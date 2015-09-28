@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.23107.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CamusFrameworkWin32", "..\..\Libs\Framework\project\CamusFrameworkWin32.vcxproj", "{9F472E44-7293-4C28-BB1A-AB118BD14081}"
+EndProject
+Global
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		..\..\Libs\Framework\project\CamusFrameworkCross\CamusFrameworkCross.Shared\CamusFrameworkCross.Shared.vcxitems*{9f472e44-7293-4c28-bb1a-ab118bd14081}*SharedItemsImports = 4
+	EndGlobalSection
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|ARM = Debug|ARM
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|ARM = Release|ARM
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{9F472E44-7293-4C28-BB1A-AB118BD14081}.Debug|ARM.ActiveCfg = Debug|ARM
+		{9F472E44-7293-4C28-BB1A-AB118BD14081}.Debug|ARM.Build.0 = Debug|ARM
+		{9F472E44-7293-4C28-BB1A-AB118BD14081}.Debug|x64.ActiveCfg = Debug|x64
+		{9F472E44-7293-4C28-BB1A-AB118BD14081}.Debug|x64.Build.0 = Debug|x64
+		{9F472E44-7293-4C28-BB1A-AB118BD14081}.Debug|x86.ActiveCfg = Debug|Win32
+		{9F472E44-7293-4C28-BB1A-AB118BD14081}.Debug|x86.Build.0 = Debug|Win32
+		{9F472E44-7293-4C28-BB1A-AB118BD14081}.Release|ARM.ActiveCfg = Release|ARM
+		{9F472E44-7293-4C28-BB1A-AB118BD14081}.Release|ARM.Build.0 = Release|ARM
+		{9F472E44-7293-4C28-BB1A-AB118BD14081}.Release|x64.ActiveCfg = Release|x64
+		{9F472E44-7293-4C28-BB1A-AB118BD14081}.Release|x64.Build.0 = Release|x64
+		{9F472E44-7293-4C28-BB1A-AB118BD14081}.Release|x86.ActiveCfg = Release|Win32
+		{9F472E44-7293-4C28-BB1A-AB118BD14081}.Release|x86.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
