@@ -22,7 +22,7 @@ class WindowParameters {
 
 		WindowParameters() :
 		Width(1280)
-		,Height(1080)
+		,Height(720)
 		,Properties(LANDSCAPE_0|WINDOWED|RESIZEABLE| SHOW_CURSOR) {	}
 
 		//	To implement per platform
