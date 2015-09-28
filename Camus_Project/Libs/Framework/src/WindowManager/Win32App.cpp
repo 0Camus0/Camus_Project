@@ -8,6 +8,8 @@
 #include <windows.h>
 #include <mmsystem.h>
 
+#include <Driver/OpenGLDriver.h>
+
 
 void Win32App::InitGlobalVars() {
 	GetWindowParameters().GatherProperties();
@@ -33,6 +35,8 @@ void Win32App::OnCreateApplication() {
 	SDL_SetVideoMode(parameters.Width, parameters.Height, 32, flags);
 
 	ShowCursor((parameters.Properties & WindowParameters::SHOW_CURSOR) ? TRUE : FALSE);
+
+	m_pVideoDriver = std::unique_ptr<BaseDriver>(new OpenGLDriver);
 
 }
 

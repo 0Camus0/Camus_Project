@@ -26,7 +26,7 @@ void AppManager::CreateApp() {
 void AppManager::MainAppThread() {
 
 #if defined(OS_WIN32)
-	pApp = new Win32App();
+	pApp = std::unique_ptr<RootApp>(new Win32App);
 #elif defined(OS_ANDROID)
 	//pApp = new AndoidApp();
 #endif
