@@ -6,7 +6,7 @@
 #ifndef USE_DEBUG
 #define ReportEGLError(...) ((void)0)
 #else
-void ReportEGLError(char* c_ptr){
+void ReportEGLError(const char* c_ptr){
 	EGLint iErr = eglGetError();
 	if (iErr != EGL_SUCCESS){
 		LogPrintError("%s failed (%d).\n", c_ptr, iErr);
@@ -66,7 +66,7 @@ void	OpenGLDriver::InitDriver() {
 
 	#ifdef OS_ANDROID
 		eglGetConfigAttrib(eglDisplay, eglConfig, EGL_NATIVE_VISUAL_ID, &format);
-		ANativeWindow_setBuffersGeometry(engine->app->window, 0, 0, format);
+		ANativeWindow_setBuffersGeometry(eglWindow, 0, 0, format);
 		ReportEGLError("eglGetConfigAttrib");
 #endif
 		EGLint ai32ContextAttribs[] = { EGL_CONTEXT_CLIENT_VERSION, 2, EGL_NONE };

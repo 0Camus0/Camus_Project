@@ -1,0 +1,69 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{d19cc614-cdbe-4c74-8e1e-1a2e5b199624}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Core">
+      <UniqueIdentifier>{c916cb07-1548-498e-b18c-d49f61876549}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Driver">
+      <UniqueIdentifier>{53a5168e-61c2-4683-829c-34ce94de0af2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Utils">
+      <UniqueIdentifier>{6524d249-5496-4bf4-9e80-1fd75db933e3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\WindowManager">
+      <UniqueIdentifier>{e25a42c3-ba42-48c1-b828-e30526bf9772}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\include\Core\Core.h">
+      <Filter>Source Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Core\OS_Selector.h">
+      <Filter>Source Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Driver\BaseDriver.h">
+      <Filter>Source Files\Driver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Driver\DriverProperties.h">
+      <Filter>Source Files\Driver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Driver\OpenGLDriver.h">
+      <Filter>Source Files\Driver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\WindowManager\AppManager.h">
+      <Filter>Source Files\WindowManager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Utils\Log.h">
+      <Filter>Source Files\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Utils\WindowProperties.h">
+      <Filter>Source Files\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\WindowManager\AndroidApp.h">
+      <Filter>Source Files\WindowManager</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\src\Driver\DriverProperties.cpp">
+      <Filter>Source Files\Driver</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Driver\OpenGlDriver.cpp">
+      <Filter>Source Files\Driver</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\WindowManager\AppManager.cpp">
+      <Filter>Source Files\WindowManager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Utils\Log.cpp">
+      <Filter>Source Files\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Utils\WindowProperties.cpp">
+      <Filter>Source Files\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\WindowManager\AndroidApp.cpp">
+      <Filter>Source Files\WindowManager</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

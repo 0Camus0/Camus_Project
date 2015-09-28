@@ -7,6 +7,12 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CamusFrameworkWin32", "..\.
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TestApplication", "..\Game\TestApplication.vcxproj", "{1AA1E229-6D59-4D2C-B572-8181EB6F0026}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Win32", "Win32", "{899EFCBB-9941-4DDA-8F81-D708CD8280C2}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Android", "Android", "{34BC2EF1-B2F9-4CEE-AB70-A6FE9EF4E535}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CamusFrameworkAndroid", "..\..\Libs\Framework\project\CamusFrameworkAndroid.vcxproj", "{2127C6EE-0F5B-426D-A2A8-8EDF54BF6543}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|ARM = Debug|ARM
@@ -37,8 +43,23 @@ Global
 		{1AA1E229-6D59-4D2C-B572-8181EB6F0026}.Release|x64.Build.0 = Release|x64
 		{1AA1E229-6D59-4D2C-B572-8181EB6F0026}.Release|x86.ActiveCfg = Release|Win32
 		{1AA1E229-6D59-4D2C-B572-8181EB6F0026}.Release|x86.Build.0 = Release|Win32
+		{2127C6EE-0F5B-426D-A2A8-8EDF54BF6543}.Debug|ARM.ActiveCfg = Debug|ARM
+		{2127C6EE-0F5B-426D-A2A8-8EDF54BF6543}.Debug|ARM.Build.0 = Debug|ARM
+		{2127C6EE-0F5B-426D-A2A8-8EDF54BF6543}.Debug|x64.ActiveCfg = Debug|x86
+		{2127C6EE-0F5B-426D-A2A8-8EDF54BF6543}.Debug|x86.ActiveCfg = Debug|x86
+		{2127C6EE-0F5B-426D-A2A8-8EDF54BF6543}.Debug|x86.Build.0 = Debug|x86
+		{2127C6EE-0F5B-426D-A2A8-8EDF54BF6543}.Release|ARM.ActiveCfg = Release|ARM
+		{2127C6EE-0F5B-426D-A2A8-8EDF54BF6543}.Release|ARM.Build.0 = Release|ARM
+		{2127C6EE-0F5B-426D-A2A8-8EDF54BF6543}.Release|x64.ActiveCfg = Release|x86
+		{2127C6EE-0F5B-426D-A2A8-8EDF54BF6543}.Release|x86.ActiveCfg = Release|x86
+		{2127C6EE-0F5B-426D-A2A8-8EDF54BF6543}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{260648F0-902D-4587-B992-AF273A735290} = {899EFCBB-9941-4DDA-8F81-D708CD8280C2}
+		{1AA1E229-6D59-4D2C-B572-8181EB6F0026} = {899EFCBB-9941-4DDA-8F81-D708CD8280C2}
+		{2127C6EE-0F5B-426D-A2A8-8EDF54BF6543} = {34BC2EF1-B2F9-4CEE-AB70-A6FE9EF4E535}
 	EndGlobalSection
 EndGlobal

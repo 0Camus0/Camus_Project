@@ -10,6 +10,7 @@
 	void	LogPrintError(const char* format, ...);
 	void	LogPrintWarning(const char* format, ...);
 #elif OS_ANDROID
+	#include <android/log.h>
 	#define  LogPrintInfo(...) ((void)__android_log_print(ANDROID_LOG_INFO, "Camus", __VA_ARGS__))
 	#define  LogPrintDebug(...) ((void)__android_log_print(ANDROID_LOG_DEBUG, "Camus", __VA_ARGS__))
 	#define  LogPrintError(...) ((void)__android_log_print(ANDROID_LOG_ERROR, "Camus", __VA_ARGS__))
