@@ -28,7 +28,10 @@
     <ClCompile Include="..\src\Utils\WindowProperties.cpp">
       <Filter>Source Files\Utils</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\Driver\OpenglDriver.cpp">
+    <ClCompile Include="..\src\Driver\DriverProperties.cpp">
+      <Filter>Source Files\Driver</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Driver\OpenGlDriver.cpp">
       <Filter>Source Files\Driver</Filter>
     </ClCompile>
   </ItemGroup>
@@ -51,10 +54,10 @@
     <ClInclude Include="..\include\Driver\BaseDriver.h">
       <Filter>Source Files\Driver</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\Driver\OpenglDriver.h">
+    <ClInclude Include="..\include\Driver\DriverProperties.h">
       <Filter>Source Files\Driver</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\Driver\DriverProperties.h">
+    <ClInclude Include="..\include\Driver\OpenGLDriver.h">
       <Filter>Source Files\Driver</Filter>
     </ClInclude>
   </ItemGroup>

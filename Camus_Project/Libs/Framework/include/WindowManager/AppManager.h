@@ -11,8 +11,6 @@ public:
 	void	CreateApp();
 	void	MainAppThread();
 
-private:
-	AppManager& getinstance();
 
 };
 

@@ -4,13 +4,11 @@
 
 class BaseDriver {
 public:
-	void	InitDriver()	= 0;
-
-	void	CreateSurfaces()  = 0;
-	void	DestroySurfaces() = 0;
-	void	SwapBuffers()	  = 0;
-
-	void	DestroyDriver() = 0;
+	virtual	void	InitDriver()	= 0;
+	virtual void	CreateSurfaces()  = 0;
+	virtual void	DestroySurfaces() = 0;
+	virtual void	SwapBuffers()	  = 0;
+	virtual void	DestroyDriver() = 0;
 };
 
 #endif
