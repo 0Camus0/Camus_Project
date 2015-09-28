@@ -5,6 +5,8 @@ VisualStudioVersion = 14.0.23107.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CamusFrameworkWin32", "..\..\Libs\Framework\project\CamusFrameworkWin32.vcxproj", "{260648F0-902D-4587-B992-AF273A735290}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TestApplication", "..\Game\TestApplication.vcxproj", "{1AA1E229-6D59-4D2C-B572-8181EB6F0026}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|ARM = Debug|ARM
@@ -25,6 +27,16 @@ Global
 		{260648F0-902D-4587-B992-AF273A735290}.Release|x64.Build.0 = Release|x64
 		{260648F0-902D-4587-B992-AF273A735290}.Release|x86.ActiveCfg = Release|Win32
 		{260648F0-902D-4587-B992-AF273A735290}.Release|x86.Build.0 = Release|Win32
+		{1AA1E229-6D59-4D2C-B572-8181EB6F0026}.Debug|ARM.ActiveCfg = Debug|Win32
+		{1AA1E229-6D59-4D2C-B572-8181EB6F0026}.Debug|x64.ActiveCfg = Debug|x64
+		{1AA1E229-6D59-4D2C-B572-8181EB6F0026}.Debug|x64.Build.0 = Debug|x64
+		{1AA1E229-6D59-4D2C-B572-8181EB6F0026}.Debug|x86.ActiveCfg = Debug|Win32
+		{1AA1E229-6D59-4D2C-B572-8181EB6F0026}.Debug|x86.Build.0 = Debug|Win32
+		{1AA1E229-6D59-4D2C-B572-8181EB6F0026}.Release|ARM.ActiveCfg = Release|Win32
+		{1AA1E229-6D59-4D2C-B572-8181EB6F0026}.Release|x64.ActiveCfg = Release|x64
+		{1AA1E229-6D59-4D2C-B572-8181EB6F0026}.Release|x64.Build.0 = Release|x64
+		{1AA1E229-6D59-4D2C-B572-8181EB6F0026}.Release|x86.ActiveCfg = Release|Win32
+		{1AA1E229-6D59-4D2C-B572-8181EB6F0026}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

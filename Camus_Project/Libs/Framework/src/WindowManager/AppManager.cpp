@@ -18,8 +18,10 @@ AppManager& GetAppManager() {
 void AppManager::CreateApp() {
 
 
-	std::thread _thread(&AppManager::MainAppThread,this);
-	_thread.detach();
+//	std::thread _thread(&AppManager::MainAppThread,this);
+//	_thread.detach();
+
+	MainAppThread();
 
 }
 
