@@ -21,10 +21,10 @@
   <ItemGroup>
     <ClCompile Include="..\..\..\Source\TestApplication\android_native_app_glue.c" />
     <ClCompile Include="..\..\..\Source\TestApplication\main.cpp" />
+    <ClCompile Include="..\..\..\Source\TestApplication\TestApplication.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\Source\TestApplication\android_native_app_glue.h" />
-    <ClInclude Include="..\..\..\Source\TestApplication\pch.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{ece03c71-46b3-40d5-8603-46cbbdf465c1}</ProjectGuid>
@@ -83,6 +83,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <CompileAs>CompileAsCpp</CompileAs>
+      <PreprocessorDefinitions>OS_ANDROID;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <LibraryDependencies>%(LibraryDependencies);GLESv1_CM;EGL;</LibraryDependencies>

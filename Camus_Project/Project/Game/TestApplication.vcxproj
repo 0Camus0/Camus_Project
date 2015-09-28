@@ -19,12 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\Source\TestApplication\stdafx.cpp" />
     <ClCompile Include="..\..\Source\TestApplication\TestApplication.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="..\..\Source\TestApplication\stdafx.h" />
-    <ClInclude Include="..\..\Source\TestApplication\targetver.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Libs\Framework\project\CamusFrameworkWin32.vcxproj">
@@ -97,8 +92,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
-      <PrecompiledHeader>
-      </PrecompiledHeader>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;OS_WIN32;%(PreprocessorDefinitions)</PreprocessorDefinitions>

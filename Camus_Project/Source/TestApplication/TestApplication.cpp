@@ -1,7 +1,13 @@
 // TestApplication.cpp : Defines the entry point for the console application.
 //
 
-#include "stdafx.h"
+#ifdef OS_ANDROID
+
+
+
+#elif defined(OS_WIN32)
+#include <stdio.h>
+#include <tchar.h>
 
 #include <WindowManager/AppManager.h>
 
@@ -26,3 +32,4 @@ int main()
     return 0;
 }
 
+#endif
