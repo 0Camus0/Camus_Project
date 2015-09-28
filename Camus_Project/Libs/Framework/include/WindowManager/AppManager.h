@@ -3,15 +3,19 @@
 
 #include <Core/Core.h>
 
+
 class AppManager {
 public:
 	RootApp*	pApp;
 
-	void CreateApp();
+	void	CreateApp();
+	void	MainAppThread();
 
 private:
 	AppManager& getinstance();
 
 };
+
+AppManager&	GetAppManager();
 
 #endif

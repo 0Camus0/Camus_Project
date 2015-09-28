@@ -19,12 +19,18 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\src\Driver\OpenglDriver.cpp" />
+    <ClCompile Include="..\src\Utils\WindowProperties.cpp" />
     <ClCompile Include="..\src\WindowManager\AppManager.cpp" />
     <ClCompile Include="..\src\WindowManager\Win32App.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\Core\Core.h" />
     <ClInclude Include="..\include\Core\OS_Selector.h" />
+    <ClInclude Include="..\include\Driver\BaseDriver.h" />
+    <ClInclude Include="..\include\Driver\DriverProperties.h" />
+    <ClInclude Include="..\include\Driver\OpenglDriver.h" />
+    <ClInclude Include="..\include\Utils\WindowProperties.h" />
     <ClInclude Include="..\include\WindowManager\AppManager.h" />
     <ClInclude Include="..\include\WindowManager\Win32App.h" />
   </ItemGroup>
@@ -87,7 +93,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;OS_WIN32;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\include;$(SolutionDir)..\..\Externals\SDL-1.2.14\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

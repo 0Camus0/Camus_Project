@@ -11,6 +11,12 @@
     <Filter Include="Source Files\WindowManager">
       <UniqueIdentifier>{5b16b787-f066-4cb6-921c-4da539f1fabd}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Utils">
+      <UniqueIdentifier>{aefa5261-b2d3-4b25-aec8-5a980bc7760c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Driver">
+      <UniqueIdentifier>{922452e4-69ad-443e-a8ee-f607a770d30c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\WindowManager\AppManager.cpp">
@@ -18,6 +24,12 @@
     </ClCompile>
     <ClCompile Include="..\src\WindowManager\Win32App.cpp">
       <Filter>Source Files\WindowManager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Utils\WindowProperties.cpp">
+      <Filter>Source Files\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Driver\OpenglDriver.cpp">
+      <Filter>Source Files\Driver</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -32,6 +44,18 @@
     </ClInclude>
     <ClInclude Include="..\include\WindowManager\Win32App.h">
       <Filter>Source Files\WindowManager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Utils\WindowProperties.h">
+      <Filter>Source Files\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Driver\BaseDriver.h">
+      <Filter>Source Files\Driver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Driver\OpenglDriver.h">
+      <Filter>Source Files\Driver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Driver\DriverProperties.h">
+      <Filter>Source Files\Driver</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
