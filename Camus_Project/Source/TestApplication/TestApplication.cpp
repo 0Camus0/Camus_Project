@@ -16,7 +16,12 @@ int main()
 
 	pAppManager->CreateApp();
 
-	system("pause");
+	std::cout << "Join..." << std::endl;
+
+	pAppManager->Join();
+
+	std::cout << "After Join, ready to close" << std::endl;
+
 
     return 0;
 }

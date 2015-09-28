@@ -4,7 +4,7 @@
 
 class RootApp {
 	public:
-
+		RootApp(bool init):m_bAlive(init){}
 		virtual void InitGlobalVars() = 0;
 		virtual void OnCreateApplication() = 0;
 		virtual void OnDestroyApplication() = 0;

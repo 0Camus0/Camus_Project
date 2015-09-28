@@ -6,7 +6,6 @@
 #include <WindowManager/AndroidApp.h>
 #endif
 
-#include <thread>
 #include <iostream>
 
 
@@ -16,13 +15,7 @@ AppManager& GetAppManager() {
 }
 
 void AppManager::CreateApp() {
-
-
-//	std::thread _thread(&AppManager::MainAppThread,this);
-//	_thread.detach();
-
-	MainAppThread();
-
+	_thread = std::thread(&AppManager::MainAppThread,this);
 }
 
 void AppManager::MainAppThread() {
@@ -43,4 +36,8 @@ void AppManager::MainAppThread() {
 
 	pApp->OnDestroyApplication();
 
+}
+
+void AppManager::Join() {
+	_thread.join();
 }

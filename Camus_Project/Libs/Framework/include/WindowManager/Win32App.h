@@ -8,7 +8,7 @@
 class Win32App : public RootApp {
 	public:
 		Win32App() : 
-		  m_bAlive(true){}
+			RootApp(true){}
 		void InitGlobalVars();
 		void OnCreateApplication();
 		void OnDestroyApplication();
@@ -16,7 +16,6 @@ class Win32App : public RootApp {
 		void OnResumeApplication();
 		void UpdateApplication();
 
-		bool						m_bAlive;
 		std::unique_ptr<BaseDriver>	m_pVideoDriver;
 };
 

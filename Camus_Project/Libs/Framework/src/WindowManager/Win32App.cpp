@@ -56,4 +56,14 @@ void Win32App::OnResumeApplication() {
 
 void Win32App::UpdateApplication() {
 
+	SDL_Event       evento;
+
+	while (SDL_PollEvent(&evento)) {
+		if (evento.type == SDL_KEYDOWN) {
+			if (evento.key.keysym.sym == SDLK_q) {
+				m_bAlive = false;
+			}
+		}
+
+	}
 }

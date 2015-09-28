@@ -3,6 +3,7 @@
 
 #include <Core/Core.h>
 #include <memory>
+#include <thread>
 
 class AppManager {
 public:
@@ -10,6 +11,9 @@ public:
 
 	void	CreateApp();
 	void	MainAppThread();
+	void	Join();
+
+	std::thread	_thread;
 
 
 };
