@@ -13,6 +13,7 @@ class WindowParameters {
 			,BORDERLESS			= 64
 			,RESIZEABLE			= 128
 			,SHOW_CURSOR		= 256
+			,MODIFIED_BY_DEVICE = 512
 		};
 
 		short	Width;
@@ -26,6 +27,8 @@ class WindowParameters {
 
 		//	To implement per platform
 		void GatherProperties();
+		
+		void SetParametersFromDriver(short _Width,short _Height);
 
 };
 

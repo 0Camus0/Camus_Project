@@ -12,3 +12,11 @@ void	WindowParameters::GatherProperties() {
 
 #endif
 }
+
+void WindowParameters::SetParametersFromDriver(short _Width, short _Height) {
+	if (Width != _Width || Height != _Height)
+		Properties |= MODIFIED_BY_DEVICE;
+
+	Width = _Width;
+	Height = _Height;
+}
