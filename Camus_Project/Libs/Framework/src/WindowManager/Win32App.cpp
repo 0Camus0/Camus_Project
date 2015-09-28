@@ -38,6 +38,8 @@ void Win32App::OnCreateApplication() {
 
 	m_pVideoDriver = std::unique_ptr<BaseDriver>(new OpenGLDriver);
 
+	m_pVideoDriver->InitDriver();
+
 }
 
 void Win32App::OnDestroyApplication() {
@@ -66,4 +68,8 @@ void Win32App::UpdateApplication() {
 		}
 
 	}
+
+	m_pVideoDriver->Update();
+
+	m_pVideoDriver->SwapBuffers();
 }

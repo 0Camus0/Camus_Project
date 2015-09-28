@@ -12,6 +12,7 @@ public:
 	void	InitDriver();
 	void	CreateSurfaces();
 	void	DestroySurfaces();
+	void	Update();
 	void	SwapBuffers();
 	void	DestroyDriver();
 

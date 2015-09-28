@@ -36,6 +36,12 @@ void	OpenGLDriver::InitDriver() {
 	#endif
 
 		ReportEGLError("eglGetDisplay");
+
+		EGLint iMajorVersion, iMinorVersion;
+
+		if (!eglInitialize(eglDisplay, &iMajorVersion, &iMinorVersion)) {
+			ReportEGLError("eglInitialize");
+		}
 		
 		eglBindAPI(EGL_OPENGL_ES_API);		// To check later
 
@@ -90,8 +96,15 @@ void	OpenGLDriver::DestroySurfaces() {
 
 }
 
-void	OpenGLDriver::SwapBuffers() {
+void	OpenGLDriver::Update() {
 
+	glClearColor(0.6f, 0.85f, 0.91f, 1.0f);
+
+	glClear(GL_COLOR_BUFFER_BIT);
+}
+
+void	OpenGLDriver::SwapBuffers() {
+	eglSwapBuffers(eglDisplay, eglSurface);
 }
 
 void	OpenGLDriver::DestroyDriver(){
