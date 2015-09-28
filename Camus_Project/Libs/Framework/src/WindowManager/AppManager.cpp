@@ -8,6 +8,13 @@
 
 #include <iostream>
 
+#if !USE_C11_THREADS
+void* AppManager::BridgeFunction(void *pctx) {
+	GetAppManager().MainAppThread();
+	return 0;
+}
+#endif
+
 
 AppManager& GetAppManager() {
 	static AppManager windows_manager;
@@ -15,7 +22,11 @@ AppManager& GetAppManager() {
 }
 
 void AppManager::CreateApp() {
+#if USE_C11_THREADS
 	_thread = std::thread(&AppManager::MainAppThread,this);
+#else
+	pthread_create(&_thread, NULL, &AppManager::BridgeFunction, 0);
+#endif
 }
 
 void AppManager::MainAppThread() {
@@ -39,5 +50,9 @@ void AppManager::MainAppThread() {
 }
 
 void AppManager::Join() {
+#if USE_C11_THREADS
 	_thread.join();
+#else
+	pthread_join(_thread,0);
+#endif
 }

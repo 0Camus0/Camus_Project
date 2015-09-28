@@ -32,7 +32,9 @@
 
 #if !defined( PTHREAD_H )
 #define PTHREAD_H
-
+#ifdef OS_WIN32
+#define HAVE_STRUCT_TIMESPEC
+#endif
 /*
  * See the README file for an explanation of the pthreads-win32 version
  * numbering scheme and how the DLL is named etc.

@@ -98,7 +98,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;OS_WIN32;USE_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\include;$(SolutionDir)..\..\Externals\SDL-1.2.14\include;$(SolutionDir)..\..\Externals\OGLES2\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\include;$(SolutionDir)..\..\Externals\SDL-1.2.14\include;$(SolutionDir)..\..\Externals\OGLES2\Include;$(SolutionDir)..\..\Externals\pthreads\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
