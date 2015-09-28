@@ -1,0 +1,37 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Source Files\Core">
+      <UniqueIdentifier>{315349aa-dbb7-40cc-a445-e0d4fd6d7338}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\WindowManager">
+      <UniqueIdentifier>{5b16b787-f066-4cb6-921c-4da539f1fabd}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\src\WindowManager\AppManager.cpp">
+      <Filter>Source Files\WindowManager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\WindowManager\Win32App.cpp">
+      <Filter>Source Files\WindowManager</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\include\Core\Core.h">
+      <Filter>Source Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Core\OS_Selector.h">
+      <Filter>Source Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\WindowManager\AppManager.h">
+      <Filter>Source Files\WindowManager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\WindowManager\Win32App.h">
+      <Filter>Source Files\WindowManager</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
