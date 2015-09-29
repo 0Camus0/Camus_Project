@@ -11,8 +11,7 @@
 
 class AndroidApp : public RootApp {
 public:
-	AndroidApp() :
-		RootApp(true) {}
+	AndroidApp(ANativeActivity* activity, void* savedState, size_t savedStateSize);
 	void InitGlobalVars();
 	void OnCreateApplication();
 	void OnDestroyApplication();
@@ -36,6 +35,10 @@ public:
 
 
 	std::unique_ptr<BaseDriver>	m_pVideoDriver;
+
+	ANativeActivity*	m_pActivity;
+	void*				m_pvSavedState;
+	size_t				m_i_SavedStateSize;
 };
 
 

@@ -15,13 +15,23 @@ void* AppManager::BridgeFunction(void *pctx) {
 }
 #endif
 
-
 AppManager& GetAppManager() {
 	static AppManager windows_manager;
 	return windows_manager;
 }
 
+#ifdef OS_WIN32
 void AppManager::CreateApp() {
+#elif defined(OS_ANDROID)
+void AppManager::CreateApp(ANativeActivity* activity, void* savedState, size_t savedStateSize) {
+#endif
+
+#if defined(OS_WIN32)
+	pApp = std::unique_ptr<RootApp>(new Win32App);
+#elif defined(OS_ANDROID)
+	pApp = std::unique_ptr<RootApp>(new AndroidApp(activity, savedState, savedStateSize));
+#endif
+
 #if USE_C11_THREADS
 	_thread = std::thread(&AppManager::MainAppThread,this);
 #else
@@ -29,13 +39,15 @@ void AppManager::CreateApp() {
 #endif
 }
 
-void AppManager::MainAppThread() {
-
-#if defined(OS_WIN32)
-	pApp = std::unique_ptr<RootApp>(new Win32App);
-#elif defined(OS_ANDROID)
-	//pApp = new AndoidApp();
+#ifdef OS_ANDROID
+void  AppManager::BridgeNativeAcitvity(ANativeActivity* activity, void* savedState, size_t savedStateSize) {
+	m_pActivity = activity;
+	m_pvSavedState = savedState;
+	m_i_SavedStateSize = savedStateSize;
+}
 #endif
+
+void AppManager::MainAppThread() {
 
 	pApp->InitGlobalVars();
 

@@ -2,6 +2,14 @@
 #include <Utils/WindowProperties.h>
 #include <Driver/OpenGLDriver.h>
 
+AndroidApp::AndroidApp(ANativeActivity* activity, void* savedState, size_t savedStateSize) :
+	RootApp(true)
+	, m_pActivity(activity)
+	, m_pvSavedState(savedState)
+	, m_i_SavedStateSize(savedStateSize) {
+
+}
+
 void AndroidApp::InitGlobalVars() {
 
 }
