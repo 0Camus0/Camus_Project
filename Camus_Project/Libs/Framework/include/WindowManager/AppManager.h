@@ -1,7 +1,11 @@
 #ifndef CA_APP_MANAGER_H
 #define CA_APP_MANAGER_H
 
-#define USE_C11_THREADS 1
+#if __cplusplus > 199711L
+#define USE_C11_THREADS 0
+#else
+#define USE_C11_THREADS 0
+#endif
 
 #include <Core/Core.h>
 #include <memory>
@@ -22,11 +26,7 @@ class AppManager {
 public:
 	std::unique_ptr<RootApp>	pApp;
 
-#ifdef OS_WIN32
 	void	CreateApp();
-#elif defined(OS_ANDROID)
-	void	CreateApp(ANativeActivity* activity, void* savedState, size_t savedStateSize);
-#endif
 	void	MainAppThread();
 	void	Join();
 

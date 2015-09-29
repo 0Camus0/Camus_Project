@@ -1,6 +1,12 @@
 #ifndef CA_ANDROID_APP_H
 #define CA_ANDROID_APP_H
 
+#if __cplusplus > 199711L
+#define USE_C11_THREADS 0
+#else
+#define USE_C11_THREADS 0
+#endif
+
 #include <Core/Core.h>
 #include <Driver/BaseDriver.h>
 #include <memory>
@@ -9,9 +15,17 @@
 #include <android/looper.h>
 #include <android/native_activity.h>
 
+#if USE_C11_THREADS
+#include <thread>
+#include <mutex>
+//include >
+#else
+#include <pthread.h>
+#endif
+
 class AndroidApp : public RootApp {
 public:
-	AndroidApp(ANativeActivity* activity, void* savedState, size_t savedStateSize);
+	AndroidApp();
 	void InitGlobalVars();
 	void OnCreateApplication();
 	void OnDestroyApplication();
@@ -36,10 +50,17 @@ public:
 
 	std::unique_ptr<BaseDriver>	m_pVideoDriver;
 
-	// Raw pointers to parse later
-	ANativeActivity*	m_pActivity;
-	void*				m_pvSavedState;
-	size_t				m_i_SavedStateSize;
+
+	ANativeActivity*					m_pActivity;
+	void*								m_pvSavedState;
+	size_t								m_i_SavedStateSize;
+
+#if USE_C11_THREADS
+	
+#else
+
+#endif
+
 };
 
 
