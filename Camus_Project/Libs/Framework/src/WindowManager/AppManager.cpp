@@ -32,20 +32,13 @@ void AppManager::CreateApp(ANativeActivity* activity, void* savedState, size_t s
 	pApp = std::unique_ptr<RootApp>(new AndroidApp(activity, savedState, savedStateSize));
 #endif
 
+
 #if USE_C11_THREADS
 	_thread = std::thread(&AppManager::MainAppThread,this);
 #else
 	pthread_create(&_thread, NULL, &AppManager::BridgeFunction, 0);
 #endif
 }
-
-#ifdef OS_ANDROID
-void  AppManager::BridgeNativeAcitvity(ANativeActivity* activity, void* savedState, size_t savedStateSize) {
-	m_pActivity = activity;
-	m_pvSavedState = savedState;
-	m_i_SavedStateSize = savedStateSize;
-}
-#endif
 
 void AppManager::MainAppThread() {
 

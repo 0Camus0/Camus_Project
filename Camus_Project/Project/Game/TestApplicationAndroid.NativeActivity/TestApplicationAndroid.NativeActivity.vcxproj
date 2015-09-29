@@ -19,12 +19,12 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\Source\TestApplication\android_native_app_glue.c" />
-    <ClCompile Include="..\..\..\Source\TestApplication\main.cpp" />
     <ClCompile Include="..\..\..\Source\TestApplication\TestApplication.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\Source\TestApplication\android_native_app_glue.h" />
+    <ProjectReference Include="..\..\..\Libs\Framework\project\CamusFrameworkAndroid.vcxproj">
+      <Project>{2127c6ee-0f5b-426d-a2a8-8edf54bf6543}</Project>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{ece03c71-46b3-40d5-8603-46cbbdf465c1}</ProjectGuid>
@@ -85,6 +85,7 @@
       <CompileAs>CompileAsCpp</CompileAs>
       <PreprocessorDefinitions>OS_ANDROID;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(SolutionDir)..\..\Libs\Framework\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <CppLanguageStandard>c++11</CppLanguageStandard>
     </ClCompile>
     <Link>
       <LibraryDependencies>%(LibraryDependencies);GLESv1_CM;EGL;</LibraryDependencies>

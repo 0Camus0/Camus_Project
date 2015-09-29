@@ -22,10 +22,10 @@ class AppManager {
 public:
 	std::unique_ptr<RootApp>	pApp;
 
-#ifdef OS_ANDROID
-	void	CreateApp(ANativeActivity* activity, void* savedState, size_t savedStateSize);
-#else
+#ifdef OS_WIN32
 	void	CreateApp();
+#elif defined(OS_ANDROID)
+	void	CreateApp(ANativeActivity* activity, void* savedState, size_t savedStateSize);
 #endif
 	void	MainAppThread();
 	void	Join();
@@ -35,14 +35,6 @@ public:
 #else
 	pthread_t	_thread;
 	static void* BridgeFunction(void *pctx);
-#endif
-
-#ifdef OS_ANDROID
-	void			BridgeNativeAcitvity(ANativeActivity* activity, void* savedState, size_t savedStateSize);
-
-	ANativeActivity*	m_pActivity;
-	void*				m_pvSavedState;
-	size_t				m_i_SavedStateSize;
 #endif
 
 };

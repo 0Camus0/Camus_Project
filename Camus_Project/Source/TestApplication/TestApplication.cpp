@@ -19,9 +19,7 @@ void ANativeActivity_onCreate(ANativeActivity* activity, void* savedState, size_
 
 	pAppManager = std::unique_ptr<AppManager>(new AppManager);
 
-	pAppManager->BridgeNativeAcitvity(activity, savedState, savedStateSize);
-
-	pAppManager->CreateApp();
+	pAppManager->CreateApp(activity, savedState, savedStateSize);
 }
 
 #elif defined(OS_WIN32)

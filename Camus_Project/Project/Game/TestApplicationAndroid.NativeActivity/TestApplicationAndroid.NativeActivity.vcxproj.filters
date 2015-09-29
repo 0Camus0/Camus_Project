@@ -6,19 +6,8 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\Source\TestApplication\android_native_app_glue.c">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\Source\TestApplication\main.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\Source\TestApplication\TestApplication.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="..\..\..\Source\TestApplication\android_native_app_glue.h">
-      <Filter>Source</Filter>
-    </ClInclude>
   </ItemGroup>
 </Project>
