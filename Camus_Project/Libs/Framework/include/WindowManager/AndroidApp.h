@@ -50,11 +50,6 @@ public:
 
 	std::unique_ptr<BaseDriver>	m_pVideoDriver;
 
-
-	ANativeActivity*					m_pActivity;
-	void*								m_pvSavedState;
-	size_t								m_i_SavedStateSize;
-
 #if USE_C11_THREADS
 	
 #else

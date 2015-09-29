@@ -3,7 +3,7 @@
 #include <Utils/Log.h>
 #include <Driver/OpenGLDriver.h>
 
-extern ANativeActivity*						g_pActivity;
+extern std::unique_ptr<ANativeActivity>		g_pActivity;
 extern void*								g_pvSavedState;
 extern size_t								g_i_SavedStateSize;
 
@@ -11,23 +11,19 @@ extern size_t								g_i_SavedStateSize;
 AndroidApp::AndroidApp() :
 	RootApp(true) {
 
-	m_pActivity = g_pActivity;
-	m_pvSavedState = g_pvSavedState;
-	m_i_SavedStateSize = g_i_SavedStateSize;
-
-	m_pActivity->callbacks->onDestroy = onDestroy;
-	m_pActivity->callbacks->onStart = onStart;
-	m_pActivity->callbacks->onResume = onResume;
-	m_pActivity->callbacks->onSaveInstanceState = onSaveInstanceState;
-	m_pActivity->callbacks->onPause = onPause;
-	m_pActivity->callbacks->onStop = onStop;
-	m_pActivity->callbacks->onConfigurationChanged = onConfigurationChanged;
-	m_pActivity->callbacks->onLowMemory = onLowMemory;
-	m_pActivity->callbacks->onWindowFocusChanged = onWindowFocusChanged;
-	m_pActivity->callbacks->onNativeWindowCreated = onNativeWindowCreated;
-	m_pActivity->callbacks->onNativeWindowDestroyed = onNativeWindowDestroyed;
-	m_pActivity->callbacks->onInputQueueCreated = onInputQueueCreated;
-	m_pActivity->callbacks->onInputQueueDestroyed = onInputQueueDestroyed;
+	g_pActivity->callbacks->onDestroy = onDestroy;
+	g_pActivity->callbacks->onStart = onStart;
+	g_pActivity->callbacks->onResume = onResume;
+	g_pActivity->callbacks->onSaveInstanceState = onSaveInstanceState;
+	g_pActivity->callbacks->onPause = onPause;
+	g_pActivity->callbacks->onStop = onStop;
+	g_pActivity->callbacks->onConfigurationChanged = onConfigurationChanged;
+	g_pActivity->callbacks->onLowMemory = onLowMemory;
+	g_pActivity->callbacks->onWindowFocusChanged = onWindowFocusChanged;
+	g_pActivity->callbacks->onNativeWindowCreated = onNativeWindowCreated;
+	g_pActivity->callbacks->onNativeWindowDestroyed = onNativeWindowDestroyed;
+	g_pActivity->callbacks->onInputQueueCreated = onInputQueueCreated;
+	g_pActivity->callbacks->onInputQueueDestroyed = onInputQueueDestroyed;
 
 
 }
@@ -53,7 +49,7 @@ void AndroidApp::OnResumeApplication() {
 }
 // Called from App Thread
 void AndroidApp::UpdateApplication() {
-	LogPrintInfo("UpdateApplication");
+
 }
 // Called from Activity Thread
 void AndroidApp::onDestroy(ANativeActivity* activity){

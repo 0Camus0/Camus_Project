@@ -27,10 +27,10 @@ void AppManager::CreateApp() {
 	_thread = std::thread(&AppManager::MainAppThread,this);
 #else
 	pthread_attr_t attr;
-#ifdef OS_ANDROID
-	pthread_attr_init(&attr);
-	pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
-#endif
+	#ifdef OS_ANDROID
+		pthread_attr_init(&attr);
+		pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
+	#endif
 	pthread_create(&_thread, &attr, &AppManager::BridgeFunction, 0);
 #endif
 }
