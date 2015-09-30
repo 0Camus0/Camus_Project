@@ -11,7 +11,7 @@
 
 bool						g_bAppRunning = false; // Needs to be global, because it's shared by different threads but same class.
 std::unique_ptr<RootApp>	pApp;
-
+  
 
 #ifdef USE_C11_THREADS
 std::thread						g_thread;
@@ -21,7 +21,6 @@ std::condition_variable			g_cond;
 pthread_t						g_thread;
 pthread_mutex_t					g_mutex;
 pthread_cond_t					g_cond;
-
 void* AppManager::BridgeFunction(void *pctx) {
 	((AppManager*)pctx)->MainAppThread();
 	return 0;
