@@ -22,7 +22,7 @@ pthread_t						g_thread;
 pthread_mutex_t					g_mutex;
 pthread_cond_t					g_cond;
 
-void* BridgeFunction(void *pctx) {
+void* AppManager::BridgeFunction(void *pctx) {
 	((AppManager*)pctx)->MainAppThread();
 	return 0;
 }
