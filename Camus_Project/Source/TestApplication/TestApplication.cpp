@@ -5,7 +5,7 @@
 #include <iostream>
 #include <memory.h>
 
-
+std::unique_ptr<AppManager>							pAppManager;
 
 #ifdef OS_ANDROID
 
@@ -15,7 +15,6 @@
 #include <android/looper.h>
 #include <android/native_activity.h>
 
-std::unique_ptr<AppManager>							pAppManager;
 std::unique_ptr<ANativeActivity>					g_pActivity;
 
 void ANativeActivity_onCreate(ANativeActivity* activity, void* savedState, size_t savedStateSize) {

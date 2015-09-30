@@ -21,8 +21,9 @@ std::condition_variable			g_cond;
 pthread_t						g_thread;
 pthread_mutex_t					g_mutex;
 pthread_cond_t					g_cond;
-void* AppManager::BridgeFunction(void *pctx) {
-	GetAppManager().MainAppThread();
+
+void* BridgeFunction(void *pctx) {
+	((AppManager*)pctx)->MainAppThread();
 	return 0;
 }
 #endif
@@ -83,9 +84,9 @@ void AppManager::CreateAppThread() {
 		pthread_attr_t attr;
 		pthread_attr_init(&attr);
 		pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
-		pthread_create(&g_thread, &attr, &AppManager::BridgeFunction, 0);
+		pthread_create(&g_thread, &attr, &AppManager::BridgeFunction, this);
 	#else
-		pthread_create(&g_thread, NULL, &AppManager::BridgeFunction, 0);
+		pthread_create(&g_thread, NULL, &AppManager::BridgeFunction, this);
 	#endif
 			
 		
@@ -128,10 +129,16 @@ void AppManager::MainAppThread() {
 
 void AppManager::Join() {
 #ifdef USE_C11_THREADS
-	g_thread.join();
+	#ifdef OS_WIN32
+		g_thread.join();
+	#endif
 #else
 	pthread_join(g_thread,0);
 #endif
+}
+
+AppManager::~AppManager(){
+	LogPrintDebug("[Thread Activity] - ~~~~~~~~~~~~AppManager~~~~~~~~~~~~");
 }
 
 void AppManager::InitMutexAndVarConditions() {
