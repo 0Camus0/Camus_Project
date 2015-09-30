@@ -1,11 +1,11 @@
 #ifndef CA_ANDROID_APP_H
 #define CA_ANDROID_APP_H
 
+/*
 #if __cplusplus > 199711L
-#define USE_C11_THREADS 0
-#else
-#define USE_C11_THREADS 0
+#define USE_C11_THREADS
 #endif
+*/
 
 #include <Core/Core.h>
 #include <Driver/BaseDriver.h>
@@ -15,13 +15,7 @@
 #include <android/looper.h>
 #include <android/native_activity.h>
 
-#if USE_C11_THREADS
-#include <thread>
-#include <mutex>
-//include >
-#else
-#include <pthread.h>
-#endif
+
 
 class AndroidApp : public RootApp {
 public:
@@ -32,6 +26,8 @@ public:
 	void OnInterruptApplication();
 	void OnResumeApplication();
 	void UpdateApplication();
+	void ResetApplication();
+	~AndroidApp();
 
 	static void  onDestroy(ANativeActivity* activity);
 	static void  onStart(ANativeActivity* activity);
@@ -46,15 +42,10 @@ public:
 	static void  onNativeWindowDestroyed(ANativeActivity* activity, ANativeWindow* window);
 	static void  onInputQueueCreated(ANativeActivity* activity, AInputQueue* queue);
 	static void  onInputQueueDestroyed(ANativeActivity* activity, AInputQueue* queue);
-
+	
 
 	std::unique_ptr<BaseDriver>	m_pVideoDriver;
-
-#if USE_C11_THREADS
 	
-#else
-
-#endif
 
 };
 

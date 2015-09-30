@@ -64,7 +64,7 @@ void	OpenGLDriver::InitDriver() {
 
 		ReportEGLError("eglChooseConfig");
 
-	#ifdef OS_ANDROID
+#ifdef OS_ANDROID
 		eglGetConfigAttrib(eglDisplay, eglConfig, EGL_NATIVE_VISUAL_ID, &format);
 		ANativeWindow_setBuffersGeometry(eglWindow, 0, 0, format);
 		ReportEGLError("eglGetConfigAttrib");

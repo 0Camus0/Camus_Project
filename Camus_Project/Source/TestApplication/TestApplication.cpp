@@ -5,28 +5,35 @@
 #include <iostream>
 #include <memory.h>
 
-std::unique_ptr<AppManager> pAppManager;
+
 
 #ifdef OS_ANDROID
 
 #include <WindowManager/AndroidApp.h>
+#include <Utils/Log.h>
 #include <android/configuration.h>
 #include <android/looper.h>
 #include <android/native_activity.h>
 
+std::unique_ptr<AppManager>							pAppManager;
 std::unique_ptr<ANativeActivity>					g_pActivity;
-void*												g_pvSavedState = 0;
-size_t												g_i_SavedStateSize = 0;
 
 void ANativeActivity_onCreate(ANativeActivity* activity, void* savedState, size_t savedStateSize) {
+	LogPrintDebug("[Thread Activity] - ANativeActivity_onCreate");
+	
+	g_pActivity.reset(activity);
+	static ANativeActivity* old_activity = activity;
 
-	g_pActivity = std::unique_ptr<ANativeActivity>(activity);
-	g_pvSavedState = savedState;
-	g_i_SavedStateSize = savedStateSize;
+	if (old_activity == activity) {
+		LogPrintDebug("[Thread Activity] - ANativeActivity_onCreate: Activity Virgin");
+		pAppManager.reset(new AppManager);
+		pAppManager->CreateApp();
+	}else{
+		LogPrintDebug("[Thread Activity] - ANativeActivity_onCreate: Activity Changed");
+		pAppManager->ResetApp();
+	}
 
-	pAppManager = std::unique_ptr<AppManager>(new AppManager);
-
-	pAppManager->CreateApp();
+	old_activity = activity;
 }
 
 #elif defined(OS_WIN32)
@@ -36,7 +43,7 @@ void ANativeActivity_onCreate(ANativeActivity* activity, void* savedState, size_
 
 int main()
 {
-	pAppManager = std::unique_ptr<AppManager>(new AppManager);
+	pAppManager.reset(new AppManager);
 
 	pAppManager->CreateApp();
 

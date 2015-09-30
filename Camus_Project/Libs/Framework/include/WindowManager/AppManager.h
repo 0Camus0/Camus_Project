@@ -1,20 +1,24 @@
 #ifndef CA_APP_MANAGER_H
 #define CA_APP_MANAGER_H
 
+/*
 #if __cplusplus > 199711L
-#define USE_C11_THREADS 0
+#define USE_C11_THREADS
+#endif
+*/
+
+#ifdef USE_C11_THREADS
+#include <thread>
+#include <mutex>
+#include <condition_variable>
 #else
-#define USE_C11_THREADS 0
+#include <pthread.h>
+#include <sched.h>
 #endif
 
 #include <Core/Core.h>
 #include <memory>
 
-#if USE_C11_THREADS
-#include <thread>
-#else
-#include <pthread.h>
-#endif
 
 #ifdef OS_ANDROID
 #include <android/configuration.h>
@@ -24,16 +28,16 @@
 
 class AppManager {
 public:
-	std::unique_ptr<RootApp>	pApp;
-
+	AppManager() {}
 	void	CreateApp();
 	void	MainAppThread();
-	void	Join();
+	void	ResetApp();
 
-#if USE_C11_THREADS
-	std::thread	_thread;
-#else
-	pthread_t	_thread;
+	void	CreateAppThread();
+	void	InitMutexAndVarConditions();
+	void	Join();
+	
+#ifndef USE_C11_THREADS
 	static void* BridgeFunction(void *pctx);
 #endif
 
