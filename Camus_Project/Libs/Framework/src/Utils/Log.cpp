@@ -6,7 +6,7 @@
 #include <iosfwd>
 #endif
 
-#if USE_SHOW_THREADS_IDS || USE_COLORED_CONSOLE
+#if USE_SHOW_THREADS_IDS || USE_COLORED_CONSOLE || defined(OS_WIN32)
 static char Log_Buffer[1024];	// 1 Kb should be enough
 #endif
 
@@ -92,7 +92,11 @@ void	LogPrintInfo(const char* format,...) {
 #if USE_COLORED_CONSOLE
 	SetConsoleTextAttribute(h, 8 | FOREGROUND_INTENSITY);
 #endif
+#if USE_SHOW_THREADS_IDS
+	std::cout << "THREAD[" << (int)GetCurrentThreadId() << "] - " << Log_Buffer << std::endl;
+#else
 	std::cout << Log_Buffer << std::endl;
+#endif
 #if USE_COLORED_CONSOLE
 	SetConsoleTextAttribute(h, wOldColorAttrs);
 #endif
@@ -113,7 +117,11 @@ void	LogPrintDebug(const char* format, ...){
 #if USE_COLORED_CONSOLE
 	SetConsoleTextAttribute(h, 2 | FOREGROUND_INTENSITY);
 #endif
+#if USE_SHOW_THREADS_IDS
+	std::cout << "THREAD[" << (int)GetCurrentThreadId() << "] - " << Log_Buffer << std::endl;
+#else
 	std::cout << Log_Buffer << std::endl;
+#endif
 #if USE_COLORED_CONSOLE
 	SetConsoleTextAttribute(h, wOldColorAttrs);
 #endif
@@ -134,7 +142,11 @@ void	LogPrintError(const char* format, ...) {
 #if USE_COLORED_CONSOLE
 	SetConsoleTextAttribute(h, 4 | FOREGROUND_INTENSITY);
 #endif
+#if USE_SHOW_THREADS_IDS
+	std::cout << "THREAD[" << (int)GetCurrentThreadId() << "] - " << Log_Buffer << std::endl;
+#else
 	std::cout << Log_Buffer << std::endl;
+#endif
 #if USE_COLORED_CONSOLE
 	SetConsoleTextAttribute(h, wOldColorAttrs);
 #endif
@@ -155,7 +167,11 @@ void	LogPrintWarning(const char* format, ...) {
 #if USE_COLORED_CONSOLE
 	SetConsoleTextAttribute(h, 14 | FOREGROUND_INTENSITY);
 #endif
+#if USE_SHOW_THREADS_IDS
+	std::cout << "THREAD[" << (int)GetCurrentThreadId() << "] - " << Log_Buffer << std::endl;
+#else
 	std::cout << Log_Buffer << std::endl;
+#endif
 #if USE_COLORED_CONSOLE
 	SetConsoleTextAttribute(h, wOldColorAttrs);
 #endif

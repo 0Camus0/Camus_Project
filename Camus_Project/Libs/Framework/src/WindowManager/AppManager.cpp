@@ -56,7 +56,6 @@ void AppManager::ResetApp() {
 }
 
 void AppManager::CreateAppThread() {
-	LogPrintDebug("CreateAppThread");
 
 #if defined(OS_WIN32)
 		pApp = new Win32App;
@@ -74,20 +73,18 @@ void AppManager::CreateAppThread() {
 
 		g_bAppRunning = false;
 
-		LogPrintDebug("CreateAppThread 1");
 #ifdef USE_C11_THREADS
 		g_thread = std::thread(&AppManager::BridgeFunction, this);
+#ifdef OS_ANDROID
 		g_thread.detach();
+#endif
 
-		LogPrintDebug("- CreateAppThread 2");
 		{
 			std::unique_lock<std::mutex> locker(g_mutex);
 			while (!g_bAppRunning) {
 				g_cond.wait(locker);
 			}
 		}
-
-		LogPrintDebug("CreateAppThread 2");
 #else
 	#ifdef OS_ANDROID
 		pthread_attr_t attr;
