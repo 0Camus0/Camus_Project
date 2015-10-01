@@ -25,71 +25,6 @@ extern bool g_bAppRunning;
 extern std::unique_ptr<ANativeActivity>		g_pActivity;
 extern RootApp								*pApp;
 
-/*
-void  ProcessCmd(AndroidApp* pApp, PollSource *source) {
-	LogPrintInfo("[Thread Activity] -ProcessCmd");
-}
-
-void  ProcessInput(AndroidApp* pApp, PollSource *source) {
-	LogPrintInfo("[Thread Activity] -ProcessInput");
-}
-
-// Called from Activity Thread
-void onDestroy(ANativeActivity* activity) {
-	LogPrintInfo("[Thread Activity] -onDestroy");
-}
-// Called from Activity Thread
-void onStart(ANativeActivity* activity) {
-	LogPrintInfo("[Thread Activity] -onStart");
-}
-// Called from Activity Thread
-void onResume(ANativeActivity* activity) {
-	LogPrintInfo("[Thread Activity] -onResume");
-}
-// Called from Activity Thread
-void* onSaveInstanceState(ANativeActivity* activity, size_t* outLen) {
-	LogPrintInfo("[Thread Activity] -onSaveInstanceState");
-	*outLen = 0;
-	return 0;
-}
-// Called from Activity Thread
-void onPause(ANativeActivity* activity) {
-	LogPrintInfo("[Thread Activity] -onPause");
-}
-// Called from Activity Thread
-void onStop(ANativeActivity* activity) {
-	LogPrintInfo("[Thread Activity] -onStop");
-}
-// Called from Activity Thread
-void onConfigurationChanged(ANativeActivity* activity) {
-	LogPrintInfo("[Thread Activity] -onConfigurationChanged");
-}
-// Called from Activity Thread
-void onLowMemory(ANativeActivity* activity) {
-	LogPrintInfo("[Thread Activity] -onLowMemory");
-}
-// Called from Activity Thread
-void onWindowFocusChanged(ANativeActivity* activity, int focused) {
-	LogPrintInfo("[Thread Activity] -onWindowFocusChanged");
-}
-// Called from Activity Thread
-void onNativeWindowCreated(ANativeActivity* activity, ANativeWindow* window) {
-	LogPrintInfo("[Thread Activity] -onNativeWindowCreated");
-}
-// Called from Activity Thread
-void onNativeWindowDestroyed(ANativeActivity* activity, ANativeWindow* window) {
-	LogPrintInfo("[Thread Activity] -onNativeWindowDestroyed");
-}
-// Called from Activity Thread
-void onInputQueueCreated(ANativeActivity* activity, AInputQueue* queue) {
-	LogPrintInfo("[Thread Activity] -onInputQueueCreated");
-}
-
-void onInputQueueDestroyed(ANativeActivity* activity, AInputQueue* queue) {
-	LogPrintInfo("[Thread Activity] -onInputQueueDestroyed");
-}
-*/
-
 void Suspend() {
 	LogPrintInfo("[Thread Activity] -Suspend APP");
 	pthread_mutex_lock(&g_mutex);
@@ -160,10 +95,10 @@ void AndroidApp::OnCreateApplication() {
 	
 	m_cmdPoll.m_Id  = LOOPER_ID_MAIN;
 	m_cmdPoll.m_App = this;
-	m_cmdPoll.process = ProcessCmd;
+	m_cmdPoll.process = AndroidApp::ProcessCmd;
 	m_inputPoll.m_Id = LOOPER_ID_INPUT;
 	m_inputPoll.m_App = this;
-	m_inputPoll.process = ProcessInput;
+	m_inputPoll.process = AndroidApp::ProcessInput;
 
 	LogPrintDebug("[Thread app] - OnCreateApplication() 4");
 
@@ -248,7 +183,6 @@ void AndroidApp::onStart(ANativeActivity* activity){
 // Called from Activity Thread
 void AndroidApp::onResume(ANativeActivity* activity){
 	LogPrintInfo("[Thread Activity] -onResume");
-	Resume();
 }
 // Called from Activity Thread
 void* AndroidApp::onSaveInstanceState(ANativeActivity* activity, size_t* outLen){
@@ -280,6 +214,7 @@ void AndroidApp::onWindowFocusChanged(ANativeActivity* activity, int focused){
 // Called from Activity Thread
 void AndroidApp::onNativeWindowCreated(ANativeActivity* activity, ANativeWindow* window){
 	LogPrintInfo("[Thread Activity] -onNativeWindowCreated");
+	Resume();
 }
 // Called from Activity Thread
 void AndroidApp::onNativeWindowDestroyed(ANativeActivity* activity, ANativeWindow* window){

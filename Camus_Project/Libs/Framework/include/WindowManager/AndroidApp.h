@@ -201,7 +201,4 @@ private:
 };
 
 
-void  ProcessCmd(AndroidApp* pApp, PollSource *source);
-void  ProcessInput(AndroidApp* pApp, PollSource *source);
-
 #endif
