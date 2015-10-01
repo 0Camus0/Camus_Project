@@ -248,6 +248,7 @@ void AndroidApp::onStart(ANativeActivity* activity){
 // Called from Activity Thread
 void AndroidApp::onResume(ANativeActivity* activity){
 	LogPrintInfo("[Thread Activity] -onResume");
+	Resume();
 }
 // Called from Activity Thread
 void* AndroidApp::onSaveInstanceState(ANativeActivity* activity, size_t* outLen){
@@ -258,6 +259,7 @@ void* AndroidApp::onSaveInstanceState(ANativeActivity* activity, size_t* outLen)
 // Called from Activity Thread
 void AndroidApp::onPause(ANativeActivity* activity){
 	LogPrintInfo("[Thread Activity] -onPause");
+	Suspend();
 }
 // Called from Activity Thread
 void AndroidApp::onStop(ANativeActivity* activity){
@@ -278,12 +280,10 @@ void AndroidApp::onWindowFocusChanged(ANativeActivity* activity, int focused){
 // Called from Activity Thread
 void AndroidApp::onNativeWindowCreated(ANativeActivity* activity, ANativeWindow* window){
 	LogPrintInfo("[Thread Activity] -onNativeWindowCreated");
-	Resume();
 }
 // Called from Activity Thread
 void AndroidApp::onNativeWindowDestroyed(ANativeActivity* activity, ANativeWindow* window){
 	LogPrintInfo("[Thread Activity] -onNativeWindowDestroyed");
-	Suspend();
 }
 // Called from Activity Thread
 void AndroidApp::onInputQueueCreated(ANativeActivity* activity, AInputQueue* queue){
