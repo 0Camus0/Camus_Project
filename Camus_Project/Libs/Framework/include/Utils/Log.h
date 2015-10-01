@@ -11,10 +11,10 @@
 	void	LogPrintWarning(const char* format, ...);
 #elif OS_ANDROID
 	#include <android/log.h>
-	#define  LogPrintInfo(...) ((void)__android_log_print(ANDROID_LOG_INFO, "Camus", __VA_ARGS__))
-	#define  LogPrintDebug(...) ((void)__android_log_print(ANDROID_LOG_DEBUG, "Camus", __VA_ARGS__))
-	#define  LogPrintError(...) ((void)__android_log_print(ANDROID_LOG_ERROR, "Camus", __VA_ARGS__))
-	#define  LogPrintWarning(...) ((void)__android_log_print(ANDROID_LOG_WARN, "Camus", __VA_ARGS__))
+	#define  LogPrintInfo(...) ((void)__android_log_print(ANDROID_LOG_INFO, "DEBUG", __VA_ARGS__))
+	#define  LogPrintDebug(...) ((void)__android_log_print(ANDROID_LOG_DEBUG, "DEBUG", __VA_ARGS__))
+	#define  LogPrintError(...) ((void)__android_log_print(ANDROID_LOG_ERROR, "DEBUG", __VA_ARGS__))
+	#define  LogPrintWarning(...) ((void)__android_log_print(ANDROID_LOG_WARN, "DEBUG", __VA_ARGS__))
 #endif
 #else
 	#define  LogPrintInfo(...) ((void)0)

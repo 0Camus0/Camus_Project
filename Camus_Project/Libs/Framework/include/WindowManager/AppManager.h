@@ -36,12 +36,14 @@ public:
 	void	CreateAppThread();
 	void	InitMutexAndVarConditions();
 	void	Join();
+
+	
+
 	~AppManager();
 #ifndef USE_C11_THREADS
 	static void* BridgeFunction(void *pctx);
 #endif
 };
 
-AppManager&	GetAppManager();
 
 #endif

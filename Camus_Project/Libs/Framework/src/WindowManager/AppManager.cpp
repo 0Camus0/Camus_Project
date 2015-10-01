@@ -5,12 +5,17 @@
 #include <WindowManager/Win32App.h>
 #elif defined(OS_ANDROID)
 #include <WindowManager/AndroidApp.h>
+#include <unistd.h>
+#include <errno.h>
+
+int							g_Mgread;
+int							g_Msgwrite;
 #endif
 
 #include <iostream>
 
 bool						g_bAppRunning = false; // Needs to be global, because it's shared by different threads but same class.
-std::unique_ptr<RootApp>	pApp;
+RootApp						*pApp;
   
 
 #ifdef USE_C11_THREADS
@@ -58,12 +63,12 @@ void AppManager::ResetApp() {
 }
 
 void AppManager::CreateAppThread() {
-		LogPrintDebug("[Thread Activity] - CreateAppThread");
+	
 
 #if defined(OS_WIN32)
-		pApp.reset(new Win32App);
+		pApp = new Win32App;
 #elif defined(OS_ANDROID)
-		pApp.reset(new AndroidApp);
+		pApp = new AndroidApp;
 #endif
 
 		g_bAppRunning = false;
@@ -80,9 +85,18 @@ void AppManager::CreateAppThread() {
 		}
 #else
 	#ifdef OS_ANDROID
+		int msgpipe[2];
+		if (pipe(msgpipe)) {
+			LogPrintDebug("could not create pipe: %s", strerror(errno));
+			return;
+		}
+		g_Mgread = msgpipe[0];
+		g_Msgwrite = msgpipe[1];
+
 		pthread_attr_t attr;
 		pthread_attr_init(&attr);
 		pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
+		LogPrintDebug("[Thread Activity] - CreateAppThread pthread_create");
 		pthread_create(&g_thread, &attr, &AppManager::BridgeFunction, this);
 	#else
 		pthread_create(&g_thread, NULL, &AppManager::BridgeFunction, this);
@@ -102,6 +116,10 @@ void AppManager::MainAppThread() {
 
 	LogPrintDebug("[Thread app] - MainAppThread");
 
+	pApp->InitGlobalVars();
+
+	pApp->OnCreateApplication();
+
 #ifdef USE_C11_THREADS
 	g_mutex.lock();
 	g_bAppRunning = true;
@@ -114,10 +132,6 @@ void AppManager::MainAppThread() {
 	pthread_mutex_unlock(&g_mutex);
 #endif
 
-	pApp->InitGlobalVars();
-
-	pApp->OnCreateApplication();
-
 	while (g_bAppRunning) {
 		pApp->UpdateApplication();
 	}
@@ -125,6 +139,7 @@ void AppManager::MainAppThread() {
 	pApp->OnDestroyApplication();
 
 }
+
 
 void AppManager::Join() {
 #ifdef USE_C11_THREADS

@@ -5,7 +5,7 @@
 #include <iostream>
 #include <memory.h>
 
-std::unique_ptr<AppManager>							pAppManager;
+AppManager					*pAppManager;
 
 #ifdef OS_ANDROID
 
@@ -15,17 +15,20 @@ std::unique_ptr<AppManager>							pAppManager;
 #include <android/looper.h>
 #include <android/native_activity.h>
 
-std::unique_ptr<ANativeActivity>					g_pActivity;
+ANativeActivity					*g_pActivity;
 
 void ANativeActivity_onCreate(ANativeActivity* activity, void* savedState, size_t savedStateSize) {
-	LogPrintDebug("[Thread Activity] - ANativeActivity_onCreate");
+	static int counter = 0;
+	LogPrintDebug("[Thread Activity] - ANativeActivity_onCreate times %d ", counter);
+
+	counter++;
 	
-	g_pActivity.reset(activity);
+	g_pActivity = activity;
 	static ANativeActivity* old_activity = activity;
 
 	if (old_activity == activity) {
 		LogPrintDebug("[Thread Activity] - ANativeActivity_onCreate: Activity Virgin");
-		pAppManager.reset(new AppManager);
+		pAppManager = new AppManager;
 		pAppManager->CreateApp();
 	}else{
 		LogPrintDebug("[Thread Activity] - ANativeActivity_onCreate: Activity Changed");
@@ -42,7 +45,7 @@ void ANativeActivity_onCreate(ANativeActivity* activity, void* savedState, size_
 
 int main()
 {
-	pAppManager.reset(new AppManager);
+	pAppManager = new AppManager;
 
 	pAppManager->CreateApp();
 
