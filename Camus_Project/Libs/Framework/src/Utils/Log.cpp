@@ -4,7 +4,9 @@
 #include <sstream>
 #include <stdarg.h> 
 #include <iosfwd>
+#endif
 
+#if USE_SHOW_THREADS_IDS || USE_COLORED_CONSOLE
 static char Log_Buffer[1024];	// 1 Kb should be enough
 #endif
 
