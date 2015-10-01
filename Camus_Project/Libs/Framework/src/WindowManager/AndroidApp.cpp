@@ -26,46 +26,66 @@ extern std::unique_ptr<ANativeActivity>		g_pActivity;
 extern RootApp								*pApp;
 
 void Suspend() {
-	LogPrintInfo("[Thread Activity] -Suspend APP");
+	LogPrintDebug("Suspend APP");
+#ifdef USE_C11_THREADS
+	g_mutex.lock();
+	g_bAppRunning = false;
+	g_mutex.unlock();
+#else
 	pthread_mutex_lock(&g_mutex);
 	g_bAppRunning = false;
 	pthread_mutex_unlock(&g_mutex);
+#endif
 }
 
 void Resume() {
-	LogPrintInfo("[Thread Activity] -Resume APP");
+	LogPrintDebug("Resume APP");
+#ifdef USE_C11_THREADS
+	g_mutex.lock();
+	g_bAppRunning = true;
+	g_cond.notify_all();
+	g_mutex.unlock();
+#else
 	pthread_mutex_lock(&g_mutex);
 	g_bAppRunning = true;
 	pthread_cond_broadcast(&g_cond);
 	pthread_mutex_unlock(&g_mutex);
+#endif
 }
 
 void CheckSuspend() {
+#ifdef USE_C11_THREADS
+	std::unique_lock<std::mutex> locker(g_mutex);
+	while (!g_bAppRunning) {
+		LogPrintDebug("CheckSuspend while waiting");
+		g_cond.wait(locker);
+	}
+#else
 	pthread_mutex_lock(&g_mutex);
 	while (!g_bAppRunning) { 
-		LogPrintInfo("[Thread Activity] -CheckSuspend while waiting");
+		LogPrintDebug("CheckSuspend while waiting");
 		pthread_cond_wait(&g_cond, &g_mutex); 
 	}
 	pthread_mutex_unlock(&g_mutex);
+#endif
 }
 
 // Called  from App Thread
 AndroidApp::AndroidApp(){
 
-	LogPrintDebug("[Thread app] - AndroidApp::AndroidApp()");
+	LogPrintDebug("AndroidApp::AndroidApp()");
 
 	ResetApplication();
 
-	m_RaiseChange = false;
 
 }
 
 AndroidApp::~AndroidApp() {
-	LogPrintDebug("~~~~~~~~~AndroidApp::~AndroidApp()");
+	LogPrintDebug("~AndroidApp::~AndroidApp()");
 }
 
 void AndroidApp::ResetApplication(){
-	LogPrintDebug("[XXX app] - AndroidApp::SetCallbacks()");
+	LogPrintDebug("AndroidApp::SetCallbacks()");
 	g_pActivity->callbacks->onDestroy = onDestroy;
 	g_pActivity->callbacks->onStart = onStart;
 	g_pActivity->callbacks->onResume = onResume;
@@ -88,7 +108,7 @@ void AndroidApp::ResetApplication(){
 }
 // Called from App Thread
 void AndroidApp::InitGlobalVars() {
-	LogPrintDebug("[Thread app] - InitGlobalVars()");
+	LogPrintDebug("InitGlobalVars()");
 }
 // Called from App Thread
 void AndroidApp::OnCreateApplication() {
@@ -100,33 +120,33 @@ void AndroidApp::OnCreateApplication() {
 	m_inputPoll.m_App = this;
 	m_inputPoll.process = AndroidApp::ProcessInput;
 
-	LogPrintDebug("[Thread app] - OnCreateApplication() 4");
+	LogPrintDebug("OnCreateApplication() 4");
 
 	m_Looper = ALooper_prepare(ALOOPER_PREPARE_ALLOW_NON_CALLBACKS);
 
-	LogPrintDebug("[Thread app] - OnCreateApplication() 5");
+	LogPrintDebug("OnCreateApplication() 5");
 
 	ALooper_addFd(m_Looper,g_Msgwrite, LOOPER_ID_MAIN, ALOOPER_EVENT_INPUT, NULL,&m_cmdPoll);
 
-	LogPrintDebug("[Thread app] - OnCreateApplication() 6");
+	LogPrintDebug("OnCreateApplication() 6");
 }
 
 // Called from App Thread
 void AndroidApp::OnDestroyApplication() {
-	LogPrintDebug("[Thread app] - OnDestroyApplication()");
+	LogPrintDebug("OnDestroyApplication()");
 	AConfiguration_delete(m_pConfig);
 }
 // Called from App Thread
 void AndroidApp::OnInterruptApplication() {
-	LogPrintDebug("[Thread app] - OnInterruptApplication()");
+	LogPrintDebug("OnInterruptApplication()");
 }
 // Called from App Thread
 void AndroidApp::OnResumeApplication() {
-	LogPrintDebug("[Thread app] - OnResumeApplication()");
+	LogPrintDebug("OnResumeApplication()");
 }
 // Called from App Thread
 void AndroidApp::UpdateApplication() {
-	LogPrintDebug("[Thread app] - UpdateApplication()");
+	//LogPrintDebug("UpdateApplication()");
 		
 	usleep(16 * 1000);
 
@@ -140,7 +160,7 @@ void AndroidApp::PrintCurrentConfig() {
 	AConfiguration_getLanguage(m_pConfig, lang);
 	AConfiguration_getCountry(m_pConfig, country);
 
-	LogPrintInfo("[Thread app] - Print Config: mcc=%d mnc=%d lang=%c%c cnt=%c%c orien=%d touch=%d dens=%d "
+	LogPrintDebug("Print Config: mcc=%d mnc=%d lang=%c%c cnt=%c%c orien=%d touch=%d dens=%d "
 		"keys=%d nav=%d keysHid=%d navHid=%d sdk=%d size=%d long=%d "
 		"modetype=%d modenight=%d",
 		AConfiguration_getMcc(m_pConfig),
@@ -161,70 +181,74 @@ void AndroidApp::PrintCurrentConfig() {
 }
 
 void  AndroidApp::ProcessCmd(AndroidApp* pApp, PollSource *source) {
-	LogPrintInfo("[Thread Activity] -ProcessCmd");
+	LogPrintDebug("ProcessCmd");
 }
 
 void  AndroidApp::ProcessInput(AndroidApp* pApp, PollSource *source) {
-	LogPrintInfo("[Thread Activity] -ProcessInput");
+	LogPrintDebug("ProcessInput");
 }
 
 // Called from Activity Thread
 void AndroidApp::onDestroy(ANativeActivity* activity){
-	LogPrintInfo("[Thread Activity] -onDestroy");
+	LogPrintDebug("onDestroy");
+#ifdef USE_C11_THREADS
+	
+#else
 	pthread_mutex_lock(&g_mutex);
 	AndroidApp *_app = (AndroidApp*)(pApp);
 	AConfiguration_delete(_app->m_pConfig);
-	pthread_mutex_unlock(&g_mutex);	
+	pthread_mutex_unlock(&g_mutex);
+#endif
 }
 // Called from Activity Thread
 void AndroidApp::onStart(ANativeActivity* activity){
-	LogPrintInfo("[Thread Activity] -onStart");
+	LogPrintDebug("onStart");
 }
 // Called from Activity Thread
 void AndroidApp::onResume(ANativeActivity* activity){
-	LogPrintInfo("[Thread Activity] -onResume");
+	LogPrintDebug("onResume");
 }
 // Called from Activity Thread
 void* AndroidApp::onSaveInstanceState(ANativeActivity* activity, size_t* outLen){
-	LogPrintInfo("[Thread Activity] -onSaveInstanceState");
+	LogPrintDebug("onSaveInstanceState");
 	*outLen = 0;
 	return 0;
 }
 // Called from Activity Thread
 void AndroidApp::onPause(ANativeActivity* activity){
-	LogPrintInfo("[Thread Activity] -onPause");
+	LogPrintDebug("onPause");
 	Suspend();
 }
 // Called from Activity Thread
 void AndroidApp::onStop(ANativeActivity* activity){
-	LogPrintInfo("[Thread Activity] -onStop");
+	LogPrintDebug("onStop");
 }
 // Called from Activity Thread
 void AndroidApp::onConfigurationChanged(ANativeActivity* activity){
-	LogPrintInfo("[Thread Activity] -onConfigurationChanged");
+	LogPrintDebug("onConfigurationChanged");
 }
 // Called from Activity Thread
 void AndroidApp::onLowMemory(ANativeActivity* activity){
-	LogPrintInfo("[Thread Activity] -onLowMemory");
+	LogPrintDebug("onLowMemory");
 }
 // Called from Activity Thread
 void AndroidApp::onWindowFocusChanged(ANativeActivity* activity, int focused){
-	LogPrintInfo("[Thread Activity] -onWindowFocusChanged");
+	LogPrintDebug("onWindowFocusChanged");
 }
 // Called from Activity Thread
 void AndroidApp::onNativeWindowCreated(ANativeActivity* activity, ANativeWindow* window){
-	LogPrintInfo("[Thread Activity] -onNativeWindowCreated");
+	LogPrintDebug("onNativeWindowCreated");
 	Resume();
 }
 // Called from Activity Thread
 void AndroidApp::onNativeWindowDestroyed(ANativeActivity* activity, ANativeWindow* window){
-	LogPrintInfo("[Thread Activity] -onNativeWindowDestroyed");
+	LogPrintDebug("onNativeWindowDestroyed");
 }
 // Called from Activity Thread
 void AndroidApp::onInputQueueCreated(ANativeActivity* activity, AInputQueue* queue){
-	LogPrintInfo("[Thread Activity] -onInputQueueCreated");
+	LogPrintDebug("onInputQueueCreated");
 }
 
 void AndroidApp::onInputQueueDestroyed(ANativeActivity* activity, AInputQueue* queue){
-	LogPrintInfo("[Thread Activity] -onInputQueueDestroyed");
+	LogPrintDebug("onInputQueueDestroyed");
 }

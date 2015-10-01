@@ -195,8 +195,7 @@ private:
 	PollSource					m_cmdPoll;
 	PollSource					m_inputPoll;
 
-	bool						m_RaiseChange;
-	
+
 
 };
 

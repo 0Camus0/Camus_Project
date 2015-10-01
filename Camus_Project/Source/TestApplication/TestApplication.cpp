@@ -5,7 +5,7 @@
 #include <iostream>
 #include <memory.h>
 
-AppManager					*pAppManager;
+AppManager					*pAppManager = 0;
 
 #ifdef OS_ANDROID
 
@@ -18,24 +18,18 @@ AppManager					*pAppManager;
 ANativeActivity					*g_pActivity;
 
 void ANativeActivity_onCreate(ANativeActivity* activity, void* savedState, size_t savedStateSize) {
-	static int counter = 0;
-	LogPrintDebug("[Thread Activity] - ANativeActivity_onCreate times %d ", counter);
-
-	counter++;
 	
 	g_pActivity = activity;
-	static ANativeActivity* old_activity = activity;
 
-	if (old_activity == activity) {
-		LogPrintDebug("[Thread Activity] - ANativeActivity_onCreate: Activity Virgin");
+	if (pAppManager==0) {
+		LogPrintDebug("ANativeActivity_onCreate: Activity Virgin");
 		pAppManager = new AppManager;
 		pAppManager->CreateApp();
 	}else{
-		LogPrintDebug("[Thread Activity] - ANativeActivity_onCreate: Activity Changed");
+		LogPrintDebug("ANativeActivity_onCreate: Activity Changed");
 		pAppManager->ResetApp();
 	}
 
-	old_activity = activity;
 }
 
 #elif defined(OS_WIN32)

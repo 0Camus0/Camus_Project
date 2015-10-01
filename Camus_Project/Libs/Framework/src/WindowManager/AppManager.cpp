@@ -7,7 +7,6 @@
 #include <WindowManager/AndroidApp.h>
 #include <unistd.h>
 #include <errno.h>
-
 int							g_Mgread;
 int							g_Msgwrite;
 #endif
@@ -15,7 +14,7 @@ int							g_Msgwrite;
 #include <iostream>
 
 bool						g_bAppRunning = false; // Needs to be global, because it's shared by different threads but same class.
-RootApp						*pApp;
+RootApp						*pApp = 0;
   
 
 #ifdef USE_C11_THREADS
@@ -26,21 +25,15 @@ std::condition_variable			g_cond;
 pthread_t						g_thread;
 pthread_mutex_t					g_mutex;
 pthread_cond_t					g_cond;
+
+#endif
 void* AppManager::BridgeFunction(void *pctx) {
 	((AppManager*)pctx)->MainAppThread();
 	return 0;
 }
-#endif
-
-
-AppManager& GetAppManager() {
-	static AppManager windows_manager;
-	return windows_manager;
-}
-
 
 void AppManager::CreateApp() {
-	LogPrintDebug("[Thread Activity] - CreateApp");
+	LogPrintDebug("CreateApp");
 
 	InitMutexAndVarConditions();
 
@@ -63,46 +56,48 @@ void AppManager::ResetApp() {
 }
 
 void AppManager::CreateAppThread() {
-	
+	LogPrintDebug("CreateAppThread");
 
 #if defined(OS_WIN32)
 		pApp = new Win32App;
 #elif defined(OS_ANDROID)
 		pApp = new AndroidApp;
+
+		int msgpipe[2];
+		if (pipe(msgpipe)) {
+			LogPrintDebug("Could not create pipe: %s", strerror(errno));
+			return;
+		}
+		g_Mgread = msgpipe[0];
+		g_Msgwrite = msgpipe[1];
 #endif
 
 		g_bAppRunning = false;
 
+		LogPrintDebug("CreateAppThread 1");
 #ifdef USE_C11_THREADS
-		g_thread = std::thread(&AppManager::MainAppThread, this);
+		g_thread = std::thread(&AppManager::BridgeFunction, this);
 		g_thread.detach();
 
+		LogPrintDebug("- CreateAppThread 2");
 		{
 			std::unique_lock<std::mutex> locker(g_mutex);
 			while (!g_bAppRunning) {
 				g_cond.wait(locker);
 			}
 		}
+
+		LogPrintDebug("CreateAppThread 2");
 #else
 	#ifdef OS_ANDROID
-		int msgpipe[2];
-		if (pipe(msgpipe)) {
-			LogPrintDebug("could not create pipe: %s", strerror(errno));
-			return;
-		}
-		g_Mgread = msgpipe[0];
-		g_Msgwrite = msgpipe[1];
-
 		pthread_attr_t attr;
 		pthread_attr_init(&attr);
 		pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
-		LogPrintDebug("[Thread Activity] - CreateAppThread pthread_create");
+		LogPrintDebug("CreateAppThread pthread_create");
 		pthread_create(&g_thread, &attr, &AppManager::BridgeFunction, this);
 	#else
 		pthread_create(&g_thread, NULL, &AppManager::BridgeFunction, this);
 	#endif
-			
-		
 		pthread_mutex_lock(&g_mutex);
 		while (!g_bAppRunning) {
 			pthread_cond_wait(&g_cond, &g_mutex);
@@ -114,7 +109,7 @@ void AppManager::CreateAppThread() {
 
 void AppManager::MainAppThread() {
 
-	LogPrintDebug("[Thread app] - MainAppThread");
+	LogPrintDebug("MainAppThread");
 
 	pApp->InitGlobalVars();
 
@@ -152,11 +147,11 @@ void AppManager::Join() {
 }
 
 AppManager::~AppManager(){
-	LogPrintDebug("[Thread Activity] - ~~~~~~~~~~~~AppManager~~~~~~~~~~~~");
+	LogPrintDebug("-~AppManager~~~~~~~~~~~~");
 }
 
 void AppManager::InitMutexAndVarConditions() {
-	LogPrintDebug("[Thread Activity] - InitMutexAndVarConditions");
+	LogPrintDebug("InitMutexAndVarConditions");
 #ifndef USE_C11_THREADS
 	pthread_mutex_init(&g_mutex, NULL);
 	pthread_cond_init(&g_cond, NULL);

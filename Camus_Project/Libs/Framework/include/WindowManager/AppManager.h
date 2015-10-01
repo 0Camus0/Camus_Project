@@ -40,9 +40,9 @@ public:
 	
 
 	~AppManager();
-#ifndef USE_C11_THREADS
+//#ifdef USE_C11_THREADS
 	static void* BridgeFunction(void *pctx);
-#endif
+//#endif
 };
 
 
