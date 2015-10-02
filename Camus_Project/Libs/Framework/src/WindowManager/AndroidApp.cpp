@@ -132,6 +132,7 @@ AndroidApp::AndroidApp(){
 	m_pInputQueue = 0;
 	m_Looper = 0;
 	m_ActivityState = -1;
+	m_ActivityRaisedFlag = false;
 	ResetApplication();
 
 
@@ -266,21 +267,14 @@ void AndroidApp::onStart(ANativeActivity* activity){
 	LogPrintDebug("onStart {");
 	
 #ifdef USE_C11_THREADS
-	{
-		std::unique_lock<std::mutex> locker(g_mutex);
-		AndroidApp *_app = (AndroidApp*)(pApp);
-		android_app_write_cmd(_app, APP_CMD_START);
-		while (_app->m_ActivityState != APP_CMD_START) {
-			LogPrintDebug("onStart while waiting");
-			g_cond.wait(locker);
-		}
-	}
+	g_mutex.lock();
+	AndroidApp *_app = (AndroidApp*)(pApp);
+	_app->m_ActivityState = APP_CMD_START;
+	g_mutex.unlock();
 #else
 	pthread_mutex_lock(&g_mutex);
-	while (!g_bAppRunning) {
-		LogPrintDebug("onStart while waiting");
-		pthread_cond_wait(&g_cond, &g_mutex);
-	}
+	AndroidApp *_app = (AndroidApp*)(pApp);
+	_app->m_ActivityState = APP_CMD_START;
 	pthread_mutex_unlock(&g_mutex);
 #endif
 	LogPrintDebug("onStart }");

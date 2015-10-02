@@ -193,6 +193,7 @@ public:
 	//size_t						*m_SavedStateSize;
 	ALooper						*m_Looper;
 	int							m_ActivityState;
+	bool						m_ActivityRaisedFlag;
 
 	PollSource					m_cmdPoll;
 	PollSource					m_inputPoll;
