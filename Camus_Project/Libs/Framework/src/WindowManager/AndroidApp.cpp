@@ -125,7 +125,6 @@ static void  ProcessInput(AndroidApp* pApp, PollSource *source) {
 
 // Called  from App Thread
 AndroidApp::AndroidApp(){
-
 	LogPrintDebug("AndroidApp::AndroidApp()");
 
 	m_pConfig = 0;
@@ -134,8 +133,6 @@ AndroidApp::AndroidApp(){
 	m_ActivityState = -1;
 	m_ActivityRaisedFlag = false;
 	ResetApplication();
-
-
 }
 
 AndroidApp::~AndroidApp() {
