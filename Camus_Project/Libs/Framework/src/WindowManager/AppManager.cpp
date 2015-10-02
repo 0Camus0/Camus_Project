@@ -130,6 +130,13 @@ void AppManager::MainAppThread() {
 
 	pApp->OnDestroyApplication();
 
+	
+
+	g_mutex.lock();
+	delete pApp;
+	pApp = 0;
+	g_cond.notify_all();
+	g_mutex.unlock();
 }
 
 

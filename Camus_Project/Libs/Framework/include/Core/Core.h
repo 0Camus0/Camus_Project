@@ -11,6 +11,7 @@ class RootApp {
 		virtual void OnResumeApplication() = 0;
 		virtual void UpdateApplication() = 0;
 		virtual void ResetApplication() = 0;
+		virtual ~RootApp() = 0;
 };
 
 

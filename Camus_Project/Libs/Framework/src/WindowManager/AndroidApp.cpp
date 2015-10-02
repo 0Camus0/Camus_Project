@@ -69,13 +69,13 @@ void CheckSuspend() {
 	pthread_mutex_unlock(&g_mutex);
 #endif
 }
-
+/*
 static void android_app_write_cmd(AndroidApp* pApp, int8_t cmd) {
 	if (write(g_Msgwrite, &cmd, sizeof(cmd)) != sizeof(cmd)) {
 		LogPrintDebug("Failure writing android_app cmd: %s\n", strerror(errno));
 	}
 }
-
+*/
 int8_t android_app_read_cmd(AndroidApp* pApp) {
 	int8_t cmd;
 	if (read(g_Mgread, &cmd, sizeof(cmd)) == sizeof(cmd)) {
@@ -119,6 +119,16 @@ static void  ProcessCmd(AndroidApp* pApp, PollSource *source) {
 
 static void  ProcessInput(AndroidApp* pApp, PollSource *source) {
 	LogPrintDebug("ProcessInput");
+	AInputEvent* event = NULL;
+	while (AInputQueue_getEvent(pApp->m_pInputQueue, &event) >= 0) {
+		LogPrintDebug("New input event: type=%d\n", AInputEvent_getType(event));
+		if (AInputQueue_preDispatchEvent(pApp->m_pInputQueue, event)) {
+			continue;
+		}
+		int32_t handled = 1;
+
+		AInputQueue_finishEvent(pApp->m_pInputQueue, event, handled);
+	}
 }
 
 
@@ -155,6 +165,11 @@ void AndroidApp::ResetApplication(){
 	g_pActivity->callbacks->onInputQueueCreated = onInputQueueCreated;
 	g_pActivity->callbacks->onInputQueueDestroyed = onInputQueueDestroyed;
 
+	if (m_pConfig != 0) {
+		AConfiguration_delete(m_pConfig);
+		m_pConfig = 0;
+	}
+
 	m_pConfig = AConfiguration_new();
 
 	AConfiguration_fromAssetManager(m_pConfig, g_pActivity->assetManager);
@@ -179,7 +194,7 @@ void AndroidApp::OnCreateApplication() {
 
 
 	m_Looper = ALooper_prepare(ALOOPER_PREPARE_ALLOW_NON_CALLBACKS);
-
+	
 	LogPrintDebug("OnCreateApplication() Val m_looper %d ", (int)m_Looper);
 
 	int answer = ALooper_addFd(m_Looper, g_Mgread, LOOPER_ID_MAIN, ALOOPER_EVENT_INPUT, 0 ,&m_cmdPoll);
@@ -203,19 +218,19 @@ void AndroidApp::OnResumeApplication() {
 // Called from App Thread
 void AndroidApp::UpdateApplication() {
 	//LogPrintDebug("UpdateApplication()");
-		
+	
 	int ident;
 	int events;
 	PollSource* source;
 
 	if ((ident = ALooper_pollAll(0, NULL, &events, (void**)&source)) >= 0) {
 		if (source != NULL) {
-			LogPrintDebug("ALooper_pollAll() source != NULL");
+	//		LogPrintDebug("ALooper_pollAll() source != NULL");
 			source->process(this, source);
 		}
 	}
-
-	usleep(16 * 1000);
+	
+	//usleep(16 * 1000);
 
 	CheckSuspend();
 }
@@ -250,18 +265,11 @@ void AndroidApp::PrintCurrentConfig() {
 // Called from Activity Thread
 void AndroidApp::onDestroy(ANativeActivity* activity){
 	LogPrintDebug("onDestroy");
-#ifdef USE_C11_THREADS
-	
-#else
-	pthread_mutex_lock(&g_mutex);
-	AndroidApp *_app = (AndroidApp*)(pApp);
-	AConfiguration_delete(_app->m_pConfig);
-	pthread_mutex_unlock(&g_mutex);
-#endif
+	return; // Nothing to do for us since this may o may not be called, also when changin orientation it IS called, so, better leave it alone.
 }
 // Called from Activity Thread
 void AndroidApp::onStart(ANativeActivity* activity){
-	LogPrintDebug("onStart {");
+	LogPrintDebug("onStart");
 	
 #ifdef USE_C11_THREADS
 	g_mutex.lock();
@@ -274,11 +282,22 @@ void AndroidApp::onStart(ANativeActivity* activity){
 	_app->m_ActivityState = APP_CMD_START;
 	pthread_mutex_unlock(&g_mutex);
 #endif
-	LogPrintDebug("onStart }");
+	
 }
 // Called from Activity Thread
 void AndroidApp::onResume(ANativeActivity* activity){
 	LogPrintDebug("onResume");
+#ifdef USE_C11_THREADS
+	g_mutex.lock();
+	AndroidApp *_app = (AndroidApp*)(pApp);
+	_app->m_ActivityState = APP_CMD_RESUME;
+	g_mutex.unlock();
+#else
+	pthread_mutex_lock(&g_mutex);
+	AndroidApp *_app = (AndroidApp*)(pApp);
+	_app->m_ActivityState = APP_CMD_RESUME;
+	pthread_mutex_unlock(&g_mutex);
+#endif
 }
 // Called from Activity Thread
 void* AndroidApp::onSaveInstanceState(ANativeActivity* activity, size_t* outLen){
@@ -289,23 +308,80 @@ void* AndroidApp::onSaveInstanceState(ANativeActivity* activity, size_t* outLen)
 // Called from Activity Thread
 void AndroidApp::onPause(ANativeActivity* activity){
 	LogPrintDebug("onPause");
+#ifdef USE_C11_THREADS
+	g_mutex.lock();
+	AndroidApp *_app = (AndroidApp*)(pApp);
+	_app->m_ActivityState = APP_CMD_PAUSE;
+	g_mutex.unlock();
+#else
+	pthread_mutex_lock(&g_mutex);
+	AndroidApp *_app = (AndroidApp*)(pApp);
+	_app->m_ActivityState = APP_CMD_PAUSE;
+	pthread_mutex_unlock(&g_mutex);
+#endif
+
 	Suspend();
 }
 // Called from Activity Thread
 void AndroidApp::onStop(ANativeActivity* activity){
 	LogPrintDebug("onStop");
+#ifdef USE_C11_THREADS
+	g_mutex.lock();
+	AndroidApp *_app = (AndroidApp*)(pApp);
+	_app->m_ActivityState = APP_CMD_STOP;
+	g_mutex.unlock();
+#else
+	pthread_mutex_lock(&g_mutex);
+	AndroidApp *_app = (AndroidApp*)(pApp);
+	_app->m_ActivityState = APP_CMD_STOP;
+	pthread_mutex_unlock(&g_mutex);
+#endif
 }
 // Called from Activity Thread
 void AndroidApp::onConfigurationChanged(ANativeActivity* activity){
 	LogPrintDebug("onConfigurationChanged");
+
+#ifdef USE_C11_THREADS
+	g_mutex.lock();
+	AndroidApp *_app = (AndroidApp*)(pApp);
+	_app->m_ActivityState = APP_CMD_CONFIG_CHANGED;
+	g_mutex.unlock();
+#else
+	pthread_mutex_lock(&g_mutex);
+	AndroidApp *_app = (AndroidApp*)(pApp);
+	_app->m_ActivityState = APP_CMD_CONFIG_CHANGED;
+	pthread_mutex_unlock(&g_mutex);
+#endif
 }
 // Called from Activity Thread
 void AndroidApp::onLowMemory(ANativeActivity* activity){
 	LogPrintDebug("onLowMemory");
+#ifdef USE_C11_THREADS
+	g_mutex.lock();
+	AndroidApp *_app = (AndroidApp*)(pApp);
+	_app->m_ActivityState = APP_CMD_LOW_MEMORY;
+	g_mutex.unlock();
+#else
+	pthread_mutex_lock(&g_mutex);
+	AndroidApp *_app = (AndroidApp*)(pApp);
+	_app->m_ActivityState = APP_CMD_LOW_MEMORY;
+	pthread_mutex_unlock(&g_mutex);
+#endif
 }
 // Called from Activity Thread
 void AndroidApp::onWindowFocusChanged(ANativeActivity* activity, int focused){
 	LogPrintDebug("onWindowFocusChanged");
+#ifdef USE_C11_THREADS
+	g_mutex.lock();
+	AndroidApp *_app = (AndroidApp*)(pApp);
+	_app->m_ActivityState = focused ? APP_CMD_GAINED_FOCUS : APP_CMD_LOST_FOCUS;
+	g_mutex.unlock();
+#else
+	pthread_mutex_lock(&g_mutex);
+	AndroidApp *_app = (AndroidApp*)(pApp);
+	_app->m_ActivityState = focused ? APP_CMD_GAINED_FOCUS : APP_CMD_LOST_FOCUS;
+	pthread_mutex_unlock(&g_mutex);
+#endif
 }
 // Called from Activity Thread
 void AndroidApp::onNativeWindowCreated(ANativeActivity* activity, ANativeWindow* window){
@@ -323,16 +399,30 @@ void AndroidApp::onInputQueueCreated(ANativeActivity* activity, AInputQueue* que
 	g_mutex.lock();
 	AndroidApp *_app = (AndroidApp*)(pApp);
 	_app->m_pInputQueue = queue;
-//	AInputQueue_attachLooper(_app->m_pInputQueue,_app->m_Looper, LOOPER_ID_INPUT, NULL,&_app->m_inputPoll);
+	AInputQueue_attachLooper(_app->m_pInputQueue,_app->m_Looper, LOOPER_ID_INPUT, NULL,&_app->m_inputPoll);
 	g_mutex.unlock();
 #else
 	pthread_mutex_lock(&g_mutex);
 	AndroidApp *_app = (AndroidApp*)(pApp);
 	_app->m_pInputQueue = queue;
+	AInputQueue_attachLooper(_app->m_pInputQueue, _app->m_Looper, LOOPER_ID_INPUT, NULL, &_app->m_inputPoll);
 	pthread_mutex_unlock(&g_mutex);
 #endif
 }
 
 void AndroidApp::onInputQueueDestroyed(ANativeActivity* activity, AInputQueue* queue){
 	LogPrintDebug("onInputQueueDestroyed");
+#ifdef USE_C11_THREADS
+	g_mutex.lock();
+	AndroidApp *_app = (AndroidApp*)(pApp);
+	AInputQueue_detachLooper(_app->m_pInputQueue);
+	_app->m_pInputQueue = 0;
+	g_mutex.unlock();
+#else
+	pthread_mutex_lock(&g_mutex);
+	AndroidApp *_app = (AndroidApp*)(pApp);
+	_app->m_pInputQueue = 0;
+	AInputQueue_detachLooper(_app->m_pInputQueue);
+	pthread_mutex_unlock(&g_mutex);
+#endif
 }

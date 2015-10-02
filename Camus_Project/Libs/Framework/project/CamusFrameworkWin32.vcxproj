@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\src\Core\Core.cpp" />
     <ClCompile Include="..\src\Driver\DriverProperties.cpp" />
     <ClCompile Include="..\src\Driver\OpenGlDriver.cpp" />
     <ClCompile Include="..\src\Utils\Log.cpp" />
