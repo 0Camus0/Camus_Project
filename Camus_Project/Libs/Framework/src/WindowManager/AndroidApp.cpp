@@ -70,11 +70,68 @@ void CheckSuspend() {
 #endif
 }
 
+static void android_app_write_cmd(AndroidApp* pApp, int8_t cmd) {
+	if (write(g_Msgwrite, &cmd, sizeof(cmd)) != sizeof(cmd)) {
+		LogPrintDebug("Failure writing android_app cmd: %s\n", strerror(errno));
+	}
+}
+
+int8_t android_app_read_cmd(AndroidApp* pApp) {
+	int8_t cmd;
+	if (read(g_Mgread, &cmd, sizeof(cmd)) == sizeof(cmd)) {
+		switch (cmd) {
+		case APP_CMD_SAVE_STATE:
+			//free_saved_state
+			break;
+		}
+		return cmd;
+	}
+	else {
+		LogPrintDebug("No data on command pipe!");
+	}
+	return -1;
+}
+
+static void  ProcessCmd(AndroidApp* pApp, PollSource *source) {
+	LogPrintDebug("ProcessCmd");
+	int8_t cmd = android_app_read_cmd(pApp);
+	switch (cmd)
+	{
+	case APP_CMD_RESUME:
+	case APP_CMD_START:
+	case APP_CMD_PAUSE:
+	case APP_CMD_STOP: {
+#ifdef USE_C11_THREADS
+		LogPrintDebug("activityState=%d\n", cmd);
+		g_mutex.lock();
+		pApp->m_ActivityState = cmd;
+		g_cond.notify_all();
+		g_mutex.unlock();
+#else
+		pthread_mutex_lock(&g_mutex);
+		pApp->m_ActivityState = cmd;
+		pthread_cond_broadcast(&g_cond);
+		pthread_mutex_unlock(&g_mutex);
+#endif
+		}break;
+	}
+}
+
+static void  ProcessInput(AndroidApp* pApp, PollSource *source) {
+	LogPrintDebug("ProcessInput");
+}
+
+
+
 // Called  from App Thread
 AndroidApp::AndroidApp(){
 
 	LogPrintDebug("AndroidApp::AndroidApp()");
 
+	m_pConfig = 0;
+	m_pInputQueue = 0;
+	m_Looper = 0;
+	m_ActivityState = -1;
 	ResetApplication();
 
 
@@ -112,23 +169,24 @@ void AndroidApp::InitGlobalVars() {
 }
 // Called from App Thread
 void AndroidApp::OnCreateApplication() {
-	
-	m_cmdPoll.m_Id  = LOOPER_ID_MAIN;
-	m_cmdPoll.m_App = this;
-	m_cmdPoll.process = AndroidApp::ProcessCmd;
-	m_inputPoll.m_Id = LOOPER_ID_INPUT;
-	m_inputPoll.m_App = this;
-	m_inputPoll.process = AndroidApp::ProcessInput;
+	LogPrintDebug("OnCreateApplication() ");
 
-	LogPrintDebug("OnCreateApplication() 4");
+	m_cmdPoll.id  = LOOPER_ID_MAIN;
+	m_cmdPoll.app = this;
+	m_cmdPoll.process = ProcessCmd;
+
+	m_inputPoll.id = LOOPER_ID_INPUT;
+	m_inputPoll.app = this;
+	m_inputPoll.process = ProcessInput;
+
 
 	m_Looper = ALooper_prepare(ALOOPER_PREPARE_ALLOW_NON_CALLBACKS);
 
-	LogPrintDebug("OnCreateApplication() 5");
+	LogPrintDebug("OnCreateApplication() Val m_looper %d ", (int)m_Looper);
 
-	ALooper_addFd(m_Looper,g_Msgwrite, LOOPER_ID_MAIN, ALOOPER_EVENT_INPUT, NULL,&m_cmdPoll);
+	int answer = ALooper_addFd(m_Looper, g_Mgread, LOOPER_ID_MAIN, ALOOPER_EVENT_INPUT, 0 ,&m_cmdPoll);
 
-	LogPrintDebug("OnCreateApplication() 6");
+	LogPrintDebug("OnCreateApplication() Val addFd %d", answer);
 }
 
 // Called from App Thread
@@ -148,6 +206,17 @@ void AndroidApp::OnResumeApplication() {
 void AndroidApp::UpdateApplication() {
 	//LogPrintDebug("UpdateApplication()");
 		
+	int ident;
+	int events;
+	PollSource* source;
+
+	if ((ident = ALooper_pollAll(0, NULL, &events, (void**)&source)) >= 0) {
+		if (source != NULL) {
+			LogPrintDebug("ALooper_pollAll() source != NULL");
+			source->process(this, source);
+		}
+	}
+
 	usleep(16 * 1000);
 
 	CheckSuspend();
@@ -180,14 +249,6 @@ void AndroidApp::PrintCurrentConfig() {
 		AConfiguration_getUiModeNight(m_pConfig));
 }
 
-void  AndroidApp::ProcessCmd(AndroidApp* pApp, PollSource *source) {
-	LogPrintDebug("ProcessCmd");
-}
-
-void  AndroidApp::ProcessInput(AndroidApp* pApp, PollSource *source) {
-	LogPrintDebug("ProcessInput");
-}
-
 // Called from Activity Thread
 void AndroidApp::onDestroy(ANativeActivity* activity){
 	LogPrintDebug("onDestroy");
@@ -202,7 +263,27 @@ void AndroidApp::onDestroy(ANativeActivity* activity){
 }
 // Called from Activity Thread
 void AndroidApp::onStart(ANativeActivity* activity){
-	LogPrintDebug("onStart");
+	LogPrintDebug("onStart {");
+	
+#ifdef USE_C11_THREADS
+	{
+		std::unique_lock<std::mutex> locker(g_mutex);
+		AndroidApp *_app = (AndroidApp*)(pApp);
+		android_app_write_cmd(_app, APP_CMD_START);
+		while (_app->m_ActivityState != APP_CMD_START) {
+			LogPrintDebug("onStart while waiting");
+			g_cond.wait(locker);
+		}
+	}
+#else
+	pthread_mutex_lock(&g_mutex);
+	while (!g_bAppRunning) {
+		LogPrintDebug("onStart while waiting");
+		pthread_cond_wait(&g_cond, &g_mutex);
+	}
+	pthread_mutex_unlock(&g_mutex);
+#endif
+	LogPrintDebug("onStart }");
 }
 // Called from Activity Thread
 void AndroidApp::onResume(ANativeActivity* activity){
@@ -247,6 +328,18 @@ void AndroidApp::onNativeWindowDestroyed(ANativeActivity* activity, ANativeWindo
 // Called from Activity Thread
 void AndroidApp::onInputQueueCreated(ANativeActivity* activity, AInputQueue* queue){
 	LogPrintDebug("onInputQueueCreated");
+#ifdef USE_C11_THREADS
+	g_mutex.lock();
+	AndroidApp *_app = (AndroidApp*)(pApp);
+	_app->m_pInputQueue = queue;
+//	AInputQueue_attachLooper(_app->m_pInputQueue,_app->m_Looper, LOOPER_ID_INPUT, NULL,&_app->m_inputPoll);
+	g_mutex.unlock();
+#else
+	pthread_mutex_lock(&g_mutex);
+	AndroidApp *_app = (AndroidApp*)(pApp);
+	_app->m_pInputQueue = queue;
+	pthread_mutex_unlock(&g_mutex);
+#endif
 }
 
 void AndroidApp::onInputQueueDestroyed(ANativeActivity* activity, AInputQueue* queue){

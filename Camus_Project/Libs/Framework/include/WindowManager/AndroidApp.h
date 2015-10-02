@@ -146,8 +146,8 @@ enum {
 
 class AndroidApp;
 struct PollSource {
-	int				 m_Id;
-	AndroidApp		*m_App;
+	int				 id;
+	AndroidApp		*app;
 	void(*process)(AndroidApp *app, PollSource *source);
 };
 
@@ -182,15 +182,17 @@ private:
 	static void  onInputQueueDestroyed(ANativeActivity* activity, AInputQueue* queue);
 	
 
-	static void  ProcessCmd(AndroidApp* pApp, PollSource *source);
-	static void  ProcessInput(AndroidApp* pApp, PollSource *source);
+	//static void  ProcessCmd(AndroidApp* pApp, PollSource *source);
+	//static void  ProcessInput(AndroidApp* pApp, PollSource *source);
 	
-
+public:
 	std::unique_ptr<BaseDriver>	 m_pVideoDriver;
 	AConfiguration				*m_pConfig;
+	AInputQueue					*m_pInputQueue;
 	//void						*m_SavedState;
 	//size_t						*m_SavedStateSize;
 	ALooper						*m_Looper;
+	int							m_ActivityState;
 
 	PollSource					m_cmdPoll;
 	PollSource					m_inputPoll;
