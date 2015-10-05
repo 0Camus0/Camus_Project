@@ -64,6 +64,14 @@ void Win32App::OnResumeApplication() {
 
 void Win32App::UpdateApplication() {
 
+	ProcessInput();	
+
+	m_pVideoDriver->Update();
+
+	m_pVideoDriver->SwapBuffers();
+}
+
+void Win32App::ProcessInput() {
 	SDL_Event       evento;
 
 	while (SDL_PollEvent(&evento)) {
@@ -74,8 +82,4 @@ void Win32App::UpdateApplication() {
 		}
 
 	}
-
-	m_pVideoDriver->Update();
-
-	m_pVideoDriver->SwapBuffers();
 }

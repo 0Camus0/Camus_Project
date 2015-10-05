@@ -14,6 +14,7 @@ class Win32App : public RootApp {
 		void OnInterruptApplication();
 		void OnResumeApplication();
 		void UpdateApplication();
+		void ProcessInput();
 		void ResetApplication();
 
 		std::unique_ptr<BaseDriver>	m_pVideoDriver;

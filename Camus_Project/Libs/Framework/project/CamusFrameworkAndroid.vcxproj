@@ -24,6 +24,7 @@
     <ClInclude Include="..\include\Driver\BaseDriver.h" />
     <ClInclude Include="..\include\Driver\DriverProperties.h" />
     <ClInclude Include="..\include\Driver\OpenGLDriver.h" />
+    <ClInclude Include="..\include\Utils\InputBase.h" />
     <ClInclude Include="..\include\Utils\Log.h" />
     <ClInclude Include="..\include\Utils\WindowProperties.h" />
     <ClInclude Include="..\include\WindowManager\AndroidApp.h" />

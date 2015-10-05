@@ -45,6 +45,9 @@
     <ClInclude Include="..\include\WindowManager\AndroidApp.h">
       <Filter>Source Files\WindowManager</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\Utils\InputBase.h">
+      <Filter>Source Files\Utils</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\Driver\DriverProperties.cpp">

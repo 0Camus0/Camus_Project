@@ -92,7 +92,7 @@ int8_t android_app_read_cmd(AndroidApp* pApp) {
 	return -1;
 }
 
-static void  ProcessCmd(AndroidApp* pApp, PollSource *source) {
+void  _ProcessCmd(AndroidApp* pApp, PollSource *source) {
 	LogPrintDebug("ProcessCmd");
 	int8_t cmd = android_app_read_cmd(pApp);
 	switch (cmd)
@@ -117,18 +117,8 @@ static void  ProcessCmd(AndroidApp* pApp, PollSource *source) {
 	}
 }
 
-static void  ProcessInput(AndroidApp* pApp, PollSource *source) {
-	LogPrintDebug("ProcessInput");
-	AInputEvent* event = NULL;
-	while (AInputQueue_getEvent(pApp->m_pInputQueue, &event) >= 0) {
-		LogPrintDebug("New input event: type=%d\n", AInputEvent_getType(event));
-		if (AInputQueue_preDispatchEvent(pApp->m_pInputQueue, event)) {
-			continue;
-		}
-		int32_t handled = 1;
-
-		AInputQueue_finishEvent(pApp->m_pInputQueue, event, handled);
-	}
+void  _ProcessInput(AndroidApp* pApp, PollSource *source) {
+	pApp->ProcessInput();
 }
 
 
@@ -186,11 +176,11 @@ void AndroidApp::OnCreateApplication() {
 
 	m_cmdPoll.id  = LOOPER_ID_MAIN;
 	m_cmdPoll.app = this;
-	m_cmdPoll.process = ProcessCmd;
+	m_cmdPoll.process = _ProcessCmd;
 
 	m_inputPoll.id = LOOPER_ID_INPUT;
 	m_inputPoll.app = this;
-	m_inputPoll.process = ProcessInput;
+	m_inputPoll.process = _ProcessInput;
 
 
 	m_Looper = ALooper_prepare(ALOOPER_PREPARE_ALLOW_NON_CALLBACKS);
@@ -235,7 +225,19 @@ void AndroidApp::UpdateApplication() {
 	CheckSuspend();
 }
 
+void AndroidApp::ProcessInput() {
+	LogPrintDebug("ProcessInput");
+	AInputEvent* event = NULL;
+	while (AInputQueue_getEvent(m_pInputQueue, &event) >= 0) {
+	LogPrintDebug("New input event: type=%d\n", AInputEvent_getType(event));
+	if (AInputQueue_preDispatchEvent(m_pInputQueue, event)) {
+	continue;
+	}
+	int32_t handled = 1;
 
+	AInputQueue_finishEvent(m_pInputQueue, event, handled);
+	}
+}
 
 void AndroidApp::PrintCurrentConfig() {
 	char lang[2], country[2];

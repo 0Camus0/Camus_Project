@@ -160,6 +160,7 @@ public:
 	void OnInterruptApplication();
 	void OnResumeApplication();
 	void UpdateApplication();
+	void ProcessInput();
 	void ResetApplication();
 
 	~AndroidApp();
