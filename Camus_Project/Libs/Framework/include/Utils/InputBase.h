@@ -1,6 +1,8 @@
 #ifndef CA_INPUTBASE_H
 #define CA_INPUTBASE_H
 
+#include <vector>
+
 namespace CamusSpace {
 	
 // Type of input
@@ -10,6 +12,7 @@ enum TypeInput_ {
 	TOUCH_SCREEN,
 	ACCELEROMETER,
 	GYROSCOPE,
+	UNKOWN_DEVICE
 };
 
 enum TypeEvent_ {
@@ -30,6 +33,7 @@ enum TypeEvent_ {
 	SCREEN_RESIZE,
 	SCREEN_ON_FOCUS,
 	SCREEN_OUT_FOCUS,
+	UNKOWN_EVENT
 };
 
 enum MouseButtons_{
@@ -45,32 +49,52 @@ enum MouseButtons_{
 	MOUSE_BUTTON_OPT_5,
 };
 
-struct InputEvent {
-	TypeInput_	typeInput;
-	TypeEvent_	typeEvent;
-	int			Id;
+// 32 bit nice structure
+struct InputEvent_ {
+	InputEvent_() : _typeInput(UNKOWN_DEVICE), _typeEvent(UNKOWN_EVENT), _id(0), _state(0) { icoords[0] = icoords[1] = icoords[2] = icoords[3] = 0; }
+	TypeInput_	_typeInput;
+	TypeEvent_	_typeEvent;
+	int			_id;
+	int			_state;
 	union {
-		int			iCoords[4];
-		float		fCoords[4];
+		int			icoords[4];
+		float		fcoords[4];
 	};
 };
 
-struct InputDevice {
-	TypeInput_	type;
-
-	
+struct InputButton_ {
+	enum { _ON = 1, _OFF = 0 };
+	enum { _LOCKED = 1, _UNLOCKED = 0 };
+	InputButton_():_state(_OFF) , _lock(_OFF){}
+	short	_state;
+	short	_lock;
+	void	PressIt() { _state = (_LOCKED==1) ? _OFF : _ON; }
+	void	ReleaseIt() { _state = _OFF; _lock = _UNLOCKED; }
+	void	LockIt() { _lock = _LOCKED; }
+	void	UnlockIt() { _lock = _UNLOCKED; }
+	bool	isPressed() { return (_state == _ON) ? true : false; }
+	bool	isLocked() { return (_lock == _LOCKED) ? true : false; }
 };
 
+struct InputDevice_ {
+	TypeInput_					typeInput;
+	std::vector<InputButton_>	buttons;
+	union {
+		int			iactual_coords[4];
+		float		factual_coords[4];
+	};
+};
 
 }
 
-#include <vector>
+
 
 class EventManager {
 public:
 	EventManager(){}
 
-	std::vector<CamusSpace::InputEvent>		m_InputQueue;
+	std::vector<CamusSpace::InputEvent_>		queue;
+	std::vector<CamusSpace::InputDevice_>		devices;
 
 };
 
