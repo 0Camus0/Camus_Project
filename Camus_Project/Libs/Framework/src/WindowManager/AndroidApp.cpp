@@ -22,7 +22,7 @@ extern int		g_Mgread;
 extern int		g_Msgwrite;
 extern bool g_bAppRunning;
 
-extern std::unique_ptr<ANativeActivity>		g_pActivity;
+extern ANativeActivity						*g_pActivity;
 extern RootApp								*pApp;
 
 void Suspend() {
@@ -215,12 +215,11 @@ void AndroidApp::UpdateApplication() {
 
 	if ((ident = ALooper_pollAll(0, NULL, &events, (void**)&source)) >= 0) {
 		if (source != NULL) {
-	//		LogPrintDebug("ALooper_pollAll() source != NULL");
 			source->process(this, source);
 		}
 	}
 	
-	//usleep(16 * 1000);
+	usleep(4 * 1000);	// Simulate processes.
 
 	CheckSuspend();
 }
