@@ -71,5 +71,8 @@
     <ClCompile Include="..\src\Core\Core.cpp">
       <Filter>Source Files\Core</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\Utils\InputImplAndroid.cpp">
+      <Filter>Source Files\Utils</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

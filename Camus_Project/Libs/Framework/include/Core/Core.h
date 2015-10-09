@@ -1,6 +1,7 @@
 #ifndef CA_CORE_H
 #define CA_CORE_H
 
+#include <Utils/InputBase.h>
 
 class RootApp {
 	public:
@@ -13,6 +14,8 @@ class RootApp {
 		virtual void ProcessInput() = 0;
 		virtual void ResetApplication() = 0;
 		virtual ~RootApp() = 0;
+
+		EventManager	*pEventManager;
 };
 
 

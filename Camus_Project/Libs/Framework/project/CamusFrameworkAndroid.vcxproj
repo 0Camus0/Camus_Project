@@ -34,6 +34,7 @@
     <ClCompile Include="..\src\Core\Core.cpp" />
     <ClCompile Include="..\src\Driver\DriverProperties.cpp" />
     <ClCompile Include="..\src\Driver\OpenGlDriver.cpp" />
+    <ClCompile Include="..\src\Utils\InputImplAndroid.cpp" />
     <ClCompile Include="..\src\Utils\Log.cpp" />
     <ClCompile Include="..\src\Utils\WindowProperties.cpp" />
     <ClCompile Include="..\src\WindowManager\AndroidApp.cpp" />

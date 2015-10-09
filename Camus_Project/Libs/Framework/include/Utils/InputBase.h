@@ -12,7 +12,14 @@ enum TypeInput_ {
 	TOUCH_SCREEN,
 	ACCELEROMETER,
 	GYROSCOPE,
-	UNKOWN_DEVICE
+	JOY_PAD_0,
+	JOY_PAD_1,
+	JOY_PAD_2,
+	JOY_PAD_3,
+	STEERING_WHEEL,
+	POSITION_TRACKING,
+	UNKOWN_DEVICE,
+	NUM_DEVICES
 };
 
 enum TypeEvent_ {
@@ -83,18 +90,25 @@ struct InputDevice_ {
 		int			iactual_coords[4];
 		float		factual_coords[4];
 	};
+	bool	isInitialized() { (buttons.size() > 0) ? true : false; }
 };
 
 }
 
-
-
 class EventManager {
 public:
 	EventManager(){}
+	void InitKeyboard(int num_keys);
+	void InitMouse(int num_buttons);
+	void InitTouchScreen(int num_touchPoints);
+	void InitAccelerometer();
+	void InitGyroscope();
+
+	// TODO: Implement other input Devices.
+	//void InitJoypad...
 
 	std::vector<CamusSpace::InputEvent_>		queue;
-	std::vector<CamusSpace::InputDevice_>		devices;
+	CamusSpace::InputDevice_					devices[CamusSpace::TypeInput_::NUM_DEVICES];
 
 };
 
