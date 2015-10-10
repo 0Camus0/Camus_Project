@@ -190,6 +190,12 @@ void AndroidApp::OnCreateApplication() {
 	int answer = ALooper_addFd(m_Looper, g_Mgread, LOOPER_ID_MAIN, ALOOPER_EVENT_INPUT, 0 ,&m_cmdPoll);
 
 	LogPrintDebug("OnCreateApplication() Val addFd %d", answer);
+
+	pEventManager = new EventManager();
+	pEventManager->InitTouchScreen(AConfiguration_getTouchscreen(m_pConfig));
+
+	
+
 }
 
 // Called from App Thread
@@ -225,13 +231,82 @@ void AndroidApp::UpdateApplication() {
 }
 
 void AndroidApp::ProcessInput() {
-	LogPrintDebug("ProcessInput");
+//	LogPrintDebug("ProcessInput");
 	AInputEvent* event = NULL;
 	while (AInputQueue_getEvent(m_pInputQueue, &event) >= 0) {
-	LogPrintDebug("New input event: type=%d\n", AInputEvent_getType(event));
+		int type = AInputEvent_getType(event);
+		int action = AKeyEvent_getAction(event);
+		unsigned int Flag = action & AMOTION_EVENT_ACTION_MASK;
+
+		switch (Flag){
+			case AMOTION_EVENT_ACTION_DOWN: {
+				CamusSpace::InputEvent_ tmp;
+				tmp._id = AMotionEvent_getPointerId(event, 0);
+				tmp._time = AMotionEvent_getEventTime(event);
+				tmp.fcoords[0] = AMotionEvent_getX(event, 0);
+				tmp.fcoords[1] = AMotionEvent_getY(event, 0);
+				tmp._state = CamusSpace::TypeEvent_::TOUCH_PRESSED;
+				pEventManager->queue.push_back(tmp);
+				pEventManager->FillTouchCoords(tmp.fcoords[0], tmp.fcoords[1], tmp._id);
+			}break;
+
+			case AMOTION_EVENT_ACTION_POINTER_DOWN: {
+				int index_ = (action & AMOTION_EVENT_ACTION_POINTER_INDEX_MASK) >> AMOTION_EVENT_ACTION_POINTER_INDEX_SHIFT;
+				std::int32_t ID_ =	AMotionEvent_getPointerId(event, index_);
+				CamusSpace::InputEvent_ tmp;
+				tmp._id = ID_;
+				tmp._time = AMotionEvent_getEventTime(event);
+				tmp.fcoords[0] = AMotionEvent_getX(event, ID_);
+				tmp.fcoords[1] = AMotionEvent_getY(event, ID_);
+				tmp._state = CamusSpace::TypeEvent_::TOUCH_PRESSED;
+				pEventManager->queue.push_back(tmp);
+				pEventManager->FillTouchCoords(tmp.fcoords[0], tmp.fcoords[1], tmp._id);
+			}break;
+		}
+		
+		
+		if (type == AINPUT_EVENT_TYPE_MOTION && action) {
+			int index_ = (action & AMOTION_EVENT_ACTION_POINTER_INDEX_MASK)	>> AMOTION_EVENT_ACTION_POINTER_INDEX_SHIFT;
+			action = action & AMOTION_EVENT_ACTION_MASK;
+			int pointerID = AMotionEvent_getPointerId(event, index_);
+			LogPrintDebug("type: %d action: %d index: %d PointerID: %d", type,action,index_, pointerID);
+		}
+
+		
+		 
+		/*switch (action)
+		{
+		case AMOTION_EVENT_ACTION_DOWN: {
+			LogPrintDebug("New input event: AMOTION_EVENT_ACTION_DOWN Device ID: %d Source %d  \n", deviceId, source);
+			}break;
+		case AMOTION_EVENT_ACTION_UP: {
+			LogPrintDebug("New input event: AMOTION_EVENT_ACTION_UP Device ID: %d Source %d  \n", deviceId, source);
+		}break;
+		case AMOTION_EVENT_ACTION_MOVE: {
+			LogPrintDebug("New input event: AMOTION_EVENT_ACTION_MOVE Device ID: %d Source %d  \n", deviceId, source);
+		}break;
+		case AMOTION_EVENT_ACTION_CANCEL: {
+			LogPrintDebug("New input event: AMOTION_EVENT_ACTION_CANCEL Device ID: %d Source %d  \n", deviceId, source);
+		}break;
+		case AMOTION_EVENT_ACTION_OUTSIDE: {
+			LogPrintDebug("New input event: AMOTION_EVENT_ACTION_OUTSIDE Device ID: %d Source %d  \n", deviceId, source);
+		}break;
+		case AMOTION_EVENT_ACTION_POINTER_DOWN: {
+			LogPrintDebug("New input event: AMOTION_EVENT_ACTION_POINTER_DOWN Device ID: %d Source %d  \n", deviceId, source);
+		}break;
+		case AMOTION_EVENT_ACTION_POINTER_UP: {
+			LogPrintDebug("New input event: AMOTION_EVENT_ACTION_POINTER_UP Device ID: %d Source %d  \n", deviceId, source);
+		}break;
+		case AMOTION_EVENT_ACTION_HOVER_MOVE: {
+			LogPrintDebug("New input event: AMOTION_EVENT_ACTION_HOVER_MOVE Device ID: %d Source %d  \n", deviceId, source);
+		}break;
+		}
+	*/
+
 	if (AInputQueue_preDispatchEvent(m_pInputQueue, event)) {
 	continue;
 	}
+
 	int32_t handled = 1;
 
 	AInputQueue_finishEvent(m_pInputQueue, event, handled);
@@ -266,7 +341,7 @@ void AndroidApp::PrintCurrentConfig() {
 // Called from Activity Thread
 void AndroidApp::onDestroy(ANativeActivity* activity){
 	LogPrintDebug("onDestroy");
-	return; // Nothing to do for us since this may o may not be called, also when changin orientation it IS called, so, better leave it alone.
+	return; // Nothing to do for us since this may o may not be called, also when changing orientation it IS called, so, better leave it alone.
 }
 // Called from Activity Thread
 void AndroidApp::onStart(ANativeActivity* activity){

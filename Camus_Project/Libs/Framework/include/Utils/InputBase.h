@@ -1,10 +1,12 @@
 #ifndef CA_INPUTBASE_H
 #define CA_INPUTBASE_H
 
+#include <iostream>
 #include <vector>
 
 namespace CamusSpace {
 	
+#define MAX_NUM_OF_TRACKING_POINTERS 4
 // Type of input
 enum TypeInput_ {
 	KEYBOARD = 0,
@@ -56,16 +58,17 @@ enum MouseButtons_{
 	MOUSE_BUTTON_OPT_5,
 };
 
-// 32 bit nice structure
+// 256 bit nice structure
 struct InputEvent_ {
-	InputEvent_() : _typeInput(UNKOWN_DEVICE), _typeEvent(UNKOWN_EVENT), _id(0), _state(0) { icoords[0] = icoords[1] = icoords[2] = icoords[3] = 0; }
-	TypeInput_	_typeInput;
-	TypeEvent_	_typeEvent;
-	int			_id;
-	int			_state;
+	InputEvent_() : _typeInput(UNKOWN_DEVICE), _typeEvent(UNKOWN_EVENT), _id(0), _state(0) { icoords[0] = icoords[1] = icoords[2] = 0; }
+	TypeInput_		_typeInput;
+	TypeEvent_		_typeEvent;
+	short			_id;
+	short			_state;
+	std::int64_t	_time;
 	union {
-		int			icoords[4];
-		float		fcoords[4];
+		int			icoords[3];
+		float		fcoords[3];
 	};
 };
 
@@ -83,14 +86,17 @@ struct InputButton_ {
 	bool	isLocked() { return (_lock == _LOCKED) ? true : false; }
 };
 
+union Coords_ {
+	int			iactual_coords[4];
+	float		factual_coords[4];
+};
+
 struct InputDevice_ {
 	TypeInput_					typeInput;
 	std::vector<InputButton_>	buttons;
-	union {
-		int			iactual_coords[4];
-		float		factual_coords[4];
-	};
-	bool	isInitialized() { (buttons.size() > 0) ? true : false; }
+	Coords_						currentcoords[MAX_NUM_OF_TRACKING_POINTERS]; 
+	
+	bool	isInitialized() { if (buttons.size() > 0) { return true; } else { return false; } }
 };
 
 }
@@ -104,6 +110,8 @@ public:
 	void InitAccelerometer();
 	void InitGyroscope();
 
+	template<typename T> 
+	void	FillTouchCoords(T x, T y, int id);
 	// TODO: Implement other input Devices.
 	//void InitJoypad...
 
