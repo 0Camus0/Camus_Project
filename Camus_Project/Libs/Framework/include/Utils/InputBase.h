@@ -111,7 +111,11 @@ public:
 	void InitGyroscope();
 
 	template<typename T> 
-	void	FillTouchCoords(T x, T y, int id);
+	void	FillTouchCoords(T x, T y, int id) {
+			devices[CamusSpace::TypeInput_::TOUCH_SCREEN].currentcoords[id].factual_coords[0] = x;
+			devices[CamusSpace::TypeInput_::TOUCH_SCREEN].currentcoords[id].factual_coords[1] = y;
+	}
+	
 	// TODO: Implement other input Devices.
 	//void InitJoypad...
 
