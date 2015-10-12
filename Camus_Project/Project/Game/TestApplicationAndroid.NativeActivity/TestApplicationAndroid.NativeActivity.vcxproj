@@ -94,7 +94,7 @@
       <CppLanguageStandard>c++11</CppLanguageStandard>
     </ClCompile>
     <Link>
-      <LibraryDependencies>%(LibraryDependencies);GLESv1_CM;EGL;</LibraryDependencies>
+      <LibraryDependencies>%(LibraryDependencies);GLESv1_CM;EGL</LibraryDependencies>
       <AdditionalOptions>-lm %(AdditionalOptions)</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
@@ -108,7 +108,7 @@
       <CppLanguageStandard>c++11</CppLanguageStandard>
     </ClCompile>
     <Link>
-      <LibraryDependencies>%(LibraryDependencies);GLESv1_CM;EGL;</LibraryDependencies>
+      <LibraryDependencies>%(LibraryDependencies);GLESv1_CM;EGL</LibraryDependencies>
       <AdditionalOptions>-lm %(AdditionalOptions)</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>

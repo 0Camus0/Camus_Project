@@ -103,12 +103,12 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)..\..\Externals\OGLES2\Lib;$(SolutionDir)..\..\Externals\pthreads\lib;$(SolutionDir)..\..\Externals\SDL-1.2.14\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>SDL.lib;pthreadVC2.lib;libEGL.lib;libGLESv2x.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL.lib;pthreadVC2.lib;libEGL.lib;libGLESv2.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(SolutionDir)..\..\bin\$(TargetName)$(TargetExt)</OutputFile>
     </Link>
     <PreBuildEvent>
       <Command>copy "$(SolutionDir)..\..\Externals\OGLES2\Lib\libEGL.dll" "$(SolutionDir)..\..\bin" /Y
-copy "$(SolutionDir)..\..\Externals\OGLES2\Lib\libGLESv2x.dll" "$(SolutionDir)..\..\bin" /Y
+copy "$(SolutionDir)..\..\Externals\OGLES2\Lib\libGLESv2.dll" "$(SolutionDir)..\..\bin" /Y
 copy "$(SolutionDir)..\..\Externals\pthreads\dll\pthreadVC2.dll" "$(SolutionDir)..\..\bin" /Y
 copy "$(SolutionDir)..\..\Externals\SDL-1.2.14\lib\SDL.dll" "$(SolutionDir)..\..\bin" /Y</Command>
       <Message>Copying dlls to the bin location.</Message>
@@ -145,7 +145,7 @@ copy "$(SolutionDir)..\..\Externals\SDL-1.2.14\lib\SDL.dll" "$(SolutionDir)..\..
       <OptimizeReferences>true</OptimizeReferences>
       <OutputFile>$(SolutionDir)..\..\bin\$(TargetName)$(TargetExt)</OutputFile>
       <AdditionalLibraryDirectories>$(SolutionDir)..\..\Externals\OGLES2\Lib;$(SolutionDir)..\..\Externals\pthreads\lib;$(SolutionDir)..\..\Externals\SDL-1.2.14\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>SDL.lib;pthreadVC2.lib;libEGL.lib;libGLESv2x.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL.lib;pthreadVC2.lib;libEGL.lib;libGLESv2.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">

@@ -1,107 +1,129 @@
-/**************************************************************************
- * Name         : egltypes.h
- *
- * Copyright    : 2005-6 by Imagination Technologies Limited. All rights reserved.
- *              : No part of this software, either material or conceptual 
- *              : may be copied or distributed, transmitted, transcribed,
- *              : stored in a retrieval system or translated into any 
- *              : human or computer language in any form by any means,
- *              : electronic, mechanical, manual or other-wise, or 
- *              : disclosed to third parties without the express written
- *              : permission of Imagination Technologies Limited, Unit 8, HomePark
- *              : Industrial Estate, King's Langley, Hertfordshire,
- *              : WD4 8LZ, U.K.
- *
- * Platform     : ANSI
- *
- * $Date: 2007/08/07 14:43:30 $ $Revision: 1.4 $
- * $Log: eglplatform.h,v $
- * Revision 1.4  2007/08/07 14:43:30  grk
- * [INTERNAL BUILDS OGLES2] Makefile changes to enable content file compilation.
- *
- * Revision 1.3  2007/08/02 14:34:36  ptj
- * *** empty log message ***
- *
- * Revision 1.2  2007/08/02 10:45:10  ptj
- * Moved egltypes.h -> eglplatform.h
- *
- * Revision 1.2  2006/11/02 10:09:18  ptj
- * [INTERNAL BUILDS OGLES2 INCLUDE] egltypes.h:  Something added new line at every line (so there were 2 new line chars at the end of each line). corrected.
- *
- * Revision 1.1  2006/08/16 11:23:28  Jakub.Lamik
- * Initial revision
- * Revision 1.3  2006/06/29 16:13:55  benji.bowman
- * Move to EGL 1.3
- * Revision 1.2  2006/04/03 09:39:47  benji.bowman
- * Fixes for calling convention
- * Revision 1.1  2006/02/14 17:34:50  stuart.smith
- * Initial revision
- *
- * Revision 1.1  2005/10/10 10:50:35  benji.bowman
- * Initial revision
- **************************************************************************/
-#ifndef _egltypes_h_
-#define _egltypes_h_
+#ifndef __eglplatform_h_
+#define __eglplatform_h_
 
-#if defined(_WIN32) || defined(__VC32__)             /* Win32 */
-#   if defined (_DLL_EXPORTS)
-#       define EGLAPI __declspec(dllexport)
-#   else
-#       define EGLAPI __declspec(dllimport)
-#   endif
-#elif defined (__ARMCC_VERSION)                      /* ADS */
-#   define EGLAPI
-#elif defined (__SYMBIAN32__) && defined (__GCC32__) /* Symbian GCC */
-#   define EGLAPI __declspec(dllexport)
-#elif defined (__GNUC__)                             /* GCC dependencies (kludge) */
-#   define EGLAPI
-#elif defined (_UITRON_)
-#	define EGLAPI
+/*
+** Copyright (c) 2007-2009 The Khronos Group Inc.
+**
+** Permission is hereby granted, free of charge, to any person obtaining a
+** copy of this software and/or associated documentation files (the
+** "Materials"), to deal in the Materials without restriction, including
+** without limitation the rights to use, copy, modify, merge, publish,
+** distribute, sublicense, and/or sell copies of the Materials, and to
+** permit persons to whom the Materials are furnished to do so, subject to
+** the following conditions:
+**
+** The above copyright notice and this permission notice shall be included
+** in all copies or substantial portions of the Materials.
+**
+** THE MATERIALS ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+** EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+** MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+** IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+** CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+** TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+** MATERIALS OR THE USE OR OTHER DEALINGS IN THE MATERIALS.
+*/
+
+/* Platform-specific types and definitions for egl.h
+ * $Revision: 12306 $ on $Date: 2010-08-25 09:51:28 -0700 (Wed, 25 Aug 2010) $
+ *
+ * Adopters may modify khrplatform.h and this file to suit their platform.
+ * You are encouraged to submit all modifications to the Khronos group so that
+ * they can be included in future versions of this file.  Please submit changes
+ * by sending them to the public Khronos Bugzilla (http://khronos.org/bugzilla)
+ * by filing a bug against product "EGL" component "Registry".
+ */
+
+#include <KHR/khrplatform.h>
+
+/* Macros used in EGL function prototype declarations.
+ *
+ * EGL functions should be prototyped as:
+ *
+ * EGLAPI return-type EGLAPIENTRY eglFunction(arguments);
+ * typedef return-type (EXPAPIENTRYP PFNEGLFUNCTIONPROC) (arguments);
+ *
+ * KHRONOS_APICALL and KHRONOS_APIENTRY are defined in KHR/khrplatform.h
+ */
+
+#ifndef EGLAPI
+#define EGLAPI KHRONOS_APICALL
 #endif
 
-#if !defined (EGLAPI)
-#   error Unsupported platform!
+#ifndef EGLAPIENTRY
+#define EGLAPIENTRY  KHRONOS_APIENTRY
 #endif
+#define EGLAPIENTRYP EGLAPIENTRY*
 
-#define EGLAPIENTRY
+/* The types NativeDisplayType, NativeWindowType, and NativePixmapType
+ * are aliases of window-system-dependent types, such as X Display * or
+ * Windows Device Context. They must be defined in platform-specific
+ * code below. The EGL-prefixed versions of Native*Type are the same
+ * types, renamed in EGL 1.3 so all types in the API start with "EGL".
+ *
+ * Khronos STRONGLY RECOMMENDS that you use the default definitions
+ * provided below, since these changes affect both binary and source
+ * portability of applications using EGL running on different EGL
+ * implementations.
+ */
 
-#if defined __linux__
-	#include <sys/types.h>
-	#if defined(SUPPORT_X11)
-		#include <X11/Xlib.h>
-		typedef Display*	EGLNativeDisplayType;
-		typedef Window		EGLNativeWindowType;
-		typedef Pixmap		EGLNativePixmapType;
-	#else
-		typedef int		EGLNativeDisplayType;
-		typedef void*	EGLNativeWindowType;
-		typedef void*	EGLNativePixmapType;
-	#endif
-#elif defined(UNDER_CE) || defined(_WIN32)
-	typedef int int32_t;
-	#undef UNREFERENCED_PARAMETER
-	#include <windows.h>
-	typedef HDC		EGLNativeDisplayType;
-	typedef HWND	EGLNativeWindowType;
-	typedef void*	EGLNativePixmapType;
-#elif defined(__SYMBIAN32__)
-	#include <e32def.h>
-	typedef TInt EGLNativeDisplayType;
-	/*
-		Declare these as void although they points to classes - we can't
-		include	a C++ header file as the EGL files are all written in C.
-	*/
-	#define EGLNativeWindowType void* /* Is really an RWindow* */
-	#define EGLNativePixmapType void* /* Is really a CFbsBitmap* */
-#elif defined(_UITRON_)
-	typedef int int32_t;	
-	typedef int		EGLNativeDisplayType;
-	typedef void*	EGLNativeWindowType;
-	typedef void*	EGLNativePixmapType;
+#if defined(_WIN32) || defined(__VC32__) && !defined(__CYGWIN__) && !defined(__SCITECH_SNAP__) /* Win32 and WinCE */
+#ifndef WIN32_LEAN_AND_MEAN
+#define WIN32_LEAN_AND_MEAN 1
+#endif
+#include <windows.h>
+
+typedef HDC     EGLNativeDisplayType;
+typedef HBITMAP EGLNativePixmapType;
+typedef HWND    EGLNativeWindowType;
+
+#elif defined(SUPPORT_X11)
+
+/* X11 (tentative)  */
+#include <X11/Xlib.h>
+#include <X11/Xutil.h>
+
+typedef Display *EGLNativeDisplayType;
+typedef Pixmap   EGLNativePixmapType;
+typedef Window   EGLNativeWindowType;
+
+
+#elif defined(__ANDROID__) || defined(ANDROID)
+
+#include <android/native_window.h>
+
+struct egl_native_pixmap_t;
+
+typedef struct ANativeWindow*           EGLNativeWindowType;
+typedef struct egl_native_pixmap_t*     EGLNativePixmapType;
+typedef void*                           EGLNativeDisplayType;
+
 #else
-	typedef int		EGLNativeDisplayType;
-	typedef void*	EGLNativeWindowType;
-	typedef void*	EGLNativePixmapType;
+
+#if defined(_WIN64) ||  __WORDSIZE == 64
+typedef khronos_int64_t EGLNativeDisplayType;
+#else
+typedef int EGLNativeDisplayType;
 #endif
 
-#endif /* _egltypes_h_ */
+typedef void *EGLNativeWindowType;
+typedef void *EGLNativePixmapType;
+
+#endif
+
+/* EGL 1.2 types, renamed for consistency in EGL 1.3 */
+typedef EGLNativeDisplayType NativeDisplayType;
+typedef EGLNativePixmapType  NativePixmapType;
+typedef EGLNativeWindowType  NativeWindowType;
+
+
+/* Define EGLint. This must be a signed integral type large enough to contain
+ * all legal attribute names and values passed into and out of EGL, whether
+ * their type is boolean, bitmask, enumerant (symbolic constant), integer,
+ * handle, or other.  While in general a 32-bit integer will suffice, if
+ * handles are 64 bit types, then EGLint should be defined as a signed 64-bit
+ * integer type.
+ */
+typedef khronos_int32_t EGLint;
+
+#endif /* __eglplatform_h */

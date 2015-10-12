@@ -1,4 +1,5 @@
 #include <Utils/WindowProperties.h>
+#include <Utils/Log.h>
 
 WindowParameters& GetWindowParameters(){
 	static WindowParameters	_windowparameter;
@@ -19,4 +20,6 @@ void WindowParameters::SetParametersFromDriver(short _Width, short _Height) {
 
 	Width = _Width;
 	Height = _Height;
+
+	LogPrintDebug("SetParametersFromDriver %d  %d",Width,Height);
 }

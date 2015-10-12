@@ -187,11 +187,7 @@ void AndroidApp::OnCreateApplication() {
 
 	m_Looper = ALooper_prepare(ALOOPER_PREPARE_ALLOW_NON_CALLBACKS);
 	
-	LogPrintDebug("OnCreateApplication() Val m_looper %d ", (int)m_Looper);
-
-	int answer = ALooper_addFd(m_Looper, g_Mgread, LOOPER_ID_MAIN, ALOOPER_EVENT_INPUT, 0 ,&m_cmdPoll);
-
-	LogPrintDebug("OnCreateApplication() Val addFd %d", answer);
+	ALooper_addFd(m_Looper, g_Mgread, LOOPER_ID_MAIN, ALOOPER_EVENT_INPUT, 0 ,&m_cmdPoll);
 
 	pEventManager = new EventManager();
 	pEventManager->InitTouchScreen(AConfiguration_getTouchscreen(m_pConfig));

@@ -48,6 +48,9 @@
     <ClInclude Include="..\include\Utils\InputBase.h">
       <Filter>Source Files\Utils</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\Driver\Buffer.h">
+      <Filter>Source Files\Driver</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\Driver\DriverProperties.cpp">

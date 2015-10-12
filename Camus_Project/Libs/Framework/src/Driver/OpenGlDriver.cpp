@@ -89,10 +89,10 @@ void	OpenGLDriver::InitDriver() {
 		ANativeWindow_setBuffersGeometry(eglWindow, 0, 0, format);
 		ReportEGLError("eglGetConfigAttrib");
 #endif
-		EGLint ai32ContextAttribs[] = { EGL_CONTEXT_CLIENT_VERSION, 2, EGL_NONE };
 		eglSurface = eglCreateWindowSurface(eglDisplay, eglConfig, eglWindow, NULL);
 		ReportEGLError("eglCreateWindowSurface");
 
+		EGLint ai32ContextAttribs[] = { EGL_CONTEXT_CLIENT_VERSION, 3, EGL_NONE };
 		eglContext = eglCreateContext(eglDisplay, eglConfig, NULL, ai32ContextAttribs);
 		ReportEGLError("eglCreateContext");
 
@@ -106,7 +106,7 @@ void	OpenGLDriver::InitDriver() {
 
 		GetWindowParameters().SetParametersFromDriver(w, h);
 
-		LogPrintDebug("Driver successfuly inited.");
+		LogPrintDebug("Driver successfuly inited version: %s" , glGetString(GL_VERSION));
 
 		bInited = true;
 		

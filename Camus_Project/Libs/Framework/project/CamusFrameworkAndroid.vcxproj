@@ -22,6 +22,7 @@
     <ClInclude Include="..\include\Core\Core.h" />
     <ClInclude Include="..\include\Core\OS_Selector.h" />
     <ClInclude Include="..\include\Driver\BaseDriver.h" />
+    <ClInclude Include="..\include\Driver\Buffer.h" />
     <ClInclude Include="..\include\Driver\DriverProperties.h" />
     <ClInclude Include="..\include\Driver\OpenGLDriver.h" />
     <ClInclude Include="..\include\Utils\InputBase.h" />
