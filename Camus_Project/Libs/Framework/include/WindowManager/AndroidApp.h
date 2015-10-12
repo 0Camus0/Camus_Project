@@ -144,6 +144,8 @@ enum {
 };
 
 
+#include <vector>
+
 class AndroidApp;
 struct PollSource {
 	int				 id;
@@ -194,7 +196,7 @@ public:
 	//void						*m_SavedState;
 	//size_t						*m_SavedStateSize;
 	ALooper						*m_Looper;
-	int							m_ActivityState;
+	std::vector<int>			m_ActivityStateQueue;
 	bool						m_ActivityRaisedFlag;
 
 	PollSource					m_cmdPoll;
