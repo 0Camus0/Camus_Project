@@ -12,8 +12,7 @@ namespace hyperspace {
 			CVertexBuffer();
 			void CreateBuffer(void *data, std::size_t size, unsigned int offset, unsigned int FLAGS = 0);
 			void DestroyBuffer();
-			void UpdateBuffer(void *data, std::size_t size, bool discardOld = true);
-			void UpdateSubBuffer(void *data, std::size_t size, unsigned int offset);
+			void UpdateBuffer(void *data, std::size_t size, unsigned int offset);
 	};
 
 	class CIndexBuffer : public hyperspace::CBuffer_ {
@@ -21,8 +20,7 @@ namespace hyperspace {
 			CIndexBuffer();
 			void CreateBuffer(void *data, std::size_t size, unsigned int offset, unsigned int FLAGS = 0);
 			void DestroyBuffer();
-			void UpdateBuffer(void *data, std::size_t size, bool discardOld = true);
-			void UpdateSubBuffer(void *data, std::size_t size, unsigned int offset);
+			void UpdateBuffer(void *data, std::size_t size, unsigned int offset);
 	};
 }
 
