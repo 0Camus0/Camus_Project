@@ -23,6 +23,7 @@
     <ClInclude Include="..\include\Core\OS_Selector.h" />
     <ClInclude Include="..\include\Driver\BaseDriver.h" />
     <ClInclude Include="..\include\Driver\Buffer.h" />
+    <ClInclude Include="..\include\Driver\BufferOpenGL.h" />
     <ClInclude Include="..\include\Driver\DriverProperties.h" />
     <ClInclude Include="..\include\Driver\OpenGLDriver.h" />
     <ClInclude Include="..\include\Utils\InputBase.h" />
@@ -33,6 +34,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\Core\Core.cpp" />
+    <ClCompile Include="..\src\Driver\BufferOpenGL.cpp" />
     <ClCompile Include="..\src\Driver\DriverProperties.cpp" />
     <ClCompile Include="..\src\Driver\OpenGlDriver.cpp" />
     <ClCompile Include="..\src\Utils\InputImplAndroid.cpp" />

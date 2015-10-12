@@ -51,6 +51,9 @@
     <ClInclude Include="..\include\Driver\Buffer.h">
       <Filter>Source Files\Driver</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\Driver\BufferOpenGL.h">
+      <Filter>Source Files\Driver</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\Driver\DriverProperties.cpp">
@@ -76,6 +79,9 @@
     </ClCompile>
     <ClCompile Include="..\src\Utils\InputImplAndroid.cpp">
       <Filter>Source Files\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Driver\BufferOpenGL.cpp">
+      <Filter>Source Files\Driver</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
