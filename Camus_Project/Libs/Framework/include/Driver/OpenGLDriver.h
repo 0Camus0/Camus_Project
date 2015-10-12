@@ -13,32 +13,33 @@
 #include <android/native_activity.h>
 #endif
 
-class OpenGLDriver : public BaseDriver {
-public:
-	OpenGLDriver();
-	void	InitDriver();
-	void	CreateSurfaces();
-	void	DestroySurfaces();
-	void	Update();
-	void	SwapBuffers();
-	void	DestroyDriver();
-	void	SetWindow(void *window);
+namespace hyperspace {
+	class OpenGLDriver : public hyperspace::BaseDriver {
+	public:
+		OpenGLDriver();
+		void	InitDriver();
+		void	CreateSurfaces();
+		void	DestroySurfaces();
+		void	Update();
+		void	SwapBuffers();
+		void	DestroyDriver();
+		void	SetWindow(void *window);
 
-	void	ResetDriver();
+		void	ResetDriver();
 
-	EGLDisplay			eglDisplay;
-	EGLConfig			eglConfig;
-	EGLSurface			eglSurface;
-	EGLContext			eglContext;
+		EGLDisplay			eglDisplay;
+		EGLConfig			eglConfig;
+		EGLSurface			eglSurface;
+		EGLContext			eglContext;
 
 #ifdef OS_WIN32
-	EGLNativeWindowType	eglWindow;
+		EGLNativeWindowType	eglWindow;
 #elif defined(OS_ANDROID)
-	ANativeWindow		*eglWindow;
+		ANativeWindow		*eglWindow;
 #endif
 
-	bool				bInited;
-};
-
+		bool				bInited;
+	};
+}
 
 #endif

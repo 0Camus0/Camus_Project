@@ -1,6 +1,7 @@
 #include <Driver/DriverProperties.h>
-
-DriverProperties& GetDriverProperties() {
-	static DriverProperties	_driverproperties;
-	return _driverproperties;
+namespace hyperspace {
+	DriverProperties& GetDriverProperties() {
+		static DriverProperties	_driverproperties;
+		return _driverproperties;
+	}
 }

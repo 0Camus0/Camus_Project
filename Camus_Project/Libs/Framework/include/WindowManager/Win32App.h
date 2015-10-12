@@ -5,7 +5,7 @@
 #include <Driver/BaseDriver.h>
 #include <memory>
 
-class Win32App : public RootApp {
+class Win32App : public hyperspace::RootApp {
 	public:
 		Win32App() {}
 		void InitGlobalVars();

@@ -1,25 +1,27 @@
 #include <Utils/WindowProperties.h>
 #include <Utils/Log.h>
 
-WindowParameters& GetWindowParameters(){
-	static WindowParameters	_windowparameter;
-	return _windowparameter;
-}
+namespace hyperspace {
+	WindowParameters& GetWindowParameters() {
+		static WindowParameters	_windowparameter;
+		return _windowparameter;
+	}
 
-void	WindowParameters::GatherProperties() {
+	void	WindowParameters::GatherProperties() {
 #if defined(OS_WIN32)
 
 #elif defined(OS_ANDROID)
 
 #endif
-}
+	}
 
-void WindowParameters::SetParametersFromDriver(short _Width, short _Height) {
-	if (Width != _Width || Height != _Height)
-		Properties |= MODIFIED_BY_DEVICE;
+	void WindowParameters::SetParametersFromDriver(short _Width, short _Height) {
+		if (Width != _Width || Height != _Height)
+			Properties |= MODIFIED_BY_DEVICE;
 
-	Width = _Width;
-	Height = _Height;
+		Width = _Width;
+		Height = _Height;
 
-	LogPrintDebug("SetParametersFromDriver %d  %d",Width,Height);
+		LogPrintDebug("SetParametersFromDriver %d  %d", Width, Height);
+	}
 }

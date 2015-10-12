@@ -153,7 +153,7 @@ struct PollSource {
 	void(*process)(AndroidApp *app, PollSource *source);
 };
 
-class AndroidApp : public RootApp {
+class AndroidApp : public hyperspace::RootApp {
 public:
 	AndroidApp();
 	void InitGlobalVars();

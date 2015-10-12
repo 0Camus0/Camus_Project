@@ -14,7 +14,7 @@ int							g_Msgwrite;
 #include <iostream>
 
 bool						g_bAppRunning = false; // Needs to be global, because it's shared by different threads but same class.
-RootApp						*pApp = 0;
+hyperspace::RootApp			*pApp = 0;
   
 
 #ifdef USE_C11_THREADS

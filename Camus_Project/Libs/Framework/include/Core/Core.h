@@ -4,7 +4,8 @@
 #include <Utils/InputBase.h>
 #include <Driver/BaseDriver.h>
 
-class RootApp {
+namespace hyperspace {
+	class RootApp {
 	public:
 		virtual void InitGlobalVars() = 0;
 		virtual void OnCreateApplication() = 0;
@@ -18,7 +19,7 @@ class RootApp {
 
 		EventManager	*pEventManager;
 		BaseDriver		*pVideoDriver;
-};
-
+	};
+}
 
 #endif

@@ -1,26 +1,29 @@
 #include <Utils/InputBase.h>
 
-void EventManager::InitKeyboard(int num_keys) {
-	devices[CamusSpace::TypeInput_::KEYBOARD].typeInput = CamusSpace::TypeInput_::KEYBOARD;
-}
+namespace hyperspace {
 
-void EventManager::InitMouse(int num_buttons) {
-	devices[CamusSpace::TypeInput_::MOUSE].typeInput = CamusSpace::TypeInput_::MOUSE;
-}
+	void EventManager::InitKeyboard(int num_keys) {
+		devices[hyperspace::TypeInput_::KEYBOARD].typeInput = hyperspace::TypeInput_::KEYBOARD;
+	}
 
-void EventManager::InitTouchScreen(int num_touchPoints) {
-	devices[CamusSpace::TypeInput_::TOUCH_SCREEN].typeInput = CamusSpace::TypeInput_::TOUCH_SCREEN;
-	for (int i = 0; i < num_touchPoints ; i++){
-		CamusSpace::InputButton_ tmp_button;
-		devices[CamusSpace::TypeInput_::TOUCH_SCREEN].buttons.push_back(tmp_button);
-	}	
-}
+	void EventManager::InitMouse(int num_buttons) {
+		devices[hyperspace::TypeInput_::MOUSE].typeInput = hyperspace::TypeInput_::MOUSE;
+	}
 
-void EventManager::InitAccelerometer() {
-	devices[CamusSpace::TypeInput_::ACCELEROMETER].typeInput = CamusSpace::TypeInput_::ACCELEROMETER;
-}
+	void EventManager::InitTouchScreen(int num_touchPoints) {
+		devices[hyperspace::TypeInput_::TOUCH_SCREEN].typeInput = hyperspace::TypeInput_::TOUCH_SCREEN;
+		for (int i = 0; i < num_touchPoints; i++) {
+			hyperspace::InputButton_ tmp_button;
+			devices[hyperspace::TypeInput_::TOUCH_SCREEN].buttons.push_back(tmp_button);
+		}
+	}
 
-void EventManager::InitGyroscope() {
-	devices[CamusSpace::TypeInput_::GYROSCOPE].typeInput = CamusSpace::TypeInput_::GYROSCOPE;
-}
+	void EventManager::InitAccelerometer() {
+		devices[hyperspace::TypeInput_::ACCELEROMETER].typeInput = hyperspace::TypeInput_::ACCELEROMETER;
+	}
 
+	void EventManager::InitGyroscope() {
+		devices[hyperspace::TypeInput_::GYROSCOPE].typeInput = hyperspace::TypeInput_::GYROSCOPE;
+	}
+
+}
