@@ -38,9 +38,9 @@ void Win32App::OnCreateApplication() {
 
 	ShowCursor((parameters.Properties & WindowParameters::SHOW_CURSOR) ? TRUE : FALSE);
 
-	m_pVideoDriver = std::unique_ptr<BaseDriver>(new OpenGLDriver);
-
-	m_pVideoDriver->InitDriver();
+	pVideoDriver = new OpenGLDriver();
+	pVideoDriver->SetWindow(0);
+	pVideoDriver->InitDriver();
 
 }
 
@@ -66,9 +66,9 @@ void Win32App::UpdateApplication() {
 
 	ProcessInput();	
 
-	m_pVideoDriver->Update();
+	pVideoDriver->Update();
 
-	m_pVideoDriver->SwapBuffers();
+	pVideoDriver->SwapBuffers();
 }
 
 void Win32App::ProcessInput() {

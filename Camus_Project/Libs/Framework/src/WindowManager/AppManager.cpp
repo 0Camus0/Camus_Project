@@ -124,15 +124,19 @@ void AppManager::MainAppThread() {
 	pthread_mutex_unlock(&g_mutex);
 #endif
 
+	LogPrintDebug("MainAppThread [");
+
 	while (g_bAppRunning) {
 		pApp->UpdateApplication();
 	}
+	LogPrintDebug("MainAppThread ]");
 
 	pApp->OnDestroyApplication();
 
 	
 
 	g_mutex.lock();
+	LogPrintDebug("MainAppThread deleting app");
 	delete pApp;
 	pApp = 0;
 	g_cond.notify_all();

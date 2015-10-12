@@ -167,6 +167,7 @@ public:
 
 private:
 	void PrintCurrentConfig();
+	void CheckState();
 	
 	static void  onDestroy(ANativeActivity* activity);
 	static void  onStart(ANativeActivity* activity);
@@ -187,9 +188,9 @@ private:
 	//static void  ProcessInput(AndroidApp* pApp, PollSource *source);
 	
 public:
-	std::unique_ptr<BaseDriver>	 m_pVideoDriver;
 	AConfiguration				*m_pConfig;
 	AInputQueue					*m_pInputQueue;
+	ANativeWindow				*m_pWindow;
 	//void						*m_SavedState;
 	//size_t						*m_SavedStateSize;
 	ALooper						*m_Looper;

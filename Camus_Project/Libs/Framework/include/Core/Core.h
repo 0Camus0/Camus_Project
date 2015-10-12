@@ -2,6 +2,7 @@
 #define CA_CORE_H
 
 #include <Utils/InputBase.h>
+#include <Driver/BaseDriver.h>
 
 class RootApp {
 	public:
@@ -16,6 +17,7 @@ class RootApp {
 		virtual ~RootApp() = 0;
 
 		EventManager	*pEventManager;
+		BaseDriver		*pVideoDriver;
 };
 
 

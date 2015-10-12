@@ -19,8 +19,3 @@ void EventManager::InitAccelerometer() {
 void EventManager::InitGyroscope() {
 	devices[CamusSpace::TypeInput_::GYROSCOPE].typeInput = CamusSpace::TypeInput_::GYROSCOPE;
 }
-
-template<typename T>
-void EventManager::FillTouchCoords(T x, T y, int id) {
-	
-}

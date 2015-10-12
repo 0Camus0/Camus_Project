@@ -15,12 +15,16 @@
 
 class OpenGLDriver : public BaseDriver {
 public:
+	OpenGLDriver();
 	void	InitDriver();
 	void	CreateSurfaces();
 	void	DestroySurfaces();
 	void	Update();
 	void	SwapBuffers();
 	void	DestroyDriver();
+	void	SetWindow(void *window);
+
+	void	ResetDriver();
 
 	EGLDisplay			eglDisplay;
 	EGLConfig			eglConfig;
@@ -32,6 +36,8 @@ public:
 #elif defined(OS_ANDROID)
 	ANativeWindow		*eglWindow;
 #endif
+
+	bool				bInited;
 };
 
 
