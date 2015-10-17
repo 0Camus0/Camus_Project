@@ -55,6 +55,9 @@
     <ClCompile Include="..\src\Driver\OpenGlDriver.cpp">
       <Filter>Source Files\Driver\OpenGL</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\Driver\GLSLParser.cpp">
+      <Filter>Source Files\Driver\OpenGL</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\Core\Core.h">
@@ -91,6 +94,12 @@
       <Filter>Source Files\Driver\OpenGL</Filter>
     </ClInclude>
     <ClInclude Include="..\include\Driver\OpenGLDriver.h">
+      <Filter>Source Files\Driver\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Driver\GLSLParser.h">
+      <Filter>Source Files\Driver\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Driver\ShaderBase.h">
       <Filter>Source Files\Driver\OpenGL</Filter>
     </ClInclude>
   </ItemGroup>
