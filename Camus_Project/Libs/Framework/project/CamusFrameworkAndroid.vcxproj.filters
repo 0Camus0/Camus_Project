@@ -16,6 +16,9 @@
     <Filter Include="Source Files\WindowManager">
       <UniqueIdentifier>{e25a42c3-ba42-48c1-b828-e30526bf9772}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Driver\OpenGL">
+      <UniqueIdentifier>{38c1410a-869e-4347-a0e0-780ad347cfc4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\Core\Core.h">
@@ -28,9 +31,6 @@
       <Filter>Source Files\Driver</Filter>
     </ClInclude>
     <ClInclude Include="..\include\Driver\DriverProperties.h">
-      <Filter>Source Files\Driver</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\Driver\OpenGLDriver.h">
       <Filter>Source Files\Driver</Filter>
     </ClInclude>
     <ClInclude Include="..\include\WindowManager\AppManager.h">
@@ -52,14 +52,14 @@
       <Filter>Source Files\Driver</Filter>
     </ClInclude>
     <ClInclude Include="..\include\Driver\BufferOpenGL.h">
-      <Filter>Source Files\Driver</Filter>
+      <Filter>Source Files\Driver\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Driver\OpenGLDriver.h">
+      <Filter>Source Files\Driver\OpenGL</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\Driver\DriverProperties.cpp">
-      <Filter>Source Files\Driver</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\Driver\OpenGlDriver.cpp">
       <Filter>Source Files\Driver</Filter>
     </ClCompile>
     <ClCompile Include="..\src\WindowManager\AppManager.cpp">
@@ -80,8 +80,17 @@
     <ClCompile Include="..\src\Utils\InputImplAndroid.cpp">
       <Filter>Source Files\Utils</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\WindowManager\AppPlatform.cpp">
+      <Filter>Source Files\WindowManager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\WindowManager\Win32App.cpp">
+      <Filter>Source Files\WindowManager</Filter>
+    </ClCompile>
     <ClCompile Include="..\src\Driver\BufferOpenGL.cpp">
-      <Filter>Source Files\Driver</Filter>
+      <Filter>Source Files\Driver\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Driver\OpenGlDriver.cpp">
+      <Filter>Source Files\Driver\OpenGL</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

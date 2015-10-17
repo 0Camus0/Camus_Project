@@ -40,8 +40,21 @@
     <ClCompile Include="..\src\Utils\InputImplAndroid.cpp" />
     <ClCompile Include="..\src\Utils\Log.cpp" />
     <ClCompile Include="..\src\Utils\WindowProperties.cpp" />
-    <ClCompile Include="..\src\WindowManager\AndroidApp.cpp" />
+    <ClCompile Include="..\src\WindowManager\AndroidApp.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x86'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="..\src\WindowManager\AppManager.cpp" />
+    <ClCompile Include="..\src\WindowManager\AppPlatform.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\src\WindowManager\Win32App.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x86'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">true</ExcludedFromBuild>
+    </ClCompile>
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{2127c6ee-0f5b-426d-a2a8-8edf54bf6543}</ProjectGuid>

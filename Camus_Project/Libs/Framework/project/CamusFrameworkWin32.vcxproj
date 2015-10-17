@@ -26,8 +26,16 @@
     <ClCompile Include="..\src\Utils\InputImplWin32.cpp" />
     <ClCompile Include="..\src\Utils\Log.cpp" />
     <ClCompile Include="..\src\Utils\WindowProperties.cpp" />
+    <ClCompile Include="..\src\WindowManager\AndroidApp.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="..\src\WindowManager\AppManager.cpp" />
-    <ClCompile Include="..\src\WindowManager\Win32App.cpp" />
+    <ClCompile Include="..\src\WindowManager\AppPlatform.cpp" />
+    <ClCompile Include="..\src\WindowManager\Win32App.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\Core\Core.h" />
