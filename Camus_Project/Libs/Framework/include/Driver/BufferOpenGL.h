@@ -7,21 +7,23 @@
 #include <GLES2/gl2ext.h>
 
 namespace hyperspace {
-	class CVertexBuffer : public hyperspace::CBuffer_ {
+	namespace video {
+		class CVertexBuffer : public CBuffer_ {
 		public:
 			CVertexBuffer();
 			void CreateBuffer(void *data, std::size_t size, unsigned int offset, unsigned int FLAGS = 0);
 			void DestroyBuffer();
 			void UpdateBuffer(void *data, std::size_t size, unsigned int offset);
-	};
+		};
 
-	class CIndexBuffer : public hyperspace::CBuffer_ {
+		class CIndexBuffer : public CBuffer_ {
 		public:
 			CIndexBuffer();
 			void CreateBuffer(void *data, std::size_t size, unsigned int offset, unsigned int FLAGS = 0);
 			void DestroyBuffer();
 			void UpdateBuffer(void *data, std::size_t size, unsigned int offset);
-	};
+		};
+	}
 }
 
 #endif

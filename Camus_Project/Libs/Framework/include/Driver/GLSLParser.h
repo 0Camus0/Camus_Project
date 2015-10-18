@@ -6,37 +6,38 @@
 #include <string>
 #include <vector>
 
+namespace hyperspace {
+	namespace video {
+		struct GLSL_Var_ {
+			shader::semantic_	sem;
+			shader::datatype_	type;
+			shader::stage_		stage;
+			std::string						name;
+		};
 
-struct GLSL_Var_{
-	hyperspace::shader::semantic_	sem;
-	hyperspace::shader::datatype_	type;
-	hyperspace::shader::stage_		stage;
-	std::string						name;
-};
+		class GLSL_Parser {
+		public:
+			GLSL_Parser(std::string Path_);
+			~GLSL_Parser();
 
-class GLSL_Parser{
-public:
-	GLSL_Parser(std::string Path_);
-	~GLSL_Parser();
+			void Parse();
 
-	void Parse();
+			std::vector<GLSL_Var_>	attributes;
+			std::vector<GLSL_Var_>	varying;
+			std::vector<GLSL_Var_>	uniforms;
 
-	std::vector<GLSL_Var_>	attributes;
-	std::vector<GLSL_Var_>	varying;
-	std::vector<GLSL_Var_>	uniforms;
+		private:
 
-private:
-
-	void Process(std::string &b);
-	void ProcessToken(std::size_t &pos, std::vector<std::string> &v);
-	void DetermineSemantic(GLSL_Var_ &var, std::string &str);
-	void DetermineType(GLSL_Var_ &var, std::string &str);
-	std::string					buffer_vertex;
-	std::string					buffer_fragment;
-	hyperspace::shader::stage_  current_stage;
-	
-};
-
+			void Process(std::string &b);
+			void ProcessToken(std::size_t &pos, std::vector<std::string> &v);
+			void DetermineSemantic(GLSL_Var_ &var, std::string &str);
+			void DetermineType(GLSL_Var_ &var, std::string &str);
+			std::string					buffer_vertex;
+			std::string					buffer_fragment;
+			shader::stage_  current_stage;
+		};
+	}
+}
 
 
 #endif

@@ -17,8 +17,8 @@ namespace hyperspace {
 		virtual void ResetApplication() = 0;
 		virtual ~RootApp() = 0;
 
-		EventManager	*pEventManager;
-		BaseDriver		*pVideoDriver;
+		input::EventManager		*pEventManager;
+		video::BaseDriver		*pVideoDriver;
 	};
 }
 

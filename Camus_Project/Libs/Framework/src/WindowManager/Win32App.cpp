@@ -38,7 +38,7 @@ void Win32App::OnCreateApplication() {
 
 	ShowCursor((parameters.Properties & hyperspace::WindowParameters::SHOW_CURSOR) ? TRUE : FALSE);
 
-	pVideoDriver = new hyperspace::OpenGLDriver();
+	pVideoDriver = new hyperspace::video::OpenGLDriver();
 	pVideoDriver->SetWindow(0);
 	pVideoDriver->InitDriver();
 
