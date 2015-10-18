@@ -1,6 +1,8 @@
 #ifndef CA_BASEDRIVER_H
 #define CA_BASEDRIVER_H
 
+#include <cstdint>
+
 namespace hyperspace {
 	namespace video {
 
@@ -59,10 +61,17 @@ namespace hyperspace {
 			DEPTH
 		};
 
-		enum draw_bits {
-			COLOR,
-			DEPTH,
-			STENCIL
+		enum draw_bits_ {
+			COLOR_BIT = 256,
+			DEPTH_BIT = 512,
+			STENCIL_BIT = 1024
+		};
+
+		enum draw_mask_ {
+			RED,
+			GREEN,
+			BLUE,
+			ALPHA
 		};
 
 		enum comp_function_ {
@@ -76,7 +85,7 @@ namespace hyperspace {
 			ALWAYS
 		};
 
-		enum texture_filtering {
+		enum texture_filtering_ {
 			NEAREST,
 			LINEAR,
 			ANISOTROPIC,
@@ -86,20 +95,20 @@ namespace hyperspace {
 			LINEAR_MIPMAP_LINEAR
 		};
 
-		enum texture_parameter {
+		enum texture_parameter_ {
 			MAG_FILTER,
 			MIN_FILTER,
 			WRAP_S,
 			WRAP_T
 		};
 
-		enum texture_wrap {
+		enum texture_wrap_ {
 			REPEAT,
 			CLAMP,
 			MIRROR
 		};
 		
-		enum texture_unit {
+		enum texture_unit_ {
 			TEX_0,
 			TEX_1,
 			TEX_2,
@@ -133,15 +142,34 @@ namespace hyperspace {
 			TEX_30
 		};
 
+		enum screen_buffers_ {
+			BACK_BUFFER,
+			FRONT_BUFFER,
+			DEPTH_BUFFER,
+			RENDER_TARGET_0,
+			RENDER_TARGET_1,
+			RENDER_TARGET_2,
+			RENDER_TARGET_3,
+			RENDER_TARGET_4,
+			RENDER_TARGET_5,
+			RENDER_TARGET_6,
+			RENDER_TARGET_7
+		};
+
+
 		class BaseDriver {
 		public:
 			virtual	void	InitDriver() = 0;
 			virtual void	CreateSurfaces() = 0;
 			virtual void	DestroySurfaces() = 0;
 			virtual void	Update() = 0;
-			virtual void	SwapBuffers() = 0;
 			virtual void	DestroyDriver() = 0;
 			virtual void	SetWindow(void *window) = 0;
+
+			
+			virtual void	Clear(draw_bits_ mask, int r, int g, int b, int a) = 0;
+			virtual void	Clear(draw_bits_ mask, float r, float g, float b, float a) = 0;
+			virtual void	SwapBuffers() = 0;
 		};
 	}
 }

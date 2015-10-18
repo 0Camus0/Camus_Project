@@ -14,25 +14,6 @@ void ReportEGLError(const char* c_ptr){
 }
 #endif
 
-#ifdef OS_WIN32
-#ifdef min
-#undef min
-#endif
-#ifdef max
-#undef max
-#endif
-#endif
-
-#include <algorithm>
-#include <iostream>
-#include <cmath>
-
-float clip(float n, float lower, float upper) {
-	return std::max(
-		lower,
-		std::min(n, upper));
-}
-
 namespace hyperspace {
 	namespace video {
 		OpenGLDriver::OpenGLDriver() {
@@ -169,22 +150,51 @@ namespace hyperspace {
 			eglMakeCurrent(eglDisplay, 0, 0, eglContext);
 		}
 
+		
+		void	OpenGLDriver::Clear(draw_bits_ mask, int r, int g, int b, int a) {
+
+			static GLint glmask;
+
+			glmask = 0;
+			if (mask&draw_bits_::COLOR_BIT)
+				glmask |= GL_COLOR_BUFFER_BIT;
+
+			if (mask&draw_bits_::DEPTH_BIT)
+				glmask |= GL_DEPTH_BUFFER_BIT;
+
+			if (mask&draw_bits_::STENCIL_BIT)
+				glmask |= GL_STENCIL_BUFFER_BIT;
+
+			float r_ = static_cast<float>(r) / 255.0f;
+			float g_ = static_cast<float>(g) / 255.0f;
+			float b_ = static_cast<float>(b) / 255.0f;
+			float a_ = static_cast<float>(a) / 255.0f;
+			glClearColor(r_, g_, b_, a_);
+			glClear(glmask);
+
+		}
+
+		void	OpenGLDriver::Clear(draw_bits_ mask, float r, float g, float b, float a) {
+
+			static GLint glmask;
+
+			glmask = 0;
+			if (mask&draw_bits_::COLOR_BIT)
+				glmask |= GL_COLOR_BUFFER_BIT;
+
+			if (mask&draw_bits_::DEPTH_BIT)
+				glmask |= GL_DEPTH_BUFFER_BIT;
+
+			if (mask&draw_bits_::STENCIL_BIT)
+				glmask |= GL_STENCIL_BUFFER_BIT;
+
+			glClearColor(r, g, b, a);
+			glClear(glmask);
+
+		}
+
 		void	OpenGLDriver::Update() {
-
-
-			static float ang = 0.0f;
-
-			float R = 0.0f, G = 0.0f, B = 0.0f;
-
-			ang += 0.1f;
-
-			R = (clip(std::sin(ang), 0.0f, 1.0f))*0.5f + 0.5f;
-			G = (clip(std::cos(ang + .70f), 0.0f, 1.0f))*0.5f + 0.5f;
-			B = (clip(std::tan(ang + 1.44f), 0.0f, 1.0f))*0.5f + 0.5f;
-
-			glClearColor(R, G, B, 1.0f);
-
-			glClear(GL_COLOR_BUFFER_BIT);
+	
 		}
 
 		void	OpenGLDriver::SwapBuffers() {

@@ -22,9 +22,14 @@ namespace hyperspace {
 			void	CreateSurfaces();
 			void	DestroySurfaces();
 			void	Update();
-			void	SwapBuffers();
+			
 			void	DestroyDriver();
 			void	SetWindow(void *window);
+
+		
+			void	Clear(draw_bits_ mask, int r, int g, int b, int a);
+			void	Clear(draw_bits_ mask, float r, float g, float b, float a);
+			void	SwapBuffers();
 
 			void	ResetDriver();
 
