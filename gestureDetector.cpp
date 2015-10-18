@@ -309,7 +309,7 @@ GESTURE_STATE DragDetector::Detect( const AInputEvent* event )
                 ret = GESTURE_STATE_START;
             }
         }
-        break;
+        break;   
     }
     case AMOTION_EVENT_ACTION_MOVE:
         switch( count )
