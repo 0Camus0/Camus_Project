@@ -61,7 +61,7 @@
       <Filter>Source Files\Driver\OpenGL</Filter>
     </ClInclude>
     <ClInclude Include="..\include\Driver\ShaderBase.h">
-      <Filter>Source Files\Driver\OpenGL</Filter>
+      <Filter>Source Files\Driver</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -151,7 +151,7 @@ namespace hyperspace {
 		}
 
 		
-		void	OpenGLDriver::Clear(draw_bits_ mask, int r, int g, int b, int a) {
+		void	OpenGLDriver::Clear(draw_bits_ mask, int r, int g, int b, int a, float depth) {
 
 			static GLint glmask;
 
@@ -170,11 +170,12 @@ namespace hyperspace {
 			float b_ = static_cast<float>(b) / 255.0f;
 			float a_ = static_cast<float>(a) / 255.0f;
 			glClearColor(r_, g_, b_, a_);
+			glClearDepthf(depth);
 			glClear(glmask);
 
 		}
 
-		void	OpenGLDriver::Clear(draw_bits_ mask, float r, float g, float b, float a) {
+		void	OpenGLDriver::Clear(draw_bits_ mask, float r, float g, float b, float a, float depth) {
 
 			static GLint glmask;
 
@@ -189,6 +190,7 @@ namespace hyperspace {
 				glmask |= GL_STENCIL_BUFFER_BIT;
 
 			glClearColor(r, g, b, a);
+			glClearDepthf(depth);
 			glClear(glmask);
 
 		}

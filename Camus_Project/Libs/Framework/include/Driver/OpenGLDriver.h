@@ -27,8 +27,8 @@ namespace hyperspace {
 			void	SetWindow(void *window);
 
 		
-			void	Clear(draw_bits_ mask, int r, int g, int b, int a);
-			void	Clear(draw_bits_ mask, float r, float g, float b, float a);
+			void	Clear(draw_bits_ mask, int r, int g, int b, int a,float depth = 1.0f);
+			void	Clear(draw_bits_ mask, float r, float g, float b, float a, float depth = 1.0f);
 			void	SwapBuffers();
 
 			void	ResetDriver();

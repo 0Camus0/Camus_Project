@@ -36,6 +36,7 @@ void ANativeActivity_onCreate(ANativeActivity* activity, void* savedState, size_
 #include <stdio.h>
 #include <tchar.h>
 
+#include <Driver/RenderState.h>
 
 int main()
 {
@@ -43,11 +44,20 @@ int main()
 
 	pAppManager->CreateApp();
 
+	hyperspace::video::CRenderState a, b;
+	b.draworder = hyperspace::video::draw_order_::CW;
+
+	std::cout << "iguales: " << (int)(a == b) << std::endl;
+
 	std::cout << "Join..." << std::endl;
+
+
 
 	pAppManager->Join();
 
+
 	std::cout << "After Join, ready to close" << std::endl;
+
 
 
     return 0;

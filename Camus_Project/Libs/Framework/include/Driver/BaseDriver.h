@@ -54,11 +54,11 @@ namespace hyperspace {
 		};
 
 		enum capability_ {
-			TEXTURE2D,
-			CULL_FACE,
-			BLEND,
-			STENCIL,
-			DEPTH
+			TEXTURE2D = 2048,
+			CULL_FACE = 4096,
+			BLEND	  = 8192,
+			STENCIL	  = 16384,
+			DEPTH	  = 32768
 		};
 
 		enum draw_bits_ {
@@ -68,10 +68,10 @@ namespace hyperspace {
 		};
 
 		enum draw_mask_ {
-			RED,
-			GREEN,
-			BLUE,
-			ALPHA
+			RED		= 2,
+			GREEN	= 4,
+			BLUE	= 8,
+			ALPHA	= 16
 		};
 
 		enum comp_function_ {
@@ -93,13 +93,6 @@ namespace hyperspace {
 			LINEAR_MIPMAP_NEAREST,
 			NEAREST_MIPMAP_LINEAR,
 			LINEAR_MIPMAP_LINEAR
-		};
-
-		enum texture_parameter_ {
-			MAG_FILTER,
-			MIN_FILTER,
-			WRAP_S,
-			WRAP_T
 		};
 
 		enum texture_wrap_ {
@@ -167,8 +160,8 @@ namespace hyperspace {
 			virtual void	SetWindow(void *window) = 0;
 
 			
-			virtual void	Clear(draw_bits_ mask, int r, int g, int b, int a) = 0;
-			virtual void	Clear(draw_bits_ mask, float r, float g, float b, float a) = 0;
+			virtual void	Clear(draw_bits_ mask, int r, int g, int b, int a,float depth = 1.0f) = 0;
+			virtual void	Clear(draw_bits_ mask, float r, float g, float b, float a, float depth = 1.0f) = 0;
 			virtual void	SwapBuffers() = 0;
 		};
 	}

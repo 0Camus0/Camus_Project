@@ -50,7 +50,9 @@
     <ClInclude Include="..\include\Driver\DriverProperties.h" />
     <ClInclude Include="..\include\Driver\GLSLParser.h" />
     <ClInclude Include="..\include\Driver\OpenGLDriver.h" />
+    <ClInclude Include="..\include\Driver\RenderState.h" />
     <ClInclude Include="..\include\Driver\ShaderBase.h" />
+    <ClInclude Include="..\include\Driver\Technique.h" />
     <ClInclude Include="..\include\Utils\InputBase.h" />
     <ClInclude Include="..\include\Utils\Log.h" />
     <ClInclude Include="..\include\Utils\WindowProperties.h" />
@@ -122,6 +124,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;OS_WIN32;USE_DEBUG;USE_C11_THREADS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(ProjectDir)..\include;$(SolutionDir)..\..\Externals\SDL-1.2.14\include;$(SolutionDir)..\..\Externals\OGLES2\Include;$(SolutionDir)..\..\Externals\pthreads\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
