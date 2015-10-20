@@ -4,6 +4,8 @@
 #include <Driver/RenderState.h>
 #include <Utils/Maths.h>
 #include <string>
+#include <vector>
+#include <map>
 #include <cstddef>
 
 namespace hyperspace {
@@ -18,11 +20,23 @@ namespace hyperspace {
 		class CTechnique {
 		public:
 			CTechnique() {}
-
 			virtual void			Initialize(std::string name, std::string shader) = 0;
 			virtual void			AddPass(Pass_ pass) = 0;
 			virtual void			RemovePass(int id) = 0;
 			virtual std::int32_t	GetNumPasses() = 0;
+			virtual void			SetPass(int index) = 0;
+
+		private:
+			std::string			Name;
+			std::string			Shader;
+			std::vector<Pass_>	Passes;
+
+		};
+
+		class CEffect {
+		public:
+			virtual void	AddTechnique(CTechnique* tech) = 0;
+			virtual void	RemoveTechnique(std::string name) = 0;
 
 			virtual	void	SetBool(std::string handler, bool &) = 0;
 			virtual	void	SetInt(std::string handler, int &) = 0;
@@ -33,11 +47,7 @@ namespace hyperspace {
 			virtual	void	SetMat3(std::string handler, float*) = 0;
 			virtual	void	SetMat4(std::string handler, XMATRIX44 &) = 0;
 
-		private:
-			std::string		Name;
-			std::string		Shader;
-
-
+			std::vector<CTechnique*>	Techniques;
 		};
 
 	}
