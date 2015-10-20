@@ -7,9 +7,9 @@
 namespace hyperspace {
 	namespace video {
 
-		class CRenderState{
+		class CRenderStateDesc{
 		public:
-			CRenderState() {
+			CRenderStateDesc() {
 				capabilities = CULL_FACE | DEPTH;
 				draworder = CCW;
 				cullface = FRONT;
@@ -20,7 +20,7 @@ namespace hyperspace {
 				stencilfunction = ALWAYS;				
 			}
 
-			bool operator == (CRenderState &o) {
+			bool operator == (CRenderStateDesc &o) {
 				return (capabilities == o.capabilities
 					&&	draworder == o.draworder
 					&&	cullface == o.cullface
@@ -32,7 +32,7 @@ namespace hyperspace {
 					);
 			}
 
-			bool operator != (CRenderState &o) {
+			bool operator != (CRenderStateDesc &o) {
 				return !(capabilities == o.capabilities
 					&&	draworder == o.draworder
 					&&	cullface == o.cullface
@@ -43,9 +43,6 @@ namespace hyperspace {
 					&&  stencilfunction == o.stencilfunction
 					);
 			}
-		
-
-
 
 			draw_order_			draworder;
 			cull_face_			cullface;
@@ -57,7 +54,6 @@ namespace hyperspace {
 			std::int32_t		mask;
 
 		};
-
 	}
 }
 

@@ -108,5 +108,11 @@
     <ClInclude Include="..\include\Driver\RenderState.h">
       <Filter>Source Files\Driver</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\WindowManager\AndroidApp.h">
+      <Filter>Source Files\WindowManager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Utils\Maths.h">
+      <Filter>Source Files\Utils</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

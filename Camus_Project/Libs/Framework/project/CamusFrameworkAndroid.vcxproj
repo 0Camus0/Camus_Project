@@ -30,6 +30,7 @@
     <ClInclude Include="..\include\Driver\ShaderBase.h" />
     <ClInclude Include="..\include\Utils\InputBase.h" />
     <ClInclude Include="..\include\Utils\Log.h" />
+    <ClInclude Include="..\include\Utils\Maths.h" />
     <ClInclude Include="..\include\Utils\WindowProperties.h" />
     <ClInclude Include="..\include\WindowManager\AndroidApp.h" />
     <ClInclude Include="..\include\WindowManager\AppManager.h" />

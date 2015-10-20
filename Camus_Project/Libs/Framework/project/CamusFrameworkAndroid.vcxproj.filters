@@ -63,6 +63,9 @@
     <ClInclude Include="..\include\Driver\ShaderBase.h">
       <Filter>Source Files\Driver</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\Utils\Maths.h">
+      <Filter>Source Files\Utils</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\Driver\DriverProperties.cpp">

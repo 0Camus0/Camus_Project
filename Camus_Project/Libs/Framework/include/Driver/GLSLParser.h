@@ -12,7 +12,7 @@ namespace hyperspace {
 			shader::semantic_	sem;
 			shader::datatype_	type;
 			shader::stage_		stage;
-			std::string						name;
+			std::string			name;
 		};
 
 		class GLSL_Parser {
