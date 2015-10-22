@@ -19,12 +19,16 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\Source\TestApplication\Test.cpp" />
     <ClCompile Include="..\..\..\Source\TestApplication\TestApplication.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Libs\Framework\project\CamusFrameworkAndroid.vcxproj">
       <Project>{2127c6ee-0f5b-426d-a2a8-8edf54bf6543}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\Source\TestApplication\Test.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{ece03c71-46b3-40d5-8603-46cbbdf465c1}</ProjectGuid>

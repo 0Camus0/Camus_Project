@@ -40,11 +40,11 @@ void Win32Framework::InitGlobalVars() {
 void Win32Framework::OnCreateApplication() {
 
 	SDL_Init(SDL_INIT_VIDEO);
-	SDL_WM_SetCaption("Camus Framework",0);
+	SDL_WM_SetCaption("Camus Framework", 0);
 
 	int flags = SDL_HWSURFACE;
 	auto parameters = hyperspace::GetWindowParameters();
-	
+
 	if (parameters.Properties & hyperspace::WindowParameters::FULL_SCREEN)
 		flags |= SDL_FULLSCREEN;
 
@@ -62,16 +62,20 @@ void Win32Framework::OnCreateApplication() {
 	pVideoDriver->SetWindow(0);
 	pVideoDriver->InitDriver();
 
+	pBaseApp->CreateAssets();
+
 }
 
 void Win32Framework::OnDestroyApplication() {
-		
+
+	pBaseApp->DestroyAssets();
+
 	SDL_Quit();
 
 }
 
 void Win32Framework::OnInterruptApplication() {
-
+	pBaseApp->OnPause();
 }
 
 void Win32Framework::ResetApplication() {
@@ -79,14 +83,18 @@ void Win32Framework::ResetApplication() {
 }
 
 void Win32Framework::OnResumeApplication() {
-
+	pBaseApp->OnResume();
 }
 
 void Win32Framework::UpdateApplication() {
 
-	ProcessInput();	
+	ProcessInput();
 
 	pVideoDriver->Update();
+
+	pBaseApp->OnUpdate(0);
+
+
 
 	static float ang = 0.0f;
 
@@ -99,6 +107,9 @@ void Win32Framework::UpdateApplication() {
 	B = (clip(std::tan(ang + 1.44f), 0.0f, 1.0f))*0.5f + 0.5f;
 
 	pVideoDriver->Clear(hyperspace::video::draw_bits_::COLOR_BIT, R, G, B, 1.0f);
+
+	pBaseApp->OnDraw();
+
 	pVideoDriver->SwapBuffers();
 }
 
@@ -106,11 +117,31 @@ void Win32Framework::ProcessInput() {
 	SDL_Event       evento;
 
 	while (SDL_PollEvent(&evento)) {
-		if (evento.type == SDL_KEYDOWN) {
+		//	printf("SDL_PollEvent IS: %d \n", (int)evento.type);
+
+		switch (evento.type) {
+		case SDL_KEYDOWN: {
 			if (evento.key.keysym.sym == SDLK_q) {
 				g_bAppRunning = false;
 			}
+		}break;
+
+		case SDL_ACTIVEEVENT: {
+
+
+			if (((int)evento.active.state == 2 || (int)evento.active.state == 6) && (int)evento.active.gain == 0) {
+				pBaseApp->OnPause();
+			}
+
+			if ((int)evento.active.state == 6 && (int)evento.active.gain == 1) {
+				pBaseApp->OnResume();
+			}
+						
+			}break;
 		}
+	
 
 	}
+
+	pBaseApp->OnInput();
 }

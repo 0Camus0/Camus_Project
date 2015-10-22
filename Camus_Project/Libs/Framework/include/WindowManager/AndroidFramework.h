@@ -155,7 +155,7 @@ struct PollSource {
 
 class AndroidFramework : public hyperspace::RootFramework {
 public:
-	AndroidFramework();
+	AndroidFramework(hyperspace::AppBase* pBaseApp);
 	void InitGlobalVars();
 	void OnCreateApplication();
 	void OnDestroyApplication();
@@ -164,12 +164,13 @@ public:
 	void UpdateApplication();
 	void ProcessInput();
 	void ResetApplication();
+	void CheckState();
 
 	~AndroidFramework();
 
 private:
 	void PrintCurrentConfig();
-	void CheckState();
+	
 	
 	static void  onDestroy(ANativeActivity* activity);
 	static void  onStart(ANativeActivity* activity);

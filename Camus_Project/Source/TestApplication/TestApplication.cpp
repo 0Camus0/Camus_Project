@@ -5,7 +5,10 @@
 #include <iostream>
 #include <memory.h>
 
+#include "Test.h"
+
 FrameworkManager					*pAppManager = 0;
+TestApp								*pTestApp = 0;
 
 #ifdef OS_ANDROID
 
@@ -24,7 +27,8 @@ void ANativeActivity_onCreate(ANativeActivity* activity, void* savedState, size_
 	if (pAppManager==0) {
 		LogPrintDebug("ANativeActivity_onCreate: Activity Virgin");
 		pAppManager = new FrameworkManager;
-		pAppManager->CreateApp();
+		pTestApp = new TestApp;
+		pAppManager->CreateApp((hyperspace::AppBase*)pTestApp);
 	}else{
 		LogPrintDebug("ANativeActivity_onCreate: Activity Changed");
 		pAppManager->ResetApp();
@@ -41,11 +45,11 @@ void ANativeActivity_onCreate(ANativeActivity* activity, void* savedState, size_
 int main()
 {
 	pAppManager = new FrameworkManager;
+	pTestApp = new TestApp;
 
-	pAppManager->CreateApp();
+	pAppManager->CreateApp((hyperspace::AppBase*)pTestApp);
 
 	std::cout << "Join..." << std::endl;
-
 	pAppManager->Join();
 
 

@@ -7,7 +7,7 @@
 
 class Win32Framework : public hyperspace::RootFramework {
 	public:
-		Win32Framework() {}
+		Win32Framework(hyperspace::AppBase *pBaseApp) : RootFramework(pBaseApp) {}
 		void InitGlobalVars();
 		void OnCreateApplication();
 		void OnDestroyApplication();

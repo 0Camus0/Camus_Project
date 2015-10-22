@@ -13,8 +13,8 @@ int							g_Msgwrite;
 
 #include <iostream>
 
-bool						g_bAppRunning = false; // Needs to be global, because it's shared by different threads but same class.
-hyperspace::RootFramework			*pApp = 0;
+bool								g_bAppRunning = false; // Needs to be global, because it's shared by different threads but same class.
+hyperspace::RootFramework			*pFramework = 0;
   
 
 #ifdef USE_C11_THREADS
@@ -32,8 +32,22 @@ void* FrameworkManager::BridgeFunction(void *pctx) {
 	return 0;
 }
 
-void FrameworkManager::CreateApp() {
+void FrameworkManager::CreateApp(hyperspace::AppBase* pApp) {
 	LogPrintDebug("CreateApp");
+
+#if defined(OS_WIN32)
+	pFramework = new Win32Framework(pApp);
+#elif defined(OS_ANDROID)
+	pFramework = new AndroidFramework(pApp);
+
+	int msgpipe[2];
+	if (pipe(msgpipe)) {
+		LogPrintDebug("Could not create pipe: %s", strerror(errno));
+		return;
+	}
+	g_Mgread = msgpipe[0];
+	g_Msgwrite = msgpipe[1];
+#endif
 
 	InitMutexAndVarConditions();
 
@@ -47,7 +61,7 @@ void FrameworkManager::ResetApp() {
 #else
 	pthread_mutex_lock(&g_mutex);
 #endif
-	pApp->ResetApplication();
+	pFramework->ResetApplication();
 #ifdef USE_C11_THREADS
 	g_mutex.unlock();
 #else
@@ -57,19 +71,6 @@ void FrameworkManager::ResetApp() {
 
 void FrameworkManager::CreateAppThread() {
 
-#if defined(OS_WIN32)
-		pApp = new Win32Framework;
-#elif defined(OS_ANDROID)
-		pApp = new AndroidFramework;
-
-		int msgpipe[2];
-		if (pipe(msgpipe)) {
-			LogPrintDebug("Could not create pipe: %s", strerror(errno));
-			return;
-		}
-		g_Mgread = msgpipe[0];
-		g_Msgwrite = msgpipe[1];
-#endif
 
 		g_bAppRunning = false;
 
@@ -108,9 +109,9 @@ void FrameworkManager::MainAppThread() {
 
 	LogPrintDebug("MainAppThread");
 
-	pApp->InitGlobalVars();
+	pFramework->InitGlobalVars();
 
-	pApp->OnCreateApplication();
+	pFramework->OnCreateApplication();
 
 #ifdef USE_C11_THREADS
 	g_mutex.lock();
@@ -127,18 +128,18 @@ void FrameworkManager::MainAppThread() {
 	LogPrintDebug("MainAppThread [");
 
 	while (g_bAppRunning) {
-		pApp->UpdateApplication();
+		pFramework->UpdateApplication();
 	}
 	LogPrintDebug("MainAppThread ]");
 
-	pApp->OnDestroyApplication();
+	pFramework->OnDestroyApplication();
 
 	
 
 	g_mutex.lock();
 	LogPrintDebug("MainAppThread deleting app");
-	delete pApp;
-	pApp = 0;
+	delete pFramework;
+	pFramework = 0;
 	g_cond.notify_all();
 	g_mutex.unlock();
 }

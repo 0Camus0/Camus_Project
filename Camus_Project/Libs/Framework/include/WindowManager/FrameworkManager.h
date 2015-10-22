@@ -29,15 +29,13 @@
 class FrameworkManager {
 public:
 	FrameworkManager() {}
-	void	CreateApp();
+	void	CreateApp(hyperspace::AppBase* pApp);
 	void	MainAppThread();
 	void	ResetApp();
 
 	void	CreateAppThread();
 	void	InitMutexAndVarConditions();
 	void	Join();
-
-	
 
 	~FrameworkManager();
 //#ifdef USE_C11_THREADS
