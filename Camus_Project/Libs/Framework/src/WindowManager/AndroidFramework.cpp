@@ -2,6 +2,7 @@
 #include <Utils/WindowProperties.h>
 #include <Utils/Log.h>
 #include <Driver/OpenGLDriver.h>
+#include <Utils/FileSystem.h>
 
 #include <unistd.h>
 
@@ -177,6 +178,8 @@ void AndroidFramework::InitGlobalVars() {
 // Called from App Thread
 void AndroidFramework::OnCreateApplication() {
 	LogPrintDebug("OnCreateApplication() ");
+
+	hyperspace::fs::Filesystem::instance()->InitFS();
 
 	m_cmdPoll.id  = LOOPER_ID_MAIN;
 	m_cmdPoll.app = this;

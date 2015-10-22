@@ -25,6 +25,7 @@
     <ClCompile Include="..\src\Driver\EffectGL.cpp" />
     <ClCompile Include="..\src\Driver\GLSLParser.cpp" />
     <ClCompile Include="..\src\Driver\OpenGlDriver.cpp" />
+    <ClCompile Include="..\src\Utils\FileSystem.cpp" />
     <ClCompile Include="..\src\Utils\InputImplWin32.cpp" />
     <ClCompile Include="..\src\Utils\Log.cpp" />
     <ClCompile Include="..\src\Utils\WindowProperties.cpp" />

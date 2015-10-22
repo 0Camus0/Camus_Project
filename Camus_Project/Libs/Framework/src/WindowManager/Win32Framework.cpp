@@ -1,7 +1,7 @@
 
 #include <WindowManager/Win32Framework.h>
 #include <Utils/WindowProperties.h>
-
+#include <Utils/FileSystem.h>
 // SDL
 #include <SDL/SDL.h>
 // Windows 
@@ -38,6 +38,8 @@ void Win32Framework::InitGlobalVars() {
 }
 
 void Win32Framework::OnCreateApplication() {
+
+	hyperspace::fs::Filesystem::instance()->InitFS();
 
 	SDL_Init(SDL_INIT_VIDEO);
 	SDL_WM_SetCaption("Camus Framework", 0);

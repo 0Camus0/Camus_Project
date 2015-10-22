@@ -14,6 +14,8 @@ namespace hyperspace {
 			 void			RemovePass(int id);
 			 std::int32_t	GetNumPasses();
 			 void			SetPass(int index);
+
+			 GLSL_Parser	Parser;
 		};
 
 		class EffectGL : public CEffect_ {

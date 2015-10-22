@@ -69,6 +69,15 @@
     <ClInclude Include="..\include\WindowManager\Win32Framework.h">
       <Filter>Source Files\WindowManager</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\Driver\Technique.h">
+      <Filter>Source Files\Driver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Driver\EffectGL.h">
+      <Filter>Source Files\Driver\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Utils\FileSystem.h">
+      <Filter>Source Files\Utils</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\Driver\DriverProperties.cpp">
@@ -106,6 +115,12 @@
     </ClCompile>
     <ClCompile Include="..\src\WindowManager\Win32Framework.cpp">
       <Filter>Source Files\WindowManager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Driver\EffectGL.cpp">
+      <Filter>Source Files\Driver\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Utils\FileSystem.cpp">
+      <Filter>Source Files\Utils</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

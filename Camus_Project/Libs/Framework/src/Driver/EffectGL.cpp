@@ -1,10 +1,30 @@
 #include <Driver/EffectGL.h>
-
+#include <Utils/FileSystem.h>
+#include <Utils/Log.h>
 
 namespace hyperspace {
 	namespace video {
 
 		void TechniqueGL::Initialize(std::string name, std::string shader) {
+			LogPrintDebug("TechniqueGL::Initialize: %s  shader: %s ", name.c_str(), shader.c_str());
+
+			Name = name;
+			Shader = shader;
+			std::string Path = fs::Filesystem::instance()->GetResourcesPath();
+			Path += "Shaders/";
+			Path += shader;
+
+			LogPrintDebug("TechniqueGL::Initialize Path to use: %s " ,Path.c_str());
+
+			Parser.Parse(Path);
+
+			for (std::size_t i = 0; i < Parser.attributes.size(); i++) {
+				LogPrintDebug("Attribute: %s ", Parser.attributes[i].name.c_str());
+			}
+		
+			for (std::size_t i = 0; i < Parser.uniforms.size(); i++) {
+				LogPrintDebug("Uniform: %s ", Parser.uniforms[i].name.c_str());
+			}
 
 		}
 
@@ -17,7 +37,7 @@ namespace hyperspace {
 		}
 
 		std::int32_t TechniqueGL::GetNumPasses() {
-
+			return 1;
 		}
 
 		void TechniqueGL::SetPass(int index) {

@@ -2,12 +2,20 @@
 #define CA_MATHS_H
 
 
-#include <math.h>
+#include <algorithm>
+#include <iostream>
+#include <cmath>
+
 #include <string.h>
 
 static const unsigned short xNULL = 0;
 static const float xPI = 3.1415926535897932384626433832795f;
 static const float xSMALLFLOAT = 0.000000001f;
+
+#if defined(WIN32) || defined(_WIN32)
+#pragma warning( disable : 4521 )
+#pragma warning( disable : 4522 )
+#endif
 
 #define Rad2Deg( r ) ((r) * (180.0f / xPI))
 #define Deg2Rad( d ) ((d) * (xPI / 180.0f))
@@ -235,14 +243,14 @@ namespace hyperspace {
 				float m[4][4];
 
 				struct {
-					/*	float        a1, a2, a3, a4;
+						float        a1, a2, a3, a4;
 						float        b1, b2, b3, b4;
 						float        c1, c2, c3, c4;
-						float        d1, d2, d3, d4;*/
-					float        a1, b1, c1, d1;
+						float        d1, d2, d3, d4;
+				/*	float        a1, b1, c1, d1;
 					float        a2, b2, c2, d2;
 					float        a3, b3, c3, d3;
-					float        a4, b4, c4, d4;
+					float        a4, b4, c4, d4;*/
 				};
 
 				float mat[16];
@@ -339,11 +347,10 @@ namespace hyperspace {
 				float	 v[4];
 
 				struct {
-					float w;
 					float x;
 					float y;
 					float z;
-
+					float w;
 				};
 			};
 		};
@@ -426,45 +433,45 @@ namespace hyperspace {
 		}
 
 		inline void XMatRotationXLH(XMATRIX44 &mpout, const float &rads) {
-			mpout.m[1][1] = cos(rads);
-			mpout.m[1][2] = -sin(rads);
-			mpout.m[2][1] = sin(rads);
-			mpout.m[2][2] = cos(rads);
+			mpout.m[1][1] = std::cos(rads);
+			mpout.m[1][2] = -std::sin(rads);
+			mpout.m[2][1] = std::sin(rads);
+			mpout.m[2][2] = std::cos(rads);
 		}
 
 		inline void XMatRotationXRH(XMATRIX44 &mpout, const float &rads) {
-			mpout.m[1][1] = cos(rads);
-			mpout.m[1][2] = sin(rads);
-			mpout.m[2][1] = -sin(rads);
-			mpout.m[2][2] = cos(rads);
+			mpout.m[1][1] = std::cos(rads);
+			mpout.m[1][2] = std::sin(rads);
+			mpout.m[2][1] = -std::sin(rads);
+			mpout.m[2][2] = std::cos(rads);
 		}
 
 		inline void XMatRotationYLH(XMATRIX44 &mpout, const float &rads) {
-			mpout.m[0][0] = cos(rads);
-			mpout.m[0][2] = sin(rads);
-			mpout.m[2][0] = -sin(rads);
-			mpout.m[2][2] = cos(rads);
+			mpout.m[0][0] = std::cos(rads);
+			mpout.m[0][2] = std::sin(rads);
+			mpout.m[2][0] = -std::sin(rads);
+			mpout.m[2][2] = std::cos(rads);
 		}
 
 		inline void XMatRotationYRH(XMATRIX44 &mpout, const float &rads) {
-			mpout.m[0][0] = cos(rads);
-			mpout.m[0][2] = -sin(rads);
-			mpout.m[2][0] = sin(rads);
-			mpout.m[2][2] = cos(rads);
+			mpout.m[0][0] = std::cos(rads);
+			mpout.m[0][2] = -std::sin(rads);
+			mpout.m[2][0] = std::sin(rads);
+			mpout.m[2][2] = std::cos(rads);
 		}
 
 		inline void XMatRotationZLH(XMATRIX44 &mpout, const float &rads) {
-			mpout.m[0][0] = cos(rads);
-			mpout.m[0][1] = -sin(rads);
-			mpout.m[1][0] = sin(rads);
-			mpout.m[1][1] = cos(rads);
+			mpout.m[0][0] = std::cos(rads);
+			mpout.m[0][1] = -std::sin(rads);
+			mpout.m[1][0] = std::sin(rads);
+			mpout.m[1][1] = std::cos(rads);
 		}
 
 		inline void XMatRotationZRH(XMATRIX44 &mpout, const float &rads) {
-			mpout.m[0][0] = cos(rads);
-			mpout.m[0][1] = sin(rads);
-			mpout.m[1][0] = -sin(rads);
-			mpout.m[1][1] = cos(rads);
+			mpout.m[0][0] = std::cos(rads);
+			mpout.m[0][1] = std::sin(rads);
+			mpout.m[1][0] = -std::sin(rads);
+			mpout.m[1][1] = std::cos(rads);
 		}
 
 
@@ -599,8 +606,8 @@ namespace hyperspace {
 		}
 
 		inline void XMatRotationAxisRH(XMATRIX44 &mpout, const XVECTOR3 &axis, const float &angle) {
-			float cosangle = cos(angle);
-			float sinangle = sin(angle);
+			float cosangle = std::cos(angle);
+			float sinangle = std::sin(angle);
 			float A = 1.0f - cosangle;
 
 			mpout.a1 = A*axis.x*axis.x + cosangle;
@@ -622,8 +629,8 @@ namespace hyperspace {
 		}
 
 		inline void XMatRotationAxisLH(XMATRIX44 &mpout, const XVECTOR3 &axis, const float &angle) {
-			float cosangle = cos(angle);
-			float sinangle = sin(angle);
+			float cosangle = std::cos(angle);
+			float sinangle = std::sin(angle);
 			float A = 1.0f - cosangle;
 
 			mpout.a1 = A*axis.x*axis.x + cosangle;

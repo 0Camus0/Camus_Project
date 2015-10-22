@@ -64,6 +64,9 @@
     <ClCompile Include="..\src\Driver\EffectGL.cpp">
       <Filter>Source Files\Driver\OpenGL</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\Utils\FileSystem.cpp">
+      <Filter>Source Files\Utils</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\Core\Core.h">

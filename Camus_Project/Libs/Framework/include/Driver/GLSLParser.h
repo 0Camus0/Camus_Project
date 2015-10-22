@@ -17,10 +17,10 @@ namespace hyperspace {
 
 		class GLSL_Parser {
 		public:
-			GLSL_Parser(std::string Path_);
+			GLSL_Parser();
 			~GLSL_Parser();
 
-			void Parse();
+			void Parse(std::string Path_);
 
 			std::vector<GLSL_Var_>	attributes;
 			std::vector<GLSL_Var_>	varying;

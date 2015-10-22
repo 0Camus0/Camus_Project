@@ -10,7 +10,14 @@
 namespace hyperspace{
 	namespace video {
 
-		GLSL_Parser::GLSL_Parser(std::string Path_) {
+		GLSL_Parser::GLSL_Parser() {
+			
+		}
+
+		GLSL_Parser::~GLSL_Parser() {
+		}
+
+		void GLSL_Parser::Parse(std::string Path_) {
 			{
 				std::ifstream ifs((Path_ + std::string(".vert")).c_str());
 				if (ifs.good()) {
@@ -28,12 +35,7 @@ namespace hyperspace{
 				}
 				ifs.close();
 			}
-		}
 
-		GLSL_Parser::~GLSL_Parser() {
-		}
-
-		void GLSL_Parser::Parse() {
 			current_stage = shader::stage_::VERTEX_SHADER;
 			Process(buffer_vertex);
 			current_stage = shader::stage_::PIXEL_SHADER;
@@ -41,7 +43,6 @@ namespace hyperspace{
 		}
 
 		void GLSL_Parser::Process(std::string &b) {
-			std::cout << "\n\n\n" << std::endl;
 
 			std::istringstream iss(b);
 			std::vector<std::string> tokens{ std::istream_iterator<std::string>{iss},

@@ -26,7 +26,7 @@ namespace hyperspace {
 			virtual std::int32_t	GetNumPasses() = 0;
 			virtual void			SetPass(int index) = 0;
 
-		private:
+
 			std::string			Name;
 			std::string			Shader;
 			std::vector<Pass_>	Passes;

@@ -114,7 +114,8 @@
       <Command>copy "$(SolutionDir)..\..\Externals\OGLES2\Lib\libEGL.dll" "$(SolutionDir)..\..\bin" /Y
 copy "$(SolutionDir)..\..\Externals\OGLES2\Lib\libGLESv2.dll" "$(SolutionDir)..\..\bin" /Y
 copy "$(SolutionDir)..\..\Externals\pthreads\dll\pthreadVC2.dll" "$(SolutionDir)..\..\bin" /Y
-copy "$(SolutionDir)..\..\Externals\SDL-1.2.14\lib\SDL.dll" "$(SolutionDir)..\..\bin" /Y</Command>
+copy "$(SolutionDir)..\..\Externals\SDL-1.2.14\lib\SDL.dll" "$(SolutionDir)..\..\bin" /Y
+xcopy "$(SolutionDir)..\..\Resources" "$(SolutionDir)..\..\bin\Resources\" /S /E</Command>
       <Message>Copying dlls to the bin location.</Message>
     </PreBuildEvent>
   </ItemDefinitionGroup>
@@ -152,7 +153,11 @@ copy "$(SolutionDir)..\..\Externals\SDL-1.2.14\lib\SDL.dll" "$(SolutionDir)..\..
       <AdditionalDependencies>SDL.lib;pthreadVC2.lib;libEGL.lib;libGLESv2.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
-      <Command>copy "$(SolutionDir)..\..\Externals\OGLES2\Lib\libEGL.dll" "$(SolutionDir)..\..\bin" /Y</Command>
+      <Command>copy "$(SolutionDir)..\..\Externals\OGLES2\Lib\libEGL.dll" "$(SolutionDir)..\..\bin" /Y
+copy "$(SolutionDir)..\..\Externals\OGLES2\Lib\libGLESv2.dll" "$(SolutionDir)..\..\bin" /Y
+copy "$(SolutionDir)..\..\Externals\pthreads\dll\pthreadVC2.dll" "$(SolutionDir)..\..\bin" /Y
+copy "$(SolutionDir)..\..\Externals\SDL-1.2.14\lib\SDL.dll" "$(SolutionDir)..\..\bin" /Y
+xcopy "$(SolutionDir)..\..\Resources" "$(SolutionDir)..\..\bin\Resources\" /S /E</Command>
       <Message>Copying dlls to the bin location.</Message>
     </PreBuildEvent>
   </ItemDefinitionGroup>
