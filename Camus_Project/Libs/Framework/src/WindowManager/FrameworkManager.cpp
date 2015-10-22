@@ -1,10 +1,10 @@
-#include <WindowManager/AppManager.h>
+#include <WindowManager/FrameworkManager.h>
 #include <Utils/Log.h>
 
 #if defined(OS_WIN32)
-#include <WindowManager/Win32App.h>
+#include <WindowManager/Win32Framework.h>
 #elif defined(OS_ANDROID)
-#include <WindowManager/AndroidApp.h>
+#include <WindowManager/AndroidFramework.h>
 #include <unistd.h>
 #include <errno.h>
 int							g_Mgread;
@@ -14,7 +14,7 @@ int							g_Msgwrite;
 #include <iostream>
 
 bool						g_bAppRunning = false; // Needs to be global, because it's shared by different threads but same class.
-hyperspace::RootApp			*pApp = 0;
+hyperspace::RootFramework			*pApp = 0;
   
 
 #ifdef USE_C11_THREADS
@@ -27,12 +27,12 @@ pthread_mutex_t					g_mutex;
 pthread_cond_t					g_cond;
 
 #endif
-void* AppManager::BridgeFunction(void *pctx) {
-	((AppManager*)pctx)->MainAppThread();
+void* FrameworkManager::BridgeFunction(void *pctx) {
+	((FrameworkManager*)pctx)->MainAppThread();
 	return 0;
 }
 
-void AppManager::CreateApp() {
+void FrameworkManager::CreateApp() {
 	LogPrintDebug("CreateApp");
 
 	InitMutexAndVarConditions();
@@ -41,7 +41,7 @@ void AppManager::CreateApp() {
 
 }
 
-void AppManager::ResetApp() {
+void FrameworkManager::ResetApp() {
 #ifdef USE_C11_THREADS
 	g_mutex.lock();
 #else
@@ -55,12 +55,12 @@ void AppManager::ResetApp() {
 #endif
 }
 
-void AppManager::CreateAppThread() {
+void FrameworkManager::CreateAppThread() {
 
 #if defined(OS_WIN32)
-		pApp = new Win32App;
+		pApp = new Win32Framework;
 #elif defined(OS_ANDROID)
-		pApp = new AndroidApp;
+		pApp = new AndroidFramework;
 
 		int msgpipe[2];
 		if (pipe(msgpipe)) {
@@ -74,7 +74,7 @@ void AppManager::CreateAppThread() {
 		g_bAppRunning = false;
 
 #ifdef USE_C11_THREADS
-		g_thread = std::thread(&AppManager::BridgeFunction, this);
+		g_thread = std::thread(&FrameworkManager::BridgeFunction, this);
 #ifdef OS_ANDROID
 		g_thread.detach();
 #endif
@@ -91,9 +91,9 @@ void AppManager::CreateAppThread() {
 		pthread_attr_init(&attr);
 		pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
 		LogPrintDebug("CreateAppThread pthread_create");
-		pthread_create(&g_thread, &attr, &AppManager::BridgeFunction, this);
+		pthread_create(&g_thread, &attr, &FrameworkManager::BridgeFunction, this);
 	#else
-		pthread_create(&g_thread, NULL, &AppManager::BridgeFunction, this);
+		pthread_create(&g_thread, NULL, &FrameworkManager::BridgeFunction, this);
 	#endif
 		pthread_mutex_lock(&g_mutex);
 		while (!g_bAppRunning) {
@@ -104,7 +104,7 @@ void AppManager::CreateAppThread() {
 #endif
 }
 
-void AppManager::MainAppThread() {
+void FrameworkManager::MainAppThread() {
 
 	LogPrintDebug("MainAppThread");
 
@@ -144,7 +144,7 @@ void AppManager::MainAppThread() {
 }
 
 
-void AppManager::Join() {
+void FrameworkManager::Join() {
 #ifdef USE_C11_THREADS
 	#ifdef OS_WIN32
 		g_thread.join();
@@ -154,11 +154,11 @@ void AppManager::Join() {
 #endif
 }
 
-AppManager::~AppManager(){
+FrameworkManager::~FrameworkManager(){
 	LogPrintDebug("-~AppManager~~~~~~~~~~~~");
 }
 
-void AppManager::InitMutexAndVarConditions() {
+void FrameworkManager::InitMutexAndVarConditions() {
 	LogPrintDebug("InitMutexAndVarConditions");
 #ifndef USE_C11_THREADS
 	pthread_mutex_init(&g_mutex, NULL);

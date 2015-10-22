@@ -1,15 +1,15 @@
 // TestApplication.cpp : Defines the entry point for the console application.
 //
 
-#include <WindowManager/AppManager.h>
+#include <WindowManager/FrameworkManager.h>
 #include <iostream>
 #include <memory.h>
 
-AppManager					*pAppManager = 0;
+FrameworkManager					*pAppManager = 0;
 
 #ifdef OS_ANDROID
 
-#include <WindowManager/AndroidApp.h>
+#include <WindowManager/AndroidFramework.h>
 #include <Utils/Log.h>
 #include <android/configuration.h>
 #include <android/looper.h>
@@ -23,7 +23,7 @@ void ANativeActivity_onCreate(ANativeActivity* activity, void* savedState, size_
 
 	if (pAppManager==0) {
 		LogPrintDebug("ANativeActivity_onCreate: Activity Virgin");
-		pAppManager = new AppManager;
+		pAppManager = new FrameworkManager;
 		pAppManager->CreateApp();
 	}else{
 		LogPrintDebug("ANativeActivity_onCreate: Activity Changed");
@@ -40,18 +40,11 @@ void ANativeActivity_onCreate(ANativeActivity* activity, void* savedState, size_
 
 int main()
 {
-	pAppManager = new AppManager;
+	pAppManager = new FrameworkManager;
 
 	pAppManager->CreateApp();
 
-	hyperspace::video::CRenderState a, b;
-	b.draworder = hyperspace::video::draw_order_::CW;
-
-	std::cout << "iguales: " << (int)(a == b) << std::endl;
-
 	std::cout << "Join..." << std::endl;
-
-
 
 	pAppManager->Join();
 

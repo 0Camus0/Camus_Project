@@ -5,9 +5,9 @@
 #include <Driver/BaseDriver.h>
 #include <memory>
 
-class Win32App : public hyperspace::RootApp {
+class Win32Framework : public hyperspace::RootFramework {
 	public:
-		Win32App() {}
+		Win32Framework() {}
 		void InitGlobalVars();
 		void OnCreateApplication();
 		void OnDestroyApplication();

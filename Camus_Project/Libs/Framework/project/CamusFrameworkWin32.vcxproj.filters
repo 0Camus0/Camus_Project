@@ -20,14 +20,11 @@
     <Filter Include="Source Files\Driver\OpenGL">
       <UniqueIdentifier>{271a918e-8b67-4c58-8e1c-8cba0cfbfd1c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Scene">
+      <UniqueIdentifier>{33a44e59-99ea-4297-9763-13234e43d95f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\src\WindowManager\AppManager.cpp">
-      <Filter>Source Files\WindowManager</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\WindowManager\Win32App.cpp">
-      <Filter>Source Files\WindowManager</Filter>
-    </ClCompile>
     <ClCompile Include="..\src\Utils\WindowProperties.cpp">
       <Filter>Source Files\Utils</Filter>
     </ClCompile>
@@ -43,9 +40,6 @@
     <ClCompile Include="..\src\Utils\InputImplWin32.cpp">
       <Filter>Source Files\Utils</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\WindowManager\AndroidApp.cpp">
-      <Filter>Source Files\WindowManager</Filter>
-    </ClCompile>
     <ClCompile Include="..\src\WindowManager\AppPlatform.cpp">
       <Filter>Source Files\WindowManager</Filter>
     </ClCompile>
@@ -58,6 +52,15 @@
     <ClCompile Include="..\src\Driver\GLSLParser.cpp">
       <Filter>Source Files\Driver\OpenGL</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\WindowManager\AndroidFramework.cpp">
+      <Filter>Source Files\WindowManager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\WindowManager\Win32Framework.cpp">
+      <Filter>Source Files\WindowManager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\WindowManager\FrameworkManager.cpp">
+      <Filter>Source Files\WindowManager</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\Core\Core.h">
@@ -65,12 +68,6 @@
     </ClInclude>
     <ClInclude Include="..\include\Core\OS_Selector.h">
       <Filter>Source Files\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\WindowManager\AppManager.h">
-      <Filter>Source Files\WindowManager</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\WindowManager\Win32App.h">
-      <Filter>Source Files\WindowManager</Filter>
     </ClInclude>
     <ClInclude Include="..\include\Utils\WindowProperties.h">
       <Filter>Source Files\Utils</Filter>
@@ -108,11 +105,20 @@
     <ClInclude Include="..\include\Driver\RenderState.h">
       <Filter>Source Files\Driver</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\WindowManager\AndroidApp.h">
-      <Filter>Source Files\WindowManager</Filter>
-    </ClInclude>
     <ClInclude Include="..\include\Utils\Maths.h">
       <Filter>Source Files\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Scene\Scene.h">
+      <Filter>Source Files\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\WindowManager\AndroidFramework.h">
+      <Filter>Source Files\WindowManager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\WindowManager\Win32Framework.h">
+      <Filter>Source Files\WindowManager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\WindowManager\FrameworkManager.h">
+      <Filter>Source Files\WindowManager</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

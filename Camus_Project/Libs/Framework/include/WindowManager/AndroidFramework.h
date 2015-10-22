@@ -146,16 +146,16 @@ enum {
 
 #include <vector>
 
-class AndroidApp;
+class AndroidFramework;
 struct PollSource {
 	int				 id;
-	AndroidApp		*app;
-	void(*process)(AndroidApp *app, PollSource *source);
+	AndroidFramework		*app;
+	void(*process)(AndroidFramework *app, PollSource *source);
 };
 
-class AndroidApp : public hyperspace::RootApp {
+class AndroidFramework : public hyperspace::RootFramework {
 public:
-	AndroidApp();
+	AndroidFramework();
 	void InitGlobalVars();
 	void OnCreateApplication();
 	void OnDestroyApplication();
@@ -165,7 +165,7 @@ public:
 	void ProcessInput();
 	void ResetApplication();
 
-	~AndroidApp();
+	~AndroidFramework();
 
 private:
 	void PrintCurrentConfig();

@@ -33,17 +33,11 @@
     <ClInclude Include="..\include\Driver\DriverProperties.h">
       <Filter>Source Files\Driver</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\WindowManager\AppManager.h">
-      <Filter>Source Files\WindowManager</Filter>
-    </ClInclude>
     <ClInclude Include="..\include\Utils\Log.h">
       <Filter>Source Files\Utils</Filter>
     </ClInclude>
     <ClInclude Include="..\include\Utils\WindowProperties.h">
       <Filter>Source Files\Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\WindowManager\AndroidApp.h">
-      <Filter>Source Files\WindowManager</Filter>
     </ClInclude>
     <ClInclude Include="..\include\Utils\InputBase.h">
       <Filter>Source Files\Utils</Filter>
@@ -66,13 +60,19 @@
     <ClInclude Include="..\include\Utils\Maths.h">
       <Filter>Source Files\Utils</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\WindowManager\AndroidFramework.h">
+      <Filter>Source Files\WindowManager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\WindowManager\FrameworkManager.h">
+      <Filter>Source Files\WindowManager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\WindowManager\Win32Framework.h">
+      <Filter>Source Files\WindowManager</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\Driver\DriverProperties.cpp">
       <Filter>Source Files\Driver</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\WindowManager\AppManager.cpp">
-      <Filter>Source Files\WindowManager</Filter>
     </ClCompile>
     <ClCompile Include="..\src\Utils\Log.cpp">
       <Filter>Source Files\Utils</Filter>
@@ -80,20 +80,11 @@
     <ClCompile Include="..\src\Utils\WindowProperties.cpp">
       <Filter>Source Files\Utils</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\WindowManager\AndroidApp.cpp">
-      <Filter>Source Files\WindowManager</Filter>
-    </ClCompile>
     <ClCompile Include="..\src\Core\Core.cpp">
       <Filter>Source Files\Core</Filter>
     </ClCompile>
     <ClCompile Include="..\src\Utils\InputImplAndroid.cpp">
       <Filter>Source Files\Utils</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\WindowManager\AppPlatform.cpp">
-      <Filter>Source Files\WindowManager</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\WindowManager\Win32App.cpp">
-      <Filter>Source Files\WindowManager</Filter>
     </ClCompile>
     <ClCompile Include="..\src\Driver\BufferOpenGL.cpp">
       <Filter>Source Files\Driver\OpenGL</Filter>
@@ -103,6 +94,18 @@
     </ClCompile>
     <ClCompile Include="..\src\Driver\GLSLParser.cpp">
       <Filter>Source Files\Driver\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\WindowManager\AndroidFramework.cpp">
+      <Filter>Source Files\WindowManager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\WindowManager\AppPlatform.cpp">
+      <Filter>Source Files\WindowManager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\WindowManager\FrameworkManager.cpp">
+      <Filter>Source Files\WindowManager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\WindowManager\Win32Framework.cpp">
+      <Filter>Source Files\WindowManager</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

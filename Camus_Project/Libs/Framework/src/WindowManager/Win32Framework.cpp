@@ -1,5 +1,5 @@
 
-#include <WindowManager/Win32App.h>
+#include <WindowManager/Win32Framework.h>
 #include <Utils/WindowProperties.h>
 
 // SDL
@@ -33,11 +33,11 @@ float clip(float n, float lower, float upper) {
 extern bool g_bAppRunning;
 
 
-void Win32App::InitGlobalVars() {
+void Win32Framework::InitGlobalVars() {
 	hyperspace::GetWindowParameters().GatherProperties();
 }
 
-void Win32App::OnCreateApplication() {
+void Win32Framework::OnCreateApplication() {
 
 	SDL_Init(SDL_INIT_VIDEO);
 	SDL_WM_SetCaption("Camus Framework",0);
@@ -64,25 +64,25 @@ void Win32App::OnCreateApplication() {
 
 }
 
-void Win32App::OnDestroyApplication() {
+void Win32Framework::OnDestroyApplication() {
 		
 	SDL_Quit();
 
 }
 
-void Win32App::OnInterruptApplication() {
+void Win32Framework::OnInterruptApplication() {
 
 }
 
-void Win32App::ResetApplication() {
+void Win32Framework::ResetApplication() {
 
 }
 
-void Win32App::OnResumeApplication() {
+void Win32Framework::OnResumeApplication() {
 
 }
 
-void Win32App::UpdateApplication() {
+void Win32Framework::UpdateApplication() {
 
 	ProcessInput();	
 
@@ -92,7 +92,7 @@ void Win32App::UpdateApplication() {
 
 	float R = 0.0f, G = 0.0f, B = 0.0f;
 
-	ang += 0.1f;
+	ang += 0.001f;
 
 	R = (clip(std::sin(ang), 0.0f, 1.0f))*0.5f + 0.5f;
 	G = (clip(std::cos(ang + .70f), 0.0f, 1.0f))*0.5f + 0.5f;
@@ -102,7 +102,7 @@ void Win32App::UpdateApplication() {
 	pVideoDriver->SwapBuffers();
 }
 
-void Win32App::ProcessInput() {
+void Win32Framework::ProcessInput() {
 	SDL_Event       evento;
 
 	while (SDL_PollEvent(&evento)) {

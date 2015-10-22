@@ -26,9 +26,9 @@
 #include <android/native_activity.h>
 #endif
 
-class AppManager {
+class FrameworkManager {
 public:
-	AppManager() {}
+	FrameworkManager() {}
 	void	CreateApp();
 	void	MainAppThread();
 	void	ResetApp();
@@ -39,7 +39,7 @@ public:
 
 	
 
-	~AppManager();
+	~FrameworkManager();
 //#ifdef USE_C11_THREADS
 	static void* BridgeFunction(void *pctx);
 //#endif

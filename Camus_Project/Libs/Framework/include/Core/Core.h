@@ -5,7 +5,7 @@
 #include <Driver/BaseDriver.h>
 
 namespace hyperspace {
-	class RootApp {
+	class RootFramework {
 	public:
 		virtual void InitGlobalVars() = 0;
 		virtual void OnCreateApplication() = 0;
@@ -15,7 +15,7 @@ namespace hyperspace {
 		virtual void UpdateApplication() = 0;
 		virtual void ProcessInput() = 0;
 		virtual void ResetApplication() = 0;
-		virtual ~RootApp() = 0;
+		virtual ~RootFramework() = 0;
 
 		input::EventManager		*pEventManager;
 		video::BaseDriver		*pVideoDriver;

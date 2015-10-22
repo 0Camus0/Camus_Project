@@ -1,5 +1,5 @@
 #ifdef OS_ANDROID
-#include "AndroidApp.cpp"
+#include "AndroidFramework.cpp"
 #elif defined(WIN32)
-#include "Win32App.cpp"
+#include "Win32Framework.cpp"
 #endif
