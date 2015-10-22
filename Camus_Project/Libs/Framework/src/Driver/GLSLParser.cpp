@@ -19,7 +19,7 @@ namespace hyperspace{
 
 		void GLSL_Parser::Parse(std::string Path_) {
 			{
-				std::ifstream ifs((Path_ + std::string(".vert")).c_str());
+				std::ifstream ifs((Path_ + std::string("_VS.glsl")).c_str());
 				if (ifs.good()) {
 					std::string str((std::istreambuf_iterator<char>(ifs)), std::istreambuf_iterator<char>());
 					buffer_vertex = str;
@@ -28,7 +28,7 @@ namespace hyperspace{
 			}
 
 			{
-				std::ifstream ifs((Path_ + std::string(".frag")).c_str());
+				std::ifstream ifs((Path_ + std::string("_FS.glsl")).c_str());
 				if (ifs.good()) {
 					std::string str((std::istreambuf_iterator<char>(ifs)), std::istreambuf_iterator<char>());
 					buffer_fragment = str;
