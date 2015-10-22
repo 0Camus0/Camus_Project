@@ -49,6 +49,8 @@ void FrameworkManager::CreateApp(hyperspace::AppBase* pApp) {
 	g_Msgwrite = msgpipe[1];
 #endif
 
+	pApp->SetParentFramework(pFramework);
+
 	InitMutexAndVarConditions();
 
 	CreateAppThread();

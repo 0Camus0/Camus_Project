@@ -10,25 +10,25 @@
 
 #include <Driver/OpenGLDriver.h>
 
-#ifdef OS_WIN32
-#ifdef min
-#undef min
-#endif
-#ifdef max
-#undef max
-#endif
-#endif
-
-#include <algorithm>
-#include <iostream>
-#include <cmath>
-
-
-float clip(float n, float lower, float upper) {
-	return std::max(
-		lower,
-		std::min(n, upper));
-}
+// #ifdef OS_WIN32
+// #ifdef min
+// #undef min
+// #endif
+// #ifdef max
+// #undef max
+// #endif
+// #endif
+// 
+// #include <algorithm>
+// #include <iostream>
+// #include <cmath>
+// 
+// 
+// float clip(float n, float lower, float upper) {
+// 	return std::max(
+// 		lower,
+// 		std::min(n, upper));
+// }
 
 extern bool g_bAppRunning;
 
@@ -89,35 +89,24 @@ void Win32Framework::OnResumeApplication() {
 void Win32Framework::UpdateApplication() {
 
 	ProcessInput();
+	
+	if (pBaseApp->bPaused)
+		return;
 
 	pVideoDriver->Update();
 
 	pBaseApp->OnUpdate(0);
 
-
-
-	static float ang = 0.0f;
-
-	float R = 0.0f, G = 0.0f, B = 0.0f;
-
-	ang += 0.001f;
-
-	R = (clip(std::sin(ang), 0.0f, 1.0f))*0.5f + 0.5f;
-	G = (clip(std::cos(ang + .70f), 0.0f, 1.0f))*0.5f + 0.5f;
-	B = (clip(std::tan(ang + 1.44f), 0.0f, 1.0f))*0.5f + 0.5f;
-
-	pVideoDriver->Clear(hyperspace::video::draw_bits_::COLOR_BIT, R, G, B, 1.0f);
-
 	pBaseApp->OnDraw();
-
-	pVideoDriver->SwapBuffers();
 }
 
 void Win32Framework::ProcessInput() {
 	SDL_Event       evento;
 
 	while (SDL_PollEvent(&evento)) {
-		//	printf("SDL_PollEvent IS: %d \n", (int)evento.type);
+
+		if(pBaseApp->bPaused && evento.type == SDL_KEYDOWN)
+			continue;
 
 		switch (evento.type) {
 		case SDL_KEYDOWN: {

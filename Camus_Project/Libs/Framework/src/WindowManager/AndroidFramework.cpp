@@ -18,17 +18,6 @@ extern pthread_mutex_t					g_mutex;
 extern pthread_cond_t					g_cond;
 #endif
 
-#include <algorithm>
-#include <iostream>
-#include <cmath>
-
-
-float clip(float n, float lower, float upper) {
-	return std::max(
-		lower,
-		std::min(n, upper));
-}
-
 
 extern int		g_Mgread;
 extern int		g_Msgwrite;
@@ -281,24 +270,14 @@ void AndroidFramework::UpdateApplication() {
 		}
 	}
 
-
 	pEventManager->queue.clear();
-	
-	pVideoDriver->Update();
 
-	static float ang = 0.0f;
+	if (!pBaseApp->bPaused) {
+		pVideoDriver->Update();
+		pBaseApp->OnUpdate(0);
+		pBaseApp->OnDraw();
+	}
 
-	float R = 0.0f, G = 0.0f, B = 0.0f;
-
-	ang += 0.02f;
-
-	R = (clip(std::sin(ang), 0.0f, 1.0f))*0.5f + 0.5f;
-	G = (clip(std::cos(ang + .70f), 0.0f, 1.0f))*0.5f + 0.5f;
-	B = (clip(std::tan(ang + 1.44f), 0.0f, 1.0f))*0.5f + 0.5f;
-
-	pVideoDriver->Clear(hyperspace::video::draw_bits_::COLOR_BIT, R, G, B, 1.0f);
-
-	pVideoDriver->SwapBuffers();
 
 	CheckSuspend(this);
 }

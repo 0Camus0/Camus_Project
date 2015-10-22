@@ -68,7 +68,10 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="..\include\WindowManager\FrameworkManager.h" />
-    <ClInclude Include="..\include\WindowManager\Win32Framework.h" />
+    <ClInclude Include="..\include\WindowManager\Win32Framework.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{260648F0-902D-4587-B992-AF273A735290}</ProjectGuid>

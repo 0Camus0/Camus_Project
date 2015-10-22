@@ -6,9 +6,11 @@
 
 namespace hyperspace {
 
+	class RootFramework;
+
 	class AppBase {
 	public:
-		AppBase() : bInited(false) {}
+		AppBase() : bInited(false), bPaused(false), pFramework(0) {}
 		virtual void CreateAssets() = 0;
 		virtual void DestroyAssets() = 0;
 
@@ -20,8 +22,14 @@ namespace hyperspace {
 		virtual void OnResume() = 0;
 
 		virtual void OnReset() = 0;
+		
+		void	SetParentFramework(RootFramework* pParentFramework) {
+			pFramework = pParentFramework;
+		}
 
-		bool bInited;
+		bool			bInited;
+		bool			bPaused;
+		RootFramework	*pFramework;
 	};
 
 	class RootFramework {
