@@ -22,6 +22,7 @@
     <ClCompile Include="..\src\Core\Core.cpp" />
     <ClCompile Include="..\src\Driver\BufferOpenGL.cpp" />
     <ClCompile Include="..\src\Driver\DriverProperties.cpp" />
+    <ClCompile Include="..\src\Driver\EffectGL.cpp" />
     <ClCompile Include="..\src\Driver\GLSLParser.cpp" />
     <ClCompile Include="..\src\Driver\OpenGlDriver.cpp" />
     <ClCompile Include="..\src\Utils\InputImplWin32.cpp" />
@@ -51,12 +52,14 @@
     <ClInclude Include="..\include\Driver\Buffer.h" />
     <ClInclude Include="..\include\Driver\BufferOpenGL.h" />
     <ClInclude Include="..\include\Driver\DriverProperties.h" />
+    <ClInclude Include="..\include\Driver\EffectGL.h" />
     <ClInclude Include="..\include\Driver\GLSLParser.h" />
     <ClInclude Include="..\include\Driver\OpenGLDriver.h" />
     <ClInclude Include="..\include\Driver\RenderState.h" />
     <ClInclude Include="..\include\Driver\ShaderBase.h" />
     <ClInclude Include="..\include\Driver\Technique.h" />
     <ClInclude Include="..\include\Scene\Scene.h" />
+    <ClInclude Include="..\include\Utils\FileSystem.h" />
     <ClInclude Include="..\include\Utils\InputBase.h" />
     <ClInclude Include="..\include\Utils\Log.h" />
     <ClInclude Include="..\include\Utils\Maths.h" />

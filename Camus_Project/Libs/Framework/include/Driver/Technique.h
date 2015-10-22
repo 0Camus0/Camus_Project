@@ -17,9 +17,9 @@ namespace hyperspace {
 			CRenderStateDesc	renderstate;
 		};
 
-		class CTechnique {
+		class CTechnique_ {
 		public:
-			CTechnique() {}
+			CTechnique_() {}
 			virtual void			Initialize(std::string name, std::string shader) = 0;
 			virtual void			AddPass(Pass_ pass) = 0;
 			virtual void			RemovePass(int id) = 0;
@@ -33,9 +33,9 @@ namespace hyperspace {
 
 		};
 
-		class CEffect {
+		class CEffect_ {
 		public:
-			virtual void	AddTechnique(CTechnique* tech) = 0;
+			virtual void	AddTechnique(CTechnique_* tech) = 0;
 			virtual void	RemoveTechnique(std::string name) = 0;
 
 			virtual	void	SetBool(std::string handler, bool &) = 0;
@@ -47,7 +47,9 @@ namespace hyperspace {
 			virtual	void	SetMat3(std::string handler, float*) = 0;
 			virtual	void	SetMat4(std::string handler, XMATRIX44 &) = 0;
 
-			std::vector<CTechnique*>	Techniques;
+			virtual void	SetTechnique(std::string name) = 0;
+
+			std::vector<CTechnique_*>	Techniques;
 		};
 
 	}
