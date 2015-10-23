@@ -11,7 +11,7 @@ namespace hyperspace {
 		public:
 			TechniqueGL() : CurrentPass(0) { }
 			 void			Initialize(std::string name, std::string shader);
-			 void			AddPass(std::string name, std::string args, std::string path, CRenderStateDesc desc);
+			 void			AddPass(std::string name, ArgumentsManager args, std::string path, CRenderStateDesc desc);
 			 void			RemovePass(std::size_t id);
 			 std::int32_t	GetNumPasses();
 			 void			SetPass(std::size_t id);

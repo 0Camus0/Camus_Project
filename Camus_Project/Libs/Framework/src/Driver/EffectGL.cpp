@@ -6,6 +6,8 @@
 
 #include <fstream>
 
+#define SHOW_SHADERS_CONTENT 0
+
 namespace hyperspace {
 	namespace video {
 
@@ -21,19 +23,21 @@ namespace hyperspace {
 			LogPrintDebug("TechniqueGL::Initialize Path to use: %s " ,Path.c_str());
 
 			Parser.Parse(Path);
-
 			CRenderStateDesc desc;
-			AddPass("0", "", Path, desc);
+			ArgumentsManager man;
+			man.AddArgument("POSITION");
+			man.AddArgument("NORMAL");
+			AddPass("0", man, Path, desc);
 
 		}
 
-		void TechniqueGL::AddPass(std::string name, std::string args, std::string path, CRenderStateDesc desc) {
+		void TechniqueGL::AddPass(std::string name, ArgumentsManager args, std::string path, CRenderStateDesc desc) {
 			Pass_ pass;
 			pass.args = args;
 			pass.name = name;
 			pass.path = path;
-			pass.vertexID = CompileShader(shader::stage_::VERTEX_SHADER, (pass.path + std::string("_VS.glsl")), "");
-			pass.pixelID = CompileShader(shader::stage_::PIXEL_SHADER, (pass.path + std::string("_FS.glsl")), "");
+			pass.vertexID = CompileShader(shader::stage_::VERTEX_SHADER, (pass.path + std::string("_VS.glsl")), pass.args.BuildArgumentListGLStyle());
+			pass.pixelID = CompileShader(shader::stage_::PIXEL_SHADER, (pass.path + std::string("_FS.glsl")), pass.args.BuildArgumentListGLStyle());
 			CreateProgram(pass);
 			GetHandlers(pass);
 			Passes.push_back(pass);
@@ -89,10 +93,11 @@ namespace hyperspace {
 			std::string strSource = args;
 			strSource += std::string(pSource);
 
-			LogPrintDebug("Compiling Shader %s ...", path.c_str());
+			LogPrintDebug("Compiling shader [%s] with args [%s] ...", path.c_str(),args.c_str());
 
-			// LogPrintDebug("Content\n\n%s\n\n", strSource.c_str());
-
+#if SHOW_SHADERS_CONTENT
+			LogPrintDebug("Content\n[%s]\n", strSource.c_str());
+#endif
 			unsigned int Id = glCreateShader(type);
 			const char *c_str = strSource.c_str();
 			glShaderSource(Id, 1,&c_str, NULL);

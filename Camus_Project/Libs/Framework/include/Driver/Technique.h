@@ -14,15 +14,50 @@ namespace hyperspace {
 
 		typedef std::map<shader::Shader_Var_, int> Handlers;
 
+		class ArgumentsManager {
+		public:
+			ArgumentsManager() {
+				arguments = "";
+			}
+			void AddArgument(std::string arg) {
+				individuals.push_back(arg);
+			}
+			void ClearArguments(){
+				individuals.clear();
+				arguments.clear();
+			}
+			std::string	 BuildArgumentListGLStyle() {
+				if (individuals.size() == 0) {
+					return "";
+				}
+				arguments = "\n\n";
+				for (std::size_t i = 0; i < individuals.size(); i++) {
+					arguments += "#define " + individuals[i] + "\n";
+				}
+				arguments += "\n";
+				return arguments;
+			}
+			std::string	 BuildArgumentListDXStyle() {
+				arguments = "";
+				for (std::size_t i = 0; i < individuals.size(); i++) {
+					arguments += "-D " + individuals[i] + " ";
+				}
+				return arguments;
+			}
+
+			std::vector <std::string>	individuals;
+			std::string					arguments;
+		};
+
 		struct Pass_ {
 			Pass_() : vertexID(0), pixelID(0), program(0){}
 			int						vertexID;
 			int						pixelID;
 			int						program;
 			CRenderStateDesc		renderstate;
-			std::string				name;
-			std::string				args;
+			std::string				name;	
 			std::string				path;
+			ArgumentsManager		args;
 			Handlers				handlers;
 		};
 
@@ -30,7 +65,7 @@ namespace hyperspace {
 		public:
 			CTechnique_() {}
 			virtual void			Initialize(std::string name, std::string shader) = 0;
-			virtual void			AddPass(std::string name,std::string args,std::string path,CRenderStateDesc desc) = 0;
+			virtual void			AddPass(std::string name, ArgumentsManager args,std::string path,CRenderStateDesc desc) = 0;
 			virtual void			RemovePass(std::size_t id) = 0;
 			virtual std::int32_t	GetNumPasses() = 0;
 			virtual void			SetPass(std::size_t id) = 0;
