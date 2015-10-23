@@ -31,9 +31,9 @@ namespace hyperspace {
 			CTechnique_() {}
 			virtual void			Initialize(std::string name, std::string shader) = 0;
 			virtual void			AddPass(std::string name,std::string args,std::string path,CRenderStateDesc desc) = 0;
-			virtual void			RemovePass(int id) = 0;
+			virtual void			RemovePass(std::size_t id) = 0;
 			virtual std::int32_t	GetNumPasses() = 0;
-			virtual void			SetPass(int index) = 0;
+			virtual void			SetPass(std::size_t id) = 0;
 			virtual unsigned int	CompileShader(shader::stage_ type, std::string path, std::string args) = 0;
 
 

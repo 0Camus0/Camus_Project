@@ -9,13 +9,15 @@ namespace hyperspace {
 
 		class TechniqueGL : public CTechnique_ {
 		public:
+			TechniqueGL() : CurrentPass(0) { }
 			 void			Initialize(std::string name, std::string shader);
 			 void			AddPass(std::string name, std::string args, std::string path, CRenderStateDesc desc);
-			 void			RemovePass(int id);
+			 void			RemovePass(std::size_t id);
 			 std::int32_t	GetNumPasses();
-			 void			SetPass(int index);
+			 void			SetPass(std::size_t id);
 
 			 GLSL_Parser	Parser;
+			 Pass_			*CurrentPass;
 
 		private:
 			unsigned int	CompileShader(shader::stage_ type, std::string path, std::string args);

@@ -37,18 +37,27 @@ namespace hyperspace {
 			CreateProgram(pass);
 			GetHandlers(pass);
 			Passes.push_back(pass);
+			SetPass(0);
 		}
 
-		void TechniqueGL::RemovePass(int id) {
-
+		void TechniqueGL::RemovePass(std::size_t id) {
+			if (id >= Passes.size())
+				return;
+		
+			Pass_ &pass = Passes[id];
+			glDetachShader(pass.program, pass.vertexID);
+			glDetachShader(pass.program, pass.pixelID);
+			glDeleteProgram(pass.program);
+			Passes.erase(Passes.begin() + id);
 		}
 
 		std::int32_t TechniqueGL::GetNumPasses() {
 			return Passes.size();
 		}
 
-		void TechniqueGL::SetPass(int index) {
-
+		void TechniqueGL::SetPass(std::size_t id) {
+			CurrentPass = &Passes[0];
+			glUseProgram(CurrentPass->program);
 		}
 
 		unsigned int TechniqueGL::CompileShader(shader::stage_ type_, std::string path, std::string args) {
@@ -127,7 +136,6 @@ namespace hyperspace {
 				if (loc != -1) {
 					shader::Shader_Var_ handler;
 					handler = Parser.attributes[i];
-					LogPrintDebug("Inserting Attribute: %s  Id: %d  Type: %d", handler.name.c_str(), loc, handler.type);
 					pass.handlers.insert(std::pair<shader::Shader_Var_, int>(handler, loc));
 					number++;
 				}
@@ -138,17 +146,10 @@ namespace hyperspace {
 				if (loc != -1) {
 					shader::Shader_Var_ handler;
 					handler = Parser.uniforms[i];
-					LogPrintDebug("Inserting Uniform: %s  Id: %d  Type: %d", handler.name.c_str(), loc, handler.type);
 					pass.handlers.insert(std::pair<shader::Shader_Var_, int>(handler, loc));
 					number++;
 				}
 			}		
-
-			for (Handlers::iterator it = pass.handlers.begin(); it != pass.handlers.end(); it++) {
-				LogPrintDebug("Name: [%s]  Id: %d Type: %d", it->first.name.c_str(), it->second, it->first.sem);
-			}
-
-			LogPrintDebug("Num hanlders is: %d ", number, pass.handlers.size());
 		}
 
 
