@@ -12,20 +12,25 @@
 namespace hyperspace {
 	namespace video {
 
+		typedef std::map<shader::Shader_Var_, int> Handlers;
+
 		struct Pass_ {
-			Pass_() : pVertexShader(0),pPixelShader(0) {}
+			Pass_() : vertexID(0), pixelID(0), program(0){}
+			int						vertexID;
+			int						pixelID;
+			int						program;
+			CRenderStateDesc		renderstate;
 			std::string				name;
 			std::string				args;
-			CRenderStateDesc		renderstate;
-			shader::CVertexShader_	*pVertexShader;
-			shader::CPixelShader_	*pPixelShader;
+			std::string				path;
+			Handlers				handlers;
 		};
 
 		class CTechnique_ {
 		public:
 			CTechnique_() {}
 			virtual void			Initialize(std::string name, std::string shader) = 0;
-			virtual void			AddPass(Pass_ pass) = 0;
+			virtual void			AddPass(std::string name,std::string args,std::string path,CRenderStateDesc desc) = 0;
 			virtual void			RemovePass(int id) = 0;
 			virtual std::int32_t	GetNumPasses() = 0;
 			virtual void			SetPass(int index) = 0;

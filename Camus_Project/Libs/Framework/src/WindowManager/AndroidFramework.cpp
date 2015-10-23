@@ -218,7 +218,7 @@ void AndroidFramework::CheckState(){
 	pthread_mutex_unlock(&g_mutex);
 #endif
 
-	for (int i = 0; i < currentStates.size(); i++){
+	for (std::size_t i = 0; i < currentStates.size(); i++){
 		switch (currentStates[i]) {
 			case APP_CMD_INIT_WINDOW: {
 				pVideoDriver->SetWindow((void*)m_pWindow);
@@ -405,8 +405,8 @@ void AndroidFramework::onStart(ANativeActivity* activity){
 #else
 	pthread_mutex_lock(&g_mutex);
 	AndroidFramework *_app = (AndroidFramework*)(pFramework);
-	if(_app)
-		_app->m_ActivityStateQueue.push_back(APP_CMD_START)
+	if (_app)
+		_app->m_ActivityStateQueue.push_back(APP_CMD_START);
 	pthread_mutex_unlock(&g_mutex);
 #endif
 	
@@ -599,8 +599,8 @@ void AndroidFramework::onInputQueueDestroyed(ANativeActivity* activity, AInputQu
 	pthread_mutex_lock(&g_mutex);
 	AndroidFramework *_app = (AndroidFramework*)(pFramework);
 	if (_app) {
-		_app->m_pInputQueue = 0;
 		AInputQueue_detachLooper(_app->m_pInputQueue);
+		_app->m_pInputQueue = 0;
 	}
 	pthread_mutex_unlock(&g_mutex);
 #endif

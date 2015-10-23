@@ -122,5 +122,8 @@
     <ClCompile Include="..\src\Utils\FileSystem.cpp">
       <Filter>Source Files\Utils</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\Driver\ShaderBase.cpp">
+      <Filter>Source Files\Driver</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

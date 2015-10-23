@@ -48,7 +48,7 @@ namespace hyperspace{
 			std::vector<std::string> tokens{ std::istream_iterator<std::string>{iss},
 				std::istream_iterator<std::string>{} };
 
-			int pos = 0;
+			std::size_t pos = 0;
 			for (std::size_t i = 0; i < tokens.size(); i++) {
 
 				if ((pos = tokens[i].find("uniform")) != std::string::npos) {
@@ -72,8 +72,9 @@ namespace hyperspace{
 				token_pos++;
 			}
 
-			GLSL_Var_ var_;
+			shader::Shader_Var_ var_;
 			var_.name = v[token_pos].substr(0, v[token_pos].size() - 1);
+			var_.name[var_.name.size()] = 0;
 			var_.stage = current_stage;
 			DetermineSemantic(var_, v[pos]);
 			DetermineType(var_, v[token_pos - 1]);
@@ -94,7 +95,7 @@ namespace hyperspace{
 
 		}
 
-		void GLSL_Parser::DetermineSemantic(GLSL_Var_ &var, std::string &str) {
+		void GLSL_Parser::DetermineSemantic(shader::Shader_Var_ &var, std::string &str) {
 			if (str.find("uniform") != std::string::npos) {
 				var.sem = shader::semantic_::UNIFORM;
 			}
@@ -109,7 +110,7 @@ namespace hyperspace{
 			}
 		}
 
-		void GLSL_Parser::DetermineType(GLSL_Var_ &var, std::string &str) {
+		void GLSL_Parser::DetermineType(shader::Shader_Var_ &var, std::string &str) {
 			if (str.find("int") != std::string::npos) {
 				var.type = shader::datatype_::INT_;
 			}

@@ -137,13 +137,21 @@ void FrameworkManager::MainAppThread() {
 	pFramework->OnDestroyApplication();
 
 	
-
+#ifdef USE_C11_THREADS
 	g_mutex.lock();
+#else
+	pthread_mutex_lock(&g_mutex);
+#endif
 	LogPrintDebug("MainAppThread deleting app");
 	delete pFramework;
 	pFramework = 0;
+#ifdef USE_C11_THREADS
 	g_cond.notify_all();
 	g_mutex.unlock();
+#else
+	pthread_cond_broadcast(&g_cond);
+	pthread_mutex_unlock(&g_mutex);
+#endif
 }
 
 

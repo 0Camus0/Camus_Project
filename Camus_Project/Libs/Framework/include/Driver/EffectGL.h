@@ -7,26 +7,10 @@
 namespace hyperspace {
 	namespace video {
 
-		namespace shader {
-			class VertexShaderGL :public CVertexShader_{
-			public:
-				VertexShaderGL(unsigned int id) {
-					ID = id;
-				}
-			};
-
-			class PixelShaderGL :public CPixelShader_ {
-			public:
-				PixelShaderGL(unsigned int id) {	
-					ID = id;
-				}
-			};
-		}
-
 		class TechniqueGL : public CTechnique_ {
 		public:
 			 void			Initialize(std::string name, std::string shader);
-			 void			AddPass(Pass_ pass);
+			 void			AddPass(std::string name, std::string args, std::string path, CRenderStateDesc desc);
 			 void			RemovePass(int id);
 			 std::int32_t	GetNumPasses();
 			 void			SetPass(int index);
@@ -35,6 +19,8 @@ namespace hyperspace {
 
 		private:
 			unsigned int	CompileShader(shader::stage_ type, std::string path, std::string args);
+			void			GetHandlers(Pass_ &pass);
+			void			CreateProgram(Pass_ &pass);
 		};
 
 		class EffectGL : public CEffect_ {

@@ -22,21 +22,21 @@ namespace hyperspace {
 
 			Parser.Parse(Path);
 
-
-			auto idVertex = CompileShader(shader::stage_::VERTEX_SHADER, (Path + std::string("_VS.glsl")), "");
-			auto idPixel = CompileShader(shader::stage_::PIXEL_SHADER, (Path + std::string("_FS.glsl")), "");
-
-			Pass_ pass0;
-			pass0.args = "";
-			pass0.name = "0";
-			pass0.pVertexShader = new shader::VertexShaderGL(idVertex);
-			pass0.pPixelShader = new shader::PixelShaderGL(idPixel);
-			Passes.push_back(pass0);
+			CRenderStateDesc desc;
+			AddPass("0", "", Path, desc);
 
 		}
 
-		void TechniqueGL::AddPass(Pass_ pass) {
-
+		void TechniqueGL::AddPass(std::string name, std::string args, std::string path, CRenderStateDesc desc) {
+			Pass_ pass;
+			pass.args = args;
+			pass.name = name;
+			pass.path = path;
+			pass.vertexID = CompileShader(shader::stage_::VERTEX_SHADER, (pass.path + std::string("_VS.glsl")), "");
+			pass.pixelID = CompileShader(shader::stage_::PIXEL_SHADER, (pass.path + std::string("_FS.glsl")), "");
+			CreateProgram(pass);
+			GetHandlers(pass);
+			Passes.push_back(pass);
 		}
 
 		void TechniqueGL::RemovePass(int id) {
@@ -44,7 +44,7 @@ namespace hyperspace {
 		}
 
 		std::int32_t TechniqueGL::GetNumPasses() {
-			return 1;
+			return Passes.size();
 		}
 
 		void TechniqueGL::SetPass(int index) {
@@ -111,6 +111,44 @@ namespace hyperspace {
 			delete [] pSource;
 
 			return Id;
+		}
+
+		void TechniqueGL::CreateProgram(Pass_ &pass) {
+			pass.program = glCreateProgram();
+			glAttachShader(pass.program, pass.vertexID);
+			glAttachShader(pass.program, pass.pixelID);
+			glLinkProgram(pass.program);
+		}
+
+		void TechniqueGL::GetHandlers(Pass_ &pass) {
+			int number = 0;
+			for (std::size_t i = 0; i < Parser.attributes.size(); i++) {
+				int loc = glGetAttribLocation(pass.program, Parser.attributes[i].name.c_str());
+				if (loc != -1) {
+					shader::Shader_Var_ handler;
+					handler = Parser.attributes[i];
+					LogPrintDebug("Inserting Attribute: %s  Id: %d  Type: %d", handler.name.c_str(), loc, handler.type);
+					pass.handlers.insert(std::pair<shader::Shader_Var_, int>(handler, loc));
+					number++;
+				}
+			}
+
+			for (std::size_t i = 0; i < Parser.uniforms.size(); i++) {
+				int loc = glGetUniformLocation(pass.program, Parser.uniforms[i].name.c_str());
+				if (loc != -1) {
+					shader::Shader_Var_ handler;
+					handler = Parser.uniforms[i];
+					LogPrintDebug("Inserting Uniform: %s  Id: %d  Type: %d", handler.name.c_str(), loc, handler.type);
+					pass.handlers.insert(std::pair<shader::Shader_Var_, int>(handler, loc));
+					number++;
+				}
+			}		
+
+			for (Handlers::iterator it = pass.handlers.begin(); it != pass.handlers.end(); it++) {
+				LogPrintDebug("Name: [%s]  Id: %d Type: %d", it->first.name.c_str(), it->second, it->first.sem);
+			}
+
+			LogPrintDebug("Num hanlders is: %d ", number, pass.handlers.size());
 		}
 
 

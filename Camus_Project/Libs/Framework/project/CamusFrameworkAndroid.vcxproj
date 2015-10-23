@@ -56,6 +56,7 @@
     <ClCompile Include="..\src\Driver\EffectGL.cpp" />
     <ClCompile Include="..\src\Driver\GLSLParser.cpp" />
     <ClCompile Include="..\src\Driver\OpenGlDriver.cpp" />
+    <ClCompile Include="..\src\Driver\ShaderBase.cpp" />
     <ClCompile Include="..\src\Utils\FileSystem.cpp" />
     <ClCompile Include="..\src\Utils\InputImplAndroid.cpp" />
     <ClCompile Include="..\src\Utils\Log.cpp" />
@@ -92,7 +93,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>Clang_3_6</PlatformToolset>
+    <PlatformToolset>Gcc_4_9</PlatformToolset>
     <UseOfStl>gnustl_static</UseOfStl>
     <AndroidAPILevel>android-19</AndroidAPILevel>
   </PropertyGroup>
@@ -104,7 +105,8 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>Clang_3_6</PlatformToolset>
+    <PlatformToolset>Gcc_4_9</PlatformToolset>
+    <UseOfStl>gnustl_static</UseOfStl>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings" />
@@ -133,7 +135,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <CppLanguageStandard>c++11</CppLanguageStandard>
-      <PreprocessorDefinitions>OS_ANDROID;USE_DEBUG;USE_C11_THREADS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>OS_ANDROID;USE_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(ProjectDir)..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
   </ItemDefinitionGroup>
@@ -150,6 +152,7 @@
       <AdditionalIncludeDirectories>$(VS_NdkRoot)\platforms\$(AndroidAPILevel)\arch-arm\usr\include;$(StlIncludeDirectories)%(AdditionalIncludeDirectories);$(ProjectDir)..\include;</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>OS_ANDROID;USE_DEBUG;USE_C11_THREADS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <CppLanguageStandard>c++11</CppLanguageStandard>
+      <DebugInformationFormat>None</DebugInformationFormat>
     </ClCompile>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

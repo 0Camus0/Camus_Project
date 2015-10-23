@@ -1,6 +1,9 @@
 #ifndef GLSL_BASE_H
 #define GLSL_BASE_H
 
+#include <iostream>
+#include <string>
+
 namespace hyperspace {
 	namespace video {
 		namespace shader {
@@ -36,16 +39,18 @@ namespace hyperspace {
 				UNKNOWN_TYPE
 			};
 
-			class CVertexShader_ {
+			class Shader_Var_ {
 			public:
-				CVertexShader_(){}
-				unsigned int	ID;
-			};
+				shader::semantic_	sem;
+				shader::datatype_	type;
+				shader::stage_		stage;
+				std::string			name;
 
-			class CPixelShader_ {
-			public:
-				CPixelShader_(){}
-				unsigned int	ID;
+				bool operator ==(const Shader_Var_ &o) const;
+				bool operator !=(const Shader_Var_ &o) const;
+				bool operator <(const Shader_Var_ &o) const;
+				bool operator >(const Shader_Var_ &o) const;
+				
 			};
 		}
 	}
