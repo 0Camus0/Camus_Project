@@ -19,33 +19,49 @@ namespace hyperspace {
 			ArgumentsManager() {
 				arguments = "";
 			}
-			void AddArgument(std::string arg) {
-				individuals.push_back(arg);
+			ArgumentsManager(std::string str) {
+				if (!str.empty()) {
+					if (str[str.size() - 1] != ';') {
+						str += ";";
+					}
+					std::size_t pos = str.find(";");
+					std::size_t length = 0;
+					std::size_t tempPos = 0;
+					while (pos != std::string::npos) {
+						length = pos - tempPos;
+						defines.push_back(str.substr(tempPos, length));
+						tempPos = pos + 1;
+						pos = str.find(";", pos + 1);
+					}
+				}
+			}
+			void AddDefine(std::string arg) {
+				defines.push_back(arg);
 			}
 			void ClearArguments(){
-				individuals.clear();
+				defines.clear();
 				arguments.clear();
 			}
 			std::string	 BuildArgumentListGLStyle() {
-				if (individuals.size() == 0) {
+				if (defines.size() == 0) {
 					return "";
 				}
 				arguments = "\n\n";
-				for (std::size_t i = 0; i < individuals.size(); i++) {
-					arguments += "#define " + individuals[i] + "\n";
+				for (std::size_t i = 0; i < defines.size(); i++) {
+					arguments += "#define " + defines[i] + "\n";
 				}
 				arguments += "\n";
 				return arguments;
 			}
 			std::string	 BuildArgumentListDXStyle() {
 				arguments = "";
-				for (std::size_t i = 0; i < individuals.size(); i++) {
-					arguments += "-D " + individuals[i] + " ";
+				for (std::size_t i = 0; i < defines.size(); i++) {
+					arguments += "-D " + defines[i] + " ";
 				}
 				return arguments;
 			}
 
-			std::vector <std::string>	individuals;
+			std::vector <std::string>	defines;
 			std::string					arguments;
 		};
 

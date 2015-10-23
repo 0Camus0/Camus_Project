@@ -21,13 +21,8 @@ namespace hyperspace {
 			Path += shader;
 
 			LogPrintDebug("TechniqueGL::Initialize Path to use: %s " ,Path.c_str());
-
 			Parser.Parse(Path);
-			CRenderStateDesc desc;
-			ArgumentsManager man;
-			man.AddArgument("POSITION");
-			man.AddArgument("NORMAL");
-			AddPass("0", man, Path, desc);
+			AddPass("0", ArgumentsManager(""), Path, CRenderStateDesc());
 
 		}
 
