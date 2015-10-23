@@ -35,6 +35,18 @@ namespace hyperspace {
 				SAMPLERCUBE_,
 				UNKNOWN_TYPE
 			};
+
+			class CVertexShader_ {
+			public:
+				CVertexShader_(){}
+				unsigned int	ID;
+			};
+
+			class CPixelShader_ {
+			public:
+				CPixelShader_(){}
+				unsigned int	ID;
+			};
 		}
 	}
 }

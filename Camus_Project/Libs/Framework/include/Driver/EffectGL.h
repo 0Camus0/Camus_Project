@@ -7,6 +7,22 @@
 namespace hyperspace {
 	namespace video {
 
+		namespace shader {
+			class VertexShaderGL :public CVertexShader_{
+			public:
+				VertexShaderGL(unsigned int id) {
+					ID = id;
+				}
+			};
+
+			class PixelShaderGL :public CPixelShader_ {
+			public:
+				PixelShaderGL(unsigned int id) {	
+					ID = id;
+				}
+			};
+		}
+
 		class TechniqueGL : public CTechnique_ {
 		public:
 			 void			Initialize(std::string name, std::string shader);
@@ -16,6 +32,9 @@ namespace hyperspace {
 			 void			SetPass(int index);
 
 			 GLSL_Parser	Parser;
+
+		private:
+			unsigned int	CompileShader(shader::stage_ type, std::string path, std::string args);
 		};
 
 		class EffectGL : public CEffect_ {

@@ -7,7 +7,7 @@
 #endif
 
 #if USE_SHOW_THREADS_IDS || USE_COLORED_CONSOLE || defined(OS_WIN32)
-static char Log_Buffer[1024];	// 1 Kb should be enough
+static char Log_Buffer[1024*1024];	// 1 Kb should be enough
 #endif
 
 #if defined(OS_ANDROID) && defined(USE_DEBUG) && USE_SHOW_THREADS_IDS

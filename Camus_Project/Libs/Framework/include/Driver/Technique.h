@@ -2,6 +2,7 @@
 #define CA_TECHNIQUE_H
 
 #include <Driver/RenderState.h>
+#include <Driver/ShaderBase.h>
 #include <Utils/Maths.h>
 #include <string>
 #include <vector>
@@ -12,9 +13,12 @@ namespace hyperspace {
 	namespace video {
 
 		struct Pass_ {
-			std::string			name;
-			std::string			args;
-			CRenderStateDesc	renderstate;
+			Pass_() : pVertexShader(0),pPixelShader(0) {}
+			std::string				name;
+			std::string				args;
+			CRenderStateDesc		renderstate;
+			shader::CVertexShader_	*pVertexShader;
+			shader::CPixelShader_	*pPixelShader;
 		};
 
 		class CTechnique_ {
@@ -25,6 +29,7 @@ namespace hyperspace {
 			virtual void			RemovePass(int id) = 0;
 			virtual std::int32_t	GetNumPasses() = 0;
 			virtual void			SetPass(int index) = 0;
+			virtual unsigned int	CompileShader(shader::stage_ type, std::string path, std::string args) = 0;
 
 
 			std::string			Name;
