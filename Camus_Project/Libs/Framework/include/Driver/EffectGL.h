@@ -23,6 +23,7 @@ namespace hyperspace {
 			 void			SetFloat(std::string handler, float &);
 			 void			SetVec2(std::string handler, XVECTOR2 &);
 			 void			SetVec3(std::string handler, XVECTOR3 &);
+			 void			SetVec4(std::string handler, XVECTOR3 &);
 			 void			SetMat2(std::string handler, float*);
 			 void			SetMat3(std::string handler, float*);
 			 void			SetMat4(std::string handler, XMATRIX44 &);

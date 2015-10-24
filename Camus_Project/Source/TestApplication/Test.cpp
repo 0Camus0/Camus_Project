@@ -1,5 +1,6 @@
 #include "Test.h"
 #include <Utils/Log.h>
+#include <Driver/Technique.h>
 #include <Driver/EffectGL.h>
 
 #ifdef OS_WIN32
@@ -25,9 +26,10 @@ float clip(float n, float lower, float upper) {
 void TestApp::CreateAssets() {
 	LogPrintDebug("TestApp::CreateAssets\n");
 
-	hyperspace::video::TechniqueGL AllTechnique;
-	AllTechnique.Initialize("All-tech", "All");
+	hyperspace::video::CTechnique_ *AllTechnique = new hyperspace::video::TechniqueGL();
+	AllTechnique->Initialize("All-tech", "All");
 
+	delete AllTechnique;
 	
 	bInited = true;
 }

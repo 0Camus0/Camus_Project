@@ -170,27 +170,52 @@ namespace hyperspace {
 		}
 
 		void TechniqueGL::SetFloat(std::string handler, float &f) {
-
+			Handlers::iterator it = CurrentPass->handlers.find(handler);
+			if (it != CurrentPass->handlers.end()) {
+				glUniform1f(it->second, f);
+			}
 		}
 
 		void TechniqueGL::SetVec2(std::string handler, XVECTOR2 &v) {
-
+			Handlers::iterator it = CurrentPass->handlers.find(handler);
+			if (it != CurrentPass->handlers.end()) {
+				glUniform2fv(it->second,1,v);
+			}
 		}
 
 		void TechniqueGL::SetVec3(std::string handler, XVECTOR3 &v) {
+			Handlers::iterator it = CurrentPass->handlers.find(handler);
+			if (it != CurrentPass->handlers.end()) {
+				glUniform3fv(it->second, 1, v);
+			}
+		}
 
+		void TechniqueGL::SetVec4(std::string handler, XVECTOR3 &v) {
+			Handlers::iterator it = CurrentPass->handlers.find(handler);
+			if (it != CurrentPass->handlers.end()) {
+				glUniform4fv(it->second, 1, v);
+			}
 		}
 
 		void TechniqueGL::SetMat2(std::string handler, float*m) {
-
+			Handlers::iterator it = CurrentPass->handlers.find(handler);
+			if (it != CurrentPass->handlers.end()) {
+				glUniformMatrix2fv(it->second, 1, GL_FALSE, m);
+			}
 		}
 
 		void TechniqueGL::SetMat3(std::string handler, float*m) {
-
+			Handlers::iterator it = CurrentPass->handlers.find(handler);
+			if (it != CurrentPass->handlers.end()) {
+				glUniformMatrix3fv(it->second, 1, GL_FALSE, m);
+			}
 		}
 
 		void TechniqueGL::SetMat4(std::string handler, XMATRIX44 &m) {
-
+			Handlers::iterator it = CurrentPass->handlers.find(handler);
+			if (it != CurrentPass->handlers.end()) {
+				glUniformMatrix3fv(it->second, 1, GL_FALSE, m);
+			}
 		}
 
 	}

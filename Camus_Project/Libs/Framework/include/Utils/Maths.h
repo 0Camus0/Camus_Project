@@ -179,26 +179,26 @@ namespace hyperspace {
 
 		struct XMATRIX44
 		{
-			XMATRIX44() :a1(1.0f), a2(0.0f), a3(0.0f), a4(0.0f),
-				b1(0.0f), b2(1.0f), b3(0.0f), b4(0.0f),
-				c1(0.0f), c2(0.0f), c3(1.0f), c4(0.0f),
-				d1(0.0f), d2(0.0f), d3(0.0f), d4(1.0f) {}
-			XMATRIX44(const float* m) : a1(m[0]), a2(m[1]), a3(m[2]), a4(m[3]),
-				b1(m[4]), b2(m[5]), b3(m[6]), b4(m[7]),
-				c1(m[8]), c2(m[9]), c3(m[10]), c4(m[11]),
-				d1(m[12]), d2(m[13]), d3(m[14]), d4(m[15]) {}
-			XMATRIX44(const XMATRIX44& m) : a1(m.a1), a2(m.a2), a3(m.a3), a4(m.a4),
-				b1(m.b1), b2(m.b2), b3(m.b3), b4(m.b4),
-				c1(m.c1), c2(m.c2), c3(m.c3), c4(m.c4),
-				d1(m.d1), d2(m.d2), d3(m.d3), d4(m.d4) {}
+			XMATRIX44() :a1(1.0f), b1(0.0f), c1(0.0f), d1(0.0f),
+						 a2(0.0f), b2(1.0f), c2(0.0f), d2(0.0f),
+						 a3(0.0f), b3(0.0f), c3(1.0f), d3(0.0f),
+						 a4(0.0f), b4(0.0f), c4(0.0f), d4(1.0f) {}
+			XMATRIX44(const float* m) : a1(m[0]), b1(m[1]), c1(m[2]),   d1(m[3]),
+										a2(m[4]), b2(m[5]), c2(m[6]),   d2(m[7]),
+										a3(m[8]), b3(m[9]), c3(m[10]),  d3(m[11]),
+										a4(m[12]),b4(m[13]),c4(m[14]),  d4(m[15]) {}
+			XMATRIX44(const XMATRIX44& m) : a1(m.a1), b1(m.b1), c1(m.c1), d1(m.d1),
+											a2(m.a2), b2(m.b2), c2(m.c2), d2(m.d2),
+											a3(m.a3), b3(m.b3), c3(m.c3), d3(m.d3),
+											a4(m.a4), b4(m.b4), c4(m.c4), d4(m.d4) {}
 			XMATRIX44(const float &a1, const float &a2, const float &a3, const float &a4,
 				const float &b1, const float &b2, const float &b3, const float &b4,
 				const float &c1, const float &c2, const float &c3, const float &c4,
 				const float &d1, const float &d2, const float &d3, const float &d4)
-				: a1(a1), a2(a2), a3(a3), a4(a4),
-				b1(b1), b2(b2), b3(b3), b4(b4),
-				c1(c1), c2(c2), c3(c3), c4(c4),
-				d1(d1), d2(d2), d3(d3), d4(d4) {}
+				:   a1(a1), b1(b1), c1(c1), d1(d1),
+					a2(a2), b2(b2), c2(c2), d2(d2),
+					a3(a3), b3(b3), c3(c3), d3(d3),
+					a4(a4), b4(b4), c4(c4), d4(d4) {}
 
 			XMATRIX44 & operator= (const XMATRIX44 & other) {
 				this->a1 = other.a1; this->a2 = other.a2; this->a3 = other.a3; this->a4 = other.a4;
@@ -243,14 +243,14 @@ namespace hyperspace {
 				float m[4][4];
 
 				struct {
-						float        a1, a2, a3, a4;
+					/*	float        a1, a2, a3, a4;
 						float        b1, b2, b3, b4;
 						float        c1, c2, c3, c4;
-						float        d1, d2, d3, d4;
-				/*	float        a1, b1, c1, d1;
+						float        d1, d2, d3, d4;*/
+					float        a1, b1, c1, d1;
 					float        a2, b2, c2, d2;
 					float        a3, b3, c3, d3;
-					float        a4, b4, c4, d4;*/
+					float        a4, b4, c4, d4;
 				};
 
 				float mat[16];

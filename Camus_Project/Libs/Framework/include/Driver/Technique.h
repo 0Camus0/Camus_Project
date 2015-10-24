@@ -94,6 +94,7 @@ namespace hyperspace {
 			virtual	void	SetFloat(std::string handler, float &) = 0;
 			virtual	void	SetVec2(std::string handler, XVECTOR2 &) = 0;
 			virtual	void	SetVec3(std::string handler, XVECTOR3 &) = 0;
+			virtual	void	SetVec4(std::string handler, XVECTOR3 &) = 0;
 			virtual	void	SetMat2(std::string handler, float*) = 0;
 			virtual	void	SetMat3(std::string handler, float*) = 0;
 			virtual	void	SetMat4(std::string handler, XMATRIX44 &) = 0;
