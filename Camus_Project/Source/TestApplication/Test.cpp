@@ -28,6 +28,7 @@ void TestApp::CreateAssets() {
 	hyperspace::video::TechniqueGL AllTechnique;
 	AllTechnique.Initialize("All-tech", "All");
 
+	
 	bInited = true;
 }
 

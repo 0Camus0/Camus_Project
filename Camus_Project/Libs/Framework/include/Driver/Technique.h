@@ -12,7 +12,8 @@
 namespace hyperspace {
 	namespace video {
 
-		typedef std::map<shader::Shader_Var_, int> Handlers;
+		typedef std::map<shader::Shader_Var_, int> ShaderInfo;
+		typedef std::map<std::string, int>		   Handlers;
 
 		class ArgumentsManager {
 		public:
@@ -74,6 +75,7 @@ namespace hyperspace {
 			std::string				name;	
 			std::string				path;
 			ArgumentsManager		args;
+			ShaderInfo				info;
 			Handlers				handlers;
 		};
 
@@ -87,18 +89,6 @@ namespace hyperspace {
 			virtual void			SetPass(std::size_t id) = 0;
 			virtual unsigned int	CompileShader(shader::stage_ type, std::string path, std::string args) = 0;
 
-
-			std::string			Name;
-			std::string			Shader;
-			std::vector<Pass_>	Passes;
-
-		};
-
-		class CEffect_ {
-		public:
-			virtual void	AddTechnique(CTechnique_* tech) = 0;
-			virtual void	RemoveTechnique(std::string name) = 0;
-
 			virtual	void	SetBool(std::string handler, bool &) = 0;
 			virtual	void	SetInt(std::string handler, int &) = 0;
 			virtual	void	SetFloat(std::string handler, float &) = 0;
@@ -108,10 +98,13 @@ namespace hyperspace {
 			virtual	void	SetMat3(std::string handler, float*) = 0;
 			virtual	void	SetMat4(std::string handler, XMATRIX44 &) = 0;
 
-			virtual void	SetTechnique(std::string name) = 0;
+			std::string			Name;
+			std::string			Shader;
+			std::vector<Pass_>	Passes;
 
-			std::vector<CTechnique_*>	Techniques;
 		};
+
+	
 
 	}
 }

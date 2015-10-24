@@ -22,7 +22,7 @@ namespace hyperspace {
 
 			LogPrintDebug("TechniqueGL::Initialize Path to use: %s " ,Path.c_str());
 			Parser.Parse(Path);
-			AddPass("0", ArgumentsManager(""), Path, CRenderStateDesc());
+			AddPass("0", ArgumentsManager("NORMAL;TANGENT;"), Path, CRenderStateDesc());
 
 		}
 
@@ -136,7 +136,8 @@ namespace hyperspace {
 				if (loc != -1) {
 					shader::Shader_Var_ handler;
 					handler = Parser.attributes[i];
-					pass.handlers.insert(std::pair<shader::Shader_Var_, int>(handler, loc));
+					pass.info.insert(std::pair<shader::Shader_Var_, int>(handler, loc));
+					pass.handlers.insert(std::pair<std::string, int>(handler.name, loc));
 					number++;
 				}
 			}
@@ -146,54 +147,49 @@ namespace hyperspace {
 				if (loc != -1) {
 					shader::Shader_Var_ handler;
 					handler = Parser.uniforms[i];
-					pass.handlers.insert(std::pair<shader::Shader_Var_, int>(handler, loc));
+					pass.info.insert(std::pair<shader::Shader_Var_, int>(handler, loc));
+					pass.handlers.insert(std::pair<std::string, int>(handler.name, loc));
 					number++;
 				}
 			}		
 		}
 
 
-
-		void EffectGL::AddTechnique(CTechnique_* tech) {
+		void TechniqueGL::SetBool(std::string handler, bool &b) {
+			Handlers::iterator it = CurrentPass->handlers.find(handler);
+			if (it != CurrentPass->handlers.end()) {
+				glUniform1i(it->second, static_cast<int>(b) );
+			}
 		}
 
-		void EffectGL::RemoveTechnique(std::string name) {
-
+		void TechniqueGL::SetInt(std::string handler, int &i) {
+			Handlers::iterator it = CurrentPass->handlers.find(handler);
+			if (it != CurrentPass->handlers.end()) {
+				glUniform1i(it->second, i);
+			}
 		}
 
-		void EffectGL::SetBool(std::string handler, bool &) {
-
-		}
-
-		void EffectGL::SetInt(std::string handler, int &) {
-
-		}
-
-		void EffectGL::SetFloat(std::string handler, float &) {
-
-		}
-
-		void EffectGL::SetVec2(std::string handler, XVECTOR2 &) {
+		void TechniqueGL::SetFloat(std::string handler, float &f) {
 
 		}
 
-		void EffectGL::SetVec3(std::string handler, XVECTOR3 &) {
+		void TechniqueGL::SetVec2(std::string handler, XVECTOR2 &v) {
 
 		}
 
-		void EffectGL::SetMat2(std::string handler, float*) {
+		void TechniqueGL::SetVec3(std::string handler, XVECTOR3 &v) {
 
 		}
 
-		void EffectGL::SetMat3(std::string handler, float*) {
+		void TechniqueGL::SetMat2(std::string handler, float*m) {
 
 		}
 
-		void EffectGL::SetMat4(std::string handler, XMATRIX44 &) {
+		void TechniqueGL::SetMat3(std::string handler, float*m) {
 
 		}
 
-		void EffectGL::SetTechnique(std::string name) {
+		void TechniqueGL::SetMat4(std::string handler, XMATRIX44 &m) {
 
 		}
 
