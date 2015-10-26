@@ -30,7 +30,7 @@ static const float xSMALLFLOAT = 0.000000001f;
 #endif
 
 namespace hyperspace {
-	namespace video {
+
 		struct XMATRIX44;
 		struct XVECTOR2;
 		struct XVECTOR3;
@@ -677,6 +677,10 @@ namespace hyperspace {
 			f = v1.x*v2.x + v1.y*v2.y + v1.z*v2.z;
 		}
 
+		inline void XVecLength(float &f, const XVECTOR3 &v) {
+			f = sqrtf(v.x*v.x + v.y*v.y + v.z*v.z);
+		}
+
 		inline void XVecCross(XVECTOR3 &vpout, const XVECTOR3 &lv, const XVECTOR3 &rv) {
 			vpout.x = lv.y*rv.z - lv.z*rv.y;
 			vpout.y = lv.z*rv.x - lv.x*rv.z;
@@ -1033,7 +1037,6 @@ namespace hyperspace {
 			return 0 != memcmp(this, &mat, sizeof(XMATRIX44));
 		}
 
-	}
 }
 
 #endif

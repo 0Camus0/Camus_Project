@@ -6,7 +6,7 @@
 
 namespace hyperspace {
 	namespace scene {
-		class CScene {
+		class CScene_ {
 		public:
 			virtual void CreateAssets() = 0;
 			virtual void DestroyAssets() = 0;

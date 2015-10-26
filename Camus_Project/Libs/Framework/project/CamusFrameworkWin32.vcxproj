@@ -60,6 +60,8 @@
     <ClInclude Include="..\include\Driver\RenderState.h" />
     <ClInclude Include="..\include\Driver\ShaderBase.h" />
     <ClInclude Include="..\include\Driver\Technique.h" />
+    <ClInclude Include="..\include\Scene\Camera.h" />
+    <ClInclude Include="..\include\Scene\Node.h" />
     <ClInclude Include="..\include\Scene\Scene.h" />
     <ClInclude Include="..\include\Utils\FileSystem.h" />
     <ClInclude Include="..\include\Utils\InputBase.h" />
