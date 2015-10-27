@@ -21,11 +21,14 @@ namespace hyperspace {
 				INVERTED_LANDSCAPE,
 				INVERTED_PORTRAIT
 			};
+			
+			enum projtype_ {
+				ORTHOGONAL = 0,
+				PERSPECTIVE
+			};
 
 			Camera() : 
 				CNode_(NodeType_::CAMERA), 
-				type(type_::FLYING), 
-				orientproj(orientproj_::LANDSCAPE),
 				fov(Deg2Rad(90.0f)),
 				ratio(1.77777777f),
 				zn(1.0f),
@@ -39,7 +42,10 @@ namespace hyperspace {
 				maxacceleration(0.0f),
 				maxRoll(0.0f),
 				maxPitch(Deg2Rad(89.0f)),
-				maxYaw(0.0f)
+				maxYaw(0.0f),
+				type(type_::FLYING),
+				orientproj(orientproj_::LANDSCAPE),
+				projtype(projtype_::PERSPECTIVE)
 			{
 				SetProjectionPerspective(fov, ratio, zn, zf);
 			}
@@ -68,8 +74,7 @@ namespace hyperspace {
 
 			void	Update(float &f);
 
-			type_			type;
-			orientproj_		orientproj;
+			XMATRIX44		matProj;
 
 			float			fov;
 			float			ratio;
@@ -88,7 +93,11 @@ namespace hyperspace {
 			float			maxPitch;
 			float			maxYaw;
 
-			XMATRIX44		matProj;
+			type_			type;
+			orientproj_		orientproj;
+			projtype_		projtype;
+
+			
 
 
 		};

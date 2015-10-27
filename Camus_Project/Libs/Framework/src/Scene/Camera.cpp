@@ -11,14 +11,33 @@ namespace hyperspace {
 #else
 			XMatPerspectiveRH(matProj, fov, ratio, zn, zf);
 #endif
+			projtype = projtype_::PERSPECTIVE;
 		}
 
-		void	Camera::SetProjectionOrtho(float &w, float &h, float &zn, float &zf) {
-
+		void	Camera::SetProjectionOrtho(float &w_, float &h_, float &zn_, float &zf_) {
+			w = w_;	h = h_;	zn = zn_;  zf = zf_;
+#if USE_LEFT_HANDED
+			XMatOrthoLH(matProj, w, h, zn, zf);
+#else
+			XMatOrthoRH(matProj, w, h, zn, zf);
+#endif
+			projtype = projtype_::ORTHOGONAL;
 		}
 
 		void	Camera::SetProjOrientation(orientproj_ &o) {
-
+			if (orientproj != o) {
+				orientproj = o;
+				switch (orientproj){
+					case hyperspace::scene::Camera::LANDSCAPE: {
+					}break;
+					case hyperspace::scene::Camera::PORTRAIT: {
+					}break;
+					case hyperspace::scene::Camera::INVERTED_LANDSCAPE: {
+					}break;
+					case hyperspace::scene::Camera::INVERTED_PORTRAIT: {
+					}break;
+				}
+			}
 		}
 
 		void	Camera::SetPosition(XVECTOR3 &v) {

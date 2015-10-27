@@ -11,7 +11,7 @@ namespace hyperspace {
 		enum NodeType_{
 			// MESHES
 			STATIC_MESH_NODE=0,
-			FLOOW_MESH_NODE,
+			FLOOR_MESH_NODE,
 			SKYBOX_MESH_NODE,
 			DYNAMIC_MESH_NODE,
 			SKINNING_MESH_NODE,
