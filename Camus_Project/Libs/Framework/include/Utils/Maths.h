@@ -181,39 +181,39 @@ namespace hyperspace {
 
 		struct XMATRIX44
 		{
-			XMATRIX44() :a1(1.0f), b1(0.0f), c1(0.0f), d1(0.0f),
-						 a2(0.0f), b2(1.0f), c2(0.0f), d2(0.0f),
-						 a3(0.0f), b3(0.0f), c3(1.0f), d3(0.0f),
-						 a4(0.0f), b4(0.0f), c4(0.0f), d4(1.0f) {}
-			XMATRIX44(const float* m) : a1(m[0]), b1(m[1]), c1(m[2]),   d1(m[3]),
-										a2(m[4]), b2(m[5]), c2(m[6]),   d2(m[7]),
-										a3(m[8]), b3(m[9]), c3(m[10]),  d3(m[11]),
-										a4(m[12]),b4(m[13]),c4(m[14]),  d4(m[15]) {}
-			XMATRIX44(const XMATRIX44& m) : a1(m.a1), b1(m.b1), c1(m.c1), d1(m.d1),
-											a2(m.a2), b2(m.b2), c2(m.c2), d2(m.d2),
-											a3(m.a3), b3(m.b3), c3(m.c3), d3(m.d3),
-											a4(m.a4), b4(m.b4), c4(m.c4), d4(m.d4) {}
-			XMATRIX44(const float &a1, const float &a2, const float &a3, const float &a4,
-				const float &b1, const float &b2, const float &b3, const float &b4,
-				const float &c1, const float &c2, const float &c3, const float &c4,
-				const float &d1, const float &d2, const float &d3, const float &d4)
-				:   a1(a1), b1(b1), c1(c1), d1(d1),
-					a2(a2), b2(b2), c2(c2), d2(d2),
-					a3(a3), b3(b3), c3(c3), d3(d3),
-					a4(a4), b4(b4), c4(c4), d4(d4) {}
+			XMATRIX44() :m[0][0](1.0f), m[0][1](0.0f), m[0][2](0.0f), m[0][3](0.0f),
+						 m[1][0](0.0f), m[1][1](1.0f), m[1][2](0.0f), m[1][3](0.0f),
+						 m[2][0](0.0f), m[2][1](0.0f), m[2][2](1.0f), m[2][3](0.0f),
+						 m[3][0](0.0f), m[3][1](0.0f), m[3][2](0.0f), m[3][3](1.0f) {}
+			XMATRIX44(const float* m) : m[0][0](m[0]), m[0][1](m[1]), m[0][2](m[2]),   m[0][3](m[3]),
+										m[1][0](m[4]), m[1][1](m[5]), m[1][2](m[6]),   m[1][3](m[7]),
+										m[2][0](m[8]), m[2][1](m[9]), m[2][2](m[10]),  m[2][3](m[11]),
+										m[3][0](m[12]),m[3][1](m[13]),m[3][2](m[14]),  m[3][3](m[15]) {}
+			XMATRIX44(const XMATRIX44& m) : m[0][0](m.m[0][0]), m[0][1](m.m[0][1]), m[0][2](m.m[0][2]), m[0][3](m.m[0][3]),
+											m[1][0](m.m[1][0]), m[1][1](m.m[1][1]), m[1][2](m.m[1][2]), m[1][3](m.m[1][3]),
+											m[2][0](m.m[2][0]), m[2][1](m.m[2][1]), m[2][2](m.m[2][2]), m[2][3](m.m[2][3]),
+											m[3][0](m.m[3][0]), m[3][1](m.m[3][1]), m[3][2](m.m[3][2]), m[3][3](m.m[3][3]) {}
+			XMATRIX44(  const float &m11, const float &m12, const float &m13, const float &m14,
+						const float &m21, const float &m22, const float &m23, const float &m24,
+						const float &m31, const float &m32, const float &m33, const float &m34,
+						const float &m41, const float &m42, const float &m43, const float &m44)
+				:   m11(m11), m21(m21), m31(m31), m41(m41),
+					m12(m12), m22(m22), m32(m32), m42(m42),
+					m13(m13), m23(m23), m33(m33), m43(m43),
+					m14(m14), m24(m24), m34(m34), m44(m44) {}
 
 			XMATRIX44 & operator= (const XMATRIX44 & other) {
-				this->a1 = other.a1; this->a2 = other.a2; this->a3 = other.a3; this->a4 = other.a4;
-				this->b1 = other.b1; this->b2 = other.b2; this->b3 = other.b3; this->b4 = other.b4;
-				this->c1 = other.c1; this->c2 = other.c2; this->c3 = other.c3; this->c4 = other.c4;
-				this->d1 = other.d1; this->d2 = other.d2; this->d3 = other.d3; this->d4 = other.d4;
+				this->m11 = other.m11; this->m12 = other.m12; this->m13 = other.m13; this->m14 = other.m14;
+				this->m21 = other.m21; this->m22 = other.m22; this->m23 = other.m23; this->m24 = other.m24;
+				this->m31 = other.m31; this->m32 = other.m32; this->m33 = other.m33; this->m34 = other.m34;
+				this->m41 = other.m41; this->m42 = other.m42; this->m43 = other.m43; this->m44 = other.m44;
 				return *this;
 			}
 			XMATRIX44 & operator= (XMATRIX44 & other) {
-				this->a1 = other.a1; this->a2 = other.a2; this->a3 = other.a3; this->a4 = other.a4;
-				this->b1 = other.b1; this->b2 = other.b2; this->b3 = other.b3; this->b4 = other.b4;
-				this->c1 = other.c1; this->c2 = other.c2; this->c3 = other.c3; this->c4 = other.c4;
-				this->d1 = other.d1; this->d2 = other.d2; this->d3 = other.d3; this->d4 = other.d4;
+				this->m11 = other.m11; this->m12 = other.m12; this->m13 = other.m13; this->m14 = other.m14;
+				this->m21 = other.m21; this->m22 = other.m22; this->m23 = other.m23; this->m24 = other.m24;
+				this->m31 = other.m31; this->m32 = other.m32; this->m33 = other.m33; this->m34 = other.m34;
+				this->m41 = other.m41; this->m42 = other.m42; this->m43 = other.m43; this->m44 = other.m44;
 				return *this;
 			}
 
@@ -245,14 +245,10 @@ namespace hyperspace {
 				float m[4][4];
 
 				struct {
-					/*	float        a1, a2, a3, a4;
-						float        b1, b2, b3, b4;
-						float        c1, c2, c3, c4;
-						float        d1, d2, d3, d4;*/
-					float        a1, b1, c1, d1;
-					float        a2, b2, c2, d2;
-					float        a3, b3, c3, d3;
-					float        a4, b4, c4, d4;
+					float        m11, m12, m13, m14;
+					float        m21, m22, m23, m24;
+					float        m31, m32, m33, m34;
+					float        m41, m42, m43, m44;
 				};
 
 				float mat[16];
@@ -930,48 +926,48 @@ namespace hyperspace {
 
 		inline XMATRIX44& XMATRIX44::operator += (const XMATRIX44& mb)
 		{
-			a1 += mb.a1; a2 += mb.a2; a3 += mb.a3; a4 += mb.a4;
-			b1 += mb.b1; b2 += mb.b2; b3 += mb.b3; b4 += mb.b4;
-			c1 += mb.c1; c2 += mb.c2; c3 += mb.c3; c4 += mb.c4;
-			d1 += mb.d1; d2 += mb.d2; d3 += mb.d3; d4 += mb.d4;
+			m11 += mb.m11; m12 += mb.m12; m13 += mb.m13; m14 += mb.m14;
+			m21 += mb.m21; m22 += mb.m22; m23 += mb.m23; m24 += mb.m24;
+			m31 += mb.m31; m32 += mb.m32; m33 += mb.m33; m34 += mb.m34;
+			m41 += mb.m41; m42 += mb.m42; m43 += mb.m43; m44 += mb.m44;
 			return *this;
 		}
 
 		inline XMATRIX44& XMATRIX44::operator -= (const XMATRIX44& mb)
 		{
-			a1 -= mb.a1; a2 -= mb.a2; a3 -= mb.a3; a4 -= mb.a4;
-			b1 -= mb.b1; b2 -= mb.b2; b3 -= mb.b3; b4 -= mb.b4;
-			c1 -= mb.c1; c2 -= mb.c2; c3 -= mb.c3; c4 -= mb.c4;
-			d1 -= mb.d1; d2 -= mb.d2; d3 -= mb.d3; d4 -= mb.d4;
+			m11 -= mb.m11; m12 -= mb.m12; m13 -= mb.m13; m14 -= mb.m14;
+			m21 -= mb.m21; m22 -= mb.m22; m23 -= mb.m23; m24 -= mb.m24;
+			m31 -= mb.m31; m32 -= mb.m32; m33 -= mb.m33; m34 -= mb.m34;
+			m41 -= mb.m41; m42 -= mb.m42; m43 -= mb.m43; m44 -= mb.m44;
 			return *this;
 		}
 
 		inline XMATRIX44::operator float* ()
 		{
-			return (float *)&a1;
+			return (float *)&m11;
 		}
 
 
 		inline XMATRIX44::operator const float* () const
 		{
-			return (const float *)&a1;
+			return (const float *)&m11;
 		}
 
 		inline XMATRIX44& XMATRIX44::operator *= (float f)
 		{
-			a1 *= f; a2 *= f; a3 *= f; a4 *= f;
-			b1 *= f; b2 *= f; b3 *= f; b4 *= f;
-			c1 *= f; c2 *= f; c3 *= f; c4 *= f;
-			d1 *= f; d2 *= f; d3 *= f; d4 *= f;
+			m11 *= f; m12 *= f; m13 *= f; m14 *= f;
+			m21 *= f; m22 *= f; m23 *= f; m24 *= f;
+			m31 *= f; m32 *= f; m33 *= f; m34 *= f;
+			m41 *= f; m42 *= f; m43 *= f; m44 *= f;
 			return *this;
 		}
 
 		inline XMATRIX44& XMATRIX44::operator /= (float f)
 		{
-			a1 /= f; a2 /= f; a3 /= f; a4 /= f;
-			b1 /= f; b2 /= f; b3 /= f; b4 /= f;
-			c1 /= f; c2 /= f; c3 /= f; c4 /= f;
-			d1 /= f; d2 /= f; d3 /= f; d4 /= f;
+			m11 /= f; m12 /= f; m13 /= f; m14 /= f;
+			m21 /= f; m22 /= f; m23 /= f; m24 /= f;
+			m31 /= f; m32 /= f; m33 /= f; m34 /= f;
+			m41 /= f; m42 /= f; m43 /= f; m44 /= f;
 			return *this;
 		}
 
@@ -982,10 +978,10 @@ namespace hyperspace {
 
 		inline XMATRIX44 XMATRIX44::operator - () const
 		{
-			return XMATRIX44(-a1, -a2, -a3, -a4,
-				-b1, -b2, -b3, -b4,
-				-c1, -c2, -c3, -c4,
-				-d1, -d2, -d3, -d4);
+			return XMATRIX44(-m11, -m12, -m13, -m14,
+				-m21, -m22, -m23, -m24,
+				-m31, -m32, -m33, -m34,
+				-m41, -m42, -m43, -m44);
 		}
 
 		inline XMATRIX44 XMATRIX44::operator * (const XMATRIX44& mb) const
@@ -997,42 +993,42 @@ namespace hyperspace {
 
 		inline XMATRIX44 XMATRIX44::operator + (const XMATRIX44& mat) const
 		{
-			return XMATRIX44(a1 + mat.a1, a2 + mat.a2, a3 + mat.a3, a4 + mat.a4,
-				b1 + mat.b1, b2 + mat.b2, b3 + mat.b3, b4 + mat.b4,
-				c1 + mat.c1, c2 + mat.c2, c3 + mat.c3, c4 + mat.c4,
-				d1 + mat.d1, d2 + mat.d2, d3 + mat.d3, d4 + mat.d4);
+			return XMATRIX44(m11 + mat.m11, m12 + mat.m12, m13 + mat.m13, m14 + mat.m14,
+				m21 + mat.m21, m22 + mat.m22, m23 + mat.m23, m24 + mat.m24,
+				m31 + mat.m31, m32 + mat.m32, m33 + mat.m33, m34 + mat.m34,
+				m41 + mat.m41, m42 + mat.m42, m43 + mat.m43, m44 + mat.m44);
 		}
 
 		inline XMATRIX44 XMATRIX44::operator - (const XMATRIX44& mat) const
 		{
-			return XMATRIX44(a1 - mat.a1, a2 - mat.a2, a3 - mat.a3, a4 - mat.a4,
-				b1 - mat.b1, b2 - mat.b2, b3 - mat.b3, b4 - mat.b4,
-				c1 - mat.c1, c2 - mat.c2, c3 - mat.c3, c4 - mat.c4,
-				d1 - mat.d1, d2 - mat.d2, d3 - mat.d3, d4 - mat.d4);
+			return XMATRIX44(m11 - mat.m11, m12 - mat.m12, m13 - mat.m13, m14 - mat.m14,
+				m21 - mat.m21, m22 - mat.m22, m23 - mat.m23, m24 - mat.m24,
+				m31 - mat.m31, m32 - mat.m32, m33 - mat.m33, m34 - mat.m34,
+				m41 - mat.m41, m42 - mat.m42, m43 - mat.m43, m44 - mat.m44);
 		}
 
 		inline XMATRIX44 operator * (float f, const XMATRIX44& mat)
 		{
-			return XMATRIX44(f * mat.a1, f * mat.a2, f * mat.a3, f * mat.a4,
-				f * mat.b1, f * mat.b2, f * mat.b3, f * mat.b4,
-				f * mat.c1, f * mat.c2, f * mat.c3, f * mat.c4,
-				f * mat.d1, f * mat.d2, f * mat.d3, f * mat.d4);
+			return XMATRIX44(f * mat.m11, f * mat.m12, f * mat.m13, f * mat.m14,
+				f * mat.m21, f * mat.m22, f * mat.m23, f * mat.m24,
+				f * mat.m31, f * mat.m32, f * mat.m33, f * mat.m34,
+				f * mat.m41, f * mat.m42, f * mat.m43, f * mat.m44);
 		}
 
 		inline XMATRIX44 XMATRIX44::operator * (float f) const
 		{
-			return XMATRIX44(a1*f, a2*f, a3*f, a4*f,
-				b1*f, b2*f, b3*f, b4*f,
-				c1*f, c2*f, c3*f, c4*f,
-				d1*f, d2*f, d3*f, d4*f);
+			return XMATRIX44(m11*f, m12*f, m13*f, m14*f,
+				m21*f, m22*f, m23*f, m24*f,
+				m31*f, m32*f, m33*f, m34*f,
+				m41*f, m42*f, m43*f, m44*f);
 		}
 
 		inline XMATRIX44 XMATRIX44::operator / (float f) const
 		{
-			return XMATRIX44(a1 / f, a2 / f, a3 / f, a4 / f,
-				b1 / f, b2 / f, b3 / f, b4 / f,
-				c1 / f, c2 / f, c3 / f, c4 / f,
-				d1 / f, d2 / f, d3 / f, d4 / f);
+			return XMATRIX44(m11 / f, m12 / f, m13 / f, m14 / f,
+				m21 / f, m22 / f, m23 / f, m24 / f,
+				m31 / f, m32 / f, m33 / f, m34 / f,
+				m41 / f, m42 / f, m43 / f, m44 / f);
 		}
 
 		inline bool XMATRIX44::operator == (const XMATRIX44& mat) const
