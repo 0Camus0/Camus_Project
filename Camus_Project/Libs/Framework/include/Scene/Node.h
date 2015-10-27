@@ -35,18 +35,18 @@ namespace hyperspace {
 
 		class CNode_ {
 		public:
-			CNode_(){}
+			CNode_(NodeType_);
 
-			std::int32_t				uniqueID;
-			std::int32_t				parentID;
-			std::vector<std::int32_t>	siblingsID;
-			std::vector<std::int32_t>	sons;
+			std::uint32_t				uniqueID;
+			std::uint32_t				parentID;
+			std::vector<std::uint32_t>	siblingsID;
+			std::vector<std::uint32_t>	sons;
 
 			NodeType_		type;
 			XMATRIX44		transform;
 			std::string		name;
 
-			static std::vector<std::int32_t>	allnodes;
+			static std::vector<std::uint32_t>	allnodes;
 		};
 	}
 }

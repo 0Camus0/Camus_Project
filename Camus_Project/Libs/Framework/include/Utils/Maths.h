@@ -50,6 +50,8 @@ namespace hyperspace {
 		void XMatViewLookAtRH(XMATRIX44 &, const XVECTOR3 &, const XVECTOR3 &, const XVECTOR3 &);
 		void XMatPerspectiveLH(XMATRIX44 &, const float &, const float &, const float &, const float &);
 		void XMatPerspectiveRH(XMATRIX44 &, const float &, const float &, const float &, const float &);
+		void XMatOrthoLH(XMATRIX44 &, const float &, const float &, const float &, const float &);
+		void XMatOrthoRH(XMATRIX44 &, const float &, const float &, const float &, const float &);
 		void XMatRotationAxisRH(XMATRIX44 &, const XVECTOR3 &, const float &);
 		void XMatRotationAxisLH(XMATRIX44 &, const XVECTOR3 &, const float &);
 
@@ -517,28 +519,28 @@ namespace hyperspace {
 			XVECTOR3 yaxe;
 			XVecCross(yaxe, zaxe, xaxe);
 
-			mpout.a1 = xaxe.x;
-			mpout.b1 = xaxe.y;
-			mpout.c1 = xaxe.z;
-			XVecDot(mpout.d1, xaxe, camPos);
-			mpout.d1 *= -1.0f;
+			mpout.m[0][0] = xaxe.x;
+			mpout.m[0][1] = xaxe.y;
+			mpout.m[0][2] = xaxe.z;
+			XVecDot(mpout.m[0][3], xaxe, camPos);
+			mpout.m[0][3] = -mpout.m[0][3];
 
-			mpout.a2 = yaxe.x;
-			mpout.b2 = yaxe.y;
-			mpout.c2 = yaxe.z;
-			XVecDot(mpout.d2, yaxe, camPos);
-			mpout.d2 *= -1.0f;
+			mpout.m[1][0] = yaxe.x;
+			mpout.m[1][1] = yaxe.y;
+			mpout.m[1][2] = yaxe.z;
+			XVecDot(mpout.m[1][3], yaxe, camPos);
+			mpout.m[1][3] = -mpout.m[1][3];
 
-			mpout.a3 = zaxe.x;
-			mpout.b3 = zaxe.y;
-			mpout.c3 = zaxe.z;
-			XVecDot(mpout.d3, zaxe, camPos);
-			mpout.d3 *= -1.0f;
+			mpout.m[2][0] = zaxe.x;
+			mpout.m[2][1] = zaxe.y;
+			mpout.m[2][2] = zaxe.z;
+			XVecDot(mpout.m[2][3], zaxe, camPos);
+			mpout.m[2][3] *= -mpout.m[2][3];
 
-			mpout.a4 = 0.0f;
-			mpout.b4 = 0.0f;
-			mpout.c4 = 0.0f;
-			mpout.d4 = 1.0f;
+			mpout.m[3][0] = 0.0f;
+			mpout.m[3][1] = 0.0f;
+			mpout.m[3][2] = 0.0f;
+			mpout.m[3][3] = 1.0f;
 		}
 
 		inline void XMatViewLookAtRH(XMATRIX44 &mpout, const XVECTOR3 &camPos, const XVECTOR3 &lookAt, const XVECTOR3 &upAxis) {
@@ -553,56 +555,69 @@ namespace hyperspace {
 			XVECTOR3 yaxe;
 			XVecCross(yaxe, zaxe, xaxe);
 
-			mpout.a1 = xaxe.x;
-			mpout.b1 = xaxe.y;
-			mpout.c1 = xaxe.z;
-			XVecDot(mpout.d1, xaxe, camPos);
-			mpout.d1 *= -1.0f;
+			mpout.m[0][0] = xaxe.x;
+			mpout.m[0][1] = xaxe.y;
+			mpout.m[0][2] = xaxe.z;
+			XVecDot(mpout.m[0][3], xaxe, camPos);
 
-			mpout.a2 = yaxe.x;
-			mpout.b2 = yaxe.y;
-			mpout.c2 = yaxe.z;
-			XVecDot(mpout.d2, yaxe, camPos);
-			mpout.d2 *= -1.0f;
+			mpout.m[1][0] = yaxe.x;
+			mpout.m[1][1] = yaxe.y;
+			mpout.m[1][2] = yaxe.z;
+			XVecDot(mpout.m[1][3], yaxe, camPos);
 
-			mpout.a3 = zaxe.x;
-			mpout.b3 = zaxe.y;
-			mpout.c3 = zaxe.z;
-			XVecDot(mpout.d3, zaxe, camPos);
-			mpout.d3 *= -1.0f;
+			mpout.m[2][0] = zaxe.x;
+			mpout.m[2][1] = zaxe.y;
+			mpout.m[2][2] = zaxe.z;
+			XVecDot(mpout.m[2][3], zaxe, camPos);
 
-			mpout.a4 = 0.0f;
-			mpout.b4 = 0.0f;
-			mpout.c4 = 0.0f;
-			mpout.d4 = 1.0f;
+			mpout.m[3][0] = 0.0f;
+			mpout.m[3][1] = 0.0f;
+			mpout.m[3][2] = 0.0f;
+			mpout.m[3][3] = 1.0f;
 		}
 
 
 		inline void XMatPerspectiveLH(XMATRIX44 &mpout, const float &FOV, const float &Aspect, const float &NearPlane, const float &FarPlane) {
 			float x, y;
 
-			y = 1.0f / tan(FOV / 2.0f);
+			y = 1.0f / tanf(FOV / 2.0f);
 			x = y / Aspect;
 
-			mpout.a1 = x;
-			mpout.b2 = y;
-			mpout.c3 = FarPlane / (FarPlane - NearPlane);
-			mpout.d3 = -(NearPlane*FarPlane) / (FarPlane - NearPlane);
-			mpout.c4 = 1.0f;
+			mpout.m[0][0] = x;
+			mpout.m[1][1] = y;
+			mpout.m[2][2] = FarPlane / (FarPlane - NearPlane);
+			mpout.m[2][3] = -(NearPlane*FarPlane) / (FarPlane - NearPlane);
+			mpout.m[3][2] = 1.0f;
 		}
 
 		inline void XMatPerspectiveRH(XMATRIX44 &mpout, const float &FOV, const float &Aspect, const float &NearPlane, const float &FarPlane)
 		{
 			float x, y;
 
-			y = 1.0f / tan(FOV / 2.0f);
+			y = 1.0f / tanf(FOV / 2.0f);
 			x = y / Aspect;
 
-			mpout.a1 = x;
-			mpout.b2 = y;
-			mpout.c3 = FarPlane / (NearPlane - FarPlane);
-			mpout.d3 = (NearPlane*FarPlane) / (NearPlane - FarPlane);
-			mpout.c4 = -1.0f;
+			mpout.m[0][0] = x;
+			mpout.m[1][1] = y;
+			mpout.m[2][2] = FarPlane / (NearPlane - FarPlane);
+			mpout.m[2][3] = (NearPlane*FarPlane) / (NearPlane - FarPlane);
+			mpout.m[3][2] = -1.0f;
+		}
+
+		void XMatOrthoLH(XMATRIX44 &m, const float &w, const float &h, const float &zn, const float &zf) {
+			m.m[0][0] = 2.0f / w;
+			m.m[1][1] = 2.0f / h;
+			m.m[2][2] = 1.0f / (zf - zn);
+			m.m[2][3] = -zn / (zf - zn);
+			m.m[3][3] = 1.0f;
+		}
+
+		void XMatOrthoRH(XMATRIX44 &m, const float &w, const float &h, const float &zn, const float &zf) {
+			m.m[0][0] = 2.0f / w;
+			m.m[1][1] = 2.0f / h;
+			m.m[2][2] = 1.0f / (zn - zf);
+			m.m[2][3] = zn / (zn - zf);
+			m.m[3][3] = 1.0f;
 		}
 
 		inline void XMatRotationAxisRH(XMATRIX44 &mpout, const XVECTOR3 &axis, const float &angle) {
@@ -610,22 +625,22 @@ namespace hyperspace {
 			float sinangle = std::sin(angle);
 			float A = 1.0f - cosangle;
 
-			mpout.a1 = A*axis.x*axis.x + cosangle;
-			mpout.a2 = A*axis.x*axis.y + sinangle*axis.z;
-			mpout.a3 = A*axis.x*axis.z - sinangle*axis.y;
-			mpout.a4 = 0.0f;
+			mpout.m[0][0] = A*axis.x*axis.x + cosangle;
+			mpout.m[1][0] = A*axis.x*axis.y + sinangle*axis.z;
+			mpout.m[2][0] = A*axis.x*axis.z - sinangle*axis.y;
+			mpout.m[3][0] = 0.0f;
 
-			mpout.b1 = A*axis.x*axis.y - sinangle*axis.z;
-			mpout.b2 = A*axis.y*axis.y + cosangle;
-			mpout.b3 = A*axis.y*axis.z + sinangle*axis.x;
-			mpout.b4 = 0.0f;
+			mpout.m[0][1] = A*axis.x*axis.y - sinangle*axis.z;
+			mpout.m[1][1] = A*axis.y*axis.y + cosangle;
+			mpout.m[2][1] = A*axis.y*axis.z + sinangle*axis.x;
+			mpout.m[3][1] = 0.0f;
 
-			mpout.c1 = A*axis.x*axis.z + sinangle*axis.y;
-			mpout.c2 = A*axis.y*axis.z - sinangle*axis.x;
-			mpout.c3 = A*axis.z*axis.z + cosangle;
-			mpout.c4 = 0.0f;
+			mpout.m[0][2] = A*axis.x*axis.z + sinangle*axis.y;
+			mpout.m[1][2] = A*axis.y*axis.z - sinangle*axis.x;
+			mpout.m[2][2] = A*axis.z*axis.z + cosangle;
+			mpout.m[3][2] = 0.0f;
 
-			mpout.d1 = mpout.d2 = mpout.d3 = 0.0f; mpout.d4 = 1.0f;
+			mpout.m[0][3] = mpout.m[1][3] = mpout.m[2][3] = 0.0f; mpout.m[3][3] = 1.0f;
 		}
 
 		inline void XMatRotationAxisLH(XMATRIX44 &mpout, const XVECTOR3 &axis, const float &angle) {
@@ -633,29 +648,25 @@ namespace hyperspace {
 			float sinangle = std::sin(angle);
 			float A = 1.0f - cosangle;
 
-			mpout.a1 = A*axis.x*axis.x + cosangle;
-			mpout.a2 = A*axis.x*axis.y - sinangle*axis.z;
-			mpout.a3 = A*axis.x*axis.z + sinangle*axis.y;
-			mpout.a4 = 0.0f;
+			mpout.m[0][0] = A*axis.x*axis.x + cosangle;
+			mpout.m[1][0] = A*axis.x*axis.y - sinangle*axis.z;
+			mpout.m[2][0] = A*axis.x*axis.z + sinangle*axis.y;
+			mpout.m[3][0] = 0.0f;
 
-			mpout.b1 = A*axis.x*axis.y + sinangle*axis.z;
-			mpout.b2 = A*axis.y*axis.y + cosangle;
-			mpout.b3 = A*axis.y*axis.z - sinangle*axis.x;
-			mpout.b4 = 0.0f;
+			mpout.m[0][1] = A*axis.x*axis.y + sinangle*axis.z;
+			mpout.m[1][1] = A*axis.y*axis.y + cosangle;
+			mpout.m[2][1] = A*axis.y*axis.z - sinangle*axis.x;
+			mpout.m[3][1] = 0.0f;
 
-			mpout.c1 = A*axis.x*axis.z - sinangle*axis.y;
-			mpout.c2 = A*axis.y*axis.z + sinangle*axis.x;
-			mpout.c3 = A*axis.z*axis.z + cosangle;
-			mpout.c4 = 0.0f;
+			mpout.m[0][2] = A*axis.x*axis.z - sinangle*axis.y;
+			mpout.m[1][2] = A*axis.y*axis.z + sinangle*axis.x;
+			mpout.m[2][2] = A*axis.z*axis.z + cosangle;
+			mpout.m[3][2] = 0.0f;
 
-			mpout.d1 = mpout.d2 = mpout.d3 = 0.0f; mpout.d4 = 1.0f;
+			mpout.m[0][3] = mpout.m[1][3] = mpout.m[2][3] = 0.0f; mpout.m[3][3] = 1.0f;
 		}
 
 		inline void XVecTransform(XVECTOR3 &vpout, const XVECTOR3 &v, const XMATRIX44 &mat) {
-			/*	vpout.x = v.x*mat.a1 + v.y*mat.a2 + v.z*mat.a3 + 1.0f*mat.d1;
-				vpout.y = v.x*mat.b1 + v.y*mat.b2 + v.z*mat.b3 + 1.0f*mat.d2;
-				vpout.z = v.x*mat.c1 + v.y*mat.c2 + v.z*mat.c3 + 1.0f*mat.d3;
-			*/
 			vpout.x = v.x*mat.m[0][0] + v.y*mat.m[1][0] + v.z*mat.m[2][0] + 1.0f*mat.m[3][0];
 			vpout.y = v.x*mat.m[0][1] + v.y*mat.m[1][1] + v.z*mat.m[2][1] + 1.0f*mat.m[3][1];
 			vpout.z = v.x*mat.m[0][2] + v.y*mat.m[1][2] + v.z*mat.m[2][2] + 1.0f*mat.m[3][2];
@@ -663,10 +674,6 @@ namespace hyperspace {
 		}
 
 		inline void XVecTransformNormal(XVECTOR3 &vpout, const XVECTOR3 &v, const XMATRIX44 &mat) {
-			/*	vpout.x = v.x*mat.a1 + v.y*mat.a2 + v.z*mat.a3;
-				vpout.y = v.x*mat.b1 + v.y*mat.b2 + v.z*mat.b3;
-				vpout.z = v.x*mat.c1 + v.y*mat.c2 + v.z*mat.c3;*/
-
 			vpout.x = v.x*mat.m[0][0] + v.y*mat.m[1][0] + v.z*mat.m[2][0];
 			vpout.y = v.x*mat.m[0][1] + v.y*mat.m[1][1] + v.z*mat.m[2][1];
 			vpout.z = v.x*mat.m[0][2] + v.y*mat.m[1][2] + v.z*mat.m[2][2];
