@@ -181,26 +181,26 @@ namespace hyperspace {
 
 		struct XMATRIX44
 		{
-			XMATRIX44() :m[0][0](1.0f), m[0][1](0.0f), m[0][2](0.0f), m[0][3](0.0f),
-						 m[1][0](0.0f), m[1][1](1.0f), m[1][2](0.0f), m[1][3](0.0f),
-						 m[2][0](0.0f), m[2][1](0.0f), m[2][2](1.0f), m[2][3](0.0f),
-						 m[3][0](0.0f), m[3][1](0.0f), m[3][2](0.0f), m[3][3](1.0f) {}
-			XMATRIX44(const float* m) : m[0][0](m[0]), m[0][1](m[1]), m[0][2](m[2]),   m[0][3](m[3]),
-										m[1][0](m[4]), m[1][1](m[5]), m[1][2](m[6]),   m[1][3](m[7]),
-										m[2][0](m[8]), m[2][1](m[9]), m[2][2](m[10]),  m[2][3](m[11]),
-										m[3][0](m[12]),m[3][1](m[13]),m[3][2](m[14]),  m[3][3](m[15]) {}
-			XMATRIX44(const XMATRIX44& m) : m[0][0](m.m[0][0]), m[0][1](m.m[0][1]), m[0][2](m.m[0][2]), m[0][3](m.m[0][3]),
-											m[1][0](m.m[1][0]), m[1][1](m.m[1][1]), m[1][2](m.m[1][2]), m[1][3](m.m[1][3]),
-											m[2][0](m.m[2][0]), m[2][1](m.m[2][1]), m[2][2](m.m[2][2]), m[2][3](m.m[2][3]),
-											m[3][0](m.m[3][0]), m[3][1](m.m[3][1]), m[3][2](m.m[3][2]), m[3][3](m.m[3][3]) {}
+			XMATRIX44() :m11(1.0f), m12(0.0f), m13(0.0f), m14(0.0f),
+						 m21(0.0f), m22(1.0f), m23(0.0f), m24(0.0f),
+						 m31(0.0f), m32(0.0f), m33(1.0f), m34(0.0f),
+						 m41(0.0f), m42(0.0f), m43(0.0f), m44(1.0f) {}
+			XMATRIX44(const float* m) : m11(m[0]), m12(m[1]), m13(m[2]),   m14(m[3]),
+										m21(m[4]), m22(m[5]), m23(m[6]),   m24(m[7]),
+										m31(m[8]), m32(m[9]), m33(m[10]),  m34(m[11]),
+										m41(m[12]),m42(m[13]),m43(m[14]),  m44(m[15]) {}
+			XMATRIX44(const XMATRIX44& m) : m11(m.m11), m12(m.m12), m13(m.m13), m14(m.m14),
+											m21(m.m21), m22(m.m22), m23(m.m23), m24(m.m24),
+											m31(m.m31), m32(m.m32), m33(m.m33), m34(m.m34),
+											m41(m.m41), m42(m.m42), m43(m.m43), m44(m.m44) {}
 			XMATRIX44(  const float &m11, const float &m12, const float &m13, const float &m14,
 						const float &m21, const float &m22, const float &m23, const float &m24,
 						const float &m31, const float &m32, const float &m33, const float &m34,
 						const float &m41, const float &m42, const float &m43, const float &m44)
-				:   m11(m11), m21(m21), m31(m31), m41(m41),
-					m12(m12), m22(m22), m32(m32), m42(m42),
-					m13(m13), m23(m23), m33(m33), m43(m43),
-					m14(m14), m24(m24), m34(m34), m44(m44) {}
+				:   m11(m11), m12(m12), m13(m13), m14(m14),
+					m21(m21), m22(m22), m23(m23), m24(m24),
+					m31(m31), m32(m32), m33(m33), m34(m34),
+					m41(m41), m42(m42), m43(m43), m44(m44) {}
 
 			XMATRIX44 & operator= (const XMATRIX44 & other) {
 				this->m11 = other.m11; this->m12 = other.m12; this->m13 = other.m13; this->m14 = other.m14;
@@ -354,6 +354,8 @@ namespace hyperspace {
 		};
 #include <stdio.h>
 		inline void XMatMultiply(XMATRIX44 &mpout, const XMATRIX44 &mp1, const XMATRIX44 &mp2) {
+
+			
 			float a00 = mp1.m[0][0], a01 = mp1.m[0][1], a02 = mp1.m[0][2], a03 = mp1.m[0][3],
 				a10 = mp1.m[1][0], a11 = mp1.m[1][1], a12 = mp1.m[1][2], a13 = mp1.m[1][3],
 				a20 = mp1.m[2][0], a21 = mp1.m[2][1], a22 = mp1.m[2][2], a23 = mp1.m[2][3],
@@ -420,7 +422,7 @@ namespace hyperspace {
 
 		inline void XMatTranslation(XMATRIX44 &mpout, const float &x, const float &y, const float &z) {
 			XMatIdentity(mpout);
-			//	mpout.m[0][3] = x; mpout.m[1][3] = y; mpout.m[2][3] = z; mpout.m[3][3] = 1.0f;
+			//mpout.m[0][3] = x; mpout.m[1][3] = y; mpout.m[2][3] = z; mpout.m[3][3] = 1.0f;
 			mpout.m[3][0] = x; mpout.m[3][1] = y; mpout.m[3][2] = z; mpout.m[3][3] = 1.0f;
 		}
 
@@ -673,7 +675,7 @@ namespace hyperspace {
 			vpout.x = v.x*mat.m[0][0] + v.y*mat.m[1][0] + v.z*mat.m[2][0];
 			vpout.y = v.x*mat.m[0][1] + v.y*mat.m[1][1] + v.z*mat.m[2][1];
 			vpout.z = v.x*mat.m[0][2] + v.y*mat.m[1][2] + v.z*mat.m[2][2];
-			vpout.w = 1.0F;
+			vpout.w = 1.0f;
 		}
 
 		inline void XVecDot(float &f, const XVECTOR3 &v1, const XVECTOR3 &v2) {
