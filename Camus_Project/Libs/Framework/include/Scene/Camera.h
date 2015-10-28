@@ -28,7 +28,11 @@ namespace hyperspace {
 			};
 
 			Camera() : 
-				CNode_(NodeType_::CAMERA), 
+				CNode_(NodeType_::CAMERA),
+				position(XVECTOR3(0.0f,0.0f,0.0f)),
+				look(XVECTOR3(0.0f,0.0f,1.0f)),
+				right(XVECTOR3(1.0f,0.0f,0.0f)),
+				up(XVECTOR3(0.0f,1.0f,0.0f)),
 				fov(Deg2Rad(90.0f)),
 				ratio(1.77777777f),
 				zn(1.0f),
@@ -47,12 +51,13 @@ namespace hyperspace {
 				orientproj(orientproj_::LANDSCAPE),
 				projtype(projtype_::PERSPECTIVE)
 			{
-				SetProjectionPerspective(fov, ratio, zn, zf);
+				UpdateProjection();
 			}
 
 			void	SetProjectionPerspective(float &f, float &r, float &zn, float &zf);
 			void	SetProjectionOrtho(float &w, float &h, float &zn, float &zf);
 			void	SetProjOrientation(orientproj_ &o);
+			void	UpdateProjection();
 
 			void	SetPosition(XVECTOR3 &v);
 			void	SetLookAt(XVECTOR3 &v);
@@ -64,6 +69,7 @@ namespace hyperspace {
 			void	RollLimit(float &f);
 			void	PitchLimit(float &f);
 			void	YawLimit(float &f);
+			void	SetLimit(float &current,float limit);
 
 			void	Roll(float &diff);
 			void	Pitch(float &diff);
@@ -72,9 +78,16 @@ namespace hyperspace {
 			void	SetMaxVelocity(float &f);
 			void	SetMaxAcceleration(float &f);
 
-			void	Update(float &f);
+			void	ResetCamera();
+
+			void	Update(float f = 0.0f);
 
 			XMATRIX44		matProj;
+
+			XVECTOR3		position;
+			XVECTOR3		look;
+			XVECTOR3		right;
+			XVECTOR3		up;
 
 			float			fov;
 			float			ratio;

@@ -29,6 +29,27 @@ static const float xSMALLFLOAT = 0.000000001f;
 #define xmin(a,b)            (((a) < (b)) ? (a) : (b))
 #endif
 
+#define USE_LEFT_HANDED 1
+
+#if USE_LEFT_HANDED
+#define XMatRotationX	 XMatRotationXLH
+#define XMatRotationY	 XMatRotationYLH
+#define XMatRotationZ	 XMatRotationZLH
+#define XMatViewLookAt	 XMatViewLookAtLH
+#define XMatPerspective	 XMatPerspectiveLH
+#define XMatOrtho		 XMatOrthoLH
+#define XMatRotationAxis XMatRotationAxisLH
+#define XMatOrtho		 XMatOrthoLH
+#else
+#define XMatRotationX	 XMatRotationXRH
+#define XMatRotationY	 XMatRotationYRH
+#define XMatRotationZ	 XMatRotationZRH
+#define XMatViewLookAt	 XMatViewLookAtRH
+#define XMatPerspective	 XMatPerspectiveRH
+#define XMatOrtho		 XMatOrthoRH
+#define XMatRotationAxis XMatRotationAxisRH
+#define XMatOrtho		 XMatOrthoRH
+#endif
 namespace hyperspace {
 
 		struct XMATRIX44;
@@ -37,6 +58,7 @@ namespace hyperspace {
 
 		void XMatMultiply(XMATRIX44 &, const XMATRIX44 &, const XMATRIX44 &);
 		void XMatTranslation(XMATRIX44 &, const float &, const float &, const float &);
+		void XMatTranslation(XMATRIX44 &, XVECTOR3&);
 		void XMatScaling(XMATRIX44 &, const float &, const float &, const float &);
 		void XMatRotationXLH(XMATRIX44 &, const float &);
 		void XMatRotationXRH(XMATRIX44 &, const float &);
@@ -352,6 +374,11 @@ namespace hyperspace {
 			mpout.m[3][0] = x; mpout.m[3][1] = y; mpout.m[3][2] = z; mpout.m[3][3] = 1.0f;
 		}
 
+		inline void XMatTranslation(XMATRIX44 &mpout, XVECTOR3& v) {
+			XMatIdentity(mpout);
+			mpout.m[3][0] = v.x; mpout.m[3][1] = v.y; mpout.m[3][2] = v.z; mpout.m[3][3] = 1.0f;
+		}
+
 		inline void XMatScaling(XMATRIX44 &mpout, const float &x, const float &y, const float &z) {
 			mpout.m[0][0] *= x;
 			mpout.m[1][1] *= y;
@@ -528,7 +555,7 @@ namespace hyperspace {
 			mpout.m[3][2] = -1.0f;
 		}
 
-		void XMatOrthoLH(XMATRIX44 &m, const float &w, const float &h, const float &zn, const float &zf) {
+		inline void XMatOrthoLH(XMATRIX44 &m, const float &w, const float &h, const float &zn, const float &zf) {
 			m.m[0][0] = 2.0f / w;
 			m.m[1][1] = 2.0f / h;
 			m.m[2][2] = 1.0f / (zf - zn);
@@ -536,7 +563,7 @@ namespace hyperspace {
 			m.m[3][3] = 1.0f;
 		}
 
-		void XMatOrthoRH(XMATRIX44 &m, const float &w, const float &h, const float &zn, const float &zf) {
+		inline void XMatOrthoRH(XMATRIX44 &m, const float &w, const float &h, const float &zn, const float &zf) {
 			m.m[0][0] = 2.0f / w;
 			m.m[1][1] = 2.0f / h;
 			m.m[2][2] = 1.0f / (zn - zf);
@@ -780,12 +807,12 @@ namespace hyperspace {
 
 		inline XVECTOR3 XVECTOR3::operator + (const XVECTOR3& v) const
 		{
-			return XVECTOR3(x + v.x, y + v.y, z + v.z);
+			return XVECTOR3( v.x, v.y, v.z);
 		}
 
 		inline XVECTOR3 XVECTOR3::operator - (const XVECTOR3& v) const
 		{
-			return XVECTOR3(x - v.x, y - v.y, z - v.z);
+			return XVECTOR3(-v.x,-v.y,-v.z);
 		}
 
 		inline XVECTOR3 XVECTOR3::operator * (float f) const
