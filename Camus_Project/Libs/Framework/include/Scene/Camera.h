@@ -81,8 +81,17 @@ namespace hyperspace {
 			void	ResetCamera();
 
 			void	Update(float f = 0.0f);
+			
+			inline XMATRIX44& GetViewMat() {
+				return transform;
+			}
+
+			inline XMATRIX44& GetMatViewProj() {
+				return matViewProj;
+			}
 
 			XMATRIX44		matProj;
+			XMATRIX44		matViewProj;
 
 			XVECTOR3		position;
 			XVECTOR3		look;

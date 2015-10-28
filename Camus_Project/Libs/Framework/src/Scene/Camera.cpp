@@ -54,6 +54,7 @@ namespace hyperspace {
 			XMatRotationY(Z_, angRoll);
 			XMatTranslation(T_, (-position));
 			transform = T_*Z_*Y_*X_;
+			matViewProj = transform*matProj;
 		}
 
 		void	Camera::UpdateProjection() {
