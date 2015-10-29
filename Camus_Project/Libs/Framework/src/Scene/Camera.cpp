@@ -53,7 +53,11 @@ namespace hyperspace {
 		}
 
 		void	Camera::MoveOnLookDir(float &dt) {
+#if USE_LEFT_HANDED
 			velocity.z += acceleration.z*dt;
+#else
+			velocity.z -= acceleration.z*dt;
+#endif
 		}
 
 		void	Camera::MoveOnRight(float &dt) {
@@ -177,36 +181,30 @@ namespace hyperspace {
 		}
 		// Z
 		void	Camera::Roll(float diff) {
-#if USE_LEFT_HANDED
-			diff = -diff;
-#endif
+
 			if (maxRoll != 0.0) {
-				if ((angRoll - diff) > maxRoll || (angRoll - diff) < -maxRoll)
+				if ((angRoll + diff) > maxRoll || (angRoll + diff) < -maxRoll)
 					return;
 			}
-			angRoll -= diff;
+			angRoll += diff;
 		}
 		// X
 		void	Camera::Pitch(float diff) {
-#if USE_LEFT_HANDED
-			diff = -diff;
-#endif
+
 			if (maxPitch != 0.0) {
-				if ((angPitch - diff) > maxPitch || (angPitch - diff) < -maxPitch)
+				if ((angPitch + diff) > maxPitch || (angPitch + diff) < -maxPitch)
 					return;
 			}
-			angPitch -= diff;
+			angPitch += diff;
 		}
 		// Y
 		void	Camera::Yaw(float diff) {
-#if USE_LEFT_HANDED
-			diff = -diff;
-#endif
+
 			if (maxYaw != 0.0) {
-				if ((angYaw - diff) > maxYaw || (angYaw - diff) < -maxYaw)
+				if ((angYaw + diff) > maxYaw || (angYaw + diff) < -maxYaw)
 					return;
 			}
-			angYaw -= diff;
+			angYaw += diff;
 		}
 
 		void	Camera::ResetCamera() {
@@ -226,7 +224,6 @@ namespace hyperspace {
 			angPitch = 0.0f;
 			angYaw = 0.0f;
 			maxspeed = 100.0f;
-			maxacceleration = 0.0f;
 			friction = 0.01f;
 			maxRoll = 0.0f;
 			maxPitch = Deg2Rad(89.0f);
@@ -239,11 +236,9 @@ namespace hyperspace {
 		}
 
 		void	Camera::SetMaxVelocity(float &f) {
-
+			maxspeed = f;
 		}
 
-		void	Camera::SetMaxAcceleration(float &f) {
-
-		}
+	
 	}
 }

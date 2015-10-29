@@ -45,7 +45,6 @@ namespace hyperspace {
 				angPitch(0.0f),
 				angYaw(0.0f),
 				maxspeed(100.0f),
-				maxacceleration(0.0f),
 				friction(0.01f),
 				maxRoll(0.0f),
 				maxPitch(Deg2Rad(89.0f)),
@@ -83,7 +82,6 @@ namespace hyperspace {
 			void	MoveOnUp(float &dt);
 
 			void	SetMaxVelocity(float &f);
-			void	SetMaxAcceleration(float &f);
 
 			void	ResetCamera();
 
@@ -124,7 +122,6 @@ namespace hyperspace {
 			float			angYaw;
 
 			float			maxspeed;
-			float			maxacceleration;
 			float			friction;
 			float			maxRoll;
 			float			maxPitch;
