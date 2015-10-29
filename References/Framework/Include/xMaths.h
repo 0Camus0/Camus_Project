@@ -34,7 +34,7 @@ static const float xSMALLFLOAT = 0.000000001f;
 #define xmin(a,b)            (((a) < (b)) ? (a) : (b))
 #endif
 
-#define USE_LEFT_HANDED 0
+#define USE_LEFT_HANDED 1
 
 #if USE_LEFT_HANDED
 #define XMatRotationX		XMatRotationXLH
@@ -617,29 +617,32 @@ static const float xSMALLFLOAT = 0.000000001f;
 
 		inline void XMatPerspectiveLH(XMATRIX44 &mpout, const float &FOV, const float &Aspect, const float &NearPlane, const float &FarPlane) {
 			float x, y;
+			float ang = FOV / 2.0f;
 
-			y = 1.0f / tanf(FOV / 2.0f);
+			y = cos(ang) / sin(ang) ;
 			x = y / Aspect;
 
 			mpout.m[0][0] = x;
 			mpout.m[1][1] = y;
 			mpout.m[2][2] = FarPlane / (FarPlane - NearPlane);
-			mpout.m[2][3] = -(NearPlane*FarPlane) / (FarPlane - NearPlane);
-			mpout.m[3][2] = 1.0f;
+			mpout.m[2][3] = 1.0;
+			mpout.m[3][2] = -(NearPlane*FarPlane) / (FarPlane - NearPlane);
+
 		}
 
 		inline void XMatPerspectiveRH(XMATRIX44 &mpout, const float &FOV, const float &Aspect, const float &NearPlane, const float &FarPlane)
 		{
 			float x, y;
+			float ang = FOV / 2.0f;
 
-			y = 1.0f / tanf(FOV / 2.0f);
+			y = cos(ang) / sin(ang) ;
 			x = y / Aspect;
 
 			mpout.m[0][0] = x;
 			mpout.m[1][1] = y;
 			mpout.m[2][2] = FarPlane / (NearPlane - FarPlane);
-			mpout.m[2][3] = (NearPlane*FarPlane) / (NearPlane - FarPlane);
-			mpout.m[3][2] = -1.0f;
+			mpout.m[2][3] = -1.0f;
+			mpout.m[3][2] = (NearPlane*FarPlane) / (NearPlane - FarPlane);
 		}
 
 	/*	void XMatOrthoLH(XMATRIX44 &m, const float &w, const float &h, const float &zn, const float &zf) {

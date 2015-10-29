@@ -1,5 +1,8 @@
 #include "../Include/Cam.h"
 
+#include <iostream>
+using namespace std;
+
 const	XVECTOR3	Cam::LookConstCameraSpace = XVECTOR3(0.0f,0.0f,1.0f);
 const	XVECTOR3	Cam::RightConstCameraSpace = XVECTOR3(1.0f, 0.0f, 0.0f);
 const	XVECTOR3	Cam::UpConstCameraSpace = XVECTOR3(0.0f, 1.0f, 0.0f);
@@ -37,12 +40,12 @@ void Cam::CreateProjectionMatrix( float fov, float aspect, float nearPlane, floa
 	AspectRatio    = aspect;
 	NearPlane = nearPlane;
 	FarPlane  = farPlane;
-
-	//if(LeftHanded)
-		MatPerspectiveLH( &Projection, FieldOfView, AspectRatio, NearPlane, FarPlane );
-	//else
-	//	MatPerspectiveRH( &Projection, FieldOfView, AspectRatio, NearPlane, FarPlane );
 /*
+	if(LeftHanded)
+		MatPerspectiveLH( &Projection, FieldOfView, AspectRatio, NearPlane, FarPlane );
+	else
+		MatPerspectiveRH( &Projection, FieldOfView, AspectRatio, NearPlane, FarPlane );
+*/
 	XMATRIX44 proj;
 #if USE_LEFT_HANDED
 	XMatPerspectiveLH(proj,FieldOfView,aspect,NearPlane,FarPlane);
@@ -50,17 +53,24 @@ void Cam::CreateProjectionMatrix( float fov, float aspect, float nearPlane, floa
 	XMatPerspectiveRH(proj,FieldOfView,aspect,NearPlane,FarPlane);
 #endif
 
+	
 	for (int i = 0; i < 16 ; i++){
 		Projection.mat[i] = proj.mat[i];
 	}
-*/
+
+
 }
 
 #include <iostream>
 using namespace std;
 void Cam::MoveForward( float dt )
 {
+#if USE_LEFT_HANDED
 	velocity.z += acceleration.z*dt;
+#else
+	velocity.z -= acceleration.z*dt;
+#endif
+
 	
 	//if ( EnableYMovement )
 	{
@@ -129,14 +139,12 @@ void Cam::MoveUp( float dt )
 
 void Cam::Yaw( float diff )
 {
-#if USE_LEFT_HANDED
-	diff = -diff;
-#endif
+
 	if (maxYaw != 0.0) {
-		if ((angYaw - diff) > maxYaw || (angYaw - diff) < -maxYaw)
+		if ((angYaw + diff) > maxYaw || (angYaw + diff) < -maxYaw)
 			return;
 	}
-	angYaw -= diff;
+	angYaw += diff;
 	
 // 	if ( radians == 0.0f )
 // 	{
@@ -155,19 +163,16 @@ void Cam::Yaw( float diff )
 
 void Cam::Pitch( float diff )
 {
-#if USE_LEFT_HANDED
-	diff = -diff;
-#endif
 
 	if (maxPitch != 0.0f) {
-		if ((angPitch - diff) > maxPitch || (angPitch - diff) < -maxPitch)
+		if ((angPitch + diff) > maxPitch || (angPitch + diff) < -maxPitch)
 			return;
 	}
 
 	if(diff==0.0f)
 		return;
 
-	angPitch -= diff;
+	angPitch += diff;
 
 	/*
 	if ( radians == 0.0f )
@@ -199,15 +204,12 @@ void Cam::Pitch( float diff )
 
 void Cam::Roll( float diff )
 {
-#if USE_LEFT_HANDED
-	diff = -diff;
-#endif
 
 	if (maxRoll != 0.0) {
-		if ((angRoll - diff) > maxRoll || (angRoll + diff) < -maxRoll)
+		if ((angRoll + diff) > maxRoll || (angRoll + diff) < -maxRoll)
 			return;
 	}
-	angRoll -= diff;
+	angRoll += diff;
 // 	if ( radians == 0.0f )
 // 	{
 // 		return;
@@ -275,10 +277,10 @@ void Cam::SetLookAt( STDVECTOR3* pLookAt )
 	angPitch = atan2f(-look.y, look.z);
 	angYaw = atan2f(look.x, -look.z);
 #else
-	look = XVECTOR3(pLookAt->x,pLookAt->y,pLookAt->z) - position;
+	look =  XVECTOR3(pLookAt->x,pLookAt->y,pLookAt->z) - position;
 	look.Normalize();
-	angPitch = atan2f(-look.y, -look.z);
-	angYaw = atan2f(-look.x, look.z);
+	angPitch = atan2f(look.y, -look.z);
+	angYaw = atan2f(-look.x, -look.z);
 #endif
 	OnUpdate(0.0f);
 

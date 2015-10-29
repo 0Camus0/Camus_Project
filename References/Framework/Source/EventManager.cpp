@@ -60,7 +60,7 @@ void EventManager::ReadEvents()
 		XPosUltima = XPosActual;
 		YPosUltima = YPosActual;
 
-		SDL_WarpMouse(XSize/2,YSize/2);
+	//	SDL_WarpMouse(XSize/2,YSize/2);
 
 #else
 		static int cont = 0;

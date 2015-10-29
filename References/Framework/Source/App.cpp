@@ -22,7 +22,7 @@ void GApp::Init()
 	Camera.SetPosition( &STDVECTOR3(-2.60666f, 109.199f, 221.997f ) );
 	//Camera.SetLookAt( &STDVECTOR3( -2.6155f, 108.718, 221.121) );
 	Camera.SetLookAt( &STDVECTOR3( 0.0f, 0.0f, 0.0f) );
-	Camera.SetNearPlane(1.0f);
+	Camera.SetNearPlane(0.1f);
 	Camera.SetFarPlane(5000000.0f);
 	Camera.SetFOV( Deg2Rad(45.0f) );
 	Camera.SetMaxPitch(  Deg2Rad(89.0f) );
@@ -110,9 +110,10 @@ void GApp::OnCreate()
 	CreateFBOShadowMap();
 
 	// setting up the render states
-	glEnable(GL_CULL_FACE);
-    glCullFace(GL_FRONT);
-	glFrontFace(GL_CCW);
+/*	glEnable(GL_CULL_FACE);
+    glCullFace(GL_FRONT_AND_BACK);
+	glFrontFace(GL_CCW);*/
+	glDisable(GL_CULL_FACE);
 	glEnable(GL_TEXTURE_2D);
 	glEnable(GL_DEPTH_TEST);
 	glClearDepthf(1.0f);
@@ -556,7 +557,7 @@ void GApp::OnRender()
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 
-	DrawMeshes();
+//	DrawMeshes();
 
 //	Font->Render("");
 
