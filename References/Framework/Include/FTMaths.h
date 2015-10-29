@@ -161,7 +161,7 @@ struct STDVECTOR3 : public STDVector
 	STDVECTOR3 operator * ( float ) const;
 	STDVECTOR3 operator / ( float ) const;
 
-	float	   operator * ( const STDVECTOR3& );
+	STDVECTOR3	   operator * ( const STDVECTOR3& );
 
 	friend STDVECTOR3 operator * ( float, const struct STDVECTOR3& );
 

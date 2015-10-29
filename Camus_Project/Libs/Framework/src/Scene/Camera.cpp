@@ -4,6 +4,11 @@
 
 namespace hyperspace {
 	namespace scene {
+
+		const	XVECTOR3	Camera::LookConstCameraSpace = XVECTOR3(0.0f,0.0f,1.0f);
+		const	XVECTOR3	Camera::RightConstCameraSpace = XVECTOR3(1.0f, 0.0f, 0.0f);
+		const	XVECTOR3	Camera::UpConstCameraSpace = XVECTOR3(0.0f, 1.0f, 0.0f);
+
 		void	Camera::SetProjectionPerspective(float &f, float &r, float &n, float &fn) {
 			fov = f;	ratio = r;	zn = n;	  zf = fn;
 			projtype = projtype_::PERSPECTIVE;
@@ -47,14 +52,48 @@ namespace hyperspace {
 			Update();
 		}
 
-		void	Camera::Update(float f) {
+		void	Camera::MoveOnLookDir(float &dt) {
+			velocity.z += acceleration.z*dt;
+		}
+
+		void	Camera::MoveOnRight(float &dt) {
+			velocity.x += acceleration.x*dt;
+		}
+
+		void	Camera::MoveOnUp(float &dt) {
+			velocity.y += acceleration.y*dt;
+		}
+
+		void	Camera::Update(float dt) {
 			XMATRIX44	X_, Y_, Z_, T_;
 			XMatRotationX(X_, angPitch);
 			XMatRotationY(Y_, angYaw);
-			XMatRotationY(Z_, angRoll);
+			XMatRotationZ(Z_, angRoll);
+			transform = Z_*Y_*X_;
+
+#if USE_LEFT_HANDED
+			XMATRIX44 transpose;
+			XMatTranspose(transpose, transform);
+			XVecTransformNormal(look, LookConstCameraSpace, transpose);
+			XVecTransformNormal(up, UpConstCameraSpace, transpose);
+			XVecTransformNormal(right, RightConstCameraSpace, transpose);
+#else
+			XVecTransformNormal(look, LookConstCameraSpace, transform);
+			XVecTransformNormal(up, UpConstCameraSpace, transform);
+			XVecTransformNormal(right, RightConstCameraSpace, transform);
+#endif
+
+			look.Normalize();
+			right.Normalize();
+			up.Normalize();
+
+			XVECTOR3 currentvelocity = velocity.x*right + velocity.y*up + velocity.z*look;
+			velocity -= velocity*friction;
+			position += currentvelocity*dt;
+
 			XMatTranslation(T_, (-position));
-			transform = T_*Z_*Y_*X_;
-			matViewProj = transform*matProj;
+			transform = T_*transform;
+
 		}
 
 		void	Camera::UpdateProjection() {
@@ -67,10 +106,17 @@ namespace hyperspace {
 		}
 
 		void	Camera::SetLookAt(XVECTOR3 &v) {
+#if USE_LEFT_HANDED
 			look = position - v;
 			look.Normalize();
-			angPitch = atan2f(look.y, look.z);
+			angPitch = atan2f(-look.y, look.z);
 			angYaw = atan2f(look.x, -look.z);
+#else
+			look = v - position;
+			look.Normalize();
+			angPitch = atan2f(-look.y, -look.z);
+			angYaw = atan2f(-look.x, look.z);
+#endif
 			Update();
 		}
 
@@ -130,43 +176,37 @@ namespace hyperspace {
 			}
 		}
 		// Z
-		void	Camera::Roll(float &diff) {
+		void	Camera::Roll(float diff) {
+#if USE_LEFT_HANDED
+			diff = -diff;
+#endif
 			if (maxRoll != 0.0) {
-				if ((angRoll + diff) > maxRoll || (angRoll - diff) < -maxRoll)
+				if ((angRoll - diff) > maxRoll || (angRoll - diff) < -maxRoll)
 					return;
 			}
-
-			XMATRIX44 rot;
-			XMatRotationAxis(rot, look, diff);
-			XVecTransformNormal(right, right, rot);
-			XVecTransformNormal(up, up, rot);
-			angRoll += diff;
+			angRoll -= diff;
 		}
 		// X
-		void	Camera::Pitch(float &diff) {
+		void	Camera::Pitch(float diff) {
+#if USE_LEFT_HANDED
+			diff = -diff;
+#endif
 			if (maxPitch != 0.0) {
-				if ((angPitch + diff) > maxPitch || (angPitch - diff) < -maxPitch)
+				if ((angPitch - diff) > maxPitch || (angPitch - diff) < -maxPitch)
 					return;
 			}
-
-			XMATRIX44 rot;
-			XMatRotationAxis(rot, right, diff);
-			XVecTransformNormal(look, look, rot);
-			XVecTransformNormal(up, up, rot);
-			angPitch += diff;
+			angPitch -= diff;
 		}
 		// Y
-		void	Camera::Yaw(float &diff) {
+		void	Camera::Yaw(float diff) {
+#if USE_LEFT_HANDED
+			diff = -diff;
+#endif
 			if (maxYaw != 0.0) {
-				if ((angYaw + diff) > maxYaw || (angYaw - diff) < -maxYaw)
+				if ((angYaw - diff) > maxYaw || (angYaw - diff) < -maxYaw)
 					return;
 			}
-
-			XMATRIX44 rot;
-			XMatRotationAxis(rot, up, diff);
-			XVecTransformNormal(look, look, rot);
-			XVecTransformNormal(up, right, rot);
-			angYaw += diff;
+			angYaw -= diff;
 		}
 
 		void	Camera::ResetCamera() {
@@ -174,6 +214,8 @@ namespace hyperspace {
 			look = XVECTOR3(0.0f, 0.0f, 1.0f);
 			right = XVECTOR3(1.0f, 0.0f, 0.0f);
 			up = XVECTOR3(0.0f, 1.0f, 0.0f);
+			velocity = XVECTOR3(0.0f, 0.0f, 0.0f);
+			acceleration = XVECTOR3(0.0f, 0.0f, 0.0f);
 			fov = Deg2Rad(90.0f);
 			ratio = 1.77777777f;
 			zn = 1.0f;
@@ -185,6 +227,7 @@ namespace hyperspace {
 			angYaw = 0.0f;
 			maxspeed = 100.0f;
 			maxacceleration = 0.0f;
+			friction = 0.01f;
 			maxRoll = 0.0f;
 			maxPitch = Deg2Rad(89.0f);
 			maxYaw = 0.0f;

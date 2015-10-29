@@ -33,6 +33,8 @@ namespace hyperspace {
 				look(XVECTOR3(0.0f,0.0f,1.0f)),
 				right(XVECTOR3(1.0f,0.0f,0.0f)),
 				up(XVECTOR3(0.0f,1.0f,0.0f)),
+				velocity(XVECTOR3(0.0f,0.0f,0.0f)),
+				acceleration(XVECTOR3(0.0f,0.0f,0.0f)),
 				fov(Deg2Rad(90.0f)),
 				ratio(1.77777777f),
 				zn(1.0f),
@@ -44,6 +46,7 @@ namespace hyperspace {
 				angYaw(0.0f),
 				maxspeed(100.0f),
 				maxacceleration(0.0f),
+				friction(0.01f),
 				maxRoll(0.0f),
 				maxPitch(Deg2Rad(89.0f)),
 				maxYaw(0.0f),
@@ -71,16 +74,20 @@ namespace hyperspace {
 			void	YawLimit(float &f);
 			void	SetLimit(float &current,float limit);
 
-			void	Roll(float &diff);
-			void	Pitch(float &diff);
-			void	Yaw(float &diff);
+			void	Roll(float diff);
+			void	Pitch(float diff);
+			void	Yaw(float diff);
+
+			void	MoveOnLookDir(float &dt);
+			void	MoveOnRight(float &dt);
+			void	MoveOnUp(float &dt);
 
 			void	SetMaxVelocity(float &f);
 			void	SetMaxAcceleration(float &f);
 
 			void	ResetCamera();
 
-			void	Update(float f = 0.0f);
+			void	Update(float dt=0.0f);
 			
 			inline XMATRIX44& GetViewMat() {
 				return transform;
@@ -98,6 +105,13 @@ namespace hyperspace {
 			XVECTOR3		right;
 			XVECTOR3		up;
 
+			XVECTOR3		velocity;
+			XVECTOR3		acceleration;
+
+			static const	XVECTOR3	LookConstCameraSpace;
+			static const	XVECTOR3	RightConstCameraSpace;
+			static const	XVECTOR3	UpConstCameraSpace;
+
 			float			fov;
 			float			ratio;
 			float			zn;
@@ -111,6 +125,7 @@ namespace hyperspace {
 
 			float			maxspeed;
 			float			maxacceleration;
+			float			friction;
 			float			maxRoll;
 			float			maxPitch;
 			float			maxYaw;

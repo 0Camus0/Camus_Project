@@ -677,10 +677,11 @@ void xMesh::Update(){
 	XMATRIX44 Rot;
 	static float val = 0.0f;
 	XMATRIX44 Scale;
-	XMatScaling(Scale,1.001,1.001,1.001);
-	XMatRotationXRH(Rot,val);
+	XMatScaling(Scale,0.5,0.5,0.5);
+	XMatRotationXLH(Rot,val);
+	Id = Scale*Rot;
 	//XMatMultiply(SkeletonAnimated.Bones[7].Bone,Scale,SkeletonAnimated.Bones[7].Bone);
-	val=0.025;
+	
 
 	//SkeletonAnimated.Bones[7].Bone *= Scale*Rot;
 
@@ -692,7 +693,8 @@ void xMesh::Update(){
 	for(unsigned int i=0;i<Geometry.size();i++){
 		xMeshGeometry *pActualMesh = &Geometry[i];
 		for (unsigned int j=0;j<pActualMesh->Info.SkinMeshHeader.NumBones;j++){
-			XMatMultiply(pActualMesh->Info.SkinWeights[j].MatrixFinal,pActualMesh->Info.SkinWeights[j].MatrixOffset,*pActualMesh->Info.SkinWeights[j].MatrixCombinedAnimation);  //// Orig working with first xmath lib
+			//XMatMultiply(pActualMesh->Info.SkinWeights[j].MatrixFinal,pActualMesh->Info.SkinWeights[j].MatrixOffset,*pActualMesh->Info.SkinWeights[j].MatrixCombinedAnimation);  //// Orig working with first xmath lib
+			pActualMesh->Info.SkinWeights[j].MatrixFinal = pActualMesh->Info.SkinWeights[j].MatrixOffset*(*pActualMesh->Info.SkinWeights[j].MatrixCombinedAnimation);
 		}
 	}
 
@@ -701,7 +703,8 @@ void xMesh::Update(){
 
 void xMesh::UpdateSkeleton(xBone *pBone, XMATRIX44 mat){
 
-	XMatMultiply(pBone->Combined,pBone->Bone,mat); // Orig working with first xmath lib
+	//XMatMultiply(pBone->Combined,pBone->Bone,mat); // Orig working with first xmath lib
+	pBone->Combined = pBone->Bone*mat;
 
 	pBone->Touched = 1;
 		
@@ -772,14 +775,17 @@ void xMesh::UpdateSoftwareSkinning(){
 					AccumOffset+=VectorSizeinBytes;
 				}
 
-				XMATRIX44	*pMat = &pActualMesh->Info.SkinWeights[j].MatrixFinal;
-				XVecTransform(Pos_out,Pos,*pMat);
+				XMATRIX44	pMat = pActualMesh->Info.SkinWeights[j].MatrixFinal;
+#if !USE_LEFT_HANDED
+				XMatTranspose(pMat,pMat);
+#endif
+				XVecTransform(Pos_out,Pos,pMat);
 				if(VertexAttrib&xMeshGeometry::HAS_NORMAL)
-					XVecTransformNormal(Normal_out,Normal,*pMat);
+					XVecTransformNormal(Normal_out,Normal,pMat);
 				if(VertexAttrib&xMeshGeometry::HAS_TANGENT)
-					XVecTransformNormal(Tangent_out,Tangent,*pMat);
+					XVecTransformNormal(Tangent_out,Tangent,pMat);
 				if(VertexAttrib&xMeshGeometry::HAS_BINORMAL)
-					XVecTransformNormal(Binormal_out,Binormal,*pMat);
+					XVecTransformNormal(Binormal_out,Binormal,pMat);
 
 				AccumOffset = offset;
 				pPos = (XVECTOR3*)(pDest+AccumOffset);

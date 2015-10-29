@@ -8,6 +8,7 @@ Revision history:
 #define Cam_H
 
 #include "FTMaths.h"
+#include "xMaths.h"
 
 class Cam
 {
@@ -103,6 +104,8 @@ private:
 	STDVECTOR3 Position;
 	STDVECTOR3 LookAt;
 	STDVECTOR3 CamVelocity;
+	float		CamAcceleration;
+	
 	float       YawRad;
 	float       PitchRad;
 	float       MaxPitch;
@@ -116,6 +119,31 @@ private:
 	bool        Rotated;
 	bool		LeftHanded;
 	int			Direction;
+
+
+	XVECTOR3		position;
+	XVECTOR3		look;
+	XVECTOR3		right;
+	XVECTOR3		up;
+
+	XVECTOR3		velocity;
+	XVECTOR3		acceleration;
+
+	static const	XVECTOR3	LookConstCameraSpace;
+	static const	XVECTOR3	RightConstCameraSpace;
+	static const	XVECTOR3	UpConstCameraSpace;
+
+	float			angRoll;
+	float			angPitch;
+	float			angYaw;
+
+	float			maxspeed;
+	float			maxacceleration;
+	float			maxRoll;
+	float			maxPitch;
+	float			maxYaw;
+
+	XMATRIX44	transform;
 };
 
 #endif

@@ -18,12 +18,12 @@ void GApp::Init()
 {
 
 	// Here we setup the camera and the light camera
-	Camera.SetMaxVelocity( 1200.0f );
+	Camera.SetMaxVelocity( 5.0f );
 	Camera.SetPosition( &STDVECTOR3(-2.60666f, 109.199f, 221.997f ) );
 	//Camera.SetLookAt( &STDVECTOR3( -2.6155f, 108.718, 221.121) );
 	Camera.SetLookAt( &STDVECTOR3( 0.0f, 0.0f, 0.0f) );
 	Camera.SetNearPlane(1.0f);
-	Camera.SetFarPlane(50000.0f);
+	Camera.SetFarPlane(5000000.0f);
 	Camera.SetFOV( Deg2Rad(45.0f) );
 	Camera.SetMaxPitch(  Deg2Rad(89.0f) );
 	Camera.SetAspectRatio( (float)(pFrame->GetWidth()) / (float)(pFrame->GetHeight())  );
@@ -104,11 +104,11 @@ void GApp::OnCreate()
 	Planos[3].Create("Skyypos.X","Texturas/granja y pos.png");
 	Planos[4].Create("Skyzneg.X","Texturas/granja z neg.png");
 	Planos[5].Create("Skyzpos.X","Texturas/granja z pos.png");
-/*
+
 	// creating frame buffer objects
 	CreateFBORelfect();
 	CreateFBOShadowMap();
-*/
+
 	// setting up the render states
 	glEnable(GL_CULL_FACE);
     glCullFace(GL_FRONT);
@@ -227,7 +227,7 @@ void GApp::OnUpdate(float globalTime)
 	LightCamera.SetAspectRatio( (float)pFrame->GetWidth() / (float)pFrame->GetHeight()  );
 	// update cameras
 	Camera.OnUpdate(globalTime);
-	LightCamera.OnUpdate(globalTime);
+	//LightCamera.OnUpdate(globalTime);
 
 	// update world transforms
 	STDMATRIX translate,sc,rot,rotX,scinv;
@@ -425,7 +425,7 @@ void GApp::OnInput(float globalTime)
 		}
 
 		LightCamera.SetPosition(&LightPos);
-		LightCamera.SetLookAt(&STDVECTOR3(0.0f,1.0f,0.0f));
+	//	LightCamera.SetLookAt(&STDVECTOR3(0.0f,1.0f,0.0f));
 		
 
 		// to move the camera
@@ -436,7 +436,7 @@ void GApp::OnInput(float globalTime)
 			if(lCamera)
 				LightCamera.MoveForward(  cameraSpeed * globalTime );
 			else
-				Camera.MoveForward(  cameraSpeed * globalTime );
+				Camera.MoveForward(  globalTime );
 
 		}
 		if ( pPressedKeys[SDLK_a] )
@@ -444,21 +444,21 @@ void GApp::OnInput(float globalTime)
 			if(lCamera)
 				LightCamera.Strafe( -cameraSpeed * globalTime );
 			else
-				Camera.Strafe( -cameraSpeed * globalTime );
+				Camera.Strafe( -globalTime );
 		}
 		if ( pPressedKeys[SDLK_s] )
 		{
 			if(lCamera)
 				LightCamera.MoveForward(  -cameraSpeed * globalTime );
 			else
-				Camera.MoveForward(  -cameraSpeed * globalTime );
+				Camera.MoveForward(  -globalTime );
 		}
 		if ( pPressedKeys[SDLK_d] )
 		{
 			if(lCamera)
 				LightCamera.Strafe( cameraSpeed * globalTime );
 			else
-				Camera.Strafe( cameraSpeed * globalTime );
+				Camera.Strafe( globalTime );
 		}
 	}
 	else
@@ -483,13 +483,6 @@ void GApp::OnRender()
 			Planos[i].Render(&Camera,false);
 	}
 
-
-	DrawMeshes();
-
-
-	
-
-/*
 	// first we fill the depth
 	DrawShadowMap();
 
@@ -562,7 +555,8 @@ void GApp::OnRender()
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-*/
+
+	DrawMeshes();
 
 //	Font->Render("");
 

@@ -322,9 +322,9 @@ STDVECTOR3 operator * ( float f, const struct STDVECTOR3& v )
 	return STDVECTOR3(f * v.x, f * v.y, f * v.z);
 }
 
-float STDVECTOR3::operator * ( const STDVECTOR3& v )
+STDVECTOR3 STDVECTOR3::operator * ( const STDVECTOR3& v )
 {
-	return ((this->x*v.x) + (this->y*v.y) + (this->z*v.z));
+	return STDVECTOR3((this->x*v.x) , (this->y*v.y) , (this->z*v.z));
 }
 
 STDVECTOR3 STDVECTOR3::operator + ( const STDVECTOR3& v ) const

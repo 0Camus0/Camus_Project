@@ -51,7 +51,7 @@ void Plane::Create(string modelPath,string texturePath){
 	STDMATRIX scl;
 	STDMATRIX rot;
 	MatRotationY(&rot,Deg2Rad(180.0f));
-	MatScaling(&scl,0.1f,0.1f,0.1f);
+	MatScaling(&scl,2.5f,2.5f,2.5f);
 	WorldP=scl*rot;
 }
 
@@ -62,9 +62,9 @@ void Plane::Render(Cam* cam,bool invert){
 	STDMATRIX tras;
 	MatRotationY(&rot,Deg2Rad(180.0f));
 	if(invert){
-		MatScaling(&scl,0.5f,-0.5f,0.5f);
+		MatScaling(&scl,2.5f,-2.5f,2.5f);
 	}else{
-		MatScaling(&scl,0.5f,0.5f,0.5f);
+		MatScaling(&scl,2.5f,2.5f,2.5f);
 	}
 
 	MatTranslation(&tras,cam->GetPosition()->x,cam->GetPosition()->y,cam->GetPosition()->z);
