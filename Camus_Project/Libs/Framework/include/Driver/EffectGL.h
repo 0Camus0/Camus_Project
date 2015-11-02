@@ -28,6 +28,10 @@ namespace hyperspace {
 			 void			SetMat3(std::string handler, float*);
 			 void			SetMat4(std::string handler, XMATRIX44 &);
 
+			 ~TechniqueGL() {
+
+			 }
+
 			 GLSL_Parser	Parser;
 			 Pass_			*CurrentPass;
 			 

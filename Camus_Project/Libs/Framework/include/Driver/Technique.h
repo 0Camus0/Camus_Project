@@ -99,6 +99,10 @@ namespace hyperspace {
 			virtual	void	SetMat3(std::string handler, float*) = 0;
 			virtual	void	SetMat4(std::string handler, XMATRIX44 &) = 0;
 
+			virtual ~CTechnique_() {
+
+			}
+
 			std::string			Name;
 			std::string			Shader;
 			std::vector<Pass_>	Passes;
