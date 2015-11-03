@@ -12,7 +12,7 @@ namespace hyperspace {
 	namespace video {
 
 		void TechniqueGL::Initialize(std::string name, std::string shader) {
-			LogPrintDebug("TechniqueGL::Initialize: %s  shader: %s ", name.c_str(), shader.c_str());
+			LogPrintDebug("[TechniqueGL::Initialize] %s  shader: %s ", name.c_str(), shader.c_str());
 
 			Name = name;
 			Shader = shader;
@@ -20,7 +20,7 @@ namespace hyperspace {
 			Path += "Shaders/";
 			Path += shader;
 
-			LogPrintDebug("TechniqueGL::Initialize Path to use: %s " ,Path.c_str());
+			LogPrintDebug("[TechniqueGL::Initialize] Path to use: %s " ,Path.c_str());
 			Parser.Parse(Path);
 			AddPass("0", ArgumentsManager("NORMAL;TANGENT;"), Path, CRenderStateDesc());
 
@@ -88,7 +88,7 @@ namespace hyperspace {
 			std::string strSource = args;
 			strSource += std::string(pSource);
 
-			LogPrintDebug("Compiling shader [%s] with args [%s] ...", path.c_str(),args.c_str());
+			LogPrintDebug("[Compiling shader] [%s] with args [%s] ...", path.c_str(),args.c_str());
 
 #if SHOW_SHADERS_CONTENT
 			LogPrintDebug("Content\n[%s]\n", strSource.c_str());
@@ -114,7 +114,7 @@ namespace hyperspace {
 				delete [] pError;				
 			}
 			else {
-				LogPrintDebug("...Success.");
+				LogPrintDebug("[...Success.]");
 			}
 
 			delete [] pSource;

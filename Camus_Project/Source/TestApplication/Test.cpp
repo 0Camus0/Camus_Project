@@ -2,6 +2,7 @@
 #include <Utils/Log.h>
 #include <Driver/Technique.h>
 #include <Driver/EffectGL.h>
+#include <Driver/Texture.h>
 
 #ifdef OS_WIN32
 #ifdef min
@@ -22,7 +23,7 @@ float clip(float n, float lower, float upper) {
 		lower,
 		std::min(n, upper));
 }
-
+ 
 void TestApp::CreateAssets() {
 	LogPrintDebug("TestApp::CreateAssets\n");
 
@@ -30,6 +31,15 @@ void TestApp::CreateAssets() {
 	AllTechnique->Initialize("All-tech", "All");
 
 	delete AllTechnique;
+
+
+	hyperspace::video::TextureManager	*TexManager = new hyperspace::video::TextureManager();
+
+	TexManager->LoadTexture("cube_xn_xn.png");
+
+	delete TexManager;
+
+
 	
 	bInited = true;
 }

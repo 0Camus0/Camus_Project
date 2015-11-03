@@ -10,17 +10,18 @@
 
 #define MAX_TEXURE_LIMIT	100
 
-#define NOT_FOUND_TEXTURE	0xFFFF
+#define TEXTURE_NOT_FOUND	0xFFFF
+#define TEXTURE_FOUND	0
 
 namespace hyperspace {
-	namespace texture {
+	namespace video {
 
 		enum channelS_ {
-			ALPHA		= 0x1,
-			LUMINANCE	= 0x2,
-			RGB			= 0x4,
-			RGBA		= 0x8,
-			DEPTH		= 0x10
+			CH_ALPHA	 = 0x1,
+			CH_LUMINANCE = 0x2,
+			CH_RGB		 = 0x4,
+			CH_RGBA		 = 0x8,
+			CH_DEPTH	 = 0x10
 		};
 
 		enum pixel_format_ {
@@ -53,19 +54,27 @@ namespace hyperspace {
 		enum props_ {
 			MIPMAPS		= 0x800000,
 			CUBE_MAP	= 0x1000000,
-			ALPHA		= 0x2000000,
-			COMPRESSED	= 0x4000000
+			COMPRESSED	= 0x2000000
 		};
 
 		class Texture {
 		public:
-			Texture(){}
+			Texture() :	size(0),
+						offset(0),
+						props(0),
+						x(0),
+						y(0),
+						id(0),
+						bounded(0)
+						{}
 
-			unsigned short	id;
+			
 			unsigned int	size;
 			unsigned int	offset;
 			unsigned int	props;
-			unsigned char	x, y;
+			unsigned short	x, y;
+			unsigned short	id;
+			unsigned short	bounded;
 		
 
 		};
@@ -74,8 +83,10 @@ namespace hyperspace {
 		public:
 			unsigned short	LoadTexture(std::string filename);
 
+			unsigned int	CheckFormat(std::ifstream &in);
+			
 
-			unsigned short	ProcessHeader(const std::ifstream &stream);
+			unsigned int	num_textures_loaded;
 
 			static Texture			textures[MAX_TEXURE_LIMIT];
 			static unsigned char	tex_mem_pool[TEXTURE_BUDGET_SIZE_BYTES];

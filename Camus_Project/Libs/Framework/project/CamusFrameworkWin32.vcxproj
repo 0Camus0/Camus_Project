@@ -25,6 +25,7 @@
     <ClCompile Include="..\src\Driver\EffectGL.cpp" />
     <ClCompile Include="..\src\Driver\GLSLParser.cpp" />
     <ClCompile Include="..\src\Driver\OpenGlDriver.cpp" />
+    <ClCompile Include="..\src\Driver\PNG\lodepng.cpp" />
     <ClCompile Include="..\src\Driver\ShaderBase.cpp" />
     <ClCompile Include="..\src\Driver\Texture.cpp" />
     <ClCompile Include="..\src\Scene\Camera.cpp" />
@@ -60,6 +61,7 @@
     <ClInclude Include="..\include\Driver\EffectGL.h" />
     <ClInclude Include="..\include\Driver\GLSLParser.h" />
     <ClInclude Include="..\include\Driver\OpenGLDriver.h" />
+    <ClInclude Include="..\include\Driver\PNG\lodepng.h" />
     <ClInclude Include="..\include\Driver\RenderState.h" />
     <ClInclude Include="..\include\Driver\ShaderBase.h" />
     <ClInclude Include="..\include\Driver\Technique.h" />
