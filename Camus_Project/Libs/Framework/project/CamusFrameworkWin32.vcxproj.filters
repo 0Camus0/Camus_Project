@@ -88,6 +88,9 @@
     <ClCompile Include="..\src\Driver\PNG\lodepng.cpp">
       <Filter>Source Files\Driver\Texture\PNG</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\Utils\MemoryTracker.cpp">
+      <Filter>Source Files\Utils</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\Core\Core.h">
@@ -164,6 +167,12 @@
     </ClInclude>
     <ClInclude Include="..\include\Driver\PNG\lodepng.h">
       <Filter>Source Files\Driver\Texture\PNG</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\config.h">
+      <Filter>Source Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Utils\MemoryTracker.h">
+      <Filter>Source Files\Utils</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

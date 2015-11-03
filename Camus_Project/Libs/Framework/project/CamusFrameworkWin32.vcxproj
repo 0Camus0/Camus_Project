@@ -33,6 +33,7 @@
     <ClCompile Include="..\src\Utils\FileSystem.cpp" />
     <ClCompile Include="..\src\Utils\InputImplWin32.cpp" />
     <ClCompile Include="..\src\Utils\Log.cpp" />
+    <ClCompile Include="..\src\Utils\MemoryTracker.cpp" />
     <ClCompile Include="..\src\Utils\WindowProperties.cpp" />
     <ClCompile Include="..\src\WindowManager\AndroidFramework.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
@@ -52,6 +53,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\include\config.h" />
     <ClInclude Include="..\include\Core\Core.h" />
     <ClInclude Include="..\include\Core\OS_Selector.h" />
     <ClInclude Include="..\include\Driver\BaseDriver.h" />
@@ -73,6 +75,7 @@
     <ClInclude Include="..\include\Utils\InputBase.h" />
     <ClInclude Include="..\include\Utils\Log.h" />
     <ClInclude Include="..\include\Utils\Maths.h" />
+    <ClInclude Include="..\include\Utils\MemoryTracker.h" />
     <ClInclude Include="..\include\Utils\WindowProperties.h" />
     <ClInclude Include="..\include\WindowManager\AndroidFramework.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>

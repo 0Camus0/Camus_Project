@@ -3,11 +3,15 @@
 
 #include <Driver/BaseDriver.h>
 #include <Utils/InputBase.h>
+#include <Utils/MemoryTracker.h>
 
 namespace hyperspace {
 	namespace scene {
 		class CScene_ {
 		public:
+			CScene_() {
+				MemAppendHeap(CScene_);
+			}
 			virtual void CreateAssets() = 0;
 			virtual void DestroyAssets() = 0;
 

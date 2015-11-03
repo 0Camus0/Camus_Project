@@ -5,10 +5,9 @@
 #include <fstream>
 #include <string>
 
-#define	TEXTURE_BUDGET_SIZE_MB		256
-#define TEXTURE_BUDGET_SIZE_BYTES	1024*1024*TEXTURE_BUDGET_SIZE_MB
+#include <config.h>
+#include <Utils/MemoryTracker.h>
 
-#define MAX_TEXURE_LIMIT	100
 
 #define TEXTURE_NOT_FOUND	0xFFFF
 #define TEXTURE_FOUND	0
@@ -66,7 +65,9 @@ namespace hyperspace {
 						y(0),
 						id(0),
 						bounded(0)
-						{}
+						{
+							MemAppendHeap(Texture);
+						}
 
 			
 			unsigned int	size;
@@ -81,16 +82,19 @@ namespace hyperspace {
 
 		class TextureManager {
 		public:
+			TextureManager();
 			unsigned short	LoadTexture(std::string filename);
 
 			unsigned int	CheckFormat(std::ifstream &in);
 			
+			unsigned int	LoadPNG(std::string &Path);
 
-			unsigned int	num_textures_loaded;
+			static unsigned int	num_textures_loaded;
+			static unsigned int	current_index;
 
 			static Texture			textures[MAX_TEXURE_LIMIT];
 			static unsigned char	tex_mem_pool[TEXTURE_BUDGET_SIZE_BYTES];
-			static unsigned char	tex_names_pool[MAX_TEXURE_LIMIT][32];
+			static			char	tex_paths_pool[MAX_TEXURE_LIMIT][MAX_PATH_SIZE];
 		};
 	}
 }

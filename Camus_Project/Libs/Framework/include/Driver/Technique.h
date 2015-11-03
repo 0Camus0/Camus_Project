@@ -4,6 +4,7 @@
 #include <Driver/RenderState.h>
 #include <Driver/ShaderBase.h>
 #include <Utils/Maths.h>
+#include <Utils/MemoryTracker.h>
 #include <string>
 #include <vector>
 #include <map>
@@ -19,8 +20,10 @@ namespace hyperspace {
 		public:
 			ArgumentsManager() {
 				arguments = "";
+				MemAppendHeap(ArgumentsManager);
 			}
 			ArgumentsManager(std::string str) {
+				MemAppendHeap(ArgumentsManager);
 				if (!str.empty()) {
 					if (str[str.size() - 1] != ';') {
 						str += ";";
@@ -67,7 +70,7 @@ namespace hyperspace {
 		};
 
 		struct Pass_ {
-			Pass_() : vertexID(0), pixelID(0), program(0){}
+			Pass_() : vertexID(0), pixelID(0), program(0){ MemAppendHeap(Pass_);  }
 			int						vertexID;
 			int						pixelID;
 			int						program;
@@ -81,7 +84,9 @@ namespace hyperspace {
 
 		class CTechnique_ {
 		public:
-			CTechnique_() {}
+			CTechnique_() {
+				MemAppendHeap(CTechnique_);
+			}
 			virtual void			Initialize(std::string name, std::string shader) = 0;
 			virtual void			AddPass(std::string name, ArgumentsManager args,std::string path,CRenderStateDesc desc) = 0;
 			virtual void			RemovePass(std::size_t id) = 0;

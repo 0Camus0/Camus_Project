@@ -1,6 +1,8 @@
 #ifndef CA_DIVER_PROPERTIES_H
 #define CA_DIVER_PROPERTIES_H
 
+#include <Utils/MemoryTracker.h>
+
 namespace hyperspace {
 	namespace video {
 		class DriverProperties {
@@ -23,7 +25,9 @@ namespace hyperspace {
 			DriverProperties() :
 				BitsPerDepth(16)
 				, BitsPerPixel(8)
-				, Channels(CHANNEL_RED | CHANNEL_GREEN | CHANNEL_BLUE | CHANNEL_ALPHA) {	}
+				, Channels(CHANNEL_RED | CHANNEL_GREEN | CHANNEL_BLUE | CHANNEL_ALPHA) {	
+				MemAppendHeap(DriverProperties);
+			}
 
 			int		BitsPerDepth;
 			int		BitsPerPixel;

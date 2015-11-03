@@ -2,6 +2,7 @@
 #define CA_NODE_H
 
 #include <Utils/Maths.h>
+#include <Utils/MemoryTracker.h>
 
 #include <vector>
 #include <string>

@@ -1,14 +1,13 @@
 #ifndef CA_FILESYS_H
 #define CA_FILESYS_H
 
+#include <Utils/MemoryTracker.h>
 #include <string>
 
 namespace hyperspace {
 	namespace fs {
 		class Filesystem {
 		public:
-			
-
 			void	InitFS();
 			std::string GetResourcesPath();
 
@@ -16,6 +15,7 @@ namespace hyperspace {
 
 		private:
 			Filesystem() {
+				MemAppendHeap(Filesystem);
 			}
 
 

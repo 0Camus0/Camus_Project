@@ -11,6 +11,7 @@ namespace hyperspace {
 			type = t;
 			uniqueID = g_Id;
 			g_Id++;
+			MemAppendHeap(CNode_);
 		}
 	}
 }

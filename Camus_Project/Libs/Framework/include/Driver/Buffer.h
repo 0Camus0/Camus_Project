@@ -1,6 +1,7 @@
 #ifndef CA_BUFFER_H
 #define CA_BUFFER_H
 
+#include <Utils/MemoryTracker.h>
 #include <cstddef>
 
 namespace hyperspace {
@@ -24,6 +25,7 @@ namespace hyperspace {
 				flags(0),
 				size(0)
 			{
+				MemAppendHeap(CBuffer_);
 				buffer = 0;
 			}
 			virtual void CreateBuffer(void *data, std::size_t size, unsigned int offset, unsigned int FLAGS = 0) = 0;

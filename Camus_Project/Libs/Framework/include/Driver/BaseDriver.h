@@ -1,6 +1,7 @@
 #ifndef CA_BASEDRIVER_H
 #define CA_BASEDRIVER_H
 
+#include <Utils/MemoryTracker.h>
 #include <cstdint>
 
 namespace hyperspace {
@@ -152,6 +153,7 @@ namespace hyperspace {
 
 		class BaseDriver {
 		public:
+			BaseDriver() { MemAppendHeap(BaseDriver); }
 			virtual	void	InitDriver() = 0;
 			virtual void	CreateSurfaces() = 0;
 			virtual void	DestroySurfaces() = 0;

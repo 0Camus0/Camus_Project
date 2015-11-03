@@ -1,6 +1,7 @@
 #ifndef CA_INPUTBASE_H
 #define CA_INPUTBASE_H
 
+#include <Utils/MemoryTracker.h>
 #include <iostream>
 #include <vector>
 
@@ -61,7 +62,7 @@ namespace hyperspace {
 
 		// 256 bit nice structure
 		struct InputEvent_ {
-			InputEvent_() : _typeInput(UNKOWN_DEVICE), _typeEvent(UNKOWN_EVENT), _id(0), _state(0) { icoords[0] = icoords[1] = icoords[2] = 0; }
+			InputEvent_() : _typeInput(UNKOWN_DEVICE), _typeEvent(UNKOWN_EVENT), _id(0), _state(0) { icoords[0] = icoords[1] = icoords[2] = 0; MemAppendHeap(InputEvent_); }
 			TypeInput_		_typeInput;
 			TypeEvent_		_typeEvent;
 			short			_id;

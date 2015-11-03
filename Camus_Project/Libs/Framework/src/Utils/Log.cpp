@@ -1,5 +1,6 @@
 #ifdef USE_DEBUG
 #include <Utils/Log.h>
+#include <Utils/MemoryTracker.h>
 #include <iostream>
 #include <sstream>
 #include <stdarg.h> 
@@ -7,7 +8,7 @@
 #endif
 
 #if USE_SHOW_THREADS_IDS || USE_COLORED_CONSOLE || defined(OS_WIN32)
-static char Log_Buffer[1024*1024];	// 1 Kb should be enough
+static char Log_Buffer[LOG_BUFFER_SIZE];	// 1 Kb should be enough
 #endif
 
 #if defined(OS_ANDROID) && defined(USE_DEBUG) && USE_SHOW_THREADS_IDS
@@ -92,11 +93,18 @@ void	LogPrintInfo(const char* format,...) {
 #if USE_COLORED_CONSOLE
 	SetConsoleTextAttribute(h, 8 | FOREGROUND_INTENSITY);
 #endif
+
+	std::stringstream extra_info_debug;
 #if USE_SHOW_THREADS_IDS
-	std::cout << "THREAD[" << (int)GetCurrentThreadId() << "] - " << Log_Buffer << std::endl;
-#else
-	std::cout << Log_Buffer << std::endl;
+	extra_info_debug << "tid[" << (int)GetCurrentThreadId() << "] ";
 #endif
+
+#if USE_SHOW_MEM_USAGE
+	extra_info_debug << "mem[" << GetTotalMem() << " MB] ";
+#endif
+
+	std::cout << extra_info_debug.str() << Log_Buffer << std::endl;
+
 #if USE_COLORED_CONSOLE
 	SetConsoleTextAttribute(h, wOldColorAttrs);
 #endif
@@ -117,11 +125,16 @@ void	LogPrintDebug(const char* format, ...){
 #if USE_COLORED_CONSOLE
 	SetConsoleTextAttribute(h, 2 | FOREGROUND_INTENSITY);
 #endif
+	std::stringstream extra_info_debug;
 #if USE_SHOW_THREADS_IDS
-	std::cout << "THREAD[" << (int)GetCurrentThreadId() << "] - " << Log_Buffer << std::endl;
-#else
-	std::cout << Log_Buffer << std::endl;
+	extra_info_debug << "tid[" << (int)GetCurrentThreadId() << "] ";
 #endif
+
+#if USE_SHOW_MEM_USAGE
+	extra_info_debug << "mem[" << GetTotalMem() << " MB] ";
+#endif
+
+	std::cout << extra_info_debug.str() << Log_Buffer << std::endl;
 #if USE_COLORED_CONSOLE
 	SetConsoleTextAttribute(h, wOldColorAttrs);
 #endif
@@ -142,11 +155,16 @@ void	LogPrintError(const char* format, ...) {
 #if USE_COLORED_CONSOLE
 	SetConsoleTextAttribute(h, 4 | FOREGROUND_INTENSITY);
 #endif
+	std::stringstream extra_info_debug;
 #if USE_SHOW_THREADS_IDS
-	std::cout << "THREAD[" << (int)GetCurrentThreadId() << "] - " << Log_Buffer << std::endl;
-#else
-	std::cout << Log_Buffer << std::endl;
+	extra_info_debug << "tid[" << (int)GetCurrentThreadId() << "] ";
 #endif
+
+#if USE_SHOW_MEM_USAGE
+	extra_info_debug << "mem[" << GetTotalMem() << " MB] ";
+#endif
+
+	std::cout << extra_info_debug.str() << Log_Buffer << std::endl;
 #if USE_COLORED_CONSOLE
 	SetConsoleTextAttribute(h, wOldColorAttrs);
 #endif
@@ -167,11 +185,16 @@ void	LogPrintWarning(const char* format, ...) {
 #if USE_COLORED_CONSOLE
 	SetConsoleTextAttribute(h, 14 | FOREGROUND_INTENSITY);
 #endif
+	std::stringstream extra_info_debug;
 #if USE_SHOW_THREADS_IDS
-	std::cout << "THREAD[" << (int)GetCurrentThreadId() << "] - " << Log_Buffer << std::endl;
-#else
-	std::cout << Log_Buffer << std::endl;
+	extra_info_debug << "tid[" << (int)GetCurrentThreadId() << "] ";
 #endif
+
+#if USE_SHOW_MEM_USAGE
+	extra_info_debug << "mem[" << GetTotalMem() << " MB] ";
+#endif
+
+	std::cout << extra_info_debug.str() << Log_Buffer << std::endl;
 #if USE_COLORED_CONSOLE
 	SetConsoleTextAttribute(h, wOldColorAttrs);
 #endif

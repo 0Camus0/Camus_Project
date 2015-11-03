@@ -35,7 +35,8 @@ void TestApp::CreateAssets() {
 
 	hyperspace::video::TextureManager	*TexManager = new hyperspace::video::TextureManager();
 
-	TexManager->LoadTexture("cube_xn_xn.png");
+	TexManager->LoadTexture("cube_xn.png");
+	TexManager->LoadTexture("Real.png");
 
 	delete TexManager;
 

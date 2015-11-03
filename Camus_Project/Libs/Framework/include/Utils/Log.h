@@ -1,14 +1,7 @@
 #ifndef CA_LOG_H
 #define CA_LOG_H
 
-#if OS_WIN32
-#define USE_COLORED_CONSOLE 1
-#else
-#define USE_COLORED_CONSOLE 0
-#endif
-
-#define USE_SHOW_THREADS_IDS 1
-#define TAG_LOGGING "DEBUG"
+#include <config.h>
 
 #ifdef USE_DEBUG
 #ifdef OS_WIN32
