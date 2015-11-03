@@ -76,6 +76,9 @@
     <ClCompile Include="..\src\Scene\Camera.cpp">
       <Filter>Source Files\Scene</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\Driver\Texture.cpp">
+      <Filter>Source Files\Driver</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\Core\Core.h">
@@ -146,6 +149,9 @@
     </ClInclude>
     <ClInclude Include="..\include\Scene\Camera.h">
       <Filter>Source Files\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Driver\Texture.h">
+      <Filter>Source Files\Driver</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
