@@ -3,7 +3,6 @@
 
 #include <iostream>
 #include <string>
-#include <Utils/MemoryTracker.h>
 
 namespace hyperspace {
 	namespace video {
@@ -43,7 +42,8 @@ namespace hyperspace {
 			class Shader_Var_ {
 			public:
 				Shader_Var_() {
-					MemAppendHeap(Shader_Var_);
+				}
+				~Shader_Var_(){
 				}
 				shader::semantic_	sem;
 				shader::datatype_	type;

@@ -1,5 +1,7 @@
 #ifndef CA_WINDOW_PROPERTIES_H
 #define CA_WINDOW_PROPERTIES_H
+
+
 namespace hyperspace {
 	class WindowParameters {
 	public:
@@ -23,7 +25,13 @@ namespace hyperspace {
 		WindowParameters() :
 			Width(1280)
 			, Height(720)
-			, Properties(LANDSCAPE_0 | WINDOWED | RESIZEABLE | SHOW_CURSOR) {	}
+			, Properties(LANDSCAPE_0 | WINDOWED | RESIZEABLE | SHOW_CURSOR) {	
+			
+			}
+
+		~WindowParameters() {
+		
+		}
 
 		//	To implement per platform
 		void GatherProperties();

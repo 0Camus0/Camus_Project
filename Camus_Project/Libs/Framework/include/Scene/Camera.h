@@ -2,7 +2,7 @@
 #define CA_CAMERA_H
 
 #include <Scene/Node.h>
-#include <Utils/MemoryTracker.h>
+
 
 namespace hyperspace {
 	namespace scene {
@@ -55,7 +55,9 @@ namespace hyperspace {
 				projtype(projtype_::PERSPECTIVE)
 			{
 				UpdateProjection();
-				MemAppendHeap(Camera);
+			}
+
+			~Camera() {
 			}
 
 			void	SetProjectionPerspective(float &f, float &r, float &zn, float &zf);

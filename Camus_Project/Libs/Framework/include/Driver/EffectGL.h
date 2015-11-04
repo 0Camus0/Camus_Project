@@ -4,6 +4,7 @@
 #include <Driver/Technique.h>
 #include <Driver/GLSLParser.h>
 
+
 namespace hyperspace {
 	namespace video {
 
@@ -11,7 +12,8 @@ namespace hyperspace {
 	
 		class TechniqueGL : public CTechnique_ {
 		public:
-			TechniqueGL() : CurrentPass(0) { }
+			TechniqueGL() : CurrentPass(0) {
+			}
 			 void			Initialize(std::string name, std::string shader);
 			 void			AddPass(std::string name, ArgumentsManager args, std::string path, CRenderStateDesc desc);
 			 void			RemovePass(std::size_t id);
@@ -29,7 +31,6 @@ namespace hyperspace {
 			 void			SetMat4(std::string handler, XMATRIX44 &);
 
 			 ~TechniqueGL() {
-
 			 }
 
 			 GLSL_Parser	Parser;

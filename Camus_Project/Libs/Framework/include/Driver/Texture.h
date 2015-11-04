@@ -6,7 +6,6 @@
 #include <string>
 
 #include <config.h>
-#include <Utils/MemoryTracker.h>
 
 
 #define TEXTURE_NOT_FOUND	0xFFFF
@@ -66,10 +65,13 @@ namespace hyperspace {
 						id(0),
 						bounded(0)
 						{
-							MemAppendHeap(Texture);
+							
 						}
 
 			
+			~Texture() {
+			
+			}
 			unsigned int	size;
 			unsigned int	offset;
 			unsigned int	props;
@@ -83,6 +85,9 @@ namespace hyperspace {
 		class TextureManager {
 		public:
 			TextureManager();
+			~TextureManager() {
+			
+			}
 			unsigned short	LoadTexture(std::string filename);
 
 			unsigned int	CheckFormat(std::ifstream &in);

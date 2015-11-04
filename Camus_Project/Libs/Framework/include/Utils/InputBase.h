@@ -1,7 +1,6 @@
 #ifndef CA_INPUTBASE_H
 #define CA_INPUTBASE_H
 
-#include <Utils/MemoryTracker.h>
 #include <iostream>
 #include <vector>
 
@@ -62,7 +61,7 @@ namespace hyperspace {
 
 		// 256 bit nice structure
 		struct InputEvent_ {
-			InputEvent_() : _typeInput(UNKOWN_DEVICE), _typeEvent(UNKOWN_EVENT), _id(0), _state(0) { icoords[0] = icoords[1] = icoords[2] = 0; MemAppendHeap(InputEvent_); }
+			InputEvent_() : _typeInput(UNKOWN_DEVICE), _typeEvent(UNKOWN_EVENT), _id(0), _state(0) { icoords[0] = icoords[1] = icoords[2] = 0;  }
 			TypeInput_		_typeInput;
 			TypeEvent_		_typeEvent;
 			short			_id;
@@ -77,7 +76,13 @@ namespace hyperspace {
 		struct InputButton_ {
 			enum { _ON = 1, _OFF = 0 };
 			enum { _LOCKED = 1, _UNLOCKED = 0 };
-			InputButton_() :_state(_OFF), _lock(_OFF) {}
+			InputButton_() :_state(_OFF), _lock(_OFF) {
+			
+			}
+			~InputButton_()
+			{
+			
+			}
 			short	_state;
 			short	_lock;
 			void	PressIt() { _state = (_LOCKED == 1) ? _OFF : _ON; }
@@ -105,7 +110,12 @@ namespace hyperspace {
 
 		class EventManager {
 		public:
-			EventManager() {}
+			EventManager() {			
+				
+			}
+			~EventManager() {
+				
+			}
 			void InitKeyboard(int num_keys);
 			void InitMouse(int num_buttons);
 			void InitTouchScreen(int num_touchPoints);

@@ -2,7 +2,6 @@
 #define CA_RENDER_STATE_H
 
 #include <Driver/BaseDriver.h>
-#include <Utils/MemoryTracker.h>
 #include <cstdint>
 
 namespace hyperspace {
@@ -19,7 +18,8 @@ namespace hyperspace {
 				texwrap = CLAMP;
 				depthfunction = LEQUAL;
 				stencilfunction = ALWAYS;		
-				MemAppendHeap(CRenderStateDesc);
+			}
+			~CRenderStateDesc() {
 			}
 
 			bool operator == (CRenderStateDesc &o) {

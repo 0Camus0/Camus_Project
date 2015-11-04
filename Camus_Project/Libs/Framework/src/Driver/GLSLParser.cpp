@@ -11,7 +11,6 @@ namespace hyperspace{
 	namespace video {
 
 		GLSL_Parser::GLSL_Parser() {
-			
 		}
 
 		GLSL_Parser::~GLSL_Parser() {

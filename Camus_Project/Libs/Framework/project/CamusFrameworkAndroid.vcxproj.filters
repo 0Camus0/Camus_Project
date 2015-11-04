@@ -19,6 +19,15 @@
     <Filter Include="Source Files\Driver\OpenGL">
       <UniqueIdentifier>{38c1410a-869e-4347-a0e0-780ad347cfc4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Driver\Texture">
+      <UniqueIdentifier>{d1be0101-ab97-4a8f-8746-2c0f049787b2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Driver\Texture\PNG">
+      <UniqueIdentifier>{19afb165-c9d1-49e9-be96-4ac8470326e0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Scene">
+      <UniqueIdentifier>{9bcecbf4-1224-4870-bc04-70f45a75d8b4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\Core\Core.h">
@@ -78,6 +87,24 @@
     <ClInclude Include="..\include\Utils\FileSystem.h">
       <Filter>Source Files\Utils</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\Driver\Texture.h">
+      <Filter>Source Files\Driver\Texture</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Driver\PNG\lodepng.h">
+      <Filter>Source Files\Driver\Texture\PNG</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Scene\Camera.h">
+      <Filter>Source Files\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Scene\Node.h">
+      <Filter>Source Files\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Scene\Scene.h">
+      <Filter>Source Files\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\config.h">
+      <Filter>Source Files\Core</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\Driver\DriverProperties.cpp">
@@ -124,6 +151,18 @@
     </ClCompile>
     <ClCompile Include="..\src\Driver\ShaderBase.cpp">
       <Filter>Source Files\Driver</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Driver\Texture.cpp">
+      <Filter>Source Files\Driver\Texture</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Driver\PNG\lodepng.cpp">
+      <Filter>Source Files\Driver\Texture\PNG</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Scene\Camera.cpp">
+      <Filter>Source Files\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Scene\Node.cpp">
+      <Filter>Source Files\Scene</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

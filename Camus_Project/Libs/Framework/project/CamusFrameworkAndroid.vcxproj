@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\include\config.h" />
     <ClInclude Include="..\include\Core\Core.h" />
     <ClInclude Include="..\include\Core\OS_Selector.h" />
     <ClInclude Include="..\include\Driver\BaseDriver.h" />
@@ -28,8 +29,13 @@
     <ClInclude Include="..\include\Driver\EffectGL.h" />
     <ClInclude Include="..\include\Driver\GLSLParser.h" />
     <ClInclude Include="..\include\Driver\OpenGLDriver.h" />
+    <ClInclude Include="..\include\Driver\PNG\lodepng.h" />
     <ClInclude Include="..\include\Driver\ShaderBase.h" />
     <ClInclude Include="..\include\Driver\Technique.h" />
+    <ClInclude Include="..\include\Driver\Texture.h" />
+    <ClInclude Include="..\include\Scene\Camera.h" />
+    <ClInclude Include="..\include\Scene\Node.h" />
+    <ClInclude Include="..\include\Scene\Scene.h" />
     <ClInclude Include="..\include\Utils\FileSystem.h" />
     <ClInclude Include="..\include\Utils\InputBase.h" />
     <ClInclude Include="..\include\Utils\Log.h" />
@@ -56,7 +62,11 @@
     <ClCompile Include="..\src\Driver\EffectGL.cpp" />
     <ClCompile Include="..\src\Driver\GLSLParser.cpp" />
     <ClCompile Include="..\src\Driver\OpenGlDriver.cpp" />
+    <ClCompile Include="..\src\Driver\PNG\lodepng.cpp" />
     <ClCompile Include="..\src\Driver\ShaderBase.cpp" />
+    <ClCompile Include="..\src\Driver\Texture.cpp" />
+    <ClCompile Include="..\src\Scene\Camera.cpp" />
+    <ClCompile Include="..\src\Scene\Node.cpp" />
     <ClCompile Include="..\src\Utils\FileSystem.cpp" />
     <ClCompile Include="..\src\Utils\InputImplAndroid.cpp" />
     <ClCompile Include="..\src\Utils\Log.cpp" />
@@ -93,7 +103,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>Gcc_4_9</PlatformToolset>
+    <PlatformToolset>Clang_3_6</PlatformToolset>
     <UseOfStl>gnustl_static</UseOfStl>
     <AndroidAPILevel>android-19</AndroidAPILevel>
   </PropertyGroup>
@@ -105,7 +115,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>Gcc_4_9</PlatformToolset>
+    <PlatformToolset>Clang_3_6</PlatformToolset>
     <UseOfStl>gnustl_static</UseOfStl>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />

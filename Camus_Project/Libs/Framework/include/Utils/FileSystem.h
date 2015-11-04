@@ -1,7 +1,6 @@
 #ifndef CA_FILESYS_H
 #define CA_FILESYS_H
 
-#include <Utils/MemoryTracker.h>
 #include <string>
 
 namespace hyperspace {
@@ -15,7 +14,7 @@ namespace hyperspace {
 
 		private:
 			Filesystem() {
-				MemAppendHeap(Filesystem);
+			
 			}
 
 

@@ -146,6 +146,7 @@ enum {
 
 #include <vector>
 
+
 class AndroidFramework;
 struct PollSource {
 	int				 id;

@@ -18,6 +18,7 @@ namespace hyperspace {
 		class OpenGLDriver : public BaseDriver {
 		public:
 			OpenGLDriver();
+			~OpenGLDriver();
 			void	InitDriver();
 			void	CreateSurfaces();
 			void	DestroySurfaces();

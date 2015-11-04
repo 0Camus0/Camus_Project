@@ -101,7 +101,7 @@ namespace hyperspace {
 		}
 
 		void	Camera::UpdateProjection() {
-			if (projtype = projtype_::ORTHOGONAL) {
+			if (projtype == projtype_::ORTHOGONAL) {
 				XMatOrtho(matProj, w, h, zn, zf);
 			}
 			else {

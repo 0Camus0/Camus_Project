@@ -28,7 +28,9 @@
 
 class FrameworkManager {
 public:
-	FrameworkManager() {}
+	FrameworkManager() {
+	}
+	
 	void	CreateApp(hyperspace::AppBase* pApp);
 	void	MainAppThread();
 	void	ResetApp();

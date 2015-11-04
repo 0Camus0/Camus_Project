@@ -15,7 +15,7 @@ namespace hyperspace {
 		unsigned int	TextureManager::current_index = 0;
 
 		TextureManager::TextureManager(){
-			MemAppendHeap(TextureManager);
+		
 		}
 
 		unsigned short	TextureManager::LoadTexture(std::string filename) {
@@ -91,6 +91,9 @@ namespace hyperspace {
 				tex->props |= pixel_format_::UINTEGER_8;
 
 			switch (st.info_raw.colortype) {
+			case LCT_PALETTE: {
+				
+			}break;
 			case LCT_GREY: {
 				tex->props |= channelS_::CH_LUMINANCE;
 				channels = 1;
@@ -112,11 +115,19 @@ namespace hyperspace {
 				
 			if (Path.size() > 32) {
 				std::string sub = Path.substr(0, 511);
+#ifdef OS_ANDROID
+				strcpy(tex_paths_pool[id], sub.c_str());
+#else
 				strcpy_s(tex_paths_pool[id], sub.c_str());
+#endif
 				tex_paths_pool[id][511] = '\0';
 			}
 			else {
+#ifdef OS_ANDROID
+				strcpy(tex_paths_pool[id], Path.c_str());
+#else
 				strcpy_s(tex_paths_pool[id], Path.c_str());
+#endif
 				tex_paths_pool[id][Path.size()-1] = '\0';
 			}
 
@@ -127,7 +138,8 @@ namespace hyperspace {
 
 			LogPrintDebug("[TextureManager::LoadTexture] Loaded [%s] info: [%d x %d x %d]  %d kb.", tex_paths_pool[id], x, y, channels*st.info_raw.bitdepth, tex->size / 1024);
 			
-			LogPrintDebug("Stack allocated mem: %d ", TEX_STACK_ALLOCATED_SIZE);
+			data.clear();
+			png.clear();
 
 			return TEXTURE_FOUND;
 		}

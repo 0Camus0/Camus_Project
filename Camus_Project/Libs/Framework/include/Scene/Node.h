@@ -2,7 +2,6 @@
 #define CA_NODE_H
 
 #include <Utils/Maths.h>
-#include <Utils/MemoryTracker.h>
 
 #include <vector>
 #include <string>
@@ -37,7 +36,7 @@ namespace hyperspace {
 		class CNode_ {
 		public:
 			CNode_(NodeType_);
-
+			~CNode_();
 			std::uint32_t				uniqueID;
 			std::uint32_t				parentID;
 			std::vector<std::uint32_t>	siblingsID;

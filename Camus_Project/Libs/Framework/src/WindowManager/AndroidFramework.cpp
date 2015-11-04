@@ -129,7 +129,6 @@ void  _ProcessInput(AndroidFramework* pApp, PollSource *source) {
 // Called  from App Thread
 AndroidFramework::AndroidFramework(hyperspace::AppBase *pBaseApp) :  RootFramework(pBaseApp){
 	LogPrintDebug("AndroidApp::AndroidApp()");
-
 	m_pConfig = 0;
 	m_pInputQueue = 0;
 	m_pWindow = 0;

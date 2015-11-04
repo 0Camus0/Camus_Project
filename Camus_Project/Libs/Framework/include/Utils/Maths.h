@@ -388,6 +388,11 @@ namespace hyperspace {
 			mpout.m[3][0] = v.x; mpout.m[3][1] = v.y; mpout.m[3][2] = v.z; mpout.m[3][3] = 1.0f;
 		}
 
+		inline void XMatTranslation(XMATRIX44 &mpout, XVECTOR3 v) {
+			XMatIdentity(mpout);
+			mpout.m[3][0] = v.x; mpout.m[3][1] = v.y; mpout.m[3][2] = v.z; mpout.m[3][3] = 1.0f;
+		}
+
 		inline void XMatTranslation(XMATRIX44 &mpout, const float &x, const float &y, const float &z) {
 			XMatIdentity(mpout);
 			mpout.m[3][0] = x; mpout.m[3][1] = y; mpout.m[3][2] = z; mpout.m[3][3] = 1.0f;

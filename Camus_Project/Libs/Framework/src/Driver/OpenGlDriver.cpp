@@ -22,6 +22,11 @@ namespace hyperspace {
 			eglDisplay = 0;
 			eglSurface = 0;
 			eglContext = 0;
+			
+		}
+
+		OpenGLDriver::~OpenGLDriver() {
+		
 		}
 
 		void OpenGLDriver::SetWindow(void *window) {
