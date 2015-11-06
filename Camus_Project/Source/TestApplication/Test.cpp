@@ -30,17 +30,19 @@ void TestApp::CreateAssets() {
 	hyperspace::video::CTechnique_ *AllTechnique = new hyperspace::video::TechniqueGL();
 	AllTechnique->Initialize("All-tech", "All");
 
-	delete AllTechnique;
+//	delete AllTechnique;
 
 
 	hyperspace::video::TextureManager	*TexManager = new hyperspace::video::TextureManager();
 
+	TexManager->LoadTexture("bones.bmp");
 	TexManager->LoadTexture("cube_xn.png");
+	TexManager->LoadTexture("floor_normal.tga");
 	TexManager->LoadTexture("Real.png");
-	TexManager->LoadTexture("EVEN MONEY.pvr");
+	TexManager->LoadTexture("EVEN MONEY.bmp");
 
 
-	delete TexManager;
+//	delete TexManager;
 
 
 	

@@ -29,6 +29,9 @@
     <Filter Include="Source Files\Driver\Texture\stb">
       <UniqueIdentifier>{5d9e9296-7b9d-43fa-9755-dd4407bfa06d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Driver\Texture\cil">
+      <UniqueIdentifier>{49cbdebc-a24e-4ed0-8095-40814db173f2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\Utils\WindowProperties.cpp">
@@ -170,6 +173,9 @@
     </ClInclude>
     <ClInclude Include="..\include\Driver\stb\stb_truetype.h">
       <Filter>Source Files\Driver\Texture\stb</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Driver\cil\cil.h">
+      <Filter>Source Files\Driver\Texture\cil</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

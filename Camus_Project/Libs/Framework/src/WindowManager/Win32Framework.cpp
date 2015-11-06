@@ -121,11 +121,11 @@ void Win32Framework::ProcessInput() {
 
 
 			if (((int)evento.active.state == 2 || (int)evento.active.state == 6) && (int)evento.active.gain == 0) {
-				pBaseApp->OnPause();
+		//		pBaseApp->OnPause();
 			}
 
 			if ((int)evento.active.state == 6 && (int)evento.active.gain == 1) {
-				pBaseApp->OnResume();
+		//		pBaseApp->OnResume();
 			}
 						
 			}break;

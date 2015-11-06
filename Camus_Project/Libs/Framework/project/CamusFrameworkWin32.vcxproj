@@ -57,6 +57,7 @@
     <ClInclude Include="..\include\Driver\BaseDriver.h" />
     <ClInclude Include="..\include\Driver\Buffer.h" />
     <ClInclude Include="..\include\Driver\BufferOpenGL.h" />
+    <ClInclude Include="..\include\Driver\cil\cil.h" />
     <ClInclude Include="..\include\Driver\DriverProperties.h" />
     <ClInclude Include="..\include\Driver\EffectGL.h" />
     <ClInclude Include="..\include\Driver\GLSLParser.h" />

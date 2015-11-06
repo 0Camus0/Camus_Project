@@ -18,48 +18,49 @@ namespace hyperspace {
 			CH_ALPHA	 = (1 << 0),
 			CH_RGB		 = (1 << 1),
 			CH_RGBA		 = (1 << 2),
-			CH_DEPTH	 = (1 << 3)
 		};
 
 		enum pixel_format_ {
-			INTEGER_8	= (1 << 4),
-			UINTEGER_8	= (1 << 5),
-			FLOAT_8		= (1 << 6),
-			INTEGER_16	= (1 << 7),
-			UINTEGER_16 = (1 << 8),
-			INTEGER_32	= (1 << 9),
-			UINTEGER_32	= (1 << 10),
-			FLOAT_32	= (1 << 11),
+			INTEGER_8	= (1 << 3),
+			UINTEGER_8	= (1 << 4),
+			FLOAT_8		= (1 << 5),
+			INTEGER_16	= (1 << 6),
+			UINTEGER_16 = (1 << 7),
+			INTEGER_32	= (1 << 8),
+			UINTEGER_32	= (1 << 9),
+			FLOAT_32	= (1 << 10),
 		};
 
 		enum props_ {
-			CUBE_MAP	= (1 << 12),
-			COMPRESSED	= (1 << 13)
+			CUBE_MAP	= (1 << 11),
+			COMPRESSED	= (1 << 12)
 		};
 
 		enum bpp_ {
-			BPP_2 = (1 << 14),
-			BPP_4 = (1 << 15),
-			BPP_8 = (1 << 16)
+			BPP_2 = (1 << 13),
+			BPP_4 = (1 << 14),
+			BPP_8 = (1 << 15)
 		};
 
 		enum file_format {
-			BMP	= (1 << 17),
-			PNG	= (1 << 18),
-			DDS	= (1 << 19),
-			TGA = (1 << 20),
-			PVR = (1 << 21),
-			KTX = (1 << 22)
+			BMP	= (1 << 16),
+			PNG	= (1 << 17),
+			DDS	= (1 << 18),
+			TGA = (1 << 19),
+			PVR = (1 << 20),
+			KTX = (1 << 21)
 		};
 
 		enum compress_format {
-			RAW		= (1 << 23),
-			ETC1	= (1 << 24),
-			ETC2	= (1 << 25),
-			DXT1	= (1 << 26),
-			DXT5	= (1 << 27),
-			PVRTC2  = (1 << 28),
-			PVRTC4  = (1 << 29)
+			RAW		 = (1 << 22),
+			ETC1	 = (1 << 23),
+			ETC2	 = (1 << 24),
+			DXT1	 = (1 << 25),
+			DXT5	 = (1 << 26),
+			PVRTC2   = (1 << 27),
+			PVRTC4   = (1 << 28),
+			PVRTCII2 = (1 << 29),
+			PVRTCII4 = (1 << 30),
  		};
 	
 		
@@ -101,6 +102,8 @@ namespace hyperspace {
 			unsigned int	CheckFormat(std::ifstream &in);
 	
 			unsigned int	LoadBufferUncompressed(std::string &Path,unsigned int format);
+
+			unsigned int    LoadBufferCompressed(std::string &Path,unsigned int format);
 
 			static unsigned int	num_textures_loaded;
 			static unsigned int	current_index;
