@@ -43,11 +43,10 @@ namespace hyperspace {
 				return ret;
 			}
 
-			if (format && (file_format::BMP | file_format::PNG | file_format::PNG | file_format::TGA)) {
+			if (format && (file_format::BMP | file_format::PNG | file_format::TGA)) {
 				ret = LoadBufferUncompressed(Path, format);
 			}
-			
-			
+						
 
 			return ret;
 		}
