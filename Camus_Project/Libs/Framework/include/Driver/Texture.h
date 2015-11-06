@@ -91,8 +91,8 @@ namespace hyperspace {
 			unsigned short	LoadTexture(std::string filename);
 
 			unsigned int	CheckFormat(std::ifstream &in);
-			
-			unsigned int	LoadPNG(std::string &Path);
+	
+			unsigned int	LoadBufferUncompressed(std::string &Path,unsigned int format);
 
 			static unsigned int	num_textures_loaded;
 			static unsigned int	current_index;

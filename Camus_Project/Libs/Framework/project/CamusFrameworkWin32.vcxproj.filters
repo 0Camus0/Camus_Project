@@ -26,8 +26,8 @@
     <Filter Include="Source Files\Driver\Texture">
       <UniqueIdentifier>{18233ab7-24b9-41dc-9de1-6e28f89b40bc}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Driver\Texture\PNG">
-      <UniqueIdentifier>{8f1c5567-5345-41fe-a7dd-33f51b8b88ae}</UniqueIdentifier>
+    <Filter Include="Source Files\Driver\Texture\stb">
+      <UniqueIdentifier>{5d9e9296-7b9d-43fa-9755-dd4407bfa06d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -84,9 +84,6 @@
     </ClCompile>
     <ClCompile Include="..\src\Driver\Texture.cpp">
       <Filter>Source Files\Driver\Texture</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\Driver\PNG\lodepng.cpp">
-      <Filter>Source Files\Driver\Texture\PNG</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -162,11 +159,17 @@
     <ClInclude Include="..\include\Driver\Texture.h">
       <Filter>Source Files\Driver\Texture</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\Driver\PNG\lodepng.h">
-      <Filter>Source Files\Driver\Texture\PNG</Filter>
-    </ClInclude>
     <ClInclude Include="..\include\config.h">
       <Filter>Source Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Driver\stb\stb.h">
+      <Filter>Source Files\Driver\Texture\stb</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Driver\stb\stb_image.h">
+      <Filter>Source Files\Driver\Texture\stb</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Driver\stb\stb_truetype.h">
+      <Filter>Source Files\Driver\Texture\stb</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
