@@ -15,46 +15,54 @@ namespace hyperspace {
 	namespace video {
 
 		enum channelS_ {
-			CH_ALPHA	 = 0x1,
-			CH_LUMINANCE = 0x2,
-			CH_RGB		 = 0x4,
-			CH_RGBA		 = 0x8,
-			CH_DEPTH	 = 0x10
+			CH_ALPHA	 = (1 << 0),
+			CH_RGB		 = (1 << 1),
+			CH_RGBA		 = (1 << 2),
+			CH_DEPTH	 = (1 << 3)
 		};
 
 		enum pixel_format_ {
-			INTEGER_8	= 0x20,
-			UINTEGER_8	= 0x40,
-			FLOAT_8		= 0x80, 
-			INTEGER_16	= 0x100,
-			UINTEGER_16 = 0x200,
-			INTEGER_32	= 0x400,
-			UINTEGER_32	= 0x800,
-			FLOAT_32	= 0x1000,
+			INTEGER_8	= (1 << 4),
+			UINTEGER_8	= (1 << 5),
+			FLOAT_8		= (1 << 6),
+			INTEGER_16	= (1 << 7),
+			UINTEGER_16 = (1 << 8),
+			INTEGER_32	= (1 << 9),
+			UINTEGER_32	= (1 << 10),
+			FLOAT_32	= (1 << 11),
+		};
+
+		enum props_ {
+			CUBE_MAP	= (1 << 12),
+			COMPRESSED	= (1 << 13)
+		};
+
+		enum bpp_ {
+			BPP_2 = (1 << 14),
+			BPP_4 = (1 << 15),
+			BPP_8 = (1 << 16)
 		};
 
 		enum file_format {
-			BMP	= 0x2000,
-			PNG	= 0x4000,
-			DDS	= 0x8000,
-			TGA = 0x10000
+			BMP	= (1 << 17),
+			PNG	= (1 << 18),
+			DDS	= (1 << 19),
+			TGA = (1 << 20),
+			PVR = (1 << 21),
+			KTX = (1 << 22)
 		};
 
 		enum compress_format {
-			RAW  = 0x20000,
-			ETC1 = 0x40000,
-			ETC2 = 0x80000,
-			DXT1 = 0x100000,
-			DXT5 = 0x200000,
-			PVR  = 0x400000
+			RAW		= (1 << 23),
+			ETC1	= (1 << 24),
+			ETC2	= (1 << 25),
+			DXT1	= (1 << 26),
+			DXT5	= (1 << 27),
+			PVRTC2  = (1 << 28),
+			PVRTC4  = (1 << 29)
  		};
 	
-		enum props_ {
-			MIPMAPS		= 0x800000,
-			CUBE_MAP	= 0x1000000,
-			COMPRESSED	= 0x2000000
-		};
-
+		
 		class Texture {
 		public:
 			Texture() :	size(0),
@@ -63,7 +71,8 @@ namespace hyperspace {
 						x(0),
 						y(0),
 						id(0),
-						bounded(0)
+						bounded(0),
+						mipmaps(0)
 						{
 							
 						}
@@ -77,9 +86,8 @@ namespace hyperspace {
 			unsigned int	props;
 			unsigned short	x, y;
 			unsigned short	id;
-			unsigned short	bounded;
-		
-
+			unsigned char	bounded;
+			unsigned char	mipmaps;
 		};
 
 		class TextureManager {

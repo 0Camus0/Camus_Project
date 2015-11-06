@@ -37,7 +37,7 @@ void TestApp::CreateAssets() {
 
 	TexManager->LoadTexture("cube_xn.png");
 	TexManager->LoadTexture("Real.png");
-	TexManager->LoadTexture("bones.BMP");
+	TexManager->LoadTexture("EVEN MONEY.pvr");
 
 
 	delete TexManager;

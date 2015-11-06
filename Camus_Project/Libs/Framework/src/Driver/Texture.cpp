@@ -99,18 +99,16 @@ namespace hyperspace {
 			tex->id = id;
 			tex->x = x;
 			tex->y = y;
-			
+			tex->mipmaps = 1;
 			tex->offset = offset;
 			tex->props |= format;
 			tex->props |= compress_format::RAW;
 			tex->props |= pixel_format_::UINTEGER_8;
+			tex->props |= bpp_::BPP_8;
 						
 			switch (channels) {
 				case 1: {
 					tex->props |= channelS_::CH_ALPHA;
-				}break;
-				case 2: {
-					tex->props |= channelS_::CH_LUMINANCE;
 				}break;
 				case 3: {
 					tex->props |= channelS_::CH_RGB;
@@ -132,6 +130,7 @@ namespace hyperspace {
 
 			std::streampos begPos = in_.tellg();
 
+			//	Raw formats:
 			{
 				LogPrintDebug("[TextureManager::LoadTexture] Checking if is png ");
 				unsigned char signaturePNG[8];
@@ -148,8 +147,6 @@ namespace hyperspace {
 				else {
 					LogPrintDebug("[TextureManager::LoadTexture] Is not PNG");
 				}
-
-
 			}
 
 			{
@@ -171,8 +168,6 @@ namespace hyperspace {
 					LogPrintDebug("[TextureManager::LoadTexture] Is not PNG");
 				}
 			}
-
-
 
 			{
 				in_.seekg(begPos);
@@ -201,6 +196,36 @@ namespace hyperspace {
 				}
 				else {
 					LogPrintDebug("[TextureManager::LoadTexture] Is not BMP");
+				}
+			}
+
+			// Compressed formats:
+			{
+				in_.seekg(begPos);
+				LogPrintDebug("[TextureManager::LoadTexture] Checking if is KTX ");
+				unsigned char	bmp[5];
+				in_.read((char*)bmp, 4);
+				bmp[4] = '\0';
+				if (strcmp((char*)bmp, "«KTX") == 0) {
+					LogPrintDebug("[TextureManager::LoadTexture] Is KTX");
+					return file_format::KTX;
+				}
+				else {
+					LogPrintDebug("[TextureManager::LoadTexture] Is not KTX");
+				}
+			}
+
+			{
+				in_.seekg(begPos);
+				LogPrintDebug("[TextureManager::LoadTexture] Checking if is PVR ");
+				int version;
+				in_.read((char*)&version, 4);
+				if (version == 52) {
+					LogPrintDebug("[TextureManager::LoadTexture] Is PVR");
+					return file_format::PVR;
+				}
+				else {
+					LogPrintDebug("[TextureManager::LoadTexture] Is not PVR");
 				}
 			}
 
