@@ -4,6 +4,7 @@
 // Logging
 #if OS_WIN32
 #define USE_COLORED_CONSOLE 1
+#define USE_PAUSE_EVENTS	0
 #else
 #define USE_COLORED_CONSOLE 0
 #endif

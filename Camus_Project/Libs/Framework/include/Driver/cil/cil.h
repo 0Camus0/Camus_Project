@@ -8,16 +8,16 @@
 using namespace std;
 
 
-#define CIL_PVRTC_2BPP_RGB			0
-#define CIL_PVRTC_2BPP_RGBA			1
-#define CIL_PVRTC_4BPP_RGB			2
-#define CIL_PVRTC_4BPP_RGBA			3
-#define CIL_PVRTCII_2BPP_RGB		4
-#define CIL_PVRTCII_4BPP_RGB		5
-#define CIL_ETC1					6
-#define CIL_DXT1					7
-#define CIL_DXT5					11
-#define CIL_ETC2					23 //ETC2 RGBA not RGBA, for that we have ETC1
+#define CIL_PVRTC_2BPP_RGB_FMT		0
+#define CIL_PVRTC_2BPP_RGBA_FMT		1
+#define CIL_PVRTC_4BPP_RGB_FMT		2
+#define CIL_PVRTC_4BPP_RGBA_FMT		3
+#define CIL_PVRTCII_2BPP_RGB_FMT	4
+#define CIL_PVRTCII_4BPP_RGB_FMT	5
+#define CIL_ETC1_FMT				6
+#define CIL_DXT1_FMT				7
+#define CIL_DXT5_FMT				11
+#define CIL_ETC2_FMT				23 //ETC2 RGBA not RGBA, for that we have ETC1
 
 #define CIL_NOT_FOUND				0x0E2
 #define CIL_CORRUPT					0x0E3
@@ -124,48 +124,48 @@ unsigned char*	load_pvr(ifstream &in_, int *x, int *y, unsigned int &prop) {
 	}
 
 	switch (header.pix_format_0){
-		case  CIL_PVRTC_2BPP_RGB: {
+		case  CIL_PVRTC_2BPP_RGB_FMT: {
 			prop |= CIL_PVRTC2;
 			prop |= CIL_RGB;
 			prop |= CIL_BPP_2;
 		}break;
-		case  CIL_PVRTC_2BPP_RGBA: {
+		case  CIL_PVRTC_2BPP_RGBA_FMT: {
 			prop |= CIL_PVRTC2;
 			prop |= CIL_RGBA;
 			prop |= CIL_BPP_2;
 		}break;
-		case  CIL_PVRTC_4BPP_RGB: {
+		case  CIL_PVRTC_4BPP_RGB_FMT: {
 			prop |= CIL_PVRTC4;
 			prop |= CIL_RGB;
 			prop |= CIL_BPP_4;
 		}break;
-		case  CIL_PVRTC_4BPP_RGBA: {
+		case  CIL_PVRTC_4BPP_RGBA_FMT: {
 			prop |= CIL_PVRTCII2;
 			prop |= CIL_RGBA;
 			prop |= CIL_BPP_4;
 		}break;
-		case  CIL_PVRTCII_2BPP_RGB: {
+		case  CIL_PVRTCII_2BPP_RGB_FMT: {
 			prop |= CIL_PVRTC2;
 			prop |= CIL_RGB;
 			prop |= CIL_BPP_2;
 		}break;
-		case  CIL_PVRTCII_4BPP_RGB: {
+		case  CIL_PVRTCII_4BPP_RGB_FMT: {
 			prop |= CIL_PVRTCII4;
 			prop |= CIL_RGBA;
 			prop |= CIL_BPP_4;
 		}break;
-		case  CIL_ETC1: {
+		case  CIL_ETC1_FMT: {
 			prop |= CIL_ETC1;
 			prop |= CIL_RGB;
 			prop |= CIL_BPP_4;
 		}break;
-		case  CIL_DXT1: {
+		case  CIL_DXT1_FMT: {
 		
 		}break;
-		case  CIL_DXT5: {
+		case  CIL_DXT5_FMT: {
 		
 		}break;
-		case  CIL_ETC2: {
+		case  CIL_ETC2_FMT: {
 		
 		}break;
 	}
@@ -188,7 +188,7 @@ unsigned char*	load_pvr(ifstream &in_, int *x, int *y, unsigned int &prop) {
 
 
 unsigned char*	cil_load(const char* filename,int *x, int *y, unsigned int *props) {
-	*props = CIL_NO_ERROR;
+	*props = CIL_NOT_FOUND;
 	ifstream in_(filename, ios::binary | ios::in);
 
 	if (!in_.good()) {
@@ -211,7 +211,7 @@ unsigned char*	cil_load(const char* filename,int *x, int *y, unsigned int *props
 		return buffer;
 	}
 
-
+	return 0;
 }
 
 #endif
