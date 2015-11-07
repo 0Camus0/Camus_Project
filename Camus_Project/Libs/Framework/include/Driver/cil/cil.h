@@ -7,7 +7,9 @@
 #include <cstddef>
 using namespace std;
 
+#define CIL_LOG_OUTPUT 1
 
+// Formats
 #define CIL_PVRTC_2BPP_RGB_FMT		0
 #define CIL_PVRTC_2BPP_RGBA_FMT		1
 #define CIL_PVRTC_4BPP_RGB_FMT		2
@@ -19,6 +21,22 @@ using namespace std;
 #define CIL_DXT5_FMT				11
 #define CIL_ETC2_FMT				23 //ETC2 RGBA not RGBA, for that we have ETC1
 
+//Channel types
+#define CIL_CHT_UNSIGNED_BYTE_NORM			0
+#define CIL_CHT_SIGNED_BYTE_NORM			1
+#define CIL_CHT_UNSIGNED_BYTE				2
+#define CIL_CHT_SIGNED_BYTE					3
+#define CIL_CHT_UNSIGNED_SHORT_NORM			4
+#define CIL_CHT_SIGNED_SHORT_NORM			5
+#define CIL_CHT_UNSIGNED_SHORT				6
+#define CIL_CHT_SIGNED_SHORT				7
+#define CIL_CHT_UNSIGNED_INT_NORM			8
+#define CIL_CHT_SIGNED_INT_NORM				9
+#define CIL_CHT_UNSIGNED_INT				10
+#define CIL_CHT_SIGNED_INT					11
+#define CIL_CHT_FLOAT						12
+
+// Return Errors
 #define CIL_NOT_FOUND				0x0E2
 #define CIL_CORRUPT					0x0E3
 #define CIL_NO_MEMORY				0x0E4
@@ -26,37 +44,40 @@ using namespace std;
 #define CIL_NOT_SUPPORTED_FILE		0x0E6
 #define CIL_NO_ERROR				0
 
-#define CIL_ALPHA		(1 << 0)
-#define CIL_RGB			(1 << 1)
-#define CIL_RGBA		(1 << 2)
-#define CIL_INTEGER_8   (1 << 3)
-#define CIL_UINTEGER_8  (1 << 4)
-#define CIL_FLOAT_8		(1 << 5)
-#define CIL_INTEGER_16  (1 << 6)
-#define CIL_UINTEGER_16 (1 << 7)
-#define CIL_INTEGER_32  (1 << 8)
-#define CIL_UINTEGER_32 (1 << 9)
-#define CIL_FLOAT_32    (1 << 10)
-#define CIL_CUBE_MAP    (1 << 11)
-#define CIL_COMPRESSED  (1 << 12)
-#define CIL_BPP_2		(1 << 13)
-#define CIL_BPP_4		(1 << 14)
-#define CIL_BPP_8		(1 << 15)
-#define CIL_BMP			(1 << 16)
-#define CIL_PNG			(1 << 17)
-#define CIL_DDS			(1 << 18)
-#define CIL_TGA			(1 << 19)
-#define CIL_PVR			(1 << 20)
-#define CIL_KTX			(1 << 21)
-#define CIL_RAW			(1 << 22)
-#define CIL_ETC1		(1 << 23)
-#define CIL_ETC2		(1 << 24)
-#define CIL_DXT1		(1 << 25)
-#define CIL_DXT5		(1 << 26)
-#define CIL_PVRTC2		(1 << 27)
-#define CIL_PVRTC4		(1 << 28)
-#define CIL_PVRTCII2    (1 << 29)
-#define CIL_PVRTCII4    (1 << 30)
+
+
+// Props
+#define CIL_ALPHA				(1 << 0)
+#define CIL_RGB					(1 << 1)
+#define CIL_RGBA				(1 << 2)
+#define CIL_PFMT_SIGNED			(1 << 3)
+#define CIL_PFMT_UNSIGNED		(1 << 4)
+#define CIL_PFMT_NORMALIZED		(1 << 5)
+#define CIL_PFMT_UNNORMALIZED	(1 << 6)
+#define CIL_PFMT_BYTE			(1 << 7)
+#define CIL_PFMT_SHORT			(1 << 8)
+#define CIL_PFMT_INT			(1 << 9)
+#define CIL_PFMT_FLOAT			(1 << 10)
+#define CIL_CUBE_MAP			(1 << 11)
+#define CIL_COMPRESSED			(1 << 12)
+#define CIL_BPP_2				(1 << 13)
+#define CIL_BPP_4				(1 << 14)
+#define CIL_BPP_8				(1 << 15)
+#define CIL_BMP					(1 << 16)
+#define CIL_PNG					(1 << 17)
+#define CIL_DDS					(1 << 18)
+#define CIL_TGA					(1 << 19)
+#define CIL_PVR					(1 << 20)
+#define CIL_KTX					(1 << 21)
+#define CIL_RAW					(1 << 22)
+#define CIL_ETC1				(1 << 23)
+#define CIL_ETC2				(1 << 24)
+#define CIL_DXT1				(1 << 25)
+#define CIL_DXT5				(1 << 26)
+#define CIL_PVRTC2				(1 << 27)
+#define CIL_PVRTC4				(1 << 28)
+#define CIL_PVRTCII2			(1 << 29)
+#define CIL_PVRTCII4			(1 << 30)
 
 struct pvr_v3_header {
 	uint32_t		version;
@@ -74,7 +95,11 @@ struct pvr_v3_header {
 	uint32_t		metadata_size;
 };
 
-
+struct pvr_metadata {
+	unsigned char	fourcc[4];
+	uint32_t		key;
+	uint32_t		size;
+};
 
 
 void checkformat(ifstream &in_,unsigned int &prop) {
@@ -93,8 +118,9 @@ void checkformat(ifstream &in_,unsigned int &prop) {
 	in_.seekg(begPos);
 	unsigned char	ktx[5];
 	in_.read((char*)ktx, 4);
+	ktx[0] = 0;
 	ktx[4] = '\0';
-	if (strcmp((char*)ktx, "«KTX") == 0) {
+	if (strcmp((char*)ktx, " KTX") == 0) {
 		prop |= CIL_KTX;
 		in_.seekg(begPos);
 		return;
@@ -113,7 +139,140 @@ void checkformat(ifstream &in_,unsigned int &prop) {
 	prop = CIL_NOT_SUPPORTED_FILE;
 }
 
-unsigned char*	load_pvr(ifstream &in_, int *x, int *y, unsigned int &prop) {
+void	pvr_set_pix_format(uint32_t& pix_format, unsigned int &prop) {
+	switch (pix_format) {
+		case  CIL_PVRTC_2BPP_RGB_FMT: {
+			prop |= CIL_PVRTC2;
+			prop |= CIL_RGB;
+			prop |= CIL_BPP_2;
+			pix_format |= CIL_COMPRESSED;
+		}break;
+		case  CIL_PVRTC_2BPP_RGBA_FMT: {
+			prop |= CIL_PVRTC2;
+			prop |= CIL_RGBA;
+			prop |= CIL_BPP_2;
+			pix_format |= CIL_COMPRESSED;
+		}break;
+		case  CIL_PVRTC_4BPP_RGB_FMT: {
+			prop |= CIL_PVRTC4;
+			prop |= CIL_RGB;
+			prop |= CIL_BPP_4;
+			pix_format |= CIL_COMPRESSED;
+		}break;
+		case  CIL_PVRTC_4BPP_RGBA_FMT: {
+			prop |= CIL_PVRTCII2;
+			prop |= CIL_RGBA;
+			prop |= CIL_BPP_4;
+			pix_format |= CIL_COMPRESSED;
+		}break;
+		case  CIL_PVRTCII_2BPP_RGB_FMT: {
+			prop |= CIL_PVRTC2;
+			prop |= CIL_RGB;
+			prop |= CIL_BPP_2;
+			pix_format |= CIL_COMPRESSED;
+		}break;
+		case  CIL_PVRTCII_4BPP_RGB_FMT: {
+			prop |= CIL_PVRTCII4;
+			prop |= CIL_RGBA;
+			prop |= CIL_BPP_4;
+			pix_format |= CIL_COMPRESSED;
+		}break;
+		case  CIL_ETC1_FMT: {
+			prop |= CIL_ETC1;
+			prop |= CIL_RGB;
+			prop |= CIL_BPP_4;
+			pix_format |= CIL_COMPRESSED;
+		}break;
+		case  CIL_DXT1_FMT: {
+			prop |= CIL_DXT1;
+			prop |= CIL_RGB;
+			prop |= CIL_BPP_4;
+			pix_format |= CIL_COMPRESSED;
+		}break;
+		case  CIL_DXT5_FMT: {
+			prop |= CIL_DXT1;
+			prop |= CIL_RGBA;
+			prop |= CIL_BPP_8;
+			pix_format |= CIL_COMPRESSED;
+		}break;
+		case  CIL_ETC2_FMT: {
+			prop |= CIL_ETC2;
+			prop |= CIL_RGBA;
+			prop |= CIL_BPP_8;
+			pix_format |= CIL_COMPRESSED;
+		}break;
+	}
+}
+
+void pvr_set_channel_type(uint32_t& c_type, unsigned int &prop) {
+	switch (c_type) {
+		case  CIL_CHT_UNSIGNED_BYTE_NORM: {
+			prop |= CIL_PFMT_UNSIGNED;
+			prop |= CIL_PFMT_BYTE;
+			prop |= CIL_PFMT_NORMALIZED;
+		}break;
+		case  CIL_CHT_SIGNED_BYTE_NORM: {
+			prop |= CIL_PFMT_SIGNED;
+			prop |= CIL_PFMT_BYTE;
+			prop |= CIL_PFMT_NORMALIZED;
+		}break;
+		case  CIL_CHT_UNSIGNED_BYTE: {
+			prop |= CIL_PFMT_UNSIGNED;
+			prop |= CIL_PFMT_BYTE;
+			prop |= CIL_PFMT_UNNORMALIZED;
+		}break;
+		case  CIL_CHT_SIGNED_BYTE: {
+			prop |= CIL_PFMT_SIGNED;
+			prop |= CIL_PFMT_BYTE;
+			prop |= CIL_PFMT_UNNORMALIZED;
+		}break;
+		case  CIL_CHT_UNSIGNED_SHORT_NORM: {
+			prop |= CIL_PFMT_UNSIGNED;
+			prop |= CIL_PFMT_SHORT;
+			prop |= CIL_PFMT_NORMALIZED;
+		}break;
+		case  CIL_CHT_SIGNED_SHORT_NORM: {
+			prop |= CIL_PFMT_SIGNED;
+			prop |= CIL_PFMT_SHORT;
+			prop |= CIL_PFMT_NORMALIZED;
+		}break;
+		case  CIL_CHT_UNSIGNED_SHORT: {
+			prop |= CIL_PFMT_UNSIGNED;
+			prop |= CIL_PFMT_SHORT;
+			prop |= CIL_PFMT_UNNORMALIZED;
+		}break;
+		case  CIL_CHT_SIGNED_SHORT: {
+			prop |= CIL_PFMT_SIGNED;
+			prop |= CIL_PFMT_SHORT;
+			prop |= CIL_PFMT_UNNORMALIZED;
+		}break;
+		case  CIL_CHT_UNSIGNED_INT_NORM: {
+			prop |= CIL_PFMT_UNSIGNED;
+			prop |= CIL_PFMT_INT;
+			prop |= CIL_PFMT_NORMALIZED;
+		}break;
+		case  CIL_CHT_SIGNED_INT_NORM: {
+			prop |= CIL_PFMT_SIGNED;
+			prop |= CIL_PFMT_INT;
+			prop |= CIL_PFMT_NORMALIZED;
+		}break;
+		case  CIL_CHT_UNSIGNED_INT: {
+			prop |= CIL_PFMT_UNSIGNED;
+			prop |= CIL_PFMT_INT;
+			prop |= CIL_PFMT_UNNORMALIZED;
+		}break;
+		case  CIL_CHT_SIGNED_INT: {
+			prop |= CIL_PFMT_SIGNED;
+			prop |= CIL_PFMT_INT;
+			prop |= CIL_PFMT_UNNORMALIZED;
+		}break;
+		case  CIL_CHT_FLOAT: {
+			prop |= CIL_PFMT_FLOAT;
+		}break;
+	}
+}
+
+unsigned char*	load_pvr(ifstream &in_, int &x, int &y, unsigned char &mipmaps, unsigned int &prop, unsigned int &buffersize) {
 	pvr_v3_header header;
 	in_.seekg(0);
 	in_.read((char*)&header, sizeof(pvr_v3_header));
@@ -123,72 +282,97 @@ unsigned char*	load_pvr(ifstream &in_, int *x, int *y, unsigned int &prop) {
 		return 0;
 	}
 
-	switch (header.pix_format_0){
-		case  CIL_PVRTC_2BPP_RGB_FMT: {
-			prop |= CIL_PVRTC2;
-			prop |= CIL_RGB;
-			prop |= CIL_BPP_2;
-		}break;
-		case  CIL_PVRTC_2BPP_RGBA_FMT: {
-			prop |= CIL_PVRTC2;
-			prop |= CIL_RGBA;
-			prop |= CIL_BPP_2;
-		}break;
-		case  CIL_PVRTC_4BPP_RGB_FMT: {
-			prop |= CIL_PVRTC4;
-			prop |= CIL_RGB;
-			prop |= CIL_BPP_4;
-		}break;
-		case  CIL_PVRTC_4BPP_RGBA_FMT: {
-			prop |= CIL_PVRTCII2;
-			prop |= CIL_RGBA;
-			prop |= CIL_BPP_4;
-		}break;
-		case  CIL_PVRTCII_2BPP_RGB_FMT: {
-			prop |= CIL_PVRTC2;
-			prop |= CIL_RGB;
-			prop |= CIL_BPP_2;
-		}break;
-		case  CIL_PVRTCII_4BPP_RGB_FMT: {
-			prop |= CIL_PVRTCII4;
-			prop |= CIL_RGBA;
-			prop |= CIL_BPP_4;
-		}break;
-		case  CIL_ETC1_FMT: {
-			prop |= CIL_ETC1;
-			prop |= CIL_RGB;
-			prop |= CIL_BPP_4;
-		}break;
-		case  CIL_DXT1_FMT: {
+#if CIL_LOG_OUTPUT
+	cout << "PVR Data: " << endl
+		<< "Version: " << header.version << endl
+		<< "Pixel format: " << header.pix_format_0 << endl
+		<< "Channel type: " << header.channel_type << endl
+		<< "Height: " << header.height << endl
+		<< "Width: " << header.width << endl
+		<< "Depth: " << header.depth << endl
+		<< "Surfaces: " << header.surfaces << endl
+		<< "Faces: " << header.faces << endl
+		<< "Mipmap count: " << header.mipmaps_c << endl
+		<< "Size meta: " << header.metadata_size << endl;
+#endif
+
+	x = header.width;
+	y = header.height;
+	mipmaps = header.mipmaps_c;
+
+	if (header.faces == 6)
+		prop |= CIL_CUBE_MAP;
+
+	pvr_set_pix_format(header.pix_format_0,prop);
+	pvr_set_channel_type(header.channel_type, prop);
+
+	pvr_metadata meta;
+	in_.read((char*)&meta, sizeof(pvr_metadata));
+
+	unsigned char*	metadata = new unsigned char[meta.size+1];
+	in_.read((char*)&metadata[0], meta.size);
+	metadata[meta.size] = '\0';
+	
+#if CIL_LOG_OUTPUT
+	cout << "Metadata: " << endl
+
+		<< "Fourcc 0: " << meta.fourcc[0] << endl
+		<< "Fourcc 1: " << meta.fourcc[1] << endl
+		<< "Fourcc 2: " << meta.fourcc[2] << endl
+		<< "Fourcc 3: " << (int)meta.fourcc[3] << endl
+		<< "Key: " << meta.key << endl
+		<< "Data size: " << meta.size << endl;
+		for (unsigned int i = 0; i < meta.size; i++) {
+			cout << "Meta " << i << ": " << (int)metadata[i] << endl;
+		} 
+#endif
+		delete[] metadata;
+
+		int currentWidth = header.width, currentHeight = header.height;
+		int totalnumpixels = 0;
+		for (unsigned int i = 0; i < header.mipmaps_c; i++) {
+			totalnumpixels += currentWidth*currentHeight;
+			currentWidth = currentWidth >> 1;
+			currentHeight = currentHeight >> 1;
+		}
+
+		totalnumpixels = totalnumpixels*header.faces;
+
+		int factor = 0;
+		if (prop & CIL_BPP_2)
+			factor = 2;
+		if (prop & CIL_BPP_4)
+			factor = 4;
+		if (prop & CIL_BPP_8)
+			factor = 8;
 		
-		}break;
-		case  CIL_DXT5_FMT: {
-		
-		}break;
-		case  CIL_ETC2_FMT: {
-		
-		}break;
-	}
+		int final_size = totalnumpixels*factor / 8;
 
+		if (factor == 2 || factor == 4) {
+			final_size++;
+		}
+	
+		buffersize = final_size;
+		unsigned char *buffer = new unsigned char[buffersize];
 
-	cout << "version: " << header.version << endl
-		<< "pixformat: " << header.pix_format_0 << endl
-		<< "height: " << header.height << endl
-		<< "width: " << header.width << endl
-		<< "depth: " << header.depth << endl
-		<< "surfaces: " << header.surfaces << endl
-		<< "faces: " << header.faces << endl
-		<< "mimaps: " << header.mipmaps_c << endl
-		<< "size meta: " << header.metadata_size << endl;
+		if (buffer == 0) {
+			prop = CIL_NO_MEMORY;
+			return 0;
+		}
 
+		in_.read((char*)&buffer[0], buffersize);
 
-	system("pause");
-	return 0;
+	return buffer;
+}
+
+void cil_free_buffer(unsigned char *pbuff) {
+	delete [] pbuff;
+	pbuff = 0;
 }
 
 
-unsigned char*	cil_load(const char* filename,int *x, int *y, unsigned int *props) {
-	*props = CIL_NOT_FOUND;
+unsigned char*	cil_load(const char* filename,int *x, int *y, unsigned char *mipmaps, unsigned int *props,unsigned int *buffersize) {
+	
 	ifstream in_(filename, ios::binary | ios::in);
 
 	if (!in_.good()) {
@@ -198,16 +382,21 @@ unsigned char*	cil_load(const char* filename,int *x, int *y, unsigned int *props
 	}
 
 	int x_ = 0, y_ = 0;
-	unsigned int props_ = 0;
+	unsigned int props_ = 0; 
+	unsigned int buffer_size_ = 0;
+	unsigned char mipmaps_;
 	checkformat(in_, props_);
 
 	if (props_ == 0){
 		return 0;
 	}else if (props_&CIL_PVR) {
-		unsigned char * buffer = load_pvr(in_, &x_, &y_, props_);
+		unsigned char * buffer = load_pvr(in_,x_,y_,mipmaps_,props_, buffer_size_);
 		*props = props_;
 		*x = x_;
 		*y = y_;
+		*buffersize = buffer_size_;
+		*mipmaps = mipmaps_;
+		in_.close();
 		return buffer;
 	}
 

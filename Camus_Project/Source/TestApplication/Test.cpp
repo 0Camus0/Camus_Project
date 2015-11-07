@@ -35,12 +35,14 @@ void TestApp::CreateAssets() {
 
 	hyperspace::video::TextureManager	*TexManager = new hyperspace::video::TextureManager();
 
-	TexManager->LoadTexture("bones.bmp");
+	//TexManager->LoadTexture("EVEN MONEY_ETC1.pvr");
+	TexManager->LoadTexture("EVEN MONEY.pvr"); 
 	TexManager->LoadTexture("cube_xn.png");
-	TexManager->LoadTexture("floor_normal.tga");
+	//TexManager->LoadTexture("Cubemap.pvr");
 	TexManager->LoadTexture("Real.png");
-	TexManager->LoadTexture("EVEN MONEY.bmp");
-
+	TexManager->LoadTexture("bones.bmp");
+	TexManager->LoadTexture("floor_normal.tga");
+	 
 
 //	delete TexManager;
 
@@ -62,7 +64,7 @@ void TestApp::OnDraw() {
 
 	float R = 0.0f, G = 0.0f, B = 0.0f;
 
-	ang += 0.01f;
+	ang += 0.0001f;
 
 	R = (clip(std::sin(ang), 0.0f, 1.0f))*0.5f + 0.5f;
 	G = (clip(std::cos(ang + .70f), 0.0f, 1.0f))*0.5f + 0.5f;

@@ -21,14 +21,14 @@ namespace hyperspace {
 		};
 
 		enum pixel_format_ {
-			INTEGER_8	= (1 << 3),
-			UINTEGER_8	= (1 << 4),
-			FLOAT_8		= (1 << 5),
-			INTEGER_16	= (1 << 6),
-			UINTEGER_16 = (1 << 7),
-			INTEGER_32	= (1 << 8),
-			UINTEGER_32	= (1 << 9),
-			FLOAT_32	= (1 << 10),
+			PFMT_SIGNED			= (1 << 3),		
+			PFMT_UNSIGNED		= (1 << 4),		
+			PFMT_NORMALIZED		= (1 << 5),		
+			PFMT_UNNORMALIZED	= (1 << 6),		
+			PFMT_BYTE			= (1 << 7),		
+			PFMT_SHORT			= (1 << 8),		
+			PFMT_INT			= (1 << 9),	
+			PFMT_FLOAT			= (1 << 10)
 		};
 
 		enum props_ {
@@ -63,6 +63,14 @@ namespace hyperspace {
 			PVRTCII4 = (1 << 30),
  		};
 	
+		enum params_in {
+			GENERATE_MIPMAPS    = (1 << 0),
+			FILTER_NEAREST	    = (1 << 1),
+			FILTER_LINEAR	    = (1 << 2),
+			FILTER_ANISOTROPIC  = (1 << 3),
+			WRAP_CLAMP			= (1 << 4),
+			WRAP_REPEAT			= (1 << 5),
+		};
 		
 		class Texture {
 		public:
@@ -97,16 +105,16 @@ namespace hyperspace {
 			~TextureManager() {
 			
 			}
-			unsigned short	LoadTexture(std::string filename);
+			unsigned short	LoadTexture(std::string filename,unsigned int params = GENERATE_MIPMAPS| FILTER_LINEAR);
 
 			unsigned int	CheckFormat(std::ifstream &in);
 	
-			unsigned int	LoadBufferUncompressed(std::string &Path,unsigned int format);
+			unsigned int	LoadBufferUncompressed(std::string &Path,unsigned int format, unsigned int params);
 
-			unsigned int    LoadBufferCompressed(std::string &Path,unsigned int format);
+			unsigned int    LoadBufferCompressed(std::string &Path,unsigned int format, unsigned int params);
 
-			static unsigned int	num_textures_loaded;
-			static unsigned int	current_index;
+			static unsigned int		num_textures_loaded;
+			static unsigned int		current_index;
 
 			static Texture			textures[MAX_TEXURE_LIMIT];
 			static unsigned char	tex_mem_pool[TEXTURE_BUDGET_SIZE_BYTES];

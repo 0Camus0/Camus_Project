@@ -6,6 +6,7 @@
 // Headers for EGL and OGLES
 #include <EGL/egl.h>
 #include <GLES2/gl2.h>
+#include <GLES2/gl2ext.h>
 
 #ifdef OS_ANDROID
 #include <android/configuration.h>

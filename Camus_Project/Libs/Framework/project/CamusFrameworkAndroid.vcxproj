@@ -25,11 +25,15 @@
     <ClInclude Include="..\include\Driver\BaseDriver.h" />
     <ClInclude Include="..\include\Driver\Buffer.h" />
     <ClInclude Include="..\include\Driver\BufferOpenGL.h" />
+    <ClInclude Include="..\include\Driver\cil\cil.h" />
     <ClInclude Include="..\include\Driver\DriverProperties.h" />
     <ClInclude Include="..\include\Driver\EffectGL.h" />
     <ClInclude Include="..\include\Driver\GLSLParser.h" />
     <ClInclude Include="..\include\Driver\OpenGLDriver.h" />
     <ClInclude Include="..\include\Driver\ShaderBase.h" />
+    <ClInclude Include="..\include\Driver\stb\stb.h" />
+    <ClInclude Include="..\include\Driver\stb\stb_image.h" />
+    <ClInclude Include="..\include\Driver\stb\stb_truetype.h" />
     <ClInclude Include="..\include\Driver\Technique.h" />
     <ClInclude Include="..\include\Driver\Texture.h" />
     <ClInclude Include="..\include\Scene\Camera.h" />

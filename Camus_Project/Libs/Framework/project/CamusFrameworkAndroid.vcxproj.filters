@@ -25,6 +25,12 @@
     <Filter Include="Source Files\Scene">
       <UniqueIdentifier>{9bcecbf4-1224-4870-bc04-70f45a75d8b4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Driver\Texture\cil">
+      <UniqueIdentifier>{352da500-5f8e-4b41-a837-8ef63ca37037}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Driver\Texture\stb">
+      <UniqueIdentifier>{141df28a-e4fd-44c8-985b-067564e5eae0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\Core\Core.h">
@@ -98,6 +104,18 @@
     </ClInclude>
     <ClInclude Include="..\include\config.h">
       <Filter>Source Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Driver\cil\cil.h">
+      <Filter>Source Files\Driver\Texture\cil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Driver\stb\stb.h">
+      <Filter>Source Files\Driver\Texture\stb</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Driver\stb\stb_image.h">
+      <Filter>Source Files\Driver\Texture\stb</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Driver\stb\stb_truetype.h">
+      <Filter>Source Files\Driver\Texture\stb</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
