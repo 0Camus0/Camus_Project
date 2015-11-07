@@ -2,7 +2,7 @@
 #include <Utils/Log.h>
 #include <Driver/Technique.h>
 #include <Driver/EffectGL.h>
-#include <Driver/Texture.h>
+#include <Driver/TextureGL.h>
 
 #ifdef OS_WIN32
 #ifdef min
@@ -33,7 +33,7 @@ void TestApp::CreateAssets() {
 //	delete AllTechnique;
 
 
-	hyperspace::video::TextureManager	*TexManager = new hyperspace::video::TextureManager();
+	hyperspace::video::TextureManager	*TexManager = new hyperspace::video::TextureManagerGL();
 
 	//TexManager->LoadTexture("EVEN MONEY_ETC1.pvr");
 	TexManager->LoadTexture("EVEN MONEY.pvr"); 

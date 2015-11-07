@@ -52,7 +52,7 @@ void	LogPrintInfo(const char* format, ...) {
 #if USE_SHOW_MEM_USAGE
 	int bytes = CurrentMemoryUssage();
 	int mbytes = bytes / 1048576;
-	extra_info_debug << " mem[" << mbytes << " MB] ";
+	extra_info_debug << "mem[" << mbytes << " MB] ";
 #endif
 
 	ss << extra_info_debug.str() << std::string(Log_Buffer);
@@ -75,7 +75,7 @@ void	LogPrintDebug(const char* format, ...) {
 #if USE_SHOW_MEM_USAGE
 	int bytes = CurrentMemoryUssage();
 	int mbytes = bytes / 1048576;
-	extra_info_debug << " mem[" << mbytes << " MB] ";
+	extra_info_debug << "mem[" << mbytes << " MB] ";
 #endif
 
 	ss << extra_info_debug.str() << std::string(Log_Buffer);
@@ -98,7 +98,7 @@ void	LogPrintError(const char* format, ...) {
 #if USE_SHOW_MEM_USAGE
 	int bytes = CurrentMemoryUssage();
 	int mbytes = bytes / 1048576;
-	extra_info_debug << " mem[" << mbytes << " MB] ";
+	extra_info_debug << "mem[" << mbytes << " MB] ";
 #endif
 
 	ss << extra_info_debug.str() << std::string(Log_Buffer);
@@ -121,7 +121,7 @@ void	LogPrintWarning(const char* format, ...) {
 #if USE_SHOW_MEM_USAGE
 	int bytes = CurrentMemoryUssage();
 	int mbytes = bytes / 1048576;
-	extra_info_debug << " mem[" << mbytes << " MB] ";
+	extra_info_debug << "mem[" << mbytes << " MB] ";
 #endif
 
 	ss << extra_info_debug.str() << std::string(Log_Buffer);
@@ -159,7 +159,7 @@ void	LogPrintInfo(const char* format,...) {
 #if USE_SHOW_MEM_USAGE
 	int bytes = CurrentMemoryUssage();
 	int mbytes = bytes / 1048576;
-	extra_info_debug << " mem[" << bytes << " bytes/" << mbytes << " MB] ";
+	extra_info_debug << "mem[" << mbytes << " MB] ";
 #endif
 
 	std::cout << extra_info_debug.str() << Log_Buffer << std::endl;
@@ -192,7 +192,7 @@ void	LogPrintDebug(const char* format, ...){
 #if USE_SHOW_MEM_USAGE
 	int bytes = CurrentMemoryUssage();
 	int mbytes = bytes / 1048576;
-	extra_info_debug << " mem[" << bytes << " bytes/" << mbytes << " MB] ";
+	extra_info_debug << "mem[" << mbytes << " MB] ";
 #endif
 
 	std::cout << extra_info_debug.str() << Log_Buffer << std::endl;
@@ -224,7 +224,7 @@ void	LogPrintError(const char* format, ...) {
 #if USE_SHOW_MEM_USAGE
 	int bytes = CurrentMemoryUssage();
 	int mbytes = bytes / 1048576;
-	extra_info_debug << " mem[" << bytes << " bytes/" << mbytes << " MB] ";
+	extra_info_debug << "mem[" << mbytes << " MB] ";
 #endif
 
 	std::cout << extra_info_debug.str() << Log_Buffer << std::endl;
@@ -256,7 +256,7 @@ void	LogPrintWarning(const char* format, ...) {
 #if USE_SHOW_MEM_USAGE
 	int bytes = CurrentMemoryUssage();
 	int mbytes = bytes / 1048576;
-	extra_info_debug << " mem[" << bytes << " bytes/" << mbytes << " MB] ";
+	extra_info_debug << "mem[" << mbytes << " MB] ";
 #endif
 
 	std::cout << extra_info_debug.str() << Log_Buffer << std::endl;

@@ -88,6 +88,9 @@
     <ClCompile Include="..\src\Driver\Texture.cpp">
       <Filter>Source Files\Driver\Texture</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\Driver\TextureGL.cpp">
+      <Filter>Source Files\Driver\OpenGL</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\Core\Core.h">
@@ -176,6 +179,9 @@
     </ClInclude>
     <ClInclude Include="..\include\Driver\cil\cil.h">
       <Filter>Source Files\Driver\Texture\cil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Driver\TextureGL.h">
+      <Filter>Source Files\Driver\OpenGL</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

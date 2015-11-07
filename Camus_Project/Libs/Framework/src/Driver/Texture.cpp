@@ -6,7 +6,6 @@
 #include <Driver/stb/stb_image.h>
 #include <Driver/cil/cil.h>
 
-#include <Driver/OpenGLDriver.h>
 
 namespace hyperspace {
 	namespace video {
@@ -22,7 +21,9 @@ namespace hyperspace {
 		}
 
 		unsigned short	TextureManager::LoadTexture(std::string filename, unsigned int params) {
+#if USE_LOG_DEBUG_TEX_LOADING
 			LogPrintDebug("[TextureManager::LoadTexture] %s", filename.c_str());
+#endif
 
 			unsigned short ret = TEXTURE_NOT_FOUND;
 
@@ -57,7 +58,9 @@ namespace hyperspace {
 		}
 
 		unsigned int TextureManager::LoadBufferUncompressed(std::string &Path, unsigned int format, unsigned int params) {
+#if USE_LOG_DEBUG_TEX_LOADING
 			LogPrintDebug("[TextureManager::LoadTexture] Loading Uncompressed texture [%s]", Path.c_str());
+#endif
 			int index = 0;
 			int offset = 0;
 			for (int i = 0; i < MAX_TEXURE_LIMIT; i++) {
@@ -104,69 +107,42 @@ namespace hyperspace {
 			}
 
 			tex->bounded = 1;
-			tex->id = 0;
 			tex->x = x;
 			tex->y = y;
 			tex->mipmaps = 1;
 			tex->offset = offset;
 			tex->props |= format;
 			tex->props |= compress_format::RAW;
-
 			tex->props |= pixel_format_::PFMT_UNSIGNED;
 			tex->props |= pixel_format_::PFMT_BYTE;
-			
 			tex->props |= bpp_::BPP_8;
-						
-			
-			unsigned int id__;
-			glGenTextures(1, &id__);
-			glBindTexture(GL_TEXTURE_2D, id__);
-
-			if(x%4!=0)
-				glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-			else
-				glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
-
-			
-			if (channels == 3)
-				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, x, y, 0, GL_RGB, GL_UNSIGNED_BYTE, (void*)(tex_mem_pool + offset));
-			else if (channels == 4)
-				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, x, y, 0, GL_RGBA, GL_UNSIGNED_BYTE, (void*)(tex_mem_pool + offset));
-
-			if(params&GENERATE_MIPMAPS)
-				glGenerateMipmap(GL_TEXTURE_2D);
-
-			if (params&FILTER_LINEAR) {
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-			}
-
-			tex->id = static_cast<unsigned short>(id__);
-
 
 			switch (channels) {
-				case 1: {
-					tex->props |= channelS_::CH_ALPHA;
-				}break;
-				case 3: {
-					tex->props |= channelS_::CH_RGB;
-				}break;
-				case 4: {
-					tex->props |= channelS_::CH_RGBA;
-				}break;
+			case 1: {
+				tex->props |= channelS_::CH_ALPHA;
+			}break;
+			case 3: {
+				tex->props |= channelS_::CH_RGB;
+			}break;
+			case 4: {
+				tex->props |= channelS_::CH_RGBA;
+			}break;
 			}
-
+			
+			LoadAPITexture(tex, tex_mem_pool + offset, params);
+	
 			current_index = index;
 			num_textures_loaded++;
 
-
-			LogPrintDebug("[TextureManager::LoadTexture] Loaded [%s] info: [%d x %d x %d]  %d kb. \n\n", tex_paths_pool[index], x, y, channels*8, tex->size / 1024);
+			LogPrintDebug("[TextureManager::LoadTexture]Loaded [%s][%d x %d x %d][%d kb]\n\n", tex_paths_pool[index], x, y, channels*8, tex->size / 1024);
 
 			return TEXTURE_FOUND;
 		}
 
 		unsigned int TextureManager::LoadBufferCompressed(std::string &Path, unsigned int format, unsigned int params) {
+#if USE_LOG_DEBUG_TEX_LOADING
 			LogPrintDebug("[TextureManager::LoadTexture] Loading Compressed texture [%s]", Path.c_str());
+#endif
 			int index = 0;
 			int offset = 0;
 			for (int i = 0; i < MAX_TEXURE_LIMIT; i++) {
@@ -214,6 +190,8 @@ namespace hyperspace {
 			tex->x = x;	tex->y = y;
 			tex->bounded = 1;
 
+
+/*
 			unsigned int id__;
 			glGenTextures(1, &id__);
 			glBindTexture(GL_TEXTURE_2D, id__);
@@ -254,7 +232,7 @@ namespace hyperspace {
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
 		
-
+			*/
 
 			return TEXTURE_FOUND;
 		}
@@ -265,7 +243,9 @@ namespace hyperspace {
 
 			//	Raw formats:
 			{
+#if USE_LOG_DEBUG_TEX_LOADING
 				LogPrintDebug("[TextureManager::LoadTexture] Checking if is png ");
+#endif
 				unsigned char signaturePNG[8];
 				in_.read((char*)signaturePNG, 8);
 				int number = 0;
@@ -274,17 +254,23 @@ namespace hyperspace {
 				}
 
 				if (number == 425) {
+#if USE_LOG_DEBUG_TEX_LOADING
 					LogPrintDebug("[TextureManager::LoadTexture] Is PNG");
+#endif
 					return file_format::PNG;
 				}
+#if USE_LOG_DEBUG_TEX_LOADING
 				else {
 					LogPrintDebug("[TextureManager::LoadTexture] Is not PNG");
 				}
+#endif
 			}
 
 			{
 				in_.seekg(begPos);
+#if USE_LOG_DEBUG_TEX_LOADING
 				LogPrintDebug("[TextureManager::LoadTexture] Checking if is tga ");
+#endif
 				unsigned char pad[12];
 				short x, y;
 				char bpp;
@@ -294,78 +280,113 @@ namespace hyperspace {
 				in_.read((char*)&bpp, 1);
 
 				if (x > 0 && y > 0 && bpp > 0 && x < 10000 && y < 10000 && bpp < 50) {
+#if USE_LOG_DEBUG_TEX_LOADING
 					LogPrintDebug("[TextureManager::LoadTexture] Is TGA");
+#endif
 					return file_format::TGA;
 				}
+#if USE_LOG_DEBUG_TEX_LOADING
 				else {
 					LogPrintDebug("[TextureManager::LoadTexture] Is not PNG");
 				}
+#endif
 			}
 
 			{
 				in_.seekg(begPos);
+#if USE_LOG_DEBUG_TEX_LOADING
 				LogPrintDebug("[TextureManager::LoadTexture] Checking if is DDS ");
+#endif
 				char	dds[4];
 				in_.read((char*)dds, 3);
 				dds[3] = '\0';
 				if (strcmp(dds, "DDS") == 0) {
+#if USE_LOG_DEBUG_TEX_LOADING
 					LogPrintDebug("[TextureManager::LoadTexture] Is DDS");
+#endif
 					return file_format::DDS;
 				}
+#if USE_LOG_DEBUG_TEX_LOADING
 				else {
 					LogPrintDebug("[TextureManager::LoadTexture] Is not DDS");
 				}
+#endif
 			}
 
 			{
 				in_.seekg(begPos);
+#if USE_LOG_DEBUG_TEX_LOADING
 				LogPrintDebug("[TextureManager::LoadTexture] Checking if is BMP ");
+#endif
 				char	bmp[3];
 				in_.read((char*)bmp, 2);
 				bmp[2] = '\0';
 				if (strcmp(bmp, "BM") == 0) {
+#if USE_LOG_DEBUG_TEX_LOADING
 					LogPrintDebug("[TextureManager::LoadTexture] Is BMP");
+#endif
 					return file_format::BMP;
 				}
+#if USE_LOG_DEBUG_TEX_LOADING
 				else {
 					LogPrintDebug("[TextureManager::LoadTexture] Is not BMP");
 				}
+#endif
 			}
 
 			// Compressed formats:
 			{
 				in_.seekg(begPos);
+#if USE_LOG_DEBUG_TEX_LOADING
 				LogPrintDebug("[TextureManager::LoadTexture] Checking if is KTX ");
+#endif
 				unsigned char	ktx[5];
 				in_.read((char*)ktx, 4);
 				ktx[0] = 0;
 				ktx[4] = '\0';
 				if (strcmp((char*)ktx, " KTX") == 0) {
+#if USE_LOG_DEBUG_TEX_LOADING
 					LogPrintDebug("[TextureManager::LoadTexture] Is KTX");
+#endif
 					return file_format::KTX;
 				}
+#if USE_LOG_DEBUG_TEX_LOADING
 				else {
 					LogPrintDebug("[TextureManager::LoadTexture] Is not KTX");
 				}
+#endif
 			}
 
 			{
 				in_.seekg(begPos);
+#if USE_LOG_DEBUG_TEX_LOADING
 				LogPrintDebug("[TextureManager::LoadTexture] Checking if is PVR ");
+#endif
 				char pvr[4];
 				in_.read((char*)&pvr, 3);
 				pvr[3] = '\0';
 				if (strcmp((char*)pvr, "PVR") == 0) {
+#if USE_LOG_DEBUG_TEX_LOADING
 					LogPrintDebug("[TextureManager::LoadTexture] Is PVR");
+#endif
 					return file_format::PVR;
 				}
 				else {
+#if USE_LOG_DEBUG_TEX_LOADING
 					LogPrintDebug("[TextureManager::LoadTexture] Is not PVR");
+#endif
 				}
 			}
 
 			return 0;
 		}
 		
+		void TextureManager::LoadAPITexture(Texture *tex, unsigned char* buffer, unsigned int &params) {
+		
+		}
+
+		void TextureManager::LoadAPITextureCompressed(Texture *tex, unsigned char* buffer, unsigned int &params) {
+	
+		}
 	}
 }

@@ -13,6 +13,9 @@
 #define USE_SHOW_MEM_USAGE 1
 #define TAG_LOGGING "DEBUG"
 
+// Textures
+#define USE_LOG_DEBUG_TEX_LOADING 0
+
 // Memory
 #define USE_MEMORY_TRACKER 1
 

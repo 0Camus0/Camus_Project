@@ -127,12 +127,12 @@ void FrameworkManager::MainAppThread() {
 	pthread_mutex_unlock(&g_mutex);
 #endif
 
-	LogPrintDebug("MainAppThread [");
+	LogPrintDebug("MainAppThread start");
 
 	while (g_bAppRunning) {
 		pFramework->UpdateApplication();
 	}
-	LogPrintDebug("MainAppThread ]");
+	LogPrintDebug("MainAppThread end");
 
 	pFramework->OnDestroyApplication();
 

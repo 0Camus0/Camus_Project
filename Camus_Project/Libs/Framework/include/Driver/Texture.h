@@ -64,12 +64,16 @@ namespace hyperspace {
  		};
 	
 		enum params_in {
-			GENERATE_MIPMAPS    = (1 << 0),
-			FILTER_NEAREST	    = (1 << 1),
-			FILTER_LINEAR	    = (1 << 2),
-			FILTER_ANISOTROPIC  = (1 << 3),
-			WRAP_CLAMP			= (1 << 4),
-			WRAP_REPEAT			= (1 << 5),
+			GENERATE_MIPMAPS				= (1 << 0),
+			FILTER_NEAREST					= (1 << 1),
+			FILTER_LINEAR					= (1 << 2),
+			FILTER_NEAREST_MIPMAP_NEAREST	= (1 << 3),
+			FILTER_NEAREST_MIPMAP_LINEAR	= (1 << 4),
+			FILTER_LINEAR_MIPMAP_NEAREST	= (1 << 5),
+			FILTER_LINEAR_MIPMAP_LINEAR		= (1 << 6),
+			FILTER_ANISOTROPIC				= (1 << 7),
+			WRAP_CLAMP						= (1 << 8),
+			WRAP_REPEAT						= (1 << 9)
 		};
 		
 		class Texture {
@@ -77,6 +81,7 @@ namespace hyperspace {
 			Texture() :	size(0),
 						offset(0),
 						props(0),
+						params(0),
 						x(0),
 						y(0),
 						id(0),
@@ -93,6 +98,7 @@ namespace hyperspace {
 			unsigned int	size;
 			unsigned int	offset;
 			unsigned int	props;
+			unsigned int	params;
 			unsigned short	x, y;
 			unsigned short	id;
 			unsigned char	bounded;
@@ -105,13 +111,16 @@ namespace hyperspace {
 			~TextureManager() {
 			
 			}
-			unsigned short	LoadTexture(std::string filename,unsigned int params = GENERATE_MIPMAPS| FILTER_LINEAR);
+			unsigned short	LoadTexture(std::string filename,unsigned int params = GENERATE_MIPMAPS| FILTER_LINEAR_MIPMAP_LINEAR | FILTER_ANISOTROPIC |WRAP_CLAMP);
 
 			unsigned int	CheckFormat(std::ifstream &in);
 	
 			unsigned int	LoadBufferUncompressed(std::string &Path,unsigned int format, unsigned int params);
 
 			unsigned int    LoadBufferCompressed(std::string &Path,unsigned int format, unsigned int params);
+
+			virtual void	LoadAPITexture(Texture *tex, unsigned char* buffer, unsigned int &params);
+			virtual void	LoadAPITextureCompressed(Texture *tex, unsigned char* buffer, unsigned int &params);
 
 			static unsigned int		num_textures_loaded;
 			static unsigned int		current_index;

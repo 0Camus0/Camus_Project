@@ -36,6 +36,7 @@
     <ClInclude Include="..\include\Driver\stb\stb_truetype.h" />
     <ClInclude Include="..\include\Driver\Technique.h" />
     <ClInclude Include="..\include\Driver\Texture.h" />
+    <ClInclude Include="..\include\Driver\TextureGL.h" />
     <ClInclude Include="..\include\Scene\Camera.h" />
     <ClInclude Include="..\include\Scene\Node.h" />
     <ClInclude Include="..\include\Scene\Scene.h" />
@@ -67,6 +68,7 @@
     <ClCompile Include="..\src\Driver\OpenGlDriver.cpp" />
     <ClCompile Include="..\src\Driver\ShaderBase.cpp" />
     <ClCompile Include="..\src\Driver\Texture.cpp" />
+    <ClCompile Include="..\src\Driver\TextureGL.cpp" />
     <ClCompile Include="..\src\Scene\Camera.cpp" />
     <ClCompile Include="..\src\Scene\Node.cpp" />
     <ClCompile Include="..\src\Utils\FileSystem.cpp" />

@@ -52,7 +52,7 @@ namespace hyperspace {
 				return;
 			}
 
-			auto properties = GetDriverProperties();
+			auto &properties = GetDriverProperties();
 			EGLint numConfigs, w, h;
 
 #ifdef OS_WIN32
@@ -114,7 +114,10 @@ namespace hyperspace {
 
 			GetWindowParameters().SetParametersFromDriver(w, h);
 
-			LogPrintDebug("Driver successfuly inited version: %s", glGetString(GL_VERSION));
+			properties.Version = std::string((const char*)glGetString(GL_VERSION));
+			LogPrintDebug("Driver successfuly inited version: %s", properties.Version.c_str());
+			properties.SetExtensions(std::string((const char*)glGetString(GL_EXTENSIONS)));
+			properties.ListExtensions();
 
 			bInited = true;
 

@@ -1,6 +1,9 @@
 #ifndef CA_DIVER_PROPERTIES_H
 #define CA_DIVER_PROPERTIES_H
 
+#include <string>
+#include <vector>
+
 namespace hyperspace {
 	namespace video {
 		class DriverProperties {
@@ -29,9 +32,18 @@ namespace hyperspace {
 			~DriverProperties() {
 			}
 
-			int		BitsPerDepth;
-			int		BitsPerPixel;
-			int		Channels;
+			bool isExtensionSupported(std::string str);
+
+			void SetExtensions(std::string str);
+
+			void ListExtensions();
+
+			int			BitsPerDepth;
+			int			BitsPerPixel;
+			int			Channels;
+			std::string	Version;
+			std::string Extensions;
+			std::vector<std::string>	Ext_tokenized;
 		};
 
 		DriverProperties& GetDriverProperties();
