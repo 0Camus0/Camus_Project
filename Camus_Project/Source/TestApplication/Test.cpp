@@ -35,10 +35,16 @@ void TestApp::CreateAssets() {
 
 	hyperspace::video::TextureManager	*TexManager = new hyperspace::video::TextureManagerGL();
 
-	//TexManager->LoadTexture("EVEN MONEY_ETC1.pvr");
-	TexManager->LoadTexture("EVEN MONEY.pvr"); 
+	TexManager->LoadTexture("pvr/BatBody_pvrtc2_rgba.pvr");
+	TexManager->LoadTexture("pvr/BatHead_pvrtc2_rgb.pvr"); 
+	TexManager->LoadTexture("pvr/CrocBody_pvrtc4_rgba.pvr");
+	TexManager->LoadTexture("pvr/CrocHead_pvrtc4_rgb.pvr");
+	TexManager->LoadTexture("pvr/JokerBody_pvrtcII_2bpp.pvr");
+	TexManager->LoadTexture("pvr/JokerHead_pvrtcII_4bpp.pvr");
+	TexManager->LoadTexture("EVEN MONEY_ETC1.pvr");
+
 	TexManager->LoadTexture("cube_xn.png");
-	//TexManager->LoadTexture("Cubemap.pvr");
+	TexManager->LoadTexture("Cubemap.pvr");
 	TexManager->LoadTexture("Real.png");
 	TexManager->LoadTexture("bones.bmp");
 	TexManager->LoadTexture("floor_normal.tga");

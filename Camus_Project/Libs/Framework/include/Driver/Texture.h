@@ -8,8 +8,8 @@
 #include <config.h>
 
 
-#define TEXTURE_NOT_FOUND	0xFFFF
-#define TEXTURE_FOUND	0
+#define TEXTURE_NOT_LOADED	0xFFFF
+#define TEXTURE_LOADED	0
 
 namespace hyperspace {
 	namespace video {
@@ -114,6 +114,8 @@ namespace hyperspace {
 			unsigned short	LoadTexture(std::string filename,unsigned int params = GENERATE_MIPMAPS| FILTER_LINEAR_MIPMAP_LINEAR | FILTER_ANISOTROPIC |WRAP_CLAMP);
 
 			unsigned int	CheckFormat(std::ifstream &in);
+
+			bool			CheckIfExtensionIsSupported(std::string &name,unsigned int &props);
 	
 			unsigned int	LoadBufferUncompressed(std::string &Path,unsigned int format, unsigned int params);
 
@@ -121,6 +123,10 @@ namespace hyperspace {
 
 			virtual void	LoadAPITexture(Texture *tex, unsigned char* buffer, unsigned int &params);
 			virtual void	LoadAPITextureCompressed(Texture *tex, unsigned char* buffer, unsigned int &params);
+
+#if USE_LOG_DEBUG_TEX_LOADING
+			void	PrintTextureInfo(std::string &name,Texture *tex);
+#endif
 
 			static unsigned int		num_textures_loaded;
 			static unsigned int		current_index;

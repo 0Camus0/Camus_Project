@@ -6,21 +6,19 @@
 
 #include <fstream>
 
-#define SHOW_SHADERS_CONTENT 0
-
 namespace hyperspace {
 	namespace video {
 
 		void TechniqueGL::Initialize(std::string name, std::string shader) {
+#if USE_LOG_DEBUG_TECHNIQUES
 			LogPrintDebug("[TechniqueGL::Initialize] %s  shader: %s ", name.c_str(), shader.c_str());
-
+#endif
 			Name = name;
 			Shader = shader;
 			std::string Path = fs::Filesystem::instance()->GetResourcesPath();
 			Path += "Shaders/";
 			Path += shader;
 
-			LogPrintDebug("[TechniqueGL::Initialize] Path to use: %s " ,Path.c_str());
 			Parser.Parse(Path);
 			AddPass("0", ArgumentsManager("NORMAL;TANGENT;"), Path, CRenderStateDesc());
 
@@ -71,7 +69,7 @@ namespace hyperspace {
 			std::ifstream in_(path.c_str(), std::ios::in| std::ios::binary);
 
 			if (!in_.good()) {
-				LogPrintError("TechniqueGL: Shader on Path: %s not found.", path.c_str());
+				LogPrintError("[TechniqueGL] Shader on Path: %s not found.", path.c_str());
 				in_.close();
 				return 65535;
 			}
@@ -87,10 +85,11 @@ namespace hyperspace {
 
 			std::string strSource = args;
 			strSource += std::string(pSource);
+#if USE_LOG_DEBUG_TECHNIQUES
+			LogPrintDebug("[TechniqueGL] Compiling shader [%s] with args [%s] ...", path.c_str(),args.c_str());
+#endif
 
-			LogPrintDebug("[Compiling shader] [%s] with args [%s] ...", path.c_str(),args.c_str());
-
-#if SHOW_SHADERS_CONTENT
+#if USE_LOG_DEBUG_SHADERS_CONTENT
 			LogPrintDebug("Content\n[%s]\n", strSource.c_str());
 #endif
 			unsigned int Id = glCreateShader(type);
@@ -108,13 +107,13 @@ namespace hyperspace {
 				glGetShaderInfoLog(Id, LogSize, &LogWritten, pError);
 				std::string strError = pError;
 				if (type == GL_VERTEX_SHADER)
-					LogPrintError("Failed to compile vertex shader: %s with args: %s\nLog[%s]", path.c_str(), args.c_str(), strError.c_str());
+					LogPrintError("[TechniqueGL] Failed to compile vertex shader: %s with args: %s\nLog[%s]", path.c_str(), args.c_str(), strError.c_str());
 				if (type == GL_FRAGMENT_SHADER)
-					LogPrintError("Failed to compile pixel shader: %s with args: %s\nLog[%s]", path.c_str(), args.c_str(), strError.c_str());
+					LogPrintError("[TechniqueGL] Failed to compile pixel shader: %s with args: %s\nLog[%s]", path.c_str(), args.c_str(), strError.c_str());
 				delete [] pError;				
 			}
 			else {
-				LogPrintDebug("[...Success.]");
+				LogPrintDebug("[TechniqueGL] Shader [%s] compiled. \n\n",path.c_str());
 			}
 
 			delete [] pSource;

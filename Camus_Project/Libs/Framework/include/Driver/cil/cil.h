@@ -7,7 +7,7 @@
 #include <cstddef>
 using namespace std;
 
-#define CIL_LOG_OUTPUT 1
+#define CIL_LOG_OUTPUT 0
 
 // Formats
 #define CIL_PVRTC_2BPP_RGB_FMT		0
@@ -160,14 +160,14 @@ void	pvr_set_pix_format(uint32_t& pix_format, unsigned int &prop) {
 			pix_format |= CIL_COMPRESSED;
 		}break;
 		case  CIL_PVRTC_4BPP_RGBA_FMT: {
-			prop |= CIL_PVRTCII2;
+			prop |= CIL_PVRTC4;
 			prop |= CIL_RGBA;
 			prop |= CIL_BPP_4;
 			pix_format |= CIL_COMPRESSED;
 		}break;
 		case  CIL_PVRTCII_2BPP_RGB_FMT: {
-			prop |= CIL_PVRTC2;
-			prop |= CIL_RGB;
+			prop |= CIL_PVRTCII2;
+			prop |= CIL_RGBA;
 			prop |= CIL_BPP_2;
 			pix_format |= CIL_COMPRESSED;
 		}break;
