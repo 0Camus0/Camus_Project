@@ -191,12 +191,17 @@ namespace hyperspace {
 				widthBlocks = current_x / 8;
 				heightBlocks = current_y / 8;
 			}
-			
+			int size_ = 0;
 			for (unsigned int i = 0; i < mipmaps_count; i++) {		
 				widthBlocks = widthBlocks < 2 ? 2 : widthBlocks;
 				heightBlocks = heightBlocks < 2 ? 2 : heightBlocks;
 
-				unsigned int size_ = widthBlocks * heightBlocks * ((blockSize * bpp) / 8);	
+			//	if (props&compress_format::ETC1) {
+			//		size_ = (current_x*current_y*bpp) / 8;
+			//		size_ = std::max(size_, 8);
+			//	}else {
+					size_ = widthBlocks * heightBlocks * ((blockSize * bpp) / 8);
+			//	}
 				for (unsigned int f = 0; f < faces; f++) {
 					glCompressedTexImage2D(glfaceTarget + f, i, glFormat, current_x, current_y, 0, size_, pbuff);
 					pbuff += size_;

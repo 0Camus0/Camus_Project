@@ -366,12 +366,19 @@ unsigned char*	load_pvr(ifstream &in_, int &x, int &y, unsigned char &mipmaps, u
 		int bpp = (prop & CIL_BPP_4) ? 4 : 2;
 		int widthBlocks = (prop & CIL_BPP_4) ? (currentWidth / 4) : (currentWidth / 8);
 		int heightBlocks = currentHeight / 4;
+		int current_size = 0;
 		for (unsigned int i = 0; i < header.mipmaps_c; i++) {
 			
 			widthBlocks = widthBlocks < 2 ? 2 : widthBlocks;
 			heightBlocks = heightBlocks < 2 ? 2 : heightBlocks;
 
-			int current_size = widthBlocks * heightBlocks * ((blockSize * bpp) / 8);
+			//if (prop&CIL_ETC1) {
+			//	current_size = (currentHeight*currentWidth*bpp) / 8;
+			//	current_size = std::max(current_size, 8);
+			//}
+			//else {
+				current_size = widthBlocks * heightBlocks * ((blockSize * bpp) / 8);
+			//}
 			for (unsigned int f = 0; f < header.faces; f++) {
 				final_size += current_size;
 			}
@@ -471,7 +478,7 @@ unsigned char*	load_ktx(ifstream &in_, int &x, int &y, unsigned char &mipmaps, u
 	ktx_header	header;
 	in_.seekg(0);
 	in_.read((char*)&header, sizeof(ktx_header));
-	cout << "size of header " << sizeof(ktx_header) << endl;
+
 #if CIL_LOG_OUTPUT
 	cout << "KTX Data: " << endl
 		<< "GLType: " << header.gltype << endl
@@ -486,13 +493,17 @@ unsigned char*	load_ktx(ifstream &in_, int &x, int &y, unsigned char &mipmaps, u
 		<< "Mipmap count: " << header.mipmaps_c << endl
 		<< "Size Key: " << header.keyvaluedatasize << endl;
 #endif
+	if (header.mipmaps_c == 0)
+		header.mipmaps_c = 1;
 
 	x = header.width;
 	y = header.height;
 	mipmaps = header.mipmaps_c;
 
+
 	if (header.faces == 6)
 		prop |= CIL_CUBE_MAP;
+
 
 	ktx_set_pix_format(header.glinternalformat, prop);
 
@@ -503,9 +514,37 @@ unsigned char*	load_ktx(ifstream &in_, int &x, int &y, unsigned char &mipmaps, u
 		delete[] metadata;
 	}
 
+	streampos actual = in_.tellg();
+	unsigned int totalSize = 0;
+	for (unsigned int i = 0; i < header.mipmaps_c; i++) {
+		unsigned int size = 0;
+		in_.read((char*)&size, sizeof(unsigned int));
+		size = size*header.faces;
+		in_.seekg(in_.tellg() + streampos(size));
+		totalSize += size;
+	}
 
+	buffersize = totalSize;
 
-	return 0;
+	unsigned char * pBuffer = new unsigned char[totalSize];
+	unsigned char *pHead = pBuffer;
+	if (pBuffer == 0) {
+		prop = CIL_NO_MEMORY;
+		return 0;
+	}
+
+	in_.seekg(actual);
+	for (unsigned int i = 0; i < header.mipmaps_c; i++) {
+		unsigned int size = 0;
+		in_.read((char*)&size, sizeof(unsigned int));
+		for (unsigned int f = 0; f < header.faces; f++) {
+			in_.read((char*)pBuffer, size);
+			pBuffer += size;
+		}
+	}
+	pBuffer = pHead;
+
+	return pBuffer;
 }
 
 void cil_free_buffer(unsigned char *pbuff) {
