@@ -361,6 +361,8 @@ unsigned char*	load_pvr(ifstream &in_, int &x, int &y, unsigned char &mipmaps, u
 
 		in_.read((char*)&buffer[0], buffersize);
 
+		in_.close();
+
 	return buffer;
 }
 
