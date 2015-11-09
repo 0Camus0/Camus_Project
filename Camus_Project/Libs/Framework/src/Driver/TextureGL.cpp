@@ -4,6 +4,8 @@
 
 #include <GLES2/gl2.h>
 #include <GLES2/gl2ext.h>
+#include <GLES3/gl3.h>
+
 
 #ifdef OS_ANDROID
 #ifndef GL_IMG_texture_compression_pvrtc2
@@ -97,6 +99,16 @@ namespace hyperspace {
 			
 			if (props & compress_format::ETC1) {
 				glFormat = GL_ETC1_RGB8_OES;
+				bpp = 4;
+			}
+
+			if (props & compress_format::ETC2) {
+				glFormat = GL_COMPRESSED_RGBA8_ETC2_EAC;
+				bpp = 8;
+			}
+
+			if (props & compress_format::DXT1) {
+				glFormat = GL_COMPRESSED_RGB_S3TC_DXT1_EXT;
 				bpp = 4;
 			}
 		}

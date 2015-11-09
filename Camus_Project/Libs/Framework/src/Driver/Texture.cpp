@@ -393,6 +393,7 @@ namespace hyperspace {
 				}
 				else {
 					LogPrintError("[LoadTexture] Failed at loading texture [%s] extension GL_IMG_texture_compression_pvrtc not supported. \n\n", name.c_str());
+					return false;
 				}
 			}
 
@@ -402,9 +403,31 @@ namespace hyperspace {
 				}
 				else {
 					LogPrintError("[LoadTexture] Failed at loading texture [%s] extension GL_IMG_texture_compression_pvrtc not supported. \n\n", name.c_str());
+					return false;
 				}
 			}
 
+			if (props & compress_format::ETC2) {
+				if (GetDriverProperties().isExtensionSupported("OES_compressed_ETC2_RGBA8_texture")) {
+					return true;
+				}
+				else {
+					LogPrintError("[LoadTexture] Failed at loading texture [%s] extension OES_compressed_ETC2_RGBA8_texture not supported. \n\n", name.c_str());
+					return false;
+				}
+			}
+
+			if (props & compress_format::DXT1) {
+				if (GetDriverProperties().isExtensionSupported("GL_EXT_texture_compression_dxt1")) {
+					return true;
+				}
+				else {
+					LogPrintError("[LoadTexture] Failed at loading texture [%s] extension GL_EXT_texture_compression_dxt1 not supported. \n\n", name.c_str());
+					return false;
+				}
+			}
+
+			
 			LogPrintError("[LoadTexture] Failed at loading texture [%s] extension Unknown and not supported. \n\n", name.c_str());
 			return false;
 		}
