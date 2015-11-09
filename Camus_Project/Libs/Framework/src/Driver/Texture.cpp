@@ -364,7 +364,7 @@ namespace hyperspace {
 				in_.seekg(begPos);
 				unsigned char	ktx[5];
 				in_.read((char*)ktx, 4);
-				ktx[0] = 0;
+				ktx[0] = ' ';
 				ktx[4] = '\0';
 				if (strcmp((char*)ktx, " KTX") == 0) {
 					return file_format::KTX;
