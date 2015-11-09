@@ -9,7 +9,7 @@ namespace hyperspace {
 		public:
 			TextureManagerGL(){}
 
-			void	SetTextureParams(unsigned int &params);
+			void	SetTextureParams(unsigned int &params,unsigned int &target);
 			void	GetFormatBpp(unsigned int &props, unsigned int &glFormat, unsigned int &bpp);
 
 			void	LoadAPITexture(Texture *tex, unsigned char* buffer, unsigned int &params);

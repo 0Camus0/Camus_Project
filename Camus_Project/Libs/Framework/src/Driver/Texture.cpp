@@ -83,14 +83,13 @@ namespace hyperspace {
 				return TEXTURE_NOT_LOADED;
 			}
 
-			
-
 			tex->size = x*y*channels;
-			memcpy((void*)(tex_mem_pool + offset), (void*)&buffer[0], tex->size);
 
 			unsigned int usage_mem = offset + tex->size;
-			if(usage_mem >= TEXTURE_BUDGET_SIZE_BYTES)
+			if (usage_mem >= TEXTURE_BUDGET_SIZE_BYTES)
 				LogPrintWarning("[LoadTexture] Current Ram Pool Usage: %d of total: %d. Textures may be corrupted", usage_mem, TEXTURE_BUDGET_SIZE_BYTES);
+
+			memcpy((void*)(tex_mem_pool + offset), (void*)&buffer[0], tex->size);
 
 			stbi_image_free(buffer);
 
@@ -196,11 +195,12 @@ namespace hyperspace {
 				}break;
 				}
 			}
-			memcpy((void*)(tex_mem_pool + offset), (void*)&buffer[0], buffer_size);
 
 			unsigned int usage_mem = offset + buffer_size;
-			if(usage_mem >= TEXTURE_BUDGET_SIZE_BYTES)
+			if (usage_mem >= TEXTURE_BUDGET_SIZE_BYTES)
 				LogPrintWarning("[LoadTexture] Current Ram Pool Usage: %d of total: %d. Textures may be corrupted", usage_mem, TEXTURE_BUDGET_SIZE_BYTES);
+
+			memcpy((void*)(tex_mem_pool + offset), (void*)&buffer[0], buffer_size);
 
 			cil_free_buffer(buffer);
 

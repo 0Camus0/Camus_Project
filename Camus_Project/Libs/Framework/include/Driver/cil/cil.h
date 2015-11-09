@@ -5,6 +5,7 @@
 #include <iostream>
 #include <fstream>
 #include <cstddef>
+#include <algorithm>
 using namespace std;
 
 #define CIL_LOG_OUTPUT 0
@@ -329,29 +330,27 @@ unsigned char*	load_pvr(ifstream &in_, int &x, int &y, unsigned char &mipmaps, u
 		delete[] metadata;
 
 		int currentWidth = header.width, currentHeight = header.height;
-		int totalnumpixels = 0;
+		int final_size = 0;
+		int blockSize = (prop & CIL_BPP_4) ? 16 : 32;
+		int bpp = (prop & CIL_BPP_4) ? 4 : 2;
+		int widthBlocks = (prop & CIL_BPP_4) ? (currentWidth / 4) : (currentWidth / 8);
+		int heightBlocks = currentHeight / 4;
 		for (unsigned int i = 0; i < header.mipmaps_c; i++) {
-			totalnumpixels += currentWidth*currentHeight;
-			currentWidth = currentWidth >> 1;
-			currentHeight = currentHeight >> 1;
+			
+			widthBlocks = widthBlocks < 2 ? 2 : widthBlocks;
+			heightBlocks = heightBlocks < 2 ? 2 : heightBlocks;
+
+			int current_size = widthBlocks * heightBlocks * ((blockSize * bpp) / 8);
+			for (unsigned int f = 0; f < header.faces; f++) {
+				final_size += current_size;
+			}
+			currentWidth = std::max(currentWidth >> 1, 1);
+			currentHeight = std::max(currentHeight >> 1, 1);
+
+			widthBlocks = (prop & CIL_BPP_4) ? (currentWidth / 4) : (currentWidth / 8);
+			heightBlocks = currentHeight / 4;
 		}
 
-		totalnumpixels = totalnumpixels*header.faces;
-
-		int factor = 0;
-		if (prop & CIL_BPP_2)
-			factor = 2;
-		if (prop & CIL_BPP_4)
-			factor = 4;
-		if (prop & CIL_BPP_8)
-			factor = 8;
-		
-		int final_size = totalnumpixels*factor / 8;
-
-		if (factor == 2 || factor == 4) {
-			final_size++;
-		}
-	
 		buffersize = final_size;
 		unsigned char *buffer = new unsigned char[buffersize];
 

@@ -19,7 +19,7 @@
 namespace hyperspace {
 	namespace video {
 
-		void	TextureManagerGL::SetTextureParams(unsigned int &params) {
+		void	TextureManagerGL::SetTextureParams(unsigned int &params, unsigned int &target) {
 			unsigned int glFiltering = 0;
 			unsigned int glWrap = 0;
 
@@ -45,16 +45,16 @@ namespace hyperspace {
 			if (params&params_in::WRAP_REPEAT)
 				glWrap = GL_REPEAT;
 
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, glFiltering);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, glFiltering);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, glWrap);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, glWrap);
+			glTexParameteri(target, GL_TEXTURE_MIN_FILTER, glFiltering);
+			glTexParameteri(target, GL_TEXTURE_MAG_FILTER, glFiltering);
+			glTexParameteri(target, GL_TEXTURE_WRAP_S, glWrap);
+			glTexParameteri(target, GL_TEXTURE_WRAP_T, glWrap);
 
 			if (params&params_in::FILTER_ANISOTROPIC) {
 				if (GetDriverProperties().isExtensionSupported("GL_EXT_texture_filter_anisotropic")) {
 					int Max = 1;
 					glGetIntegerv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &Max);
-					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, Max);
+					glTexParameteri(target, GL_TEXTURE_MAX_ANISOTROPY_EXT, Max);
 				}
 			}
 		}
@@ -69,6 +69,7 @@ namespace hyperspace {
 					glFormat = GL_COMPRESSED_RGBA_PVRTC_2BPPV1_IMG;
 				}
 				bpp = 2;
+				return;
 			}
 
 			if (props & compress_format::PVRTC4) {
@@ -79,16 +80,19 @@ namespace hyperspace {
 					glFormat = GL_COMPRESSED_RGBA_PVRTC_4BPPV1_IMG;
 				}
 				bpp = 4;
+				return;
 			}
 
 			if (props & compress_format::PVRTCII2) {
 				glFormat = GL_COMPRESSED_RGBA_PVRTC_2BPPV2_IMG;
 				bpp = 2;
+				return;
 			}
 			
 			if (props & compress_format::PVRTCII4) {
 				glFormat = GL_COMPRESSED_RGBA_PVRTC_4BPPV2_IMG;
 				bpp = 4;
+				return;
 			}
 			
 			if (props & compress_format::ETC1) {
@@ -101,6 +105,7 @@ namespace hyperspace {
 			unsigned int id;
 			unsigned int glFormat = 0;
 			unsigned int glChannel = GL_UNSIGNED_BYTE;
+			unsigned int glTarget = GL_TEXTURE_2D;
 			
 			if (tex->props&channelS_::CH_ALPHA)
 				glFormat = GL_ALPHA;
@@ -110,19 +115,19 @@ namespace hyperspace {
 				glFormat = GL_RGBA;
 
 			glGenTextures(1, &id);
-			glBindTexture(GL_TEXTURE_2D, id);
+			glBindTexture(glTarget, id);
 
 			if (tex->x % 4 != 0)
 				glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 			else
 				glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
 
-			glTexImage2D(GL_TEXTURE_2D, 0, glFormat, tex->x, tex->x, 0, glFormat, glChannel, (void*)(buffer));
+			glTexImage2D(glTarget, 0, glFormat, tex->x, tex->x, 0, glFormat, glChannel, (void*)(buffer));
 
 			if (params&params_in::GENERATE_MIPMAPS)
-				glGenerateMipmap(GL_TEXTURE_2D);
+				glGenerateMipmap(glTarget);
 
-			SetTextureParams(params);
+			SetTextureParams(params, glTarget);
 
 			tex->id = static_cast<unsigned short>(id);
 			tex->params = params;
@@ -135,24 +140,53 @@ namespace hyperspace {
 			unsigned int mipmaps_count = tex->mipmaps;
 			unsigned int props = tex->props;
 			unsigned int bpp = 0;
-			unsigned int current_x = tex->x, current_y = tex->y;
-			unsigned int offset = 0;
-			unsigned int min_size = 1;
+			int current_x = tex->x, current_y = tex->y;
+			unsigned int glTarget = 0;
+			unsigned int glfaceTarget = 0;
+			unsigned int faces = (props&props_::CUBE_MAP) ? 6 : 1;
+
+			if (faces == 6) {
+				glTarget = GL_TEXTURE_CUBE_MAP;
+				glfaceTarget = GL_TEXTURE_CUBE_MAP_POSITIVE_X;
+			}
+			else {
+				glTarget = GL_TEXTURE_2D;
+				glfaceTarget = glTarget;
+			}	
 
 			GetFormatBpp(props, glFormat, bpp);
 
 			glGenTextures(1, &id);
-			glBindTexture(GL_TEXTURE_2D, id);
+			glBindTexture(glTarget, id);
+			unsigned char *pbuff = buffer;
 
-			for (unsigned int i = 0; i < mipmaps_count; i++) {
-				unsigned int size_ = std::max((current_x*current_y*bpp) / 8, min_size);
-				glCompressedTexImage2D(GL_TEXTURE_2D, i, glFormat, current_x, current_y, 0, size_, (void*)(buffer + offset));
-				offset += size_;
-				current_x = current_x >> 1;
-				current_y = current_y >> 1;
+			int blockSize = 0, widthBlocks = 0, heightBlocks = 0;
+			for (unsigned int i = 0; i < mipmaps_count; i++) {		
+				if (props & bpp_::BPP_4) {
+					blockSize = 4 * 4;
+					widthBlocks = current_x / 4;
+					heightBlocks = current_y / 4;
+				}
+				else if (props & bpp_::BPP_2) {
+					blockSize = 8 * 4;
+					widthBlocks = current_x / 8;
+					heightBlocks = current_y / 4;
+				}
+
+				widthBlocks = widthBlocks < 2 ? 2 : widthBlocks;
+				heightBlocks = heightBlocks < 2 ? 2 : heightBlocks;
+
+				unsigned int size_ = widthBlocks * heightBlocks * ((blockSize * bpp) / 8);	
+				for (unsigned int f = 0; f < faces; f++) {
+					glCompressedTexImage2D(glfaceTarget + f, i, glFormat, current_x, current_y, 0, size_, pbuff);
+					pbuff += size_;
+				}
+
+				current_x = std::max(current_x >> 1, 1);
+				current_y = std::max(current_y >> 1, 1);
 			}
 
-			SetTextureParams(params);
+			SetTextureParams(params, glTarget);
 
 			tex->id = static_cast<unsigned short>(id);
 			tex->params = params;
