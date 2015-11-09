@@ -39,18 +39,18 @@ void TestApp::CreateAssets() {
 	TexManager->LoadTexture("pvr/BatBody_pvrtc2_rgba.pvr");
 	TexManager->LoadTexture("pvr/BatHead_pvrtc2_rgb.pvr"); 
 	TexManager->LoadTexture("pvr/CrocBody_pvrtc4_rgba.pvr");
-	TexManager->LoadTexture("pvr/CrocHead_pvrtc4_rgb.pvr");
+	TexManager->LoadTexture("pvr/CrocHead_pvrtc4_rgb.pvr");*
 	TexManager->LoadTexture("pvr/JokerBody_pvrtcII_2bpp.pvr");
-	TexManager->LoadTexture("pvr/JokerHead_pvrtcII_4bpp.pvr");
-	*/
+	TexManager->LoadTexture("pvr/JokerHead_pvrtcII_4bpp.pvr");*/
+	
 
-
-//	TexManager->LoadTexture("ktx/textetc1.ktx");
+	/*TexManager->LoadTexture("ktx/textetc1.ktx");
 	TexManager->LoadTexture("ktx/cube.ktx");
 
-	TexManager->LoadTexture("pvr/Cubemap.pvr");
-	/*TexManager->LoadTexture("pvr/EVEN_MONEY_ETC1.pvr");
-	TexManager->LoadTexture("pvr/cabeza_dxt1.pvr");
+	TexManager->LoadTexture("pvr/Cubemap.pvr");*/
+	//TexManager->LoadTexture("ktx/EVEN_MONEY_ETC1.ktx");
+	TexManager->LoadTexture("pvr/EVEN_MONEY_ETC1.pvr");
+	/*TexManager->LoadTexture("pvr/cabeza_dxt1.pvr");
 	TexManager->LoadTexture("pvr/traje_dxt5.pvr");*/
 
 
