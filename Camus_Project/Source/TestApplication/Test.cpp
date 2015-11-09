@@ -46,7 +46,7 @@ void TestApp::CreateAssets() {
 	TexManager->LoadTexture("pvr/Cubemap.pvr");
 	TexManager->LoadTexture("pvr/EVEN_MONEY_ETC1.pvr");
 	TexManager->LoadTexture("pvr/cabeza_dxt1.pvr");
-
+	TexManager->LoadTexture("pvr/traje_dxt5.pvr");
 
 
 	/*

@@ -111,6 +111,11 @@ namespace hyperspace {
 				glFormat = GL_COMPRESSED_RGB_S3TC_DXT1_EXT;
 				bpp = 4;
 			}
+
+			if (props & compress_format::DXT5) {
+				glFormat = GL_COMPRESSED_RGBA_S3TC_DXT5_EXT;
+				bpp = 8;
+			}
 		}
 
 		void TextureManagerGL::LoadAPITexture(Texture *tex, unsigned char* buffer, unsigned int &params) {

@@ -416,7 +416,7 @@ namespace hyperspace {
 					return false;
 				}
 			}
-
+			
 			if (props & compress_format::DXT1) {
 				if (GetDriverProperties().isExtensionSupported("GL_EXT_texture_compression_dxt1")) {
 					return true;
@@ -427,6 +427,15 @@ namespace hyperspace {
 				}
 			}
 
+			if (props & compress_format::DXT5) {
+				if (GetDriverProperties().isExtensionSupported("GL_EXT_texture_compression_s3tc")) {
+					return true;
+				}
+				else {
+					LogPrintError("[LoadTexture] Failed at loading texture [%s] extension GL_EXT_texture_compression_s3tc not supported. \n\n", name.c_str());
+					return false;
+				}
+			}
 			
 			LogPrintError("[LoadTexture] Failed at loading texture [%s] extension Unknown and not supported. \n\n", name.c_str());
 			return false;

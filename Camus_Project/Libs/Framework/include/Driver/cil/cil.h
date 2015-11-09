@@ -191,7 +191,7 @@ void	pvr_set_pix_format(uint32_t& pix_format, unsigned int &prop) {
 			pix_format |= CIL_COMPRESSED;
 		}break;
 		case  CIL_DXT5_FMT: {
-			prop |= CIL_DXT1;
+			prop |= CIL_DXT5;
 			prop |= CIL_RGBA;
 			prop |= CIL_BPP_8;
 			pix_format |= CIL_COMPRESSED;
