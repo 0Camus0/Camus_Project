@@ -161,18 +161,21 @@ namespace hyperspace {
 			unsigned char *pbuff = buffer;
 
 			int blockSize = 0, widthBlocks = 0, heightBlocks = 0;
+			if (props & bpp_::BPP_4) {
+				blockSize = 4 * 4;
+				widthBlocks = current_x / 4;
+				heightBlocks = current_y / 4;
+			}else if (props & bpp_::BPP_2) {
+				blockSize = 8 * 4;
+				widthBlocks = current_x / 8;
+				heightBlocks = current_y / 4;
+			}else if (props & bpp_::BPP_8) {
+				blockSize = 8 * 8;
+				widthBlocks = current_x / 8;
+				heightBlocks = current_y / 8;
+			}
+			
 			for (unsigned int i = 0; i < mipmaps_count; i++) {		
-				if (props & bpp_::BPP_4) {
-					blockSize = 4 * 4;
-					widthBlocks = current_x / 4;
-					heightBlocks = current_y / 4;
-				}
-				else if (props & bpp_::BPP_2) {
-					blockSize = 8 * 4;
-					widthBlocks = current_x / 8;
-					heightBlocks = current_y / 4;
-				}
-
 				widthBlocks = widthBlocks < 2 ? 2 : widthBlocks;
 				heightBlocks = heightBlocks < 2 ? 2 : heightBlocks;
 
@@ -184,6 +187,19 @@ namespace hyperspace {
 
 				current_x = std::max(current_x >> 1, 1);
 				current_y = std::max(current_y >> 1, 1);
+
+				if (props & bpp_::BPP_4) {
+					widthBlocks = current_x / 4;
+					heightBlocks = current_y / 4;
+				}
+				else if (props & bpp_::BPP_2) {
+					widthBlocks = current_x / 8;
+					heightBlocks = current_y / 4;
+				}
+				else if (props & bpp_::BPP_8) {
+					widthBlocks = current_x / 8;
+					heightBlocks = current_y / 8;
+				}
 			}
 
 			SetTextureParams(params, glTarget);
