@@ -124,6 +124,8 @@ namespace hyperspace {
 			virtual void	LoadAPITexture(Texture *tex, unsigned char* buffer, unsigned int &params);
 			virtual void	LoadAPITextureCompressed(Texture *tex, unsigned char* buffer, unsigned int &params);
 
+			void			LoadAPIAllatOnce(unsigned int params = GENERATE_MIPMAPS | FILTER_LINEAR_MIPMAP_LINEAR | FILTER_ANISOTROPIC | WRAP_CLAMP);
+
 #if USE_LOG_DEBUG_TEX_LOADING
 			void	PrintTextureInfo(std::string &name,Texture *tex);
 #endif

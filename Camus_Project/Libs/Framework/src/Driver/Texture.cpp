@@ -134,7 +134,7 @@ namespace hyperspace {
 			}break;
 			}
 			
-			LoadAPITexture(tex, tex_mem_pool + offset, params);
+		//	LoadAPITexture(tex, tex_mem_pool + offset, params);
 	
 			current_index = index;
 			num_textures_loaded++;
@@ -228,8 +228,8 @@ namespace hyperspace {
 			tex->mipmaps = mipmaps;
 			tex->x = x;	tex->y = y;
 			tex->bounded = 1;
-
-			LoadAPITextureCompressed(tex, (tex_mem_pool + offset), params);
+			tex->props |= props_::COMPRESSED;
+		//	LoadAPITextureCompressed(tex, (tex_mem_pool + offset), params);
 
 			unsigned int bpp = 0;
 			if (tex->props & bpp_::BPP_2)
@@ -305,6 +305,24 @@ namespace hyperspace {
 
 		}
 #endif
+		void TextureManager::LoadAPIAllatOnce(unsigned int params) {
+
+			int offset = 0;
+			for (int i = 0; i < MAX_TEXURE_LIMIT; i++) {
+				if (!textures[i].bounded) {
+					break;
+				}
+				else {
+					if (textures[i].props&props_::COMPRESSED) {
+						LoadAPITextureCompressed(&textures[i], (tex_mem_pool + offset), params);
+					}else{
+						LoadAPITexture(&textures[i], tex_mem_pool + offset, params);
+					}
+					offset += textures[i].size;
+				}
+			}
+
+		}
 
 		unsigned int TextureManager::CheckFormat(std::ifstream &in_) {
 
