@@ -12,8 +12,8 @@ namespace hyperspace {
 			void	SetTextureParams(unsigned int &params,unsigned int &target);
 			void	GetFormatBpp(unsigned int &props, unsigned int &glFormat, unsigned int &bpp);
 
-			void	LoadAPITexture(Texture *tex, unsigned char* buffer, unsigned int &params);
-			void	LoadAPITextureCompressed(Texture *tex, unsigned char* buffer, unsigned int &params);
+			void	LoadAPITexture(Texture *tex, unsigned char* buffer);
+			void	LoadAPITextureCompressed(Texture *tex, unsigned char* buffer);
 		};
 	}
 }

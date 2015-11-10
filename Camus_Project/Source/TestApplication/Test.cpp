@@ -35,7 +35,7 @@ void TestApp::CreateAssets() {
 
 	hyperspace::video::TextureManager	*TexManager = new hyperspace::video::TextureManagerGL();
 
-
+	/*
 	TexManager->LoadTexture("etc1/BatBody_ETC1.ktx");
 	TexManager->LoadTexture("etc1/BatHead_ETC1.ktx");
 	TexManager->LoadTexture("etc1/CrocBody_ETC1.ktx");
@@ -44,13 +44,44 @@ void TestApp::CreateAssets() {
 	TexManager->LoadTexture("etc1/JokerBody_ETC1.ktx");
 	TexManager->LoadTexture("etc1/JokerHead_ETC1.ktx");
 	TexManager->LoadTexture("etc1/text_ETC1.ktx");
-
-
-//	delete TexManager;
-	TexManager->LoadAPIAllatOnce();
-
+	*/
+/*
+	TexManager->LoadTexture("bones.bmp");
+	TexManager->LoadTexture("etc1/BatHead_ETC1.ktx");
+	TexManager->LoadTexture("etc1/CrocBody_ETC1.ktx");
+	TexManager->LoadTexture("etc1/CrocHead_ETC1.ktx");
+	TexManager->LoadTexture("etc1/cube_ETC1.ktx");
+	TexManager->LoadTexture("Real.png");
+	TexManager->LoadTexture("etc1/JokerHead_ETC1.ktx");
+	TexManager->LoadTexture("floor_normal.tga");
+	*/
 	
-	bInited = true;
+	
+	TexManager->AddTextureToLoadingQueue("etc1/BatBody_ETC1.ktx");
+	TexManager->AddTextureToLoadingQueue("etc1/BatHead_ETC1.ktx");
+	TexManager->AddTextureToLoadingQueue("etc1/CrocBody_ETC1.ktx");
+	TexManager->AddTextureToLoadingQueue("etc1/CrocHead_ETC1.ktx");
+	TexManager->AddTextureToLoadingQueue("etc1/cube_ETC1.ktx");
+	TexManager->AddTextureToLoadingQueue("etc1/JokerBody_ETC1.ktx");
+	TexManager->AddTextureToLoadingQueue("etc1/JokerHead_ETC1.ktx");
+	TexManager->AddTextureToLoadingQueue("etc1/text_ETC1.ktx");
+	
+	
+	TexManager->AddTextureToLoadingQueue("bones.bmp");
+	TexManager->AddTextureToLoadingQueue("etc1/BatHead_ETC1.ktx");
+	TexManager->AddTextureToLoadingQueue("etc1/CrocBody_ETC1.ktx");
+	TexManager->AddTextureToLoadingQueue("etc1/CrocHead_ETC1.ktx");
+	TexManager->AddTextureToLoadingQueue("etc1/cube_ETC1.ktx");
+	TexManager->AddTextureToLoadingQueue("Real.png");
+	TexManager->AddTextureToLoadingQueue("etc1/JokerHead_ETC1.ktx");
+	TexManager->AddTextureToLoadingQueue("floor_normal.tga");
+	
+	TexManager->LoadTextureQueue();
+	
+	
+	//	delete TexManager;
+	
+ 	bInited = true;
 }
 
 void TestApp::DestroyAssets() {

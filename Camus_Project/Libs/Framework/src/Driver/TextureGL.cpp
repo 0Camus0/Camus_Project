@@ -118,7 +118,7 @@ namespace hyperspace {
 			}
 		}
 
-		void TextureManagerGL::LoadAPITexture(Texture *tex, unsigned char* buffer, unsigned int &params) {
+		void TextureManagerGL::LoadAPITexture(Texture *tex, unsigned char* buffer) {
 			unsigned int id;
 			unsigned int glFormat = 0;
 			unsigned int glChannel = GL_UNSIGNED_BYTE;
@@ -139,19 +139,18 @@ namespace hyperspace {
 			else
 				glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
 
-			glTexImage2D(glTarget, 0, glFormat, tex->x, tex->x, 0, glFormat, glChannel, (void*)(buffer));
+			glTexImage2D(glTarget, 0, glFormat, tex->x, tex->y, 0, glFormat, glChannel, (void*)(buffer));
 
-			if (params&params_in::GENERATE_MIPMAPS)
+			if (tex->params&params_in::GENERATE_MIPMAPS)
 				glGenerateMipmap(glTarget);
 
-			SetTextureParams(params, glTarget);
+			SetTextureParams(tex->params, glTarget);
 
 			tex->id = static_cast<unsigned short>(id);
-			tex->params = params;
 
 		}
 
-		void TextureManagerGL::LoadAPITextureCompressed(Texture *tex, unsigned char* buffer, unsigned int &params) {
+		void TextureManagerGL::LoadAPITextureCompressed(Texture *tex, unsigned char* buffer) {
 			unsigned int id;
 			unsigned int glFormat = 0;
 			unsigned int mipmaps_count = tex->mipmaps;
@@ -224,10 +223,9 @@ namespace hyperspace {
 				}
 			}
 
-			SetTextureParams(params, glTarget);
+			SetTextureParams(tex->params, glTarget);
 
 			tex->id = static_cast<unsigned short>(id);
-			tex->params = params;
 		}
 	}
 }

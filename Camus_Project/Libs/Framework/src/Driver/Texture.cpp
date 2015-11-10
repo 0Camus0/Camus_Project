@@ -7,9 +7,14 @@
 #include <Driver/stb/stb_image.h>
 #include <Driver/cil/cil.h>
 
+#ifdef OS_ANDROID
+#define strcpy_s strcpy
+#endif
 
 namespace hyperspace {
 	namespace video {
+		unsigned int	TextureManager::queue[MAX_TEXURE_LIMIT];
+		unsigned int	TextureManager::queueoffsets[MAX_TEXURE_LIMIT];
 		Texture			TextureManager::textures[MAX_TEXURE_LIMIT];
 		unsigned char	TextureManager::tex_mem_pool[TEXTURE_BUDGET_SIZE_BYTES];
 				 char	TextureManager::tex_paths_pool[MAX_TEXURE_LIMIT][512];
@@ -18,15 +23,21 @@ namespace hyperspace {
 		unsigned int	TextureManager::current_index = 0;
 
 		TextureManager::TextureManager(){
-		
+			memset(queue, 0, MAX_TEXURE_LIMIT*sizeof(unsigned int));
+			memset(queueoffsets, 0, MAX_TEXURE_LIMIT*sizeof(unsigned int));
+			memset(tex_mem_pool, 0, TEXTURE_BUDGET_SIZE_BYTES);
+			
 		}
 
-		unsigned short	TextureManager::LoadTexture(std::string filename, unsigned int params) {
+		
+
+		Texture		TextureManager::LoadTexture(std::string filename, unsigned int params) {
 #if USE_LOG_DEBUG_TEX_LOADING
 			LogPrintDebug("[LoadTexture] Loading texture [%s]", filename.c_str());
 #endif
+			Texture ret;
+			ret.bounded = 0;
 
-			unsigned short ret = TEXTURE_NOT_LOADED;
 
 			std::string Path = fs::Filesystem::instance()->GetResourcesPath();
 			Path += "Textures/";
@@ -38,15 +49,14 @@ namespace hyperspace {
 				LogPrintError("[LoadTexture] %s not found \n\n", Path.c_str());
 				return ret;
 			}
-
 			unsigned int format = CheckFormat(in_);
-
 			in_.close();
 
 			if (format == 0) {
 				LogPrintError("[LoadTexture] %s cannot determine format.\n\n", Path.c_str());
 				return ret;
 			}
+
 
 			if (format & (file_format::BMP | file_format::PNG | file_format::TGA)) {
 				ret = LoadBufferUncompressed(Path, format, params);
@@ -58,118 +68,271 @@ namespace hyperspace {
 			return ret;
 		}
 
-		unsigned int TextureManager::LoadBufferUncompressed(std::string &Path, unsigned int format, unsigned int params) {
+		Texture TextureManager::LoadBufferUncompressed(std::string &Path, unsigned int format, unsigned int params) {
 #if USE_LOG_DEBUG_TEX_LOADING
-			LogPrintDebug("[LoadTexture] Loading Uncompressed texture [%s]", Path.c_str());
+			LogPrintDebug("[LoadBufferUncompressed] Loading Uncompressed texture [%s]", Path.c_str());
 #endif
-			int index = 0;
-			int offset = 0;
-			for (int i = 0; i < MAX_TEXURE_LIMIT; i++) {
-				if (!textures[i].bounded) {
-					index = i;
-					break;
-				}
-				else {
-					offset += textures[i].size;
-				}
-			}
+	
+			Texture texture;
+			texture.bounded = 0;
 
-			Texture *tex = &textures[index];
 			int x = 0, y = 0, channels = 0;
 			unsigned char *buffer = stbi_load(Path.c_str(), &x, &y, &channels, 0);
 
 			if (buffer == 0) {
-				LogPrintError("[LoadTexture] Failed at loading texture [%s] \n\n", Path.c_str());
-				return TEXTURE_NOT_LOADED;
+				LogPrintError("[LoadBufferUncompressed] Failed at loading texture [%s] \n\n", Path.c_str());
+				return texture;
 			}
 
-			tex->size = x*y*channels;
-
-			unsigned int usage_mem = offset + tex->size;
-			if (usage_mem >= TEXTURE_BUDGET_SIZE_BYTES)
-				LogPrintWarning("[LoadTexture] Current Ram Pool Usage: %d of total: %d. Textures may be corrupted", usage_mem, TEXTURE_BUDGET_SIZE_BYTES);
-
-			memcpy((void*)(tex_mem_pool + offset), (void*)&buffer[0], tex->size);
-
-			stbi_image_free(buffer);
-
-			if (Path.size() > 32) {
-				std::string sub = Path.substr(0, 511);
-#ifdef OS_ANDROID
-				strcpy(tex_paths_pool[index], sub.c_str());
-#else
-				strcpy_s(tex_paths_pool[index], sub.c_str());
-#endif
-				tex_paths_pool[index][511] = '\0';
-			}
-			else {
-#ifdef OS_ANDROID
-				strcpy(tex_paths_pool[index], Path.c_str());
-#else
-				strcpy_s(tex_paths_pool[index], Path.c_str());
-#endif
-				tex_paths_pool[index][Path.size()] = '\0';
-			}
-
-			tex->bounded = 1;
-			tex->x = x;
-			tex->y = y;
-			tex->mipmaps = 1;
-			tex->offset = offset;
-			tex->props |= format;
-			tex->props |= compress_format::RAW;
-			tex->props |= pixel_format_::PFMT_UNSIGNED;
-			tex->props |= pixel_format_::PFMT_BYTE;
-			tex->props |= bpp_::BPP_8;
+			texture.size = x*y*channels;
+			texture.bounded = 1;
+			texture.x = x;
+			texture.y = y;
+			texture.mipmaps = 1;
+			texture.params = params;
+			texture.props |= format;
+			texture.props |= compress_format::RAW;
+			texture.props |= pixel_format_::PFMT_UNSIGNED;
+			texture.props |= pixel_format_::PFMT_BYTE;
+			texture.props |= bpp_::BPP_8;
 
 			switch (channels) {
 			case 1: {
-				tex->props |= channelS_::CH_ALPHA;
+				texture.props |= channelS_::CH_ALPHA;
 			}break;
 			case 3: {
-				tex->props |= channelS_::CH_RGB;
+				texture.props |= channelS_::CH_RGB;
 			}break;
 			case 4: {
-				tex->props |= channelS_::CH_RGBA;
+				texture.props |= channelS_::CH_RGBA;
 			}break;
 			}
 			
-		//	LoadAPITexture(tex, tex_mem_pool + offset, params);
+			texture.optname = new char[Path.size()+1];
+			memcpy(&texture.optname[0], Path.c_str(), Path.size());
+			texture.optname[Path.size()] = '\0';
+
+			LoadAPITexture(&texture,buffer);
+			stbi_image_free(buffer);
 	
-			current_index = index;
-			num_textures_loaded++;
 #if USE_LOG_DEBUG_TEX_LOADING
-			PrintTextureInfo(Path, tex);
+			PrintTextureInfo(Path, texture);
 #else
-			LogPrintDebug("[LoadTexture] Loaded [%s][%dx%dx%d][%dkb]\n\n", tex_paths_pool[index], x, y, channels*8, tex->size / 1024);
+			LogPrintDebug("[LoadBufferUncompressed] Loaded [%s][%dx%dx%d][%dkb]\n\n", Path.c_str(), x, y, channels*8, texture.size / 1024);
 #endif
 
-			return TEXTURE_LOADED;
+			return texture;
 		}
 
-		unsigned int TextureManager::LoadBufferCompressed(std::string &Path, unsigned int format, unsigned int params) {
+		Texture TextureManager::LoadBufferCompressed(std::string &Path, unsigned int format, unsigned int params) {
 #if USE_LOG_DEBUG_TEX_LOADING
-			LogPrintDebug("[LoadTexture] Loading Compressed texture [%s]", Path.c_str());
+			LogPrintDebug("[LoadBufferCompressed] Loading Compressed texture [%s]", Path.c_str());
 #endif
-			int index = 0;
-			int offset = 0;
-			for (int i = 0; i < MAX_TEXURE_LIMIT; i++) {
-				if (!textures[i].bounded) {
-					index = i;
-					break;
-				}
-				else {
-					offset += textures[i].size;
-				}
-			}
-			
+				
+			Texture texture;
+			texture.bounded = 0;
+
 			int x = 0, y = 0;
 			unsigned int props = 0;
 			unsigned int buffer_size = 0;
 			unsigned char mipmaps = 0;
 			unsigned char *buffer = cil_load(Path.c_str(), &x, &y, &mipmaps, &props, &buffer_size);
 
-			bool ext_good = CheckIfExtensionIsSupported(Path,props);
+			bool ext_good = CheckIfExtensionIsSupported((char*)Path.c_str(),props);
+
+			if (!ext_good) {
+				cil_free_buffer(buffer);
+				return texture;
+			}
+
+			if (buffer == 0) {
+				switch (props) {
+				case CIL_NOT_FOUND: {
+					LogPrintError("[LoadBufferCompressed] Failed at loading texture [%s] Not Found. \n\n", Path.c_str());
+				}break;
+				case CIL_CORRUPT: {
+					LogPrintError("[LoadBufferCompressed] Failed at loading texture [%s] Is Corrupt.\n\n ", Path.c_str());
+				}break;
+				case CIL_NO_MEMORY: {
+					LogPrintError("[LoadBufferCompressed] Failed at loading texture [%s] Not enough memory.\n\n ", Path.c_str());
+				}break;
+				case CIL_PVR_V2_NOT_SUPPORTED: {
+					LogPrintError("[LoadBufferCompressed] Failed at loading texture [%s] Pvr v2 not supported.\n\n ", Path.c_str());
+				}break;
+				case CIL_NOT_SUPPORTED_FILE: {
+					LogPrintError("[LoadBufferCompressed] Failed at loading texture [%s] Not supported format.\n\n ", Path.c_str());
+				}break;
+				}
+			}
+
+		
+			texture.bounded = 1;
+			texture.size = buffer_size;
+			texture.props = props;
+			texture.mipmaps = mipmaps;
+			texture.x = x;	texture.y = y;
+			texture.params = params;
+			texture.props |= props_::COMPRESSED;
+
+			texture.optname = new char[Path.size()+1];
+			memcpy(&texture.optname[0],Path.c_str(), Path.size());
+			texture.optname[Path.size()] = '\0';
+
+	
+			LoadAPITextureCompressed(&texture, buffer);
+
+			cil_free_buffer(buffer);
+
+			unsigned int bpp = 0;
+			if (texture.props & bpp_::BPP_2)
+				bpp = 2;
+			if (texture.props & bpp_::BPP_4)
+				bpp = 4;
+			if (texture.props & bpp_::BPP_8)
+				bpp = 8;
+
+#if USE_LOG_DEBUG_TEX_LOADING
+			PrintTextureInfo(Path, texture);
+#else
+			LogPrintDebug("[LoadBufferCompressed] Loaded [%s][%dx%d][%dbpp][%dkb]\n\n", Path.c_str(), x, y, bpp, texture.size / 1024);
+#endif
+
+			return texture;
+		}
+
+		unsigned int TextureManager::AddTextureToLoadingQueue(std::string filename, unsigned int params) {
+#if USE_LOG_DEBUG_TEX_LOADING
+			LogPrintDebug("[AddTextureToLoadingQueue] Adding texture [%s] to the queue", filename.c_str());
+#endif
+
+			unsigned int ret = TEXTURE_BAD_INDEX;
+
+			std::string Path = fs::Filesystem::instance()->GetResourcesPath();
+			Path += "Textures/";
+			Path += filename;
+
+			std::ifstream in_(Path.c_str(), std::ios::binary | std::ios::in);
+			if (!in_.good()) {
+				in_.close();
+				LogPrintError("[LoadTextureQueue] %s not found \n\n", Path.c_str());
+				return ret;
+			}
+			unsigned int format = CheckFormat(in_);
+			in_.close();
+
+			if (format == 0) {
+				LogPrintError("[LoadTextureQueue] %s cannot determine format.\n\n", Path.c_str());
+				return ret;
+			}
+
+			for (int i = 0; i < MAX_TEXURE_LIMIT; i++) {
+				if (queue[i] == 0) {
+					current_index = i;
+					num_textures_loaded = current_index + 1;
+					queue[current_index] = format | params;
+					strcpy_s(tex_paths_pool[current_index], Path.c_str());
+					tex_paths_pool[current_index][Path.size()] = '\0';
+					 if (format & (file_format::PVR | file_format::DDS | file_format::KTX)) {
+						queue[current_index] |= (format & (file_format::PVR | file_format::DDS | file_format::KTX)) ? props_::COMPRESSED : 0;
+					}
+
+					return current_index;
+					break;
+				}
+			}
+
+			
+			LogPrintError("[LoadTextureQueue] MAX_TEXURE_LIMIT %d exceeded, %s not added to the queue.\n\n", MAX_TEXURE_LIMIT, Path.c_str());
+			return ret;
+		
+		}
+
+		unsigned int TextureManager::LoadBufferUncompressedQueue(unsigned int &index) {
+			unsigned int ret = TEXTURE_NOT_LOADED;
+			char path[MAX_PATH_SIZE];
+
+			strcpy_s(path, tex_paths_pool[index]);
+
+			int x = 0, y = 0, channels = 0;
+			unsigned char *buffer = stbi_load(path, &x, &y, &channels, 0);
+
+			if (buffer == 0) {
+				LogPrintError("[LoadBufferUncompressedQueue] Failed at loading texture [%s] \n\n", path);
+				return ret;
+			}
+
+			unsigned int size_ = x*y*channels;
+			unsigned int offset = 0;
+			for (unsigned int i = 0; i < MAX_TEXURE_LIMIT; i++) {
+				if (queueoffsets[i] == 0)
+					break;
+				else
+					offset += queueoffsets[i];
+			}
+			queueoffsets[index] = size_;
+		
+			unsigned int usage_mem = offset + size_;
+			if (usage_mem >= TEXTURE_BUDGET_SIZE_BYTES)
+				LogPrintWarning("[LoadBufferUncompressedQueue] Current Ram Pool Usage: %d of total: %d. Textures may be corrupted", usage_mem, TEXTURE_BUDGET_SIZE_BYTES);
+
+			memcpy((void*)(tex_mem_pool + offset), (void*)&buffer[0], size_);
+
+			stbi_image_free(buffer);
+			unsigned int format = queue[index] & 0x3F0000;
+			unsigned int params = queue[index] & 0x3FF;
+			Texture texture;
+			texture.bounded = 1;
+			texture.x = x;
+			texture.y = y;
+			texture.size = size_;
+			texture.mipmaps = 1;
+			texture.params = params;
+			texture.props |= format;
+			texture.props |= compress_format::RAW;
+			texture.props |= pixel_format_::PFMT_UNSIGNED;
+			texture.props |= pixel_format_::PFMT_BYTE;
+			texture.props |= bpp_::BPP_8;
+
+			switch (channels) {
+			case 1: {
+				texture.props |= channelS_::CH_ALPHA;
+			}break;
+			case 3: {
+				texture.props |= channelS_::CH_RGB;
+			}break;
+			case 4: {
+				texture.props |= channelS_::CH_RGBA;
+			}break;
+		}
+
+#if USE_LOG_DEBUG_TEX_LOADING
+			PrintTextureInfo(path, texture);
+#else
+			LogPrintDebug("[LoadBufferUncompressedQueue] Loaded [%s][%dx%dx%d][%dkb]\n\n", path, x, y, channels * 8, size_ / 1024);
+#endif
+			textures[index] = texture;
+
+			return TEXTURE_LOADED;	
+		}
+
+		unsigned int TextureManager::LoadBufferCompressedQueue(unsigned int &index) {
+			unsigned int ret = TEXTURE_NOT_LOADED;
+			char path[MAX_PATH_SIZE];
+
+			strcpy_s(path, tex_paths_pool[index]);
+
+			int x = 0, y = 0;
+			unsigned int props = 0;
+			unsigned int buffer_size = 0;
+			unsigned char mipmaps = 0;
+			unsigned char *buffer = cil_load(path, &x, &y, &mipmaps, &props, &buffer_size);
+
+			if (buffer == 0) {
+				LogPrintError("[LoadBufferCompressedQueue] Failed at loading texture [%s] \n\n", path);
+				return ret;
+			}
+
+			bool ext_good = CheckIfExtensionIsSupported(path, props);
 
 			if (!ext_good) {
 				cil_free_buffer(buffer);
@@ -179,133 +342,77 @@ namespace hyperspace {
 			if (buffer == 0) {
 				switch (props) {
 				case CIL_NOT_FOUND: {
-					LogPrintError("[LoadTexture] Failed at loading texture [%s] Not Found. \n\n", Path.c_str());
+					LogPrintError("[LoadBufferCompressedQueue] Failed at loading texture [%s] Not Found. \n\n", path);
 				}break;
 				case CIL_CORRUPT: {
-					LogPrintError("[LoadTexture] Failed at loading texture [%s] Is Corrupt.\n\n ", Path.c_str());
+					LogPrintError("[LoadBufferCompressedQueue] Failed at loading texture [%s] Is Corrupt.\n\n ", path);
 				}break;
 				case CIL_NO_MEMORY: {
-					LogPrintError("[LoadTexture] Failed at loading texture [%s] Not enough memory.\n\n ", Path.c_str());
+					LogPrintError("[LoadBufferCompressedQueue] Failed at loading texture [%s] Not enough memory.\n\n ", path);
 				}break;
 				case CIL_PVR_V2_NOT_SUPPORTED: {
-					LogPrintError("[LoadTexture] Failed at loading texture [%s] Pvr v2 not supported.\n\n ", Path.c_str());
+					LogPrintError("[LoadBufferCompressedQueue] Failed at loading texture [%s] Pvr v2 not supported.\n\n ", path);
 				}break;
 				case CIL_NOT_SUPPORTED_FILE: {
-					LogPrintError("[LoadTexture] Failed at loading texture [%s] Not supported format.\n\n ", Path.c_str());
+					LogPrintError("[LoadBufferCompressedQueue] Failed at loading texture [%s] Not supported format.\n\n ", path);
 				}break;
 				}
 			}
 
+			unsigned int offset = 0;
+			for (unsigned int i = 0; i < MAX_TEXURE_LIMIT; i++) {
+				if (queueoffsets[i] == 0)
+					break;
+				else
+					offset += queueoffsets[i];
+			}
+			queueoffsets[index] = buffer_size;
+
 			unsigned int usage_mem = offset + buffer_size;
 			if (usage_mem >= TEXTURE_BUDGET_SIZE_BYTES)
-				LogPrintWarning("[LoadTexture] Current Ram Pool Usage: %d of total: %d. Textures may be corrupted", usage_mem, TEXTURE_BUDGET_SIZE_BYTES);
+				LogPrintWarning("[LoadBufferCompressedQueue] Current Ram Pool Usage: %d of total: %d. Textures may be corrupted", usage_mem, TEXTURE_BUDGET_SIZE_BYTES);
 
 			memcpy((void*)(tex_mem_pool + offset), (void*)&buffer[0], buffer_size);
 
 			cil_free_buffer(buffer);
 
-			if (Path.size() > 32) {
-				std::string sub = Path.substr(0, 511);
-#ifdef OS_ANDROID
-				strcpy(tex_paths_pool[index], sub.c_str());
-#else
-				strcpy_s(tex_paths_pool[index], sub.c_str());
-#endif
-				tex_paths_pool[index][511] = '\0';
-			}
-			else {
-#ifdef OS_ANDROID
-				strcpy(tex_paths_pool[index], Path.c_str());
-#else
-				strcpy_s(tex_paths_pool[index], Path.c_str());
-#endif
-				tex_paths_pool[index][Path.size()] = '\0';
-			}
-
-			Texture *tex = &textures[index];
-			tex->size = buffer_size;
-			tex->props = props;
-			tex->mipmaps = mipmaps;
-			tex->x = x;	tex->y = y;
-			tex->bounded = 1;
-			tex->props |= props_::COMPRESSED;
-		//	LoadAPITextureCompressed(tex, (tex_mem_pool + offset), params);
+			unsigned int params = queue[index] & 0x3FF;
+			Texture texture;
+			texture.size = buffer_size;
+			texture.props = props;
+			texture.mipmaps = mipmaps;
+			texture.x = x;	texture.y = y;
+			texture.bounded = 1;
+			texture.params = params;
+			texture.props |= props_::COMPRESSED;
 
 			unsigned int bpp = 0;
-			if (tex->props & bpp_::BPP_2)
+			if (texture.props & bpp_::BPP_2)
 				bpp = 2;
-			if (tex->props & bpp_::BPP_4)
+			if (texture.props& bpp_::BPP_4)
 				bpp = 4;
-			if (tex->props & bpp_::BPP_8)
+			if (texture.props & bpp_::BPP_8)
 				bpp = 8;
-
-			current_index = index;
-			num_textures_loaded++;
 
 #if USE_LOG_DEBUG_TEX_LOADING
 			PrintTextureInfo(Path, tex);
 #else
-			LogPrintDebug("[LoadTexture] Loaded [%s][%dx%d][%dbpp][%dkb]\n\n", tex_paths_pool[index], x, y, bpp, tex->size / 1024);
+			LogPrintDebug("[LoadTexture] Loaded [%s][%dx%d][%dbpp][%dkb]\n\n", path, x, y, bpp, buffer_size / 1024);
 #endif
+			textures[index] = texture;
 
 			return TEXTURE_LOADED;
 		}
 
-#if USE_LOG_DEBUG_TEX_LOADING
-		void	TextureManager::PrintTextureInfo(std::string &name, Texture *tex) {
-			unsigned int mipmaps_count = tex->mipmaps;
-			unsigned int props = tex->props;
-			unsigned int bpp = 8;
-			unsigned int size = tex->size;
+		void TextureManager::LoadTextureQueue() {
 
-			std::string rgba_;
-			std::string compress_ = "RAW";
-
-			if (props & channelS_::CH_RGB)
-				rgba_ = "RGB";
-			if (props & channelS_::CH_RGBA)
-				rgba_ = "RGB";
-			if (props & channelS_::CH_ALPHA)
-				rgba_ = "ALPHA";
-
-			if (props & compress_format::PVRTC2) {
-				compress_ = "PVRTC2";
-				bpp = 2;
+			for (unsigned int i = 0; i < num_textures_loaded; i++) {
+				if (queue[i] & props_::COMPRESSED) {
+					LoadBufferCompressedQueue(i);
+				}else {
+					LoadBufferUncompressedQueue(i);
+				}
 			}
-
-			if (props & compress_format::PVRTC4) {
-				compress_ = "PVRTC4";
-				bpp = 4;
-			}
-
-			if (props & compress_format::PVRTCII2) {
-				compress_ = "PVRTCII2";
-				bpp = 2;
-			}
-
-			if (props & compress_format::PVRTCII4) {
-				compress_ = "PVRTCII4";
-				bpp = 4;
-			}
-
-			if (props & compress_format::ETC1) {
-				compress_ = "ETC1";
-				bpp = 4;
-			}
-			LogPrintDebug("[LoadTexture] Loaded:\n\n[Name][%s]\n[Compression][%s]\n[Channels][%s]\n[Size][%d]\n[Dimensions][%dx%d]\n[BPP][%d]\n[Mipmaps][%d]\n\n",
-				name.c_str(),
-				compress_.c_str(),
-				rgba_.c_str(),
-				size,
-				tex->x,
-				tex->y,
-				bpp,
-				mipmaps_count
-				);
-
-		}
-#endif
-		void TextureManager::LoadAPIAllatOnce(unsigned int params) {
 
 			int offset = 0;
 			for (int i = 0; i < MAX_TEXURE_LIMIT; i++) {
@@ -314,13 +421,22 @@ namespace hyperspace {
 				}
 				else {
 					if (textures[i].props&props_::COMPRESSED) {
-						LoadAPITextureCompressed(&textures[i], (tex_mem_pool + offset), params);
-					}else{
-						LoadAPITexture(&textures[i], tex_mem_pool + offset, params);
+						LoadAPITextureCompressed(&textures[i], (tex_mem_pool + offset));
+					}
+					else {
+						LoadAPITexture(&textures[i], tex_mem_pool + offset);
 					}
 					offset += textures[i].size;
 				}
 			}
+
+		}
+
+		void TextureManager::LoadAPITexture(Texture *tex, unsigned char* buffer) {
+
+		}
+
+		void TextureManager::LoadAPITextureCompressed(Texture *tex, unsigned char* buffer) {
 
 		}
 
@@ -402,7 +518,7 @@ namespace hyperspace {
 			return 0;
 		}
 
-		bool TextureManager::CheckIfExtensionIsSupported(std::string &name, unsigned int &props) {
+		bool TextureManager::CheckIfExtensionIsSupported(char *name, unsigned int &props) {
 
 
 			if (props & (compress_format::PVRTC2 | compress_format::PVRTC4 | compress_format::PVRTCII2 | compress_format::PVRTCII4)) {
@@ -410,7 +526,7 @@ namespace hyperspace {
 					return true;
 				}
 				else {
-					LogPrintError("[LoadTexture] Failed at loading texture [%s] extension GL_IMG_texture_compression_pvrtc not supported. \n\n", name.c_str());
+					LogPrintError("[LoadTexture] Failed at loading texture [%s] extension GL_IMG_texture_compression_pvrtc not supported. \n\n", name);
 					return false;
 				}
 			}
@@ -420,7 +536,7 @@ namespace hyperspace {
 					return true;
 				}
 				else {
-					LogPrintError("[LoadTexture] Failed at loading texture [%s] extension GL_IMG_texture_compression_pvrtc not supported. \n\n", name.c_str());
+					LogPrintError("[LoadTexture] Failed at loading texture [%s] extension GL_IMG_texture_compression_pvrtc not supported. \n\n", name);
 					return false;
 				}
 			}
@@ -430,17 +546,17 @@ namespace hyperspace {
 					return true;
 				}
 				else {
-					LogPrintError("[LoadTexture] Failed at loading texture [%s] extension OES_compressed_ETC2_RGBA8_texture not supported. \n\n", name.c_str());
+					LogPrintError("[LoadTexture] Failed at loading texture [%s] extension OES_compressed_ETC2_RGBA8_texture not supported. \n\n", name);
 					return false;
 				}
 			}
-			
+
 			if (props & compress_format::DXT1) {
 				if (GetDriverProperties().isExtensionSupported("GL_EXT_texture_compression_dxt1")) {
 					return true;
 				}
 				else {
-					LogPrintError("[LoadTexture] Failed at loading texture [%s] extension GL_EXT_texture_compression_dxt1 not supported. \n\n", name.c_str());
+					LogPrintError("[LoadTexture] Failed at loading texture [%s] extension GL_EXT_texture_compression_dxt1 not supported. \n\n", name);
 					return false;
 				}
 			}
@@ -450,21 +566,68 @@ namespace hyperspace {
 					return true;
 				}
 				else {
-					LogPrintError("[LoadTexture] Failed at loading texture [%s] extension GL_EXT_texture_compression_s3tc not supported. \n\n", name.c_str());
+					LogPrintError("[LoadTexture] Failed at loading texture [%s] extension GL_EXT_texture_compression_s3tc not supported. \n\n", name);
 					return false;
 				}
 			}
-			
-			LogPrintError("[LoadTexture] Failed at loading texture [%s] extension Unknown and not supported. \n\n", name.c_str());
+
+			LogPrintError("[LoadTexture] Failed at loading texture [%s] extension Unknown and not supported. \n\n", name);
 			return false;
 		}
-		
-		void TextureManager::LoadAPITexture(Texture *tex, unsigned char* buffer, unsigned int &params) {
-		
-		}
 
-		void TextureManager::LoadAPITextureCompressed(Texture *tex, unsigned char* buffer, unsigned int &params) {
-	
+#if USE_LOG_DEBUG_TEX_LOADING
+		void	TextureManager::PrintTextureInfo(std::string &name, Texture *tex) {
+			unsigned int mipmaps_count = tex->mipmaps;
+			unsigned int props = tex->props;
+			unsigned int bpp = 8;
+			unsigned int size = tex->size;
+
+			std::string rgba_;
+			std::string compress_ = "RAW";
+
+			if (props & channelS_::CH_RGB)
+				rgba_ = "RGB";
+			if (props & channelS_::CH_RGBA)
+				rgba_ = "RGB";
+			if (props & channelS_::CH_ALPHA)
+				rgba_ = "ALPHA";
+
+			if (props & compress_format::PVRTC2) {
+				compress_ = "PVRTC2";
+				bpp = 2;
+			}
+
+			if (props & compress_format::PVRTC4) {
+				compress_ = "PVRTC4";
+				bpp = 4;
+			}
+
+			if (props & compress_format::PVRTCII2) {
+				compress_ = "PVRTCII2";
+				bpp = 2;
+			}
+
+			if (props & compress_format::PVRTCII4) {
+				compress_ = "PVRTCII4";
+				bpp = 4;
+			}
+
+			if (props & compress_format::ETC1) {
+				compress_ = "ETC1";
+				bpp = 4;
+			}
+			LogPrintDebug("[LoadTexture] Loaded:\n\n[Name][%s]\n[Compression][%s]\n[Channels][%s]\n[Size][%d]\n[Dimensions][%dx%d]\n[BPP][%d]\n[Mipmaps][%d]\n\n",
+				name.c_str(),
+				compress_.c_str(),
+				rgba_.c_str(),
+				size,
+				tex->x,
+				tex->y,
+				bpp,
+				mipmaps_count
+				);
+
 		}
+#endif
 	}
 }
