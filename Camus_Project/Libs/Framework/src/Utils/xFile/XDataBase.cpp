@@ -1,6 +1,10 @@
 #include <Utils/xFile/XDataBase.h>
 #include <Utils/FileSystem.h>
 
+#define USE_VECTOR_RESERVE_AND_PUSH 0
+#define USE_VECTOR_ARRAY_MODE 1
+
+
 namespace xF {
 
 	bool	XDataBase::LoadXFile(const std::string	&FileName) {
@@ -244,25 +248,45 @@ namespace xF {
 		pActualGeometry->RelativeMatrix = m_pActualMesh->Skeleton.Bones.back().Bone;
 
 		m_ActualStream >> pActualGeometry->NumVertices >> c_temp;
+#if USE_VECTOR_RESERVE_AND_PUSH
 		pActualGeometry->Positions.reserve(pActualGeometry->NumVertices);
+#elif USE_VECTOR_ARRAY_MODE
+		pActualGeometry->Positions = std::vector<XVECTOR3>(pActualGeometry->NumVertices);
+#endif
 		
 		float x = 0.0f, y = 0.0f, z = 0.0f;
 		for (std_uint i = 0; i < pActualGeometry->NumVertices; i++) {
 			m_ActualStream >> x >> c_temp >> y >> c_temp >> z >> c_temp >> c_temp;
+#if USE_VECTOR_RESERVE_AND_PUSH
 			pActualGeometry->Positions.push_back(XVECTOR3(x, y, z));
+#elif USE_VECTOR_ARRAY_MODE
+			pActualGeometry->Positions[i].x = x;
+			pActualGeometry->Positions[i].y = y;
+			pActualGeometry->Positions[i].z = z;
+#endif
+
 		}
 
 		m_ActualStream >> pActualGeometry->NumTriangles >> c_temp;
 
-		
+#if USE_VECTOR_RESERVE_AND_PUSH	
 		pActualGeometry->Triangles.reserve(3 * pActualGeometry->NumTriangles);
+#elif USE_VECTOR_ARRAY_MODE
+		pActualGeometry->Triangles = std::vector<xWORD>(3 * pActualGeometry->NumTriangles);
+#endif
 		unsigned int counter = 0;
+		unsigned short a, b, c;
 		for (unsigned int i = 0; i < pActualGeometry->NumTriangles; i++) {
-			unsigned short a, b, c;
 			m_ActualStream >> c_temp >> c_temp >> a >> c_temp >> b >> c_temp >> c >> c_temp >> c_temp;
+#if USE_VECTOR_RESERVE_AND_PUSH	
 			pActualGeometry->Triangles.push_back(a);
 			pActualGeometry->Triangles.push_back(b);
 			pActualGeometry->Triangles.push_back(c);
+#elif USE_VECTOR_ARRAY_MODE
+			pActualGeometry->Triangles[counter++] = a;
+			pActualGeometry->Triangles[counter++] = b;
+			pActualGeometry->Triangles[counter++] = c;
+#endif
 		}
 
 
@@ -427,15 +451,26 @@ namespace xF {
 		int size_vec = 0;
 		m_ActualStream >> size_vec >> c_temp;
 
+#if USE_VECTOR_RESERVE_AND_PUSH	
 		out->RotationKeys.reserve(size_vec);
-
-		for (int i = 0; i < size_vec; i++) {
-			xRotationKey tmp;
+#elif USE_VECTOR_ARRAY_MODE
+		out->RotationKeys = std::vector<xRotationKey>(size_vec);
+#endif
+		xRotationKey tmp;
+		for (int i = 0; i < size_vec; i++) {		
 			m_ActualStream >> tmp.t.i_atTime >> c_temp >> c_temp >> c_temp >> tmp.Rot.w >> c_temp >> tmp.Rot.x >> c_temp >> tmp.Rot.y >> c_temp >> tmp.Rot.z >> c_temp >> c_temp >> c_temp;
 #if DEBUG_COUTS
 			cout << "time: " << tmp.t.i_atTime << " w: " << tmp.Rot.w << " x: " << tmp.Rot.x << " y: " << tmp.Rot.y << " z: " << tmp.Rot.z << endl;
 #endif
+#if USE_VECTOR_RESERVE_AND_PUSH	
 			out->RotationKeys.push_back(tmp);
+#elif USE_VECTOR_ARRAY_MODE
+			out->RotationKeys[i].t.i_atTime = tmp.t.i_atTime;
+			out->RotationKeys[i].Rot.x = tmp.Rot.x;
+			out->RotationKeys[i].Rot.y = tmp.Rot.y;
+			out->RotationKeys[i].Rot.z = tmp.Rot.z;
+			out->RotationKeys[i].Rot.w = tmp.Rot.w;
+#endif
 		}
 
 		m_ActualStream >> c_temp;
@@ -445,16 +480,25 @@ namespace xF {
 	void XDataBase::ProcessAnimationKey_Scale(xF::xAnimationBone* out) {
 		int size_vec = 0;
 		m_ActualStream >> size_vec >> c_temp;
-
+#if USE_VECTOR_RESERVE_AND_PUSH	
 		out->ScaleKeys.reserve(size_vec);
-
+#elif USE_VECTOR_ARRAY_MODE
+		out->ScaleKeys = std::vector<xScaleKey>(size_vec);
+#endif
+		xScaleKey tmp;
 		for (int i = 0; i < size_vec; i++) {
-			xScaleKey tmp;
 			m_ActualStream >> tmp.t.i_atTime >> c_temp >> c_temp >> c_temp >> tmp.Scale.x >> c_temp >> tmp.Scale.y >> c_temp >> tmp.Scale.z >> c_temp >> c_temp >> c_temp;
 #if DEBUG_COUTS		
 			cout << "time: " << tmp.t.i_atTime << " x: " << tmp.Scale.x << " y: " << tmp.Scale.y << " z: " << tmp.Scale.z << endl;
 #endif
+#if USE_VECTOR_RESERVE_AND_PUSH	
 			out->ScaleKeys.push_back(tmp);
+#elif USE_VECTOR_ARRAY_MODE
+			out->ScaleKeys[i].t.i_atTime = tmp.t.i_atTime;
+			out->ScaleKeys[i].Scale.x = tmp.Scale.x;
+			out->ScaleKeys[i].Scale.y = tmp.Scale.y;
+			out->ScaleKeys[i].Scale.z = tmp.Scale.z;
+#endif
 		}
 
 		m_ActualStream >> c_temp;
@@ -463,16 +507,26 @@ namespace xF {
 	void XDataBase::ProcessAnimationKey_Position(xF::xAnimationBone* out) {
 		int size_vec = 0;
 		m_ActualStream >> size_vec >> c_temp;
-
+#if USE_VECTOR_RESERVE_AND_PUSH	
 		out->PositionKeys.reserve(size_vec);
-
-		for (int i = 0; i < size_vec; i++) {
-			xPositionKey tmp;
+#elif USE_VECTOR_ARRAY_MODE
+		out->PositionKeys = std::vector<xPositionKey>(size_vec);
+#endif
+		xPositionKey tmp;
+		for (int i = 0; i < size_vec; i++) {		
 			m_ActualStream >> tmp.t.i_atTime >> c_temp >> c_temp >> c_temp >> tmp.Position.x >> c_temp >> tmp.Position.y >> c_temp >> tmp.Position.z >> c_temp >> c_temp >> c_temp;
 #if DEBUG_COUTS
 			cout << "time: " << tmp.t.i_atTime << " x: " << tmp.Position.x << " y: " << tmp.Position.y << " z: " << tmp.Position.z << endl;
 #endif
+
+#if USE_VECTOR_RESERVE_AND_PUSH	
 			out->PositionKeys.push_back(tmp);
+#elif USE_VECTOR_ARRAY_MODE
+			out->PositionKeys[i].t.i_atTime = tmp.t.i_atTime;
+			out->PositionKeys[i].Position.x = tmp.Position.x;
+			out->PositionKeys[i].Position.y = tmp.Position.y;
+			out->PositionKeys[i].Position.z = tmp.Position.z;
+#endif
 		}
 
 		m_ActualStream >> c_temp;
@@ -493,12 +547,15 @@ namespace xF {
 			pGeometry->VertexAttributes |= xF::xMeshGeometry::HAS_SKININDEXES1;
 			pGeometry->VertexAttributes |= xF::xMeshGeometry::HAS_SKINWEIGHTS1;
 		}
-
+#if USE_VECTOR_RESERVE_AND_PUSH	
 		pGeometry->Info.SkinWeights.reserve(pGeometry->Info.SkinMeshHeader.NumBones);
 		for (std::size_t i = 0; i < pGeometry->Info.SkinMeshHeader.NumBones; i++) {
 			xSkinWeights tmp;
 			pGeometry->Info.SkinWeights.push_back(tmp);
 		}
+#elif USE_VECTOR_ARRAY_MODE
+		pGeometry->Info.SkinWeights = std::vector<xSkinWeights>(pGeometry->Info.SkinMeshHeader.NumBones);
+#endif
 	
 		pGeometry->Info.SkinMeshHeader.NumBonesProcess = 0;
 
@@ -515,19 +572,32 @@ namespace xF {
 
 		xDWORD	NumWeights;
 		m_ActualStream >> NumWeights >> c_temp;
+
+#if USE_VECTOR_RESERVE_AND_PUSH
 		pSkin->VertexIndices.reserve(NumWeights);
 		pSkin->Weights.reserve(NumWeights);
-
+#elif USE_VECTOR_ARRAY_MODE
+		pSkin->VertexIndices = std::vector<xDWORD>(NumWeights);
+		pSkin->Weights = std::vector<xFLOAT>(NumWeights);
+#endif
+		xDWORD tmp_d;
 		for (unsigned int i = 0; i < NumWeights; i++) {
-			xDWORD tmp;
-			m_ActualStream >> tmp >> c_temp;
-			pSkin->VertexIndices.push_back(tmp);
+			m_ActualStream >> tmp_d >> c_temp;
+#if USE_VECTOR_RESERVE_AND_PUSH
+			pSkin->VertexIndices.push_back(tmp_d);
+#elif USE_VECTOR_ARRAY_MODE
+			pSkin->VertexIndices[i] = tmp_d;
+#endif
 		}
 
+		xFLOAT tmp_f;
 		for (unsigned int i = 0; i < NumWeights; i++) {
-			xFLOAT tmp;
-			m_ActualStream >> tmp >> c_temp;
-			pSkin->Weights.push_back(tmp);
+			m_ActualStream >> tmp_f >> c_temp;
+#if USE_VECTOR_RESERVE_AND_PUSH
+			pSkin->Weights.push_back(tmp_f);
+#elif USE_VECTOR_ARRAY_MODE
+			pSkin->Weights[i] = tmp_f;
+#endif
 		}
 
 		for (int i = 0; i < 16; i++) {
@@ -545,21 +615,34 @@ namespace xF {
 		xDWORD	NumFaceIndices = 0;
 
 		m_ActualStream >> NumMaterials >> c_temp;
-		pGeometry->MaterialList.Materials.reserve(NumMaterials);
-	
 
+#if USE_VECTOR_RESERVE_AND_PUSH
+		pGeometry->MaterialList.Materials.reserve(NumMaterials);
+		xMaterial tmp_m;
 		for (unsigned int i = 0; i < NumMaterials; i++) {
-			xMaterial tmp;
-			pGeometry->MaterialList.Materials.push_back(tmp);
+			pGeometry->MaterialList.Materials.push_back(tmp_m);
 		}
+#elif USE_VECTOR_ARRAY_MODE
+		pGeometry->MaterialList.Materials = std::vector<xMaterial>(NumMaterials);
+#endif
 
 		m_ActualStream >> NumFaceIndices >> c_temp;
-		pGeometry->MaterialList.FaceIndices.reserve(NumFaceIndices);
 
+
+#if USE_VECTOR_RESERVE_AND_PUSH
+		pGeometry->MaterialList.FaceIndices.reserve(NumFaceIndices);
+#elif USE_VECTOR_ARRAY_MODE
+		pGeometry->MaterialList.FaceIndices = std::vector<xDWORD>(NumFaceIndices);
+#endif
+		xDWORD tmp_d;
 		for (unsigned int i = 0; i < NumFaceIndices; i++) {
-			xDWORD tmp;
-			m_ActualStream >> tmp >> c_temp;
-			pGeometry->MaterialList.FaceIndices.push_back(tmp);
+			
+			m_ActualStream >> tmp_d >> c_temp;
+#if USE_VECTOR_RESERVE_AND_PUSH
+			pGeometry->MaterialList.FaceIndices.push_back(tmp_d);
+#elif USE_VECTOR_ARRAY_MODE
+			pGeometry->MaterialList.FaceIndices[i] = tmp_d;
+#endif
 		}
 
 		xF::xSTRING Line;
@@ -655,12 +738,15 @@ namespace xF {
 
 		m_ActualStream.seekg(PosStream);
 		Line = "";
-
+#if USE_VECTOR_RESERVE_AND_PUSH
 		out->pDefaults.reserve(out->NumDefaults);
 		for (std::size_t i = 0; i < out->NumDefaults; i++) {
 			xEffectDefault tmp;
 			out->pDefaults.push_back(tmp);
 		}
+#elif USE_VECTOR_ARRAY_MODE
+		out->pDefaults = std::vector<xEffectDefault>(out->NumDefaults);
+#endif
 
 		out->NumProcess = 0;
 
@@ -723,13 +809,21 @@ namespace xF {
 		xDWORD NumElements = 0;
 		m_ActualStream >> NumElements >> c_temp;
 
+#if USE_VECTOR_RESERVE_AND_PUSH
 		if (NumElements > 0)
 			out->CaseFloat.reserve(NumElements);
-
+#elif USE_VECTOR_ARRAY_MODE
+		if (NumElements > 0)
+			out->CaseFloat = std::vector<xFLOAT>(NumElements);
+#endif
+		xFLOAT tmp_f;
 		for (std_uint i = 0; i < NumElements; i++) {
-			xFLOAT tmp;
-			m_ActualStream >> tmp >> c_temp;
-			out->CaseFloat.push_back(tmp);
+			m_ActualStream >> tmp_f >> c_temp;
+#if USE_VECTOR_RESERVE_AND_PUSH
+			out->CaseFloat.push_back(tmp_f);
+#elif USE_VECTOR_ARRAY_MODE
+			out->CaseFloat[i] = tmp_f;
+#endif
 		}
 
 
@@ -751,11 +845,21 @@ namespace xF {
 	void XDataBase::ProcessNormalsBlock(xF::xMeshGeometry *pGeometry) {
 		xDWORD NumVertices = 0;
 		m_ActualStream >> NumVertices >> c_temp;
+#if USE_VECTOR_RESERVE_AND_PUSH
 		pGeometry->Normals.reserve(NumVertices);
+#elif USE_VECTOR_ARRAY_MODE
+		pGeometry->Normals = std::vector<XVECTOR3>(NumVertices);
+#endif
 		float x = 0.0f, y = 0.0f, z = 0.0f;
 		for (std_uint i = 0; i < NumVertices; i++) {
 			m_ActualStream >> x >> c_temp >> y >> c_temp >> z >> c_temp >> c_temp;
+#if USE_VECTOR_RESERVE_AND_PUSH
 			pGeometry->Normals.push_back(XVECTOR3(x, y, z));
+#elif USE_VECTOR_ARRAY_MODE
+			pGeometry->Normals[i].x = x;
+			pGeometry->Normals[i].y = y;
+			pGeometry->Normals[i].z = z;
+#endif
 		}
 		pGeometry->VertexAttributes |= xF::xMeshGeometry::HAS_NORMAL;
 
@@ -769,10 +873,19 @@ namespace xF {
 		float x = 0.0f, y = 0.0f;
 
 		m_ActualStream >> NumTexcoords >> c_temp;
+#if USE_VECTOR_RESERVE_AND_PUSH
 		pGeometry->TexCoordinates[pGeometry->NumChannelsTexCoords].reserve(NumTexcoords);		
+#elif USE_VECTOR_ARRAY_MODE
+		pGeometry->TexCoordinates[pGeometry->NumChannelsTexCoords] = std::vector<XVECTOR2>(NumTexcoords);
+#endif
 		for (std_uint i = 0; i < pGeometry->Normals.size(); i++) {
 			m_ActualStream >> x >> c_temp >> y >> c_temp >> c_temp;
+#if USE_VECTOR_RESERVE_AND_PUSH
 			pGeometry->TexCoordinates[pGeometry->NumChannelsTexCoords].push_back(XVECTOR2(x, y));
+#elif USE_VECTOR_ARRAY_MODE
+			pGeometry->TexCoordinates[pGeometry->NumChannelsTexCoords][i].x = x;
+			pGeometry->TexCoordinates[pGeometry->NumChannelsTexCoords][i].y = y;
+#endif
 		}
 
 		pGeometry->NumChannelsTexCoords++;
@@ -799,55 +912,106 @@ namespace xF {
 		xDWORD NumElements = 0;
 		xDWORD NumValues = 0;
 		m_ActualStream >> NumElements >> c_temp;
+#if USE_VECTOR_RESERVE_AND_PUSH
 		Data.Elements.reserve(NumElements);
+#elif USE_VECTOR_ARRAY_MODE
+		Data.Elements = std::vector<xVertexElement>(NumElements);
+#endif
+		xVertexElement tmp_xv;
 		for (unsigned int i = 0; i < NumElements; i++) {
-			xVertexElement tmp;
-			m_ActualStream  >> tmp.Type >> c_temp
-				>> tmp.Method >> c_temp
-				>> tmp.Usage >> c_temp
-				>> tmp.UsageIndex >> c_temp >> c_temp;
-			Data.Elements.push_back(tmp);
+			
+			m_ActualStream  >> tmp_xv.Type >> c_temp
+				>> tmp_xv.Method >> c_temp
+				>> tmp_xv.Usage >> c_temp
+				>> tmp_xv.UsageIndex >> c_temp >> c_temp;
+#if USE_VECTOR_RESERVE_AND_PUSH
+			Data.Elements.push_back(tmp_xv);
+#elif USE_VECTOR_ARRAY_MODE
+			Data.Elements[i].Type = tmp_xv.Type;
+			Data.Elements[i].Method = tmp_xv.Method;
+			Data.Elements[i].Usage = tmp_xv.Usage;
+			Data.Elements[i].UsageIndex = tmp_xv.UsageIndex;
+#endif
 		}
 
 		m_ActualStream >> NumValues >> c_temp;
+#if USE_VECTOR_RESERVE_AND_PUSH
 		Data.Values.reserve(NumValues);
-		for (unsigned int i = 0; i < NumValues; i++) {
-			xDWORD	tmp;
-			m_ActualStream >> tmp >> c_temp;
-			Data.Values.push_back(tmp);
+#elif USE_VECTOR_ARRAY_MODE
+		Data.Values = std::vector<xDWORD>(NumValues);
+#endif
+		xDWORD	tmp_d;
+		for (unsigned int i = 0; i < NumValues; i++) {		
+			m_ActualStream >> tmp_d >> c_temp;
+#if USE_VECTOR_RESERVE_AND_PUSH
+			Data.Values.push_back(tmp_d);
+#elif USE_VECTOR_ARRAY_MODE
+			Data.Values[i] = tmp_d;
+#endif
 		}
 
 		int Offset = 0;
 		xDWORD NumVertices = pGeometry->Positions.size();
+#if USE_VECTOR_RESERVE_AND_PUSH
 		float x = 0.0f, y = 0.0f, z = 0.0f, w = 0.0f;
+#endif
 		for (unsigned int i = 0; i < NumElements; i++) {
-			if (Data.Elements[i].Usage == xF::STDDECLUSAGE_TANGENT) {				
+			if (Data.Elements[i].Usage == xF::STDDECLUSAGE_TANGENT) {		
+#if USE_VECTOR_RESERVE_AND_PUSH
 				pGeometry->Tangents.reserve(NumVertices);
+#elif USE_VECTOR_ARRAY_MODE
+				pGeometry->Tangents = std::vector<XVECTOR3>(NumVertices);
+#endif
 				for (unsigned int j = 0; j < NumVertices; j++) {
+#if USE_VECTOR_RESERVE_AND_PUSH
 					x = *(float*)(&Data.Values[Offset++]);
 					y = *(float*)(&Data.Values[Offset++]);
 					z = *(float*)(&Data.Values[Offset++]);
 					pGeometry->Tangents.push_back(XVECTOR3(x, y, z));
+#elif USE_VECTOR_ARRAY_MODE
+					pGeometry->Tangents[j].x = *(float*)(&Data.Values[Offset++]);
+					pGeometry->Tangents[j].y = *(float*)(&Data.Values[Offset++]);
+					pGeometry->Tangents[j].z = *(float*)(&Data.Values[Offset++]);
+#endif
 				}
 				pGeometry->VertexAttributes |= xF::xMeshGeometry::HAS_TANGENT;
 			}
 			else if (Data.Elements[i].Usage == xF::STDDECLUSAGE_BINORMAL) {
+#if USE_VECTOR_RESERVE_AND_PUSH
 				pGeometry->Binormals.reserve(NumVertices);
+#elif USE_VECTOR_ARRAY_MODE
+				pGeometry->Binormals = std::vector<XVECTOR3>(NumVertices);
+#endif
 				for (unsigned int j = 0; j < NumVertices; j++) {
+#if USE_VECTOR_RESERVE_AND_PUSH
 					x = *(float*)(&Data.Values[Offset++]);
 					y = *(float*)(&Data.Values[Offset++]);
 					z = *(float*)(&Data.Values[Offset++]);
 					pGeometry->Binormals.push_back(XVECTOR3(x, y, z));
+#elif USE_VECTOR_ARRAY_MODE
+					pGeometry->Binormals[j].x = *(float*)(&Data.Values[Offset++]);
+					pGeometry->Binormals[j].y = *(float*)(&Data.Values[Offset++]);
+					pGeometry->Binormals[j].z = *(float*)(&Data.Values[Offset++]);
+#endif
 				}
 				pGeometry->VertexAttributes |= xF::xMeshGeometry::HAS_BINORMAL;
 			}
 			else if (Data.Elements[i].Usage == xF::STDDECLUSAGE_TEXCOORD) {
+#if USE_VECTOR_RESERVE_AND_PUSH
+				float x = 0.0f, y = 0.0f;
 				pGeometry->TexCoordinates[pGeometry->NumChannelsTexCoords].reserve(NumVertices);
-				float x = 0.0f,y = 0.0f;
+#elif USE_VECTOR_ARRAY_MODE
+				pGeometry->TexCoordinates[pGeometry->NumChannelsTexCoords] = std::vector<XVECTOR2>(NumVertices);
+#endif	
 				for (unsigned int j = 0; j < NumVertices; j++) {
+#if USE_VECTOR_RESERVE_AND_PUSH
 					x = *(float*)(&Data.Values[Offset++]);
 					y = *(float*)(&Data.Values[Offset++]);
 					pGeometry->TexCoordinates[pGeometry->NumChannelsTexCoords].push_back(XVECTOR2(x, y));
+#elif USE_VECTOR_ARRAY_MODE
+					pGeometry->TexCoordinates[pGeometry->NumChannelsTexCoords][j].x = *(float*)(&Data.Values[Offset++]);
+					pGeometry->TexCoordinates[pGeometry->NumChannelsTexCoords][j].y = *(float*)(&Data.Values[Offset++]);
+#endif
 				}
 
 				pGeometry->NumChannelsTexCoords++;
@@ -867,8 +1031,13 @@ namespace xF {
 
 			}
 			else if (Data.Elements[i].Usage == xF::STDDECLUSAGE_COLOR) {
+#if USE_VECTOR_RESERVE_AND_PUSH
 				pGeometry->VertexColors.reserve(NumVertices);
+#elif USE_VECTOR_ARRAY_MODE
+				pGeometry->VertexColors = std::vector<XVECTOR3>(NumVertices);
+#endif
 				for (unsigned int j = 0; j < NumVertices; j++) {
+#if USE_VECTOR_RESERVE_AND_PUSH
 					x = *(float*)(&Data.Values[Offset++]);
 					y = *(float*)(&Data.Values[Offset++]);
 					z = *(float*)(&Data.Values[Offset++]);
@@ -879,6 +1048,17 @@ namespace xF {
 						w = 0.0f;
 					}
 					pGeometry->VertexColors.push_back(XVECTOR3(x, y, z, w));
+#elif USE_VECTOR_ARRAY_MODE
+					pGeometry->VertexColors[j].x = *(float*)(&Data.Values[Offset++]);
+					pGeometry->VertexColors[j].y = *(float*)(&Data.Values[Offset++]);
+					pGeometry->VertexColors[j].z = *(float*)(&Data.Values[Offset++]);
+					if (Data.Elements[i].Type == xF::STDDECLTYPE_FLOAT4) {
+						pGeometry->VertexColors[j].w = *(float*)(&Data.Values[Offset++]);
+					}
+					else {
+						pGeometry->VertexColors[j].w = 0.0f;
+					}
+#endif
 				}
 				pGeometry->VertexAttributes |= xF::xMeshGeometry::HAS_VERTEXCOLOR;
 			}

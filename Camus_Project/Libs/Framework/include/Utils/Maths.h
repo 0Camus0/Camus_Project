@@ -167,7 +167,7 @@ namespace hyperspace {
 			XVECTOR3(const float *vf) :x(vf[0]), y(vf[1]), z(vf[2]) { w = 0.0f; }
 			XVECTOR3(const XVECTOR3& v) :x(v.x), y(v.y), z(v.z), w(0.0f) {}
 			XVECTOR3(const _XVECTOR3& v) :x(v.x), y(v.y), z(v.z), w(0.0f) {}
-			XVECTOR3(const float &xp, const float &yp, const float &zp) :x(xp), y(yp), z(zp) { w = 0.0f; }
+			XVECTOR3(const float &xp, const float &yp, const float &zp) :x(xp), y(yp), z(zp), w(0.0f){  }
 			XVECTOR3(const float &xp, const float &yp, const float &zp,const float &wp) :x(xp), y(yp), z(zp), w(wp) { }
 
 			XVECTOR3 & operator= (const XVECTOR3 & other) {
