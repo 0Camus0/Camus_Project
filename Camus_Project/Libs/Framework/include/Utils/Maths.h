@@ -8,9 +8,17 @@
 
 #include <string.h>
 
-static const unsigned short xNULL = 0;
-static const float xPI = 3.1415926535897932384626433832795f;
-static const float xSMALLFLOAT = 0.000000001f;
+#ifndef xNULL
+#define  xNULL 0
+#endif
+
+#ifndef xPI
+#define  xPI 3.141592653589f
+#endif
+
+#ifndef xSMALLFLOAT
+#define  xSMALLFLOAT 0.000000001f
+#endif
 
 #if defined(WIN32) || defined(_WIN32)
 #pragma warning( disable : 4521 )
@@ -160,6 +168,7 @@ namespace hyperspace {
 			XVECTOR3(const XVECTOR3& v) :x(v.x), y(v.y), z(v.z), w(0.0f) {}
 			XVECTOR3(const _XVECTOR3& v) :x(v.x), y(v.y), z(v.z), w(0.0f) {}
 			XVECTOR3(const float &xp, const float &yp, const float &zp) :x(xp), y(yp), z(zp) { w = 0.0f; }
+			XVECTOR3(const float &xp, const float &yp, const float &zp,const float &wp) :x(xp), y(yp), z(zp), w(wp) { }
 
 			XVECTOR3 & operator= (const XVECTOR3 & other) {
 				this->x = other.x; this->y = other.y; this->z = other.z; this->w = other.w;

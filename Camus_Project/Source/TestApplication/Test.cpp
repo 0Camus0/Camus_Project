@@ -30,6 +30,8 @@ void TestApp::CreateAssets() {
 	hyperspace::video::CTechnique_ *AllTechnique = new hyperspace::video::TechniqueGL();
 	AllTechnique->Initialize("All-tech", "All");
 
+	LogPrintDebug("Version cpp %d", __cplusplus);
+
 //	delete AllTechnique;
 
 
@@ -56,7 +58,7 @@ void TestApp::CreateAssets() {
 	TexManager->LoadTexture("floor_normal.tga");
 	*/
 	
-	
+/*	
 	TexManager->AddTextureToLoadingQueue("etc1/BatBody_ETC1.ktx");
 	TexManager->AddTextureToLoadingQueue("etc1/BatHead_ETC1.ktx");
 	TexManager->AddTextureToLoadingQueue("etc1/CrocBody_ETC1.ktx");
@@ -75,7 +77,7 @@ void TestApp::CreateAssets() {
 	TexManager->AddTextureToLoadingQueue("Real.png");
 	TexManager->AddTextureToLoadingQueue("etc1/JokerHead_ETC1.ktx");
 	TexManager->AddTextureToLoadingQueue("floor_normal.tga");
-	
+*/	
 	TexManager->LoadTextureQueue();
 	
 	
