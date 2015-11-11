@@ -1,10 +1,15 @@
 #include <Utils/xFile/XDataBase.h>
-
+#include <Utils/FileSystem.h>
 
 namespace xF {
 
 	bool	XDataBase::LoadXFile(const std::string	&FileName) {
-		ifstream	inFile(FileName.c_str(), ios::binary | ios::in);
+
+		std::string Path = fs::Filesystem::instance()->GetResourcesPath();
+		Path += "Models/";
+		Path += FileName;
+
+		ifstream	inFile(Path.c_str(), ios::binary | ios::in);
 		if (!inFile.good()) {
 			inFile.close();
 			return false;
@@ -31,7 +36,7 @@ namespace xF {
 		delete[] pData;
 		pData = 0;
 
-		return Parse(FileName);
+		return Parse(Path);
 	}
 
 	bool	XDataBase::LoadXFromMemory(char* pData, const unsigned int &size) {
@@ -242,7 +247,7 @@ namespace xF {
 		pActualGeometry->Positions.reserve(pActualGeometry->NumVertices);
 		
 		float x = 0.0f, y = 0.0f, z = 0.0f;
-		for (std_uint i = 0; i < pActualGeometry->Positions.size(); i++) {
+		for (std_uint i = 0; i < pActualGeometry->NumVertices; i++) {
 			m_ActualStream >> x >> c_temp >> y >> c_temp >> z >> c_temp >> c_temp;
 			pActualGeometry->Positions.push_back(XVECTOR3(x, y, z));
 		}
@@ -489,8 +494,12 @@ namespace xF {
 			pGeometry->VertexAttributes |= xF::xMeshGeometry::HAS_SKINWEIGHTS1;
 		}
 
-		pGeometry->Info.SkinWeights = new xSkinWeights[pGeometry->Info.SkinMeshHeader.NumBones];
-
+		pGeometry->Info.SkinWeights.reserve(pGeometry->Info.SkinMeshHeader.NumBones);
+		for (std::size_t i = 0; i < pGeometry->Info.SkinMeshHeader.NumBones; i++) {
+			xSkinWeights tmp;
+			pGeometry->Info.SkinWeights.push_back(tmp);
+		}
+	
 		pGeometry->Info.SkinMeshHeader.NumBonesProcess = 0;
 
 		GetNextEndBracket();
@@ -504,17 +513,21 @@ namespace xF {
 
 		pSkin->NodeName = pSkin->NodeName.substr(0, pSkin->NodeName.size() - 2);
 
-		m_ActualStream >> pSkin->NumWeights >> c_temp;
+		xDWORD	NumWeights;
+		m_ActualStream >> NumWeights >> c_temp;
+		pSkin->VertexIndices.reserve(NumWeights);
+		pSkin->Weights.reserve(NumWeights);
 
-		pSkin->VertexIndices = new xF::xDWORD[pSkin->NumWeights];
-		pSkin->Weights = new xF::xFLOAT[pSkin->NumWeights];
-
-		for (unsigned int i = 0; i < pSkin->NumWeights; i++) {
-			m_ActualStream >> pSkin->VertexIndices[i] >> c_temp;
+		for (unsigned int i = 0; i < NumWeights; i++) {
+			xDWORD tmp;
+			m_ActualStream >> tmp >> c_temp;
+			pSkin->VertexIndices.push_back(tmp);
 		}
 
-		for (unsigned int i = 0; i < pSkin->NumWeights; i++) {
-			m_ActualStream >> pSkin->Weights[i] >> c_temp;
+		for (unsigned int i = 0; i < NumWeights; i++) {
+			xFLOAT tmp;
+			m_ActualStream >> tmp >> c_temp;
+			pSkin->Weights.push_back(tmp);
 		}
 
 		for (int i = 0; i < 16; i++) {
@@ -528,19 +541,25 @@ namespace xF {
 
 	void XDataBase::ProcessMaterialBlock(xF::xMeshGeometry *pGeometry) {
 
+		xDWORD	NumMaterials = 0;
+		xDWORD	NumFaceIndices = 0;
 
+		m_ActualStream >> NumMaterials >> c_temp;
+		pGeometry->MaterialList.Materials.reserve(NumMaterials);
+	
 
-		m_ActualStream >> pGeometry->Materials.NumMaterials >> c_temp;
+		for (unsigned int i = 0; i < NumMaterials; i++) {
+			xMaterial tmp;
+			pGeometry->MaterialList.Materials.push_back(tmp);
+		}
 
-		pGeometry->Materials.Materials = new xF::xMaterial[pGeometry->Materials.NumMaterials];
+		m_ActualStream >> NumFaceIndices >> c_temp;
+		pGeometry->MaterialList.FaceIndices.reserve(NumFaceIndices);
 
-		m_ActualStream >> pGeometry->Materials.NumFaceIndices >> c_temp;
-
-
-		pGeometry->Materials.FaceIndices = new xF::xDWORD[pGeometry->Materials.NumFaceIndices];
-
-		for (unsigned int i = 0; i < pGeometry->Materials.NumFaceIndices; i++) {
-			m_ActualStream >> pGeometry->Materials.FaceIndices[i] >> c_temp;
+		for (unsigned int i = 0; i < NumFaceIndices; i++) {
+			xDWORD tmp;
+			m_ActualStream >> tmp >> c_temp;
+			pGeometry->MaterialList.FaceIndices.push_back(tmp);
 		}
 
 		xF::xSTRING Line;
@@ -552,11 +571,11 @@ namespace xF {
 				{
 				case xF::STD_X_MATERIAL: {
 #if DEBUG_COUTS
-					std::cout << "Found Material : " << rets << " num: " << pGeometry->Materials.NumMatProcess << std::endl;
+					std::cout << "Found Material : " << rets << " num: " << pGeometry->MaterialList.NumMatProcess << std::endl;
 #endif
-					pGeometry->Materials.Materials[pGeometry->Materials.NumMatProcess].Name = rets;
-					ProcessMaterial(&pGeometry->Materials.Materials[pGeometry->Materials.NumMatProcess]);
-					pGeometry->Materials.NumMatProcess++;
+					pGeometry->MaterialList.Materials[pGeometry->MaterialList.NumMatProcess].Name = rets;
+					ProcessMaterial(&pGeometry->MaterialList.Materials[pGeometry->MaterialList.NumMatProcess]);
+					pGeometry->MaterialList.NumMatProcess++;
 				}break;
 
 				case xF::STD_X_REF: {
@@ -637,7 +656,11 @@ namespace xF {
 		m_ActualStream.seekg(PosStream);
 		Line = "";
 
-		out->pDefaults = new xF::xEffectDefault[out->NumDefaults];
+		out->pDefaults.reserve(out->NumDefaults);
+		for (std::size_t i = 0; i < out->NumDefaults; i++) {
+			xEffectDefault tmp;
+			out->pDefaults.push_back(tmp);
+		}
 
 		out->NumProcess = 0;
 
@@ -697,13 +720,16 @@ namespace xF {
 
 		out->NameParam = out->NameParam.substr(0, out->NameParam.size() - 2);
 
-		m_ActualStream >> out->NumElements >> c_temp;
+		xDWORD NumElements = 0;
+		m_ActualStream >> NumElements >> c_temp;
 
-		if (out->NumElements > 0)
-			out->CaseFloat = new xF::xFLOAT[out->NumElements];
+		if (NumElements > 0)
+			out->CaseFloat.reserve(NumElements);
 
-		for (std_uint i = 0; i < out->NumElements; i++) {
-			m_ActualStream >> out->CaseFloat[i] >> c_temp;
+		for (std_uint i = 0; i < NumElements; i++) {
+			xFLOAT tmp;
+			m_ActualStream >> tmp >> c_temp;
+			out->CaseFloat.push_back(tmp);
 		}
 
 
@@ -769,34 +795,32 @@ namespace xF {
 	}
 
 	void XDataBase::ProcessDeclDataBlock(xF::xMeshGeometry *pGeometry) {
-
-
 		xF::xDeclData	Data;
-
-		m_ActualStream >> Data.NumElements >> c_temp;
-
-		Data.Elements = new xF::xVertexElement[Data.NumElements];
-
-		for (unsigned int i = 0; i < Data.NumElements; i++) {
-			m_ActualStream >> Data.Elements[i].Type >> c_temp
-				>> Data.Elements[i].Method >> c_temp
-				>> Data.Elements[i].Usage >> c_temp
-				>> Data.Elements[i].UsageIndex >> c_temp >> c_temp;
+		xDWORD NumElements = 0;
+		xDWORD NumValues = 0;
+		m_ActualStream >> NumElements >> c_temp;
+		Data.Elements.reserve(NumElements);
+		for (unsigned int i = 0; i < NumElements; i++) {
+			xVertexElement tmp;
+			m_ActualStream  >> tmp.Type >> c_temp
+				>> tmp.Method >> c_temp
+				>> tmp.Usage >> c_temp
+				>> tmp.UsageIndex >> c_temp >> c_temp;
+			Data.Elements.push_back(tmp);
 		}
 
-		m_ActualStream >> Data.NumValues >> c_temp;
-
-
-		Data.Values = new xF::xDWORD[Data.NumValues];
-
-		for (unsigned int i = 0; i < Data.NumValues; i++) {
-			m_ActualStream >> Data.Values[i] >> c_temp;
+		m_ActualStream >> NumValues >> c_temp;
+		Data.Values.reserve(NumValues);
+		for (unsigned int i = 0; i < NumValues; i++) {
+			xDWORD	tmp;
+			m_ActualStream >> tmp >> c_temp;
+			Data.Values.push_back(tmp);
 		}
 
 		int Offset = 0;
 		xDWORD NumVertices = pGeometry->Positions.size();
 		float x = 0.0f, y = 0.0f, z = 0.0f, w = 0.0f;
-		for (unsigned int i = 0; i < Data.NumElements; i++) {
+		for (unsigned int i = 0; i < NumElements; i++) {
 			if (Data.Elements[i].Usage == xF::STDDECLUSAGE_TANGENT) {				
 				pGeometry->Tangents.reserve(NumVertices);
 				for (unsigned int j = 0; j < NumVertices; j++) {

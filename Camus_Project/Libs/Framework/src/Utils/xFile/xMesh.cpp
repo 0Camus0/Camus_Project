@@ -1,5 +1,9 @@
 #include <Utils/xFile/xMesh.h>
 
+#include <GLES2/gl2.h>
+#include <GLES2/gl2ext.h>
+
+
 using namespace hyperspace;
 namespace xF {
 
@@ -638,13 +642,16 @@ namespace xF {
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 			glFlush();
 
-			tmpGeo.Subsets.reserve(pActual->Materials.NumMaterials);
+			xDWORD NumMaterials = pActual->MaterialList.Materials.size();
+			tmpGeo.Subsets.reserve(NumMaterials);
 
-			for (unsigned int j = 0; j < pActual->Materials.NumMaterials; j++) {
+			xDWORD NumFaceIndices = pActual->MaterialList.FaceIndices.size();
+
+			for (unsigned int j = 0; j < NumMaterials; j++) {
 				xSubsetInfo tmpSubset;
 				tmpSubset.NumTris = 0;
-				for (unsigned int k = 0; k < pActual->Materials.NumFaceIndices; k++) {
-					if (pActual->Materials.FaceIndices[k] == j) {
+				for (unsigned int k = 0; k < NumFaceIndices; k++) {
+					if (pActual->MaterialList.FaceIndices[k] == j) {
 						tmpSubset.NumTris++;
 					}
 				}
@@ -652,8 +659,8 @@ namespace xF {
 				unsigned short *tmpIndexex = new unsigned short[tmpSubset.NumVertex];
 				counter = 0;
 				bool first = false;
-				for (unsigned int k = 0; k < pActual->Materials.NumFaceIndices; k++) {
-					if (pActual->Materials.FaceIndices[k] == j) {
+				for (unsigned int k = 0; k < NumFaceIndices; k++) {
+					if (pActual->MaterialList.FaceIndices[k] == j) {
 						unsigned int index = k * 3;
 						if (!first) {
 							tmpSubset.TriStart = k;
@@ -779,7 +786,7 @@ namespace xF {
 
 			for (unsigned int j = 0; j < pActualMesh->Info.SkinMeshHeader.NumBones; j++) {
 
-				for (unsigned int k = 0; k < pActualMesh->Info.SkinWeights[j].NumWeights; k++) {
+				for (unsigned int k = 0; k < pActualMesh->Info.SkinWeights[j].Weights.size(); k++) {
 
 					VertsIndex = pActualMesh->Info.SkinWeights[j].VertexIndices[k];
 					VertsWeight = pActualMesh->Info.SkinWeights[j].Weights[k];

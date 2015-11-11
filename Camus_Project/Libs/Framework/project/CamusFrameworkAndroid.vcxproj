@@ -45,6 +45,9 @@
     <ClInclude Include="..\include\Utils\Log.h" />
     <ClInclude Include="..\include\Utils\Maths.h" />
     <ClInclude Include="..\include\Utils\WindowProperties.h" />
+    <ClInclude Include="..\include\Utils\xFile\XDataBase.h" />
+    <ClInclude Include="..\include\Utils\xFile\xDefs.h" />
+    <ClInclude Include="..\include\Utils\xFile\xMesh.h" />
     <ClInclude Include="..\include\WindowManager\AndroidFramework.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">true</ExcludedFromBuild>
@@ -75,6 +78,8 @@
     <ClCompile Include="..\src\Utils\InputImplAndroid.cpp" />
     <ClCompile Include="..\src\Utils\Log.cpp" />
     <ClCompile Include="..\src\Utils\WindowProperties.cpp" />
+    <ClCompile Include="..\src\Utils\xFile\XDataBase.cpp" />
+    <ClCompile Include="..\src\Utils\xFile\xMesh.cpp" />
     <ClCompile Include="..\src\WindowManager\AndroidFramework.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">true</ExcludedFromBuild>

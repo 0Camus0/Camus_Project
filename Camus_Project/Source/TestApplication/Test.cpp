@@ -4,6 +4,8 @@
 #include <Driver/EffectGL.h>
 #include <Driver/TextureGL.h>
 
+#include <Utils/xFile/XDataBase.h>
+
 #ifdef OS_WIN32
 #ifdef min
 #undef min
@@ -34,12 +36,17 @@ void TestApp::CreateAssets() {
 
 //	delete AllTechnique;
 
+	xF::XDataBase xDataBase;
+
+	xDataBase.LoadXFile("DealerA14.X");
+
+
 
 	hyperspace::video::TextureManager	*TexManager = new hyperspace::video::TextureManagerGL();
 
-	/*
+	
 	TexManager->LoadTexture("etc1/BatBody_ETC1.ktx");
-	TexManager->LoadTexture("etc1/BatHead_ETC1.ktx");
+/*	TexManager->LoadTexture("etc1/BatHead_ETC1.ktx");
 	TexManager->LoadTexture("etc1/CrocBody_ETC1.ktx");
 	TexManager->LoadTexture("etc1/CrocHead_ETC1.ktx");
 	TexManager->LoadTexture("etc1/cube_ETC1.ktx");
@@ -78,7 +85,7 @@ void TestApp::CreateAssets() {
 	TexManager->AddTextureToLoadingQueue("etc1/JokerHead_ETC1.ktx");
 	TexManager->AddTextureToLoadingQueue("floor_normal.tga");
 */	
-	TexManager->LoadTextureQueue();
+//	TexManager->LoadTextureQueue();
 	
 	
 	//	delete TexManager;

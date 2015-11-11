@@ -1,8 +1,6 @@
 #ifndef XOGLMESH_H
 #define XOGLMESH_H
 
-#include <GLES2/gl2.h>
-#include <GLES2/gl2ext.h>
 
 
 #include <Utils/xFile/xDefs.h>

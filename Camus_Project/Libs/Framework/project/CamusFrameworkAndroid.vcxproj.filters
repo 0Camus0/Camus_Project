@@ -31,6 +31,9 @@
     <Filter Include="Source Files\Driver\Texture\stb">
       <UniqueIdentifier>{141df28a-e4fd-44c8-985b-067564e5eae0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Utils\xFile">
+      <UniqueIdentifier>{d9297582-a09b-4f69-b636-b7b8c97b8fc2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\Core\Core.h">
@@ -120,6 +123,15 @@
     <ClInclude Include="..\include\Driver\TextureGL.h">
       <Filter>Source Files\Driver\OpenGL</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\Utils\xFile\XDataBase.h">
+      <Filter>Source Files\Utils\xFile</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Utils\xFile\xDefs.h">
+      <Filter>Source Files\Utils\xFile</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Utils\xFile\xMesh.h">
+      <Filter>Source Files\Utils\xFile</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\Driver\DriverProperties.cpp">
@@ -178,6 +190,12 @@
     </ClCompile>
     <ClCompile Include="..\src\Driver\TextureGL.cpp">
       <Filter>Source Files\Driver\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Utils\xFile\XDataBase.cpp">
+      <Filter>Source Files\Utils\xFile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Utils\xFile\xMesh.cpp">
+      <Filter>Source Files\Utils\xFile</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
