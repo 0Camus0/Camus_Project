@@ -79,8 +79,9 @@ namespace hyperspace {
 		
 		class Texture {
 		public:
-			Texture() :	size(0),
-						optname(0),
+			Texture() :	
+						optname(0), 
+						size(0),						
 						props(0),
 						params(0),
 						x(0),

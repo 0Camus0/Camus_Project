@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\include\Utils\Time.cpp" />
     <ClCompile Include="..\src\Core\Core.cpp" />
     <ClCompile Include="..\src\Driver\BufferOpenGL.cpp" />
     <ClCompile Include="..\src\Driver\DriverProperties.cpp" />
@@ -80,6 +81,7 @@
     <ClInclude Include="..\include\Utils\InputBase.h" />
     <ClInclude Include="..\include\Utils\Log.h" />
     <ClInclude Include="..\include\Utils\Maths.h" />
+    <ClInclude Include="..\include\Utils\Time.h" />
     <ClInclude Include="..\include\Utils\WindowProperties.h" />
     <ClInclude Include="..\include\Utils\xFile\XDataBase.h" />
     <ClInclude Include="..\include\Utils\xFile\xDefs.h" />

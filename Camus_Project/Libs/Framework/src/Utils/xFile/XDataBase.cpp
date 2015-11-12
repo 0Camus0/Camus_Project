@@ -1,13 +1,53 @@
 #include <Utils/xFile/XDataBase.h>
 #include <Utils/FileSystem.h>
+#include <Utils/Time.h>
+#include <Utils/Log.h>
 
-#define USE_VECTOR_RESERVE_AND_PUSH 0
-#define USE_VECTOR_ARRAY_MODE 1
 
+const char* xTemplatesc_Str[] = {
+	"template ",
+	"KeyValuePair ",
+	"Frame ",
+	"FrameTransformMatrix ",
+	"ObjectMatrixComment ",
+	"Mesh ",
+	"MeshNormals ",
+	"MeshTextureCoords ",
+	"DeclData ",
+	"XSkinMeshHeader ",
+	"SkinWeights ",
+	"MeshMaterialList ",
+	"Material ",
+	"EffectInstance ",
+	"EffectParamDWord ",
+	"EffectParamFloats ",
+	"EffectParamString ",
+	"TextureFilename ",
+	"AnimTicksPerSecond ",
+	"AnimationSet ",
+	"Animation ",
+	"AnimationKey ",
+	"AnimationOptions "
+	};
 
 namespace xF {
+#if !USE_STRING_STREAM
+	void		XDataBase::advance_to_next_open_brace() {
+		do{
+			index++;
+		}while (pData[index] != '{');
+	}
+
+	void XDataBase::advance_to_next_close_brace() {
+		do {
+			index++;
+		} while (pData[index] != '}');
+		index++;
+	}
+#endif
 
 	bool	XDataBase::LoadXFile(const std::string	&FileName) {
+		PROFILING_SCOPE("LoadXFile")
 
 		std::string Path = fs::Filesystem::instance()->GetResourcesPath();
 		Path += "Models/";
@@ -24,23 +64,25 @@ namespace xF {
 		inFile.seekg(0, std::ios::beg);
 
 		
-		char *pData = new char[Size + 1];
+		pData = new char[Size + 1];
 		pData[Size] = '\0';
 
 		inFile.read(pData, Size);
 		inFile.close();
 
+#if USE_STRING_STREAM
 		m_ActualStream.clear();
 		m_ActualStream.str(std::string());
-
 		m_ActualStream.write((const char*)pData, Size);
+		m_ActualStream.seekg(0, std::ios::beg);		
+#endif
+		index = 0;
+		Parse(Path);
 
-		m_ActualStream.seekg(0, std::ios::beg);
-
-		delete[] pData;
+		delete [] pData;
 		pData = 0;
 
-		return Parse(Path);
+		return true;
 	}
 
 	bool	XDataBase::LoadXFromMemory(char* pData, const unsigned int &size) {
@@ -59,8 +101,109 @@ namespace xF {
 		return Parse("FromMemory");
 
 	}
+#if !USE_STRING_STREAM
+	unsigned int	XDataBase::GetxTemplateTypeChar(std::string &retName) {
+		PROFILING_SCOPE("GetTemplateType");
+/*
+		unsigned int current_index = index;
+		unsigned int ret = STD_NOT;
+		while (pData[current_index] != '\n') {
+			current_index--;
+		}
 
-	unsigned short	XDataBase::GetTemplateType(std::string Line, std::string *retName) {
+		std::string Line = std::string(&pData[current_index + 1], index - current_index);
+		for (current_index = 0; current_index < xF::STD_X_REF; current_index++) {
+			ret = Line.find(xTemplatesStr[current_index]);
+			if (ret != -1) {
+					std::size_t dif = Line.find_last_of(" ") - Line.find(" ", ret);
+					retName = Line.substr(ret + xTemplatesStr[current_index].size(), --dif);
+#if DEBUG_COUTS
+					LogPrintDebug("Template type found [%s] name [%s]", xTemplatesStr[current_index].c_str(), retName.c_str());
+#endif
+				return current_index;
+			}
+		}
+
+		ret = Line.find("{");
+		if ((ret != -1) && (Line.find("}") != -1)) {
+				std::size_t dif = Line.find_last_of(" ") - Line.find(" ", ret);
+				retName = Line.substr(++(++ret), --dif);
+#if DEBUG_COUTS
+				LogPrintDebug("Template type [%s] not recognized", retName.c_str());
+#endif
+		}
+
+		avance_to_next_close_brace();
+
+		return STD_NOT;
+		*/
+
+		unsigned int current_index = index;
+		unsigned int ret = STD_NOT;
+		while (pData[current_index] != '\n') {
+			current_index--;
+		}
+		int size = index - current_index;
+		char *tmpLine = new char[size+1];
+		memcpy(tmpLine, &pData[current_index + 1],size);
+		tmpLine[size] = '\0';
+		for (unsigned int i = 0; i < STD_X_REF; i++) {
+			if (strstr(tmpLine, xTemplatesc_Str[i])) {
+				current_index = index;
+				while (pData[current_index] != ' ') {
+					current_index--;
+				}
+				
+				while (pData[current_index] == ' ') {
+					current_index--;
+				}	
+				ret = current_index+1;
+				while (pData[current_index] != ' ') {
+					current_index--;
+				}
+				current_index++;
+				
+				if (current_index < (index-size))
+					current_index = (index - size) + 1;
+
+				retName = std::string(&pData[current_index], ret - current_index);
+				ret = i;
+#if DEBUG_COUTS
+				LogPrintDebug("Template type found [%s] name [%s]", xTemplatesc_Str[i], retName.c_str());
+#endif
+				break;
+			}
+		}
+
+		if (retName.find("mesh") != -1) {
+			LogPrintDebug("MESH");
+		}
+
+
+		if (retName.find("Dealer") != -1) {
+			LogPrintDebug("Dealer");
+		}
+
+		delete[] tmpLine;
+	
+
+		return ret;
+		/*
+		while (pData[current_index] != ' ') {
+   current_index--;
+  }
+  while (pData[current_index] == ' ') {
+   current_index--;
+  }
+  while (pData[current_index] != ' ') {
+   current_index--;
+  }
+		*/
+
+	}
+#endif
+
+	unsigned int	XDataBase::GetxTemplateType(std::string Line, std::string *retName) {
 		std::size_t ret = -1;
 		for (int i = 0; i < xF::STD_X_REF; i++) {
 			ret = Line.find(xTemplatesStr[i]);
@@ -69,7 +212,7 @@ namespace xF {
 					std::size_t dif = Line.find_last_of(" ") - Line.find(" ", ret);
 					*retName = Line.substr(ret + xTemplatesStr[i].size(), --dif);
 				}
-				return static_cast<unsigned short>(i);
+				return i;
 			}
 		}
 
@@ -82,10 +225,11 @@ namespace xF {
 			return xF::STD_X_REF;
 		}
 
-		return static_cast<unsigned short>(-1);
+		return STD_NOT;
 	}
 
 	bool	XDataBase::Parse(std::string name) {
+		PROFILING_SCOPE("Parse")
 
 		while (!m_Stack.empty()) {
 			m_Stack.pop();
@@ -96,22 +240,30 @@ namespace xF {
 		m_pActualMesh = XMeshDataBase.back();
 		m_pActualMesh->FileName = name;
 
+#if USE_STRING_STREAM
 		std::string Line;
 		while (!m_ActualStream.eof()) {
-			std::getline(m_ActualStream, Line);
-			if (Line.find("{") != -1) {
-				std::string rets;
-				unsigned short Ret = GetTemplateType(Line, &rets);
-				switch (Ret) {
+		std::getline(m_ActualStream, Line);
+		if (Line.find("{") != -1) {
+			std::string rets;
+			unsigned short Ret = GetxTemplateType(Line, &rets);
+			
+#else
+		while(pData[index]!='\0'){
+		advance_to_next_open_brace();{
+			std::string rets;
+			unsigned int Ret = GetxTemplateTypeChar(rets);
+#endif
+			switch (Ret) {
+			
 				case xF::STD_X_FRAME: {
 #if	DEBUG_COUTS
-					std::cout << "Found Frame : " << rets << std::endl;
+					LogPrintDebug("Found Frame [%s]", rets.c_str());
 #endif
 					xBone tmp;
 					tmp.Name = rets;
 					tmp.Dad = 0;
 					m_pActualMesh->Skeleton.Bones.push_back(tmp);
-					//	m_pActualMesh->SkeletonAnimated.Bones.push_back(tmp);
 					ProcessFrameBlock(rets);
 				}break;
 
@@ -128,6 +280,11 @@ namespace xF {
 #endif
 					ProcessAnimationSet(&m_pActualMesh->Animation, rets);
 				}break;
+#if !USE_STRING_STREAM
+				default: {
+					advance_to_next_close_brace();
+				}break;
+#endif
 				}//switch			
 			}//if
 		}
@@ -171,15 +328,24 @@ namespace xF {
 	}
 
 
-	void XDataBase::ProcessFrameBlock(std::string actual) {
+	void XDataBase::ProcessFrameBlock(std::string &actual) {
+		PROFILING_SCOPE("ProcessFrameBlock")
+
 		m_Stack.push(actual);
 
+#if USE_STRING_STREAM
 		std::string Line;
 		while (Line.find("}") == -1) {
 			std::getline(m_ActualStream, Line);
 			if (Line.find("{") != -1) {
 				std::string rets;
-				unsigned short Ret = GetTemplateType(Line, &rets);
+				unsigned short Ret = GetxTemplateType(Line, &rets);
+#else
+		while(pData[index]!='}'){
+				advance_to_next_open_brace(); {
+				std::string rets;
+				unsigned int Ret = GetxTemplateTypeChar(rets);
+#endif
 				switch (Ret)
 				{
 				case xF::STD_X_FRAME: {
@@ -204,7 +370,7 @@ namespace xF {
 				}break;
 				case xF::STD_X_MESH: {
 #if	DEBUG_COUTS
-					std::cout << "Found Mesh name: " << rets << std::endl;
+					LogPrintDebug("Found x Mesh [%s]", rets.c_str());
 #endif
 					ProcessMeshBlock(rets);
 
@@ -212,7 +378,11 @@ namespace xF {
 
 				case xF::STD_X_OBJ_CMMTX: {
 					//	ProcessMatrix(&m_pActualMesh->Skeleton.Bones.back().Bone);
+#if USE_STRING_STREAM
 					GetNextEndBracket();
+#else
+					advance_to_next_close_brace();
+#endif
 
 				}break;
 
@@ -222,7 +392,12 @@ namespace xF {
 					//	m_ActualStream.seekg(PosStream);
 					//	ProcessMatrix(&m_pActualMesh->SkeletonAnimated.Bones.back().Bone);
 
+					//system("pause");
+#if USE_STRING_STREAM
 					GetNextEndBracket();
+#else
+					advance_to_next_close_brace();
+#endif
 
 				}break;
 
@@ -240,55 +415,164 @@ namespace xF {
 	}
 
 	void XDataBase::ProcessMeshBlock(std::string actual) {
+		/*PROFILING_SCOPE("ProcessMeshBlock")*/
 		xF::xMeshGeometry	tmp;
-		m_pActualMesh->Geometry.push_back(tmp);
-		xF::xMeshGeometry *pActualGeometry = &m_pActualMesh->Geometry.back();
+		{
+			PROFILING_SCOPE("ProcessMeshBlock")
+			
 
-		pActualGeometry->Name = actual;
-		pActualGeometry->RelativeMatrix = m_pActualMesh->Skeleton.Bones.back().Bone;
+			tmp.Name = actual;
+			tmp.RelativeMatrix = m_pActualMesh->Skeleton.Bones.back().Bone;
 
-		m_ActualStream >> pActualGeometry->NumVertices >> c_temp;
+#if USE_STRING_STREAM
+			m_ActualStream >> tmp.NumVertices >> c_temp;
 #if USE_VECTOR_RESERVE_AND_PUSH
-		pActualGeometry->Positions.reserve(pActualGeometry->NumVertices);
+			tmp.Positions.reserve(tmp.NumVertices);
 #elif USE_VECTOR_ARRAY_MODE
-		pActualGeometry->Positions = std::vector<XVECTOR3>(pActualGeometry->NumVertices);
+			tmp.Positions = std::vector<XVECTOR3>(tmp.NumVertices);
 #endif
-		
-		float x = 0.0f, y = 0.0f, z = 0.0f;
-		for (std_uint i = 0; i < pActualGeometry->NumVertices; i++) {
-			m_ActualStream >> x >> c_temp >> y >> c_temp >> z >> c_temp >> c_temp;
+
+			float x = 0.0f, y = 0.0f, z = 0.0f;
+			for (std_uint i = 0; i < tmp.NumVertices; i++) {
+				m_ActualStream >> x >> c_temp >> y >> c_temp >> z >> c_temp >> c_temp;
 #if USE_VECTOR_RESERVE_AND_PUSH
-			pActualGeometry->Positions.push_back(XVECTOR3(x, y, z));
+				tmp.Positions.push_back(XVECTOR3(x, y, z));
 #elif USE_VECTOR_ARRAY_MODE
-			pActualGeometry->Positions[i].x = x;
-			pActualGeometry->Positions[i].y = y;
-			pActualGeometry->Positions[i].z = z;
+				tmp.Positions[i].x = x;
+				tmp.Positions[i].y = y;
+				tmp.Positions[i].z = z;
+#endif
+			}
+
+				m_ActualStream >> tmp.NumTriangles >> c_temp;
+
+#if USE_VECTOR_RESERVE_AND_PUSH	
+				tmp.Triangles.reserve(3 * tmp.NumTriangles);
+#elif USE_VECTOR_ARRAY_MODE
+				tmp.Triangles = std::vector<xWORD>(3 * tmp.NumTriangles);
+#endif
+				unsigned int counter = 0;
+				unsigned short a, b, c;
+				for (unsigned int i = 0; i < tmp.NumTriangles; i++) {
+					m_ActualStream >> c_temp >> c_temp >> a >> c_temp >> b >> c_temp >> c >> c_temp >> c_temp;
+#if USE_VECTOR_RESERVE_AND_PUSH	
+					tmp.Triangles.push_back(a);
+					tmp.Triangles.push_back(b);
+					tmp.Triangles.push_back(c);
+#elif USE_VECTOR_ARRAY_MODE
+					tmp.Triangles[counter++] = a;
+					tmp.Triangles[counter++] = b;
+					tmp.Triangles[counter++] = c;
+#endif
+				}
+
+#else
+			int current_index = index;
+			int token = 0;
+			while (pData[current_index] != ';') {
+				current_index++;
+				if (pData[current_index] == ' ')
+					token = current_index;
+			}
+			char cNumVerts[10];
+			cNumVerts[7] = '\0';
+			memcpy(cNumVerts, &pData[token + 1], current_index - token);
+			tmp.NumVertices = static_cast<xDWORD>(atof(cNumVerts));
+
+			current_index++;
+#if USE_VECTOR_RESERVE_AND_PUSH
+			tmp.Positions.reserve(tmp.NumVertices);
+#elif USE_VECTOR_ARRAY_MODE
+			tmp.Positions = std::vector<XVECTOR3>(tmp.NumVertices);
+#endif
+
+			char cVertComponent[15];
+			cVertComponent[14] = '\0';
+			int cont = 0;
+			for (unsigned int i = 0; i < tmp.NumVertices; i++) {
+				cont = 0;
+				while (pData[current_index] != ',') {
+
+					if (pData[current_index] == ' ')
+						token = current_index;
+
+					if (pData[current_index] == ';') {
+						memcpy(cVertComponent, &pData[token + 1], current_index - token);
+						tmp.Positions[i].v[cont++] = static_cast<float>(atof(cVertComponent));
+						token = current_index;
+						if (cont == 4)
+							break;
+					}
+					current_index++;
+				}
+				current_index++;
+			}
+
+			current_index++;
+
+
+
+			while (pData[current_index] != ';') {
+				current_index++;
+				if (pData[current_index] == ' ')
+					token = current_index;
+			}
+
+			memcpy(cNumVerts, &pData[token + 1], current_index - token);
+			tmp.NumTriangles = static_cast<xDWORD>(atoi(cNumVerts));
+
+
+			while (pData[current_index] != ' ') {
+				current_index++;
+			}
+
+			std::string pstr = std::string(&pData[current_index], 5);
+			LogPrintDebug("actual [%s]", pstr.c_str());
+
+#if USE_VECTOR_RESERVE_AND_PUSH	
+			tmp.Triangles.reserve(3 * tmp.NumTriangles);
+#elif USE_VECTOR_ARRAY_MODE
+			tmp.Triangles = std::vector<xWORD>(3 * tmp.NumTriangles);
+#endif
+			char cTriang[8];
+			cTriang[7] = '\0';
+			cont = 0;
+			int delim = 0;
+			for (unsigned int i = 0; i < tmp.NumTriangles; i++) {
+				delim = 0;
+				while (delim < 5) {
+					if (pData[current_index] == ',' || pData[current_index] == ';') {
+						if (delim != 0 && delim != 4) {
+							memcpy(cTriang, &pData[token + 1], current_index - token);
+							tmp.Triangles[cont++] = static_cast<unsigned short>(atoi(cTriang));
+						}
+						token = current_index;
+
+						delim++;
+					}
+					current_index++;
+				}
+			}
+			current_index++;
+			/*
+			for (unsigned int i = 0; i < tmp.NumVertices; i++) {
+				LogPrintDebug("[%f;%f;%f;,]", tmp.Positions[i].x, tmp.Positions[i].y, tmp.Positions[i].z);
+			}
+			*/
+			/*
+			for (unsigned int i = 0; i < tmp.Triangles.size(); i++) {
+				LogPrintDebug("[%d]", tmp.Triangles[i]);
+			}
+			*/
+			/*
+				std::string pstr = std::string(&pData[current_index], 5);
+			LogPrintDebug("actual [%s]", pstr.c_str());
+			*/
+
 #endif
 
 		}
-
-		m_ActualStream >> pActualGeometry->NumTriangles >> c_temp;
-
-#if USE_VECTOR_RESERVE_AND_PUSH	
-		pActualGeometry->Triangles.reserve(3 * pActualGeometry->NumTriangles);
-#elif USE_VECTOR_ARRAY_MODE
-		pActualGeometry->Triangles = std::vector<xWORD>(3 * pActualGeometry->NumTriangles);
-#endif
-		unsigned int counter = 0;
-		unsigned short a, b, c;
-		for (unsigned int i = 0; i < pActualGeometry->NumTriangles; i++) {
-			m_ActualStream >> c_temp >> c_temp >> a >> c_temp >> b >> c_temp >> c >> c_temp >> c_temp;
-#if USE_VECTOR_RESERVE_AND_PUSH	
-			pActualGeometry->Triangles.push_back(a);
-			pActualGeometry->Triangles.push_back(b);
-			pActualGeometry->Triangles.push_back(c);
-#elif USE_VECTOR_ARRAY_MODE
-			pActualGeometry->Triangles[counter++] = a;
-			pActualGeometry->Triangles[counter++] = b;
-			pActualGeometry->Triangles[counter++] = c;
-#endif
-		}
-
+		system("pause");
 
 		xSTRING Line;
 		//std::getline(m_ActualStream,Line);
@@ -296,13 +580,13 @@ namespace xF {
 			std::getline(m_ActualStream, Line);
 			if (Line.find("{") != -1) {
 				xSTRING rets;
-				switch (GetTemplateType(Line, &rets))
+				switch (GetxTemplateType(Line, &rets))
 				{
 				case xF::STD_X_MESH_NORMALS: {
 #if	DEBUG_COUTS
 					std::cout << "Found Mesh Normals: " << std::endl;
 #endif
-					ProcessNormalsBlock(pActualGeometry);
+					ProcessNormalsBlock(&tmp);
 					//GetNextEndBracket();
 				}break;
 
@@ -310,7 +594,7 @@ namespace xF {
 #if	DEBUG_COUTS
 					std::cout << "Found Mesh Texture Coordinates: " << std::endl;
 #endif
-					ProcessTexCoordinatesBlock(pActualGeometry);
+					ProcessTexCoordinatesBlock(&tmp);
 					//GetNextEndBracket();
 				}break;
 
@@ -318,7 +602,7 @@ namespace xF {
 #if	DEBUG_COUTS
 					std::cout << "Found Mesh decl data: " << std::endl;
 #endif
-					ProcessDeclDataBlock(pActualGeometry);
+					ProcessDeclDataBlock(&tmp);
 					//	GetNextEndBracket();
 				}break;
 
@@ -326,7 +610,7 @@ namespace xF {
 #if	DEBUG_COUTS
 					std::cout << "Found Mesh skin header: " << rets << std::endl;
 #endif
-					ProcessSkinHeader(pActualGeometry);
+					ProcessSkinHeader(&tmp);
 					//	GetNextEndBracket();
 				}break;
 
@@ -334,7 +618,7 @@ namespace xF {
 #if	DEBUG_COUTS
 					std::cout << "Found Mesh skin weight: " << rets << std::endl;
 #endif
-					ProcessSkinWeights(pActualGeometry);
+					ProcessSkinWeights(&tmp);
 					//	GetNextEndBracket();
 				}break;
 
@@ -342,17 +626,18 @@ namespace xF {
 #if	DEBUG_COUTS
 					std::cout << "Found Mesh material list: " << rets << std::endl;
 #endif
-					ProcessMaterialBlock(pActualGeometry);
+					ProcessMaterialBlock(&tmp);
 					//	GetNextEndBracket();
 				}break;
 				}
 			}
 		}
 
-
+		m_pActualMesh->Geometry.push_back(tmp);
 	}
 
 	void XDataBase::ProcessTicksPerSecond(xF::xAnimationInfo* pAnimation) {
+		PROFILING_SCOPE("ProcessTicksPerSecond")
 		std::string Temp;
 		m_ActualStream >> Temp;
 		Temp = Temp.substr(0, Temp.size() - 1);
@@ -362,6 +647,7 @@ namespace xF {
 	}
 
 	void XDataBase::ProcessAnimationSet(xF::xAnimationInfo* pAnimation, const std::string name) {
+		PROFILING_SCOPE("ProcessAnimationSet")
 		xF::xAnimationSet tmp;
 		pAnimation->Animations.push_back(tmp);
 		xF::xAnimationSet* pActualAnimationSet = &pAnimation->Animations.back();
@@ -373,7 +659,7 @@ namespace xF {
 			std::getline(m_ActualStream, Line);
 			if (Line.find("{") != -1) {
 				xSTRING rets;
-				switch (GetTemplateType(Line, &rets)) {
+				switch (GetxTemplateType(Line, &rets)) {
 				case xF::STD_X_ANIMATION: {
 #if DEBUG_COUTS
 					std::cout << "Found Animation for: " << rets << std::endl;
@@ -387,6 +673,7 @@ namespace xF {
 	}
 
 	void XDataBase::ProcessAnimation(xF::xAnimationSet* out) {
+		PROFILING_SCOPE("ProcessAnimation")
 		xF::xSTRING Line;
 		while ((Line.find("{") == -1) && (Line.find("}") == -1)) {
 			std::getline(m_ActualStream, Line);
@@ -404,7 +691,7 @@ namespace xF {
 			std::getline(m_ActualStream, Line);
 			if (Line.find("{") != -1) {
 				xSTRING rets;
-				switch (GetTemplateType(Line, &rets)) {
+				switch (GetxTemplateType(Line, &rets)) {
 				case xF::STD_X_ANIMATION_KEY: {
 #if DEBUG_COUTS
 					cout << "Found Animation Key: " << rets << endl;
@@ -448,6 +735,7 @@ namespace xF {
 	}
 
 	void XDataBase::ProcessAnimationKey_Rotation(xF::xAnimationBone* out) {
+		PROFILING_SCOPE("ProcessAnimationKey_Rotation")
 		int size_vec = 0;
 		m_ActualStream >> size_vec >> c_temp;
 
@@ -478,6 +766,7 @@ namespace xF {
 	}
 
 	void XDataBase::ProcessAnimationKey_Scale(xF::xAnimationBone* out) {
+		PROFILING_SCOPE("ProcessAnimationKey_Scale")
 		int size_vec = 0;
 		m_ActualStream >> size_vec >> c_temp;
 #if USE_VECTOR_RESERVE_AND_PUSH	
@@ -505,6 +794,7 @@ namespace xF {
 	}
 
 	void XDataBase::ProcessAnimationKey_Position(xF::xAnimationBone* out) {
+		PROFILING_SCOPE("ProcessAnimationKey_Position")
 		int size_vec = 0;
 		m_ActualStream >> size_vec >> c_temp;
 #if USE_VECTOR_RESERVE_AND_PUSH	
@@ -533,6 +823,7 @@ namespace xF {
 	}
 
 	void XDataBase::ProcessSkinHeader(xF::xMeshGeometry* pGeometry) {
+		PROFILING_SCOPE("ProcessSkinHeader")
 		m_ActualStream >> pGeometry->Info.SkinMeshHeader.MaxNumWeightPerVertex >> c_temp;
 		m_ActualStream >> pGeometry->Info.SkinMeshHeader.MaxNumWeightPerFace >> c_temp;
 		m_ActualStream >> pGeometry->Info.SkinMeshHeader.NumBones >> c_temp;
@@ -563,7 +854,7 @@ namespace xF {
 	}
 
 	void  XDataBase::ProcessSkinWeights(xF::xMeshGeometry* pGeometry) {
-
+		PROFILING_SCOPE("ProcessSkinWeights")
 		xF::xSkinWeights	*pSkin = &pGeometry->Info.SkinWeights[pGeometry->Info.SkinMeshHeader.NumBonesProcess];
 
 		m_ActualStream >> c_temp >> pSkin->NodeName;
@@ -610,7 +901,7 @@ namespace xF {
 	}
 
 	void XDataBase::ProcessMaterialBlock(xF::xMeshGeometry *pGeometry) {
-
+		PROFILING_SCOPE("ProcessMaterialBlock")
 		xDWORD	NumMaterials = 0;
 		xDWORD	NumFaceIndices = 0;
 
@@ -650,7 +941,7 @@ namespace xF {
 			std::getline(m_ActualStream, Line);
 			if (Line.find("{") != -1) {
 				xSTRING rets;
-				switch (GetTemplateType(Line, &rets))
+				switch (GetxTemplateType(Line, &rets))
 				{
 				case xF::STD_X_MATERIAL: {
 #if DEBUG_COUTS
@@ -674,7 +965,7 @@ namespace xF {
 	}
 
 	void XDataBase::ProcessMaterial(xMaterial* out) {
-
+		PROFILING_SCOPE("ProcessMaterial")
 		m_ActualStream >> out->FaceColor.r >> c_temp >> out->FaceColor.g >> c_temp >> out->FaceColor.b >> c_temp >> out->FaceColor.a >> c_temp >> c_temp;
 
 		m_ActualStream >> out->Power >> c_temp;
@@ -689,7 +980,7 @@ namespace xF {
 			std::getline(m_ActualStream, Line);
 			if (Line.find("{") != -1) {
 				xSTRING rets;
-				switch (GetTemplateType(Line, &rets))
+				switch (GetxTemplateType(Line, &rets))
 				{
 				case xF::STD_X_EFFECT_INSTANCE: {
 #if DEBUG_COUTS
@@ -712,7 +1003,7 @@ namespace xF {
 	}
 
 	void XDataBase::ProcessEffectInstance(xF::xEffectInstance *out) {
-
+		PROFILING_SCOPE("ProcessEffectInstance")
 
 		m_ActualStream >> c_temp >> out->ShaderFileName;
 
@@ -728,7 +1019,7 @@ namespace xF {
 			std::getline(m_ActualStream, Line);
 			if (Line.find("{") != -1) {
 				xF::xSTRING rets;
-				std_uint T = GetTemplateType(Line, &rets);
+				std_uint T = GetxTemplateType(Line, &rets);
 				if (T == xF::STD_X_EFFECT_PARAMS_DWORD || T == xF::STD_X_EFFECT_PARAMS_FLOAT || T == xF::STD_X_EFFECT_PARAMS_STRING) {
 					out->NumDefaults++;
 					GetNextEndBracket();
@@ -754,7 +1045,7 @@ namespace xF {
 			std::getline(m_ActualStream, Line);
 			if (Line.find("{") != -1) {
 				xF::xSTRING rets;
-				switch (GetTemplateType(Line, &rets))
+				switch (GetxTemplateType(Line, &rets))
 				{
 				case xF::STD_X_EFFECT_PARAMS_DWORD: {
 #if DEBUG_COUTS
@@ -784,7 +1075,7 @@ namespace xF {
 
 
 	void XDataBase::ProcessEffectString(xF::xEffectDefault *out) {
-
+	//	PROFILING_SCOPE("ProcessEffectString")
 
 		out->Type = xF::STDX_STRINGS;
 
@@ -800,6 +1091,8 @@ namespace xF {
 	}
 
 	void XDataBase::ProcessEffectFloats(xF::xEffectDefault *out) {
+	//	PROFILING_SCOPE("ProcessEffectFloats")
+
 		out->Type = xF::STDX_FLOATS;
 
 		m_ActualStream >> c_temp >> out->NameParam;
@@ -831,6 +1124,7 @@ namespace xF {
 	}
 
 	void XDataBase::ProcessEffectDwords(xEffectDefault *out) {
+		//PROFILING_SCOPE("ProcessEffectDwords")
 		out->Type = xF::STDX_DWORDS;
 
 		m_ActualStream >> c_temp >> out->NameParam;
@@ -868,7 +1162,7 @@ namespace xF {
 	}
 
 	void  XDataBase::ProcessTexCoordinatesBlock(xF::xMeshGeometry *pGeometry) {
-
+		PROFILING_SCOPE("ProcessTexCoordinatesBlock")
 		xDWORD NumTexcoords = 0;
 		float x = 0.0f, y = 0.0f;
 
@@ -908,6 +1202,8 @@ namespace xF {
 	}
 
 	void XDataBase::ProcessDeclDataBlock(xF::xMeshGeometry *pGeometry) {
+		PROFILING_SCOPE("ProcessDeclDataBlock")
+
 		xF::xDeclData	Data;
 		xDWORD NumElements = 0;
 		xDWORD NumValues = 0;
@@ -1076,23 +1372,44 @@ namespace xF {
 	}
 
 	void XDataBase::ProcessMatrix(XMATRIX44* out) {
-		/*	XMATRIX44 Normal;
-			char tmp;
-			for (int i = 0; i < 16 ; i++){
-				m_ActualStream >> Normal.mat[i] >> tmp;
-			}
+#if PROFILE_MATRICES
+		PROFILING_SCOPE("ProcessMatrix")
+#endif
 
-			for (int i = 0; i < 4 ; i++)
-			{
-				for (int j = 0; j < 4 ; j++)
-				{
-					out->m[i][j] = Normal.m[j][i];
-				}
-			}*/
+#if USE_STRING_STREAM
 		char tmp;
 		for (int i = 0; i < 16; i++) {
 			m_ActualStream >> out->mat[i] >> tmp;
 		}
+#else
+		char NumTemp[10];
+		NumTemp[9] = '\0';
+
+		int space = index;
+		while (pData[index] != ',') {
+			index++;
+			if (pData[index] == ' ')
+				space = index;
+		}
+		int firstcoma = index;
+		int matCount = 0;
+		index = firstcoma + 1;
+		while (pData[index] != ' ') {
+			if (pData[index] == ',' || pData[index] == ';') {
+				memcpy(NumTemp, &pData[space + 1], 9);
+				out->mat[matCount++] = static_cast<float>(atof(NumTemp));
+				space = index;
+				if(pData[index] == ';')
+					break;
+			}	
+			index++;
+		}
+	#if DEBUG_MATRICES
+			for (unsigned int i = 0; i < 16; i++) {
+				LogPrintDebug("[%f]", out->mat[i]);
+			}
+	#endif
+#endif
 
 	}
 }

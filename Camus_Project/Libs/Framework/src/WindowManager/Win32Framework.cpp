@@ -30,11 +30,16 @@
 // 		std::min(n, upper));
 // }
 
+double	g_Frequency;
+
 extern bool g_bAppRunning;
 
 
 void Win32Framework::InitGlobalVars() {
 	hyperspace::GetWindowParameters().GatherProperties();
+	LARGE_INTEGER y;
+	QueryPerformanceFrequency(&y);
+	g_Frequency = double(y.QuadPart)/ 1000000.0;
 }
 
 void Win32Framework::OnCreateApplication() {

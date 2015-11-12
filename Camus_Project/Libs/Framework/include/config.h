@@ -13,6 +13,9 @@
 #define USE_SHOW_MEM_USAGE 1
 #define TAG_LOGGING "DEBUG"
 
+// Profiling
+#define USE_PROFILING 1
+
 // Shaders
 #define USE_LOG_DEBUG_SHADERS_CONTENT 0
 #define USE_LOG_DEBUG_TECHNIQUES 0

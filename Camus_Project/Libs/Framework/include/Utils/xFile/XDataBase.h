@@ -2,7 +2,16 @@
 #ifndef XDATABASE_H
 #define XDATABASE_H
 
-#define DEBUG_COUTS 0
+#define DEBUG_COUTS 1
+#define DEBUG_MATRICES 0
+
+#define PROFILE_MATRICES 1
+
+#define USE_VECTOR_RESERVE_AND_PUSH 0
+#define USE_VECTOR_ARRAY_MODE 1
+
+#define USE_STRING_STREAM 1
+
 
 #include <Utils/xFile/xDefs.h>
 #include <Utils/xFile/xMesh.h>
@@ -38,9 +47,9 @@ namespace xF {
 
 	private:
 		bool			Parse(std::string);
-		unsigned short	GetTemplateType(std::string Line, std::string *retName = 0);
+		unsigned int	GetxTemplateType(std::string Line, std::string *retName = 0);
 
-		void		ProcessFrameBlock(std::string actual);
+		void		ProcessFrameBlock(std::string &actual);
 		void		ProcessMeshBlock(std::string actual);
 		void		ProcessNormalsBlock(xF::xMeshGeometry *pGeometry);
 		void		ProcessTexCoordinatesBlock(xF::xMeshGeometry *pGeometry);
@@ -66,10 +75,17 @@ namespace xF {
 		void		ProcessEffectFloats(xF::xEffectDefault *out);
 		void		ProcessEffectDwords(xF::xEffectDefault *out);
 
+#if !USE_STRING_STREAM
+		void			advance_to_next_open_brace();
+		void			advance_to_next_close_brace();
+		unsigned int	GetxTemplateTypeChar(std::string &retName);
+#endif
+
 		std::stringstream		 m_ActualStream;
 		std::stack<std::string>	 m_Stack;
 		xMesh					*m_pActualMesh;
-
+		char					 *pData;
+		unsigned int			 index;
 
 		// ...
 		char					c_temp;
