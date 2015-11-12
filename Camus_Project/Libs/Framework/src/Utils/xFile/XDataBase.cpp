@@ -104,39 +104,6 @@ namespace xF {
 #if !USE_STRING_STREAM
 	unsigned int	XDataBase::GetxTemplateTypeChar(std::string &retName) {
 		PROFILING_SCOPE("GetTemplateType");
-/*
-		unsigned int current_index = index;
-		unsigned int ret = STD_NOT;
-		while (pData[current_index] != '\n') {
-			current_index--;
-		}
-
-		std::string Line = std::string(&pData[current_index + 1], index - current_index);
-		for (current_index = 0; current_index < xF::STD_X_REF; current_index++) {
-			ret = Line.find(xTemplatesStr[current_index]);
-			if (ret != -1) {
-					std::size_t dif = Line.find_last_of(" ") - Line.find(" ", ret);
-					retName = Line.substr(ret + xTemplatesStr[current_index].size(), --dif);
-#if DEBUG_COUTS
-					LogPrintDebug("Template type found [%s] name [%s]", xTemplatesStr[current_index].c_str(), retName.c_str());
-#endif
-				return current_index;
-			}
-		}
-
-		ret = Line.find("{");
-		if ((ret != -1) && (Line.find("}") != -1)) {
-				std::size_t dif = Line.find_last_of(" ") - Line.find(" ", ret);
-				retName = Line.substr(++(++ret), --dif);
-#if DEBUG_COUTS
-				LogPrintDebug("Template type [%s] not recognized", retName.c_str());
-#endif
-		}
-
-		avance_to_next_close_brace();
-
-		return STD_NOT;
-		*/
 
 		unsigned int current_index = index;
 		unsigned int ret = STD_NOT;
@@ -168,20 +135,11 @@ namespace xF {
 
 				retName = std::string(&pData[current_index], ret - current_index);
 				ret = i;
-#if DEBUG_COUTS
+#if DEBUG_GET_TEMPLATE
 				LogPrintDebug("Template type found [%s] name [%s]", xTemplatesc_Str[i], retName.c_str());
 #endif
 				break;
 			}
-		}
-
-		if (retName.find("mesh") != -1) {
-			LogPrintDebug("MESH");
-		}
-
-
-		if (retName.find("Dealer") != -1) {
-			LogPrintDebug("Dealer");
 		}
 
 		delete[] tmpLine;
@@ -415,209 +373,211 @@ namespace xF {
 	}
 
 	void XDataBase::ProcessMeshBlock(std::string actual) {
-		/*PROFILING_SCOPE("ProcessMeshBlock")*/
-		xF::xMeshGeometry	tmp;
-		{
-			PROFILING_SCOPE("ProcessMeshBlock")
-			
+		PROFILING_SCOPE("ProcessMeshBlock")
 
-			tmp.Name = actual;
-			tmp.RelativeMatrix = m_pActualMesh->Skeleton.Bones.back().Bone;
+		xF::xMeshGeometry	tmp;
+		tmp.Name = actual;
+		tmp.RelativeMatrix = m_pActualMesh->Skeleton.Bones.back().Bone;
 
 #if USE_STRING_STREAM
-			m_ActualStream >> tmp.NumVertices >> c_temp;
+		m_ActualStream >> tmp.NumVertices >> c_temp;
 #if USE_VECTOR_RESERVE_AND_PUSH
-			tmp.Positions.reserve(tmp.NumVertices);
+		tmp.Positions.reserve(tmp.NumVertices);
 #elif USE_VECTOR_ARRAY_MODE
-			tmp.Positions = std::vector<XVECTOR3>(tmp.NumVertices);
+		tmp.Positions = std::vector<XVECTOR3>(tmp.NumVertices);
 #endif
 
-			float x = 0.0f, y = 0.0f, z = 0.0f;
-			for (std_uint i = 0; i < tmp.NumVertices; i++) {
-				m_ActualStream >> x >> c_temp >> y >> c_temp >> z >> c_temp >> c_temp;
+		float x = 0.0f, y = 0.0f, z = 0.0f;
+		for (std_uint i = 0; i < tmp.NumVertices; i++) {
+			m_ActualStream >> x >> c_temp >> y >> c_temp >> z >> c_temp >> c_temp;
 #if USE_VECTOR_RESERVE_AND_PUSH
-				tmp.Positions.push_back(XVECTOR3(x, y, z));
+			tmp.Positions.push_back(XVECTOR3(x, y, z));
 #elif USE_VECTOR_ARRAY_MODE
-				tmp.Positions[i].x = x;
-				tmp.Positions[i].y = y;
-				tmp.Positions[i].z = z;
+			tmp.Positions[i].x = x;
+			tmp.Positions[i].y = y;
+			tmp.Positions[i].z = z;
 #endif
-			}
+		}
 
-				m_ActualStream >> tmp.NumTriangles >> c_temp;
+		m_ActualStream >> tmp.NumTriangles >> c_temp;
 
 #if USE_VECTOR_RESERVE_AND_PUSH	
-				tmp.Triangles.reserve(3 * tmp.NumTriangles);
+		tmp.Triangles.reserve(3 * tmp.NumTriangles);
 #elif USE_VECTOR_ARRAY_MODE
-				tmp.Triangles = std::vector<xWORD>(3 * tmp.NumTriangles);
+		tmp.Triangles = std::vector<xWORD>(3 * tmp.NumTriangles);
 #endif
-				unsigned int counter = 0;
-				unsigned short a, b, c;
-				for (unsigned int i = 0; i < tmp.NumTriangles; i++) {
-					m_ActualStream >> c_temp >> c_temp >> a >> c_temp >> b >> c_temp >> c >> c_temp >> c_temp;
+		unsigned int counter = 0;
+		unsigned short a, b, c;
+		for (unsigned int i = 0; i < tmp.NumTriangles; i++) {
+			m_ActualStream >> c_temp >> c_temp >> a >> c_temp >> b >> c_temp >> c >> c_temp >> c_temp;
 #if USE_VECTOR_RESERVE_AND_PUSH	
-					tmp.Triangles.push_back(a);
-					tmp.Triangles.push_back(b);
-					tmp.Triangles.push_back(c);
+			tmp.Triangles.push_back(a);
+			tmp.Triangles.push_back(b);
+			tmp.Triangles.push_back(c);
 #elif USE_VECTOR_ARRAY_MODE
-					tmp.Triangles[counter++] = a;
-					tmp.Triangles[counter++] = b;
-					tmp.Triangles[counter++] = c;
+			tmp.Triangles[counter++] = a;
+			tmp.Triangles[counter++] = b;
+			tmp.Triangles[counter++] = c;
 #endif
-				}
+		}
 
 #else
-			int current_index = index;
-			int token = 0;
-			while (pData[current_index] != ';') {
-				current_index++;
-				if (pData[current_index] == ' ')
-					token = current_index;
-			}
-			char cNumVerts[10];
-			cNumVerts[7] = '\0';
-			memcpy(cNumVerts, &pData[token + 1], current_index - token);
-			tmp.NumVertices = static_cast<xDWORD>(atof(cNumVerts));
-
+		int current_index = index;
+		int token = 0;
+		while (pData[current_index] != ';') {
 			current_index++;
+			if (pData[current_index] == ' ')
+				token = current_index;
+		}
+		char cNumVerts[10];
+		cNumVerts[7] = '\0';
+		memcpy(cNumVerts, &pData[token + 1], current_index - token);
+		tmp.NumVertices = static_cast<xDWORD>(atof(cNumVerts));
+
+		current_index++;
 #if USE_VECTOR_RESERVE_AND_PUSH
-			tmp.Positions.reserve(tmp.NumVertices);
+		tmp.Positions.reserve(tmp.NumVertices);
 #elif USE_VECTOR_ARRAY_MODE
-			tmp.Positions = std::vector<XVECTOR3>(tmp.NumVertices);
+		tmp.Positions = std::vector<XVECTOR3>(tmp.NumVertices);
 #endif
 
-			char cVertComponent[15];
-			cVertComponent[14] = '\0';
-			int cont = 0;
-			for (unsigned int i = 0; i < tmp.NumVertices; i++) {
-				cont = 0;
-				while (pData[current_index] != ',') {
+		char cVertComponent[15];
+		cVertComponent[14] = '\0';
+		int cont = 0;
+		for (unsigned int i = 0; i < tmp.NumVertices; i++) {
+			cont = 0;
+			while (pData[current_index] != ',') {
 
-					if (pData[current_index] == ' ')
-						token = current_index;
+				if (pData[current_index] == ' ')
+					token = current_index;
 
-					if (pData[current_index] == ';') {
-						memcpy(cVertComponent, &pData[token + 1], current_index - token);
-						tmp.Positions[i].v[cont++] = static_cast<float>(atof(cVertComponent));
-						token = current_index;
-						if (cont == 4)
-							break;
-					}
-					current_index++;
+				if (pData[current_index] == ';') {
+					memcpy(cVertComponent, &pData[token + 1], current_index - token);
+					tmp.Positions[i].v[cont++] = static_cast<float>(atof(cVertComponent));
+					token = current_index;
+					if (cont == 4)
+						break;
 				}
 				current_index++;
 			}
-
 			current_index++;
+		}
+
+		current_index++;
 
 
 
-			while (pData[current_index] != ';') {
-				current_index++;
-				if (pData[current_index] == ' ')
-					token = current_index;
-			}
+		while (pData[current_index] != ';') {
+			current_index++;
+			if (pData[current_index] == ' ')
+				token = current_index;
+		}
 
-			memcpy(cNumVerts, &pData[token + 1], current_index - token);
-			tmp.NumTriangles = static_cast<xDWORD>(atoi(cNumVerts));
+		memcpy(cNumVerts, &pData[token + 1], current_index - token);
+		tmp.NumTriangles = static_cast<xDWORD>(atoi(cNumVerts));
 
 
-			while (pData[current_index] != ' ') {
-				current_index++;
-			}
-
-			std::string pstr = std::string(&pData[current_index], 5);
-			LogPrintDebug("actual [%s]", pstr.c_str());
+		while (pData[current_index] != ' ') {
+			current_index++;
+		}
 
 #if USE_VECTOR_RESERVE_AND_PUSH	
-			tmp.Triangles.reserve(3 * tmp.NumTriangles);
+		tmp.Triangles.reserve(3 * tmp.NumTriangles);
 #elif USE_VECTOR_ARRAY_MODE
-			tmp.Triangles = std::vector<xWORD>(3 * tmp.NumTriangles);
+		tmp.Triangles = std::vector<xWORD>(3 * tmp.NumTriangles);
 #endif
-			char cTriang[8];
-			cTriang[7] = '\0';
-			cont = 0;
-			int delim = 0;
-			for (unsigned int i = 0; i < tmp.NumTriangles; i++) {
-				delim = 0;
-				while (delim < 5) {
-					if (pData[current_index] == ',' || pData[current_index] == ';') {
-						if (delim != 0 && delim != 4) {
-							memcpy(cTriang, &pData[token + 1], current_index - token);
-							tmp.Triangles[cont++] = static_cast<unsigned short>(atoi(cTriang));
-						}
-						token = current_index;
-
-						delim++;
+		char cTriang[8];
+		cTriang[7] = '\0';
+		cont = 0;
+		int delim = 0;
+		for (unsigned int i = 0; i < tmp.NumTriangles; i++) {
+			delim = 0;
+			while (delim < 5) {
+				if (pData[current_index] == ',' || pData[current_index] == ';') {
+					if (delim != 0 && delim != 4) {
+						memcpy(cTriang, &pData[token + 1], current_index - token);
+						tmp.Triangles[cont++] = static_cast<unsigned short>(atoi(cTriang));
 					}
-					current_index++;
+					token = current_index;
+
+					delim++;
 				}
+				current_index++;
 			}
-			current_index++;
-			/*
-			for (unsigned int i = 0; i < tmp.NumVertices; i++) {
-				LogPrintDebug("[%f;%f;%f;,]", tmp.Positions[i].x, tmp.Positions[i].y, tmp.Positions[i].z);
-			}
-			*/
-			/*
-			for (unsigned int i = 0; i < tmp.Triangles.size(); i++) {
-				LogPrintDebug("[%d]", tmp.Triangles[i]);
-			}
-			*/
-			/*
-				std::string pstr = std::string(&pData[current_index], 5);
-			LogPrintDebug("actual [%s]", pstr.c_str());
-			*/
+		}
+		current_index++;
+#if DEBUG_VERTICES
+		for (unsigned int i = 0; i < tmp.NumVertices; i++) {
+			LogPrintDebug("[%f;%f;%f;,]", tmp.Positions[i].x, tmp.Positions[i].y, tmp.Positions[i].z);
+		}
+#endif
+
+#if DEBUG_INDICES
+		for (unsigned int i = 0; i < tmp.Triangles.size(); i++) {
+			LogPrintDebug("[%d]", tmp.Triangles[i]);
+		}
+#endif
+		index = current_index;
 
 #endif
 
-		}
-		system("pause");
-
+		
+	
+#if USE_STRING_STREAM
 		xSTRING Line;
 		//std::getline(m_ActualStream,Line);
 		while (Line.find("}") == -1) {
 			std::getline(m_ActualStream, Line);
 			if (Line.find("{") != -1) {
-				xSTRING rets;
-				switch (GetxTemplateType(Line, &rets))
+				std::string rets;
+				unsigned int Ret = GetxTemplateType(Line, &rets);
+#else
+		while (pData[index] != '}') {
+			advance_to_next_open_brace(); {
+				std::string rets;
+				unsigned int Ret = GetxTemplateTypeChar(rets);
+#endif
+				switch (Ret)
 				{
 				case xF::STD_X_MESH_NORMALS: {
 #if	DEBUG_COUTS
-					std::cout << "Found Mesh Normals: " << std::endl;
+					LogPrintDebug("Found MeshNormals [%s]", rets.c_str());
 #endif
 					ProcessNormalsBlock(&tmp);
-					//GetNextEndBracket();
+						
 				}break;
 
 				case xF::STD_X_MESH_TEXCOORD: {
 #if	DEBUG_COUTS
-					std::cout << "Found Mesh Texture Coordinates: " << std::endl;
+					LogPrintDebug("Found TextureCoords [%s]", rets.c_str());
 #endif
 					ProcessTexCoordinatesBlock(&tmp);
-					//GetNextEndBracket();
+
 				}break;
 
 				case xF::STD_X_DECLDATA: {
 #if	DEBUG_COUTS
 					std::cout << "Found Mesh decl data: " << std::endl;
 #endif
+					system("pause");
 					ProcessDeclDataBlock(&tmp);
 					//	GetNextEndBracket();
 				}break;
 
 				case xF::STD_X_SKIN_HEADER: {
 #if	DEBUG_COUTS
-					std::cout << "Found Mesh skin header: " << rets << std::endl;
+					LogPrintDebug("Found SkinMeshHeader [%s]", rets.c_str());
 #endif
+
 					ProcessSkinHeader(&tmp);
-					//	GetNextEndBracket();
+
 				}break;
 
 				case xF::STD_X_SKIN_WEIGHTS: {
 #if	DEBUG_COUTS
 					std::cout << "Found Mesh skin weight: " << rets << std::endl;
 #endif
+					system("pause");
 					ProcessSkinWeights(&tmp);
 					//	GetNextEndBracket();
 				}break;
@@ -626,11 +586,13 @@ namespace xF {
 #if	DEBUG_COUTS
 					std::cout << "Found Mesh material list: " << rets << std::endl;
 #endif
+					system("pause");
 					ProcessMaterialBlock(&tmp);
 					//	GetNextEndBracket();
 				}break;
 				}
 			}
+
 		}
 
 		m_pActualMesh->Geometry.push_back(tmp);
@@ -824,6 +786,7 @@ namespace xF {
 
 	void XDataBase::ProcessSkinHeader(xF::xMeshGeometry* pGeometry) {
 		PROFILING_SCOPE("ProcessSkinHeader")
+#if USE_STRING_STREAM
 		m_ActualStream >> pGeometry->Info.SkinMeshHeader.MaxNumWeightPerVertex >> c_temp;
 		m_ActualStream >> pGeometry->Info.SkinMeshHeader.MaxNumWeightPerFace >> c_temp;
 		m_ActualStream >> pGeometry->Info.SkinMeshHeader.NumBones >> c_temp;
@@ -851,6 +814,12 @@ namespace xF {
 		pGeometry->Info.SkinMeshHeader.NumBonesProcess = 0;
 
 		GetNextEndBracket();
+#else
+		std::string pstr = std::string(&pData[index], 5);
+		LogPrintDebug("actual [%s]", pstr.c_str());
+
+		system("pause");
+#endif
 	}
 
 	void  XDataBase::ProcessSkinWeights(xF::xMeshGeometry* pGeometry) {
@@ -1137,6 +1106,7 @@ namespace xF {
 	}
 
 	void XDataBase::ProcessNormalsBlock(xF::xMeshGeometry *pGeometry) {
+#if USE_STRING_STREAM
 		xDWORD NumVertices = 0;
 		m_ActualStream >> NumVertices >> c_temp;
 #if USE_VECTOR_RESERVE_AND_PUSH
@@ -1158,12 +1128,70 @@ namespace xF {
 		pGeometry->VertexAttributes |= xF::xMeshGeometry::HAS_NORMAL;
 
 		GetNextEndBracket();
+#else
+		xDWORD NumVertices = 0;
+
+		int current_index = index;
+		int token = 0;
+		while (pData[current_index] != ';') {
+			current_index++;
+			if (pData[current_index] == ' ')
+				token = current_index;
+		}
+		char cNumVerts[10];
+		cNumVerts[7] = '\0';
+		memcpy(cNumVerts, &pData[token + 1], current_index - token);
+		NumVertices = static_cast<xDWORD>(atof(cNumVerts));
+		current_index++;
+
+#if USE_VECTOR_RESERVE_AND_PUSH
+		pGeometry->Normals.reserve(NumVertices);
+#elif USE_VECTOR_ARRAY_MODE
+		pGeometry->Normals = std::vector<XVECTOR3>(NumVertices);
+#endif
+
+		char cVertComponent[15];
+		cVertComponent[14] = '\0';
+		int cont = 0;
+		for (unsigned int i = 0; i < NumVertices; i++) {
+			cont = 0;
+			while (pData[current_index] != ',') {
+
+				if (pData[current_index] == ' ')
+					token = current_index;
+
+				if (pData[current_index] == ';') {
+					memcpy(cVertComponent, &pData[token + 1], current_index - token);
+					pGeometry->Normals[i].v[cont++] = static_cast<float>(atof(cVertComponent));
+					token = current_index;
+					if (cont == 4)
+						break;
+				}
+				current_index++;
+			}
+			current_index++;
+		}
+		current_index++;
+
+		pGeometry->VertexAttributes |= xF::xMeshGeometry::HAS_NORMAL;
+
+#if DEBUG_NORMALS
+		for (unsigned int i = 0; i < NumVertices; i++) {
+			LogPrintDebug("[%f;%f;%f;,]", pGeometry->Normals[i].x, pGeometry->Normals[i].y, pGeometry->Normals[i].z);
+		}
+#endif
+		index = current_index;
+
+		advance_to_next_close_brace();
+#endif
 
 	}
 
 	void  XDataBase::ProcessTexCoordinatesBlock(xF::xMeshGeometry *pGeometry) {
 		PROFILING_SCOPE("ProcessTexCoordinatesBlock")
 		xDWORD NumTexcoords = 0;
+
+#if USE_STRING_STREAM
 		float x = 0.0f, y = 0.0f;
 
 		m_ActualStream >> NumTexcoords >> c_temp;
@@ -1198,7 +1226,60 @@ namespace xF {
 		}
 
 
+
+
 		GetNextEndBracket();
+#else
+		int current_index = index;
+		int token = 0;
+		while (pData[current_index] != ';') {
+			current_index++;
+			if (pData[current_index] == ' ')
+				token = current_index;
+		}
+		char cNumVerts[10];
+		cNumVerts[7] = '\0';
+		memcpy(cNumVerts, &pData[token + 1], current_index - token);
+		NumTexcoords = static_cast<xDWORD>(atof(cNumVerts));
+		current_index++;
+
+#if USE_VECTOR_RESERVE_AND_PUSH
+		pGeometry->TexCoordinates[pGeometry->NumChannelsTexCoords].reserve(NumTexcoords);
+#elif USE_VECTOR_ARRAY_MODE
+		pGeometry->TexCoordinates[pGeometry->NumChannelsTexCoords] = std::vector<XVECTOR2>(NumTexcoords);
+#endif
+
+		char cVertComponent[15];
+		cVertComponent[14] = '\0';
+		int cont = 0;
+		for (unsigned int i = 0; i < NumTexcoords; i++) {
+			cont = 0;
+			while (pData[current_index] != ',') {
+
+				if (pData[current_index] == ' ')
+					token = current_index;
+
+				if (pData[current_index] == ';') {
+					memcpy(cVertComponent, &pData[token + 1], current_index - token);
+					pGeometry->TexCoordinates[pGeometry->NumChannelsTexCoords][i].v[cont++] = static_cast<float>(atof(cVertComponent));
+					token = current_index;
+					if (cont == 3)
+						break;
+				}
+				current_index++;
+			}
+			current_index++;
+		}
+
+#if DEBUG_TEXCOORDS
+		for (unsigned int i = 0; i < NumTexcoords; i++) {
+			LogPrintDebug("[%f;%f;,]", pGeometry->TexCoordinates[pGeometry->NumChannelsTexCoords][i].x, pGeometry->TexCoordinates[pGeometry->NumChannelsTexCoords][i].y);
+		}
+#endif
+		index = current_index;
+
+		advance_to_next_close_brace();
+#endif
 	}
 
 	void XDataBase::ProcessDeclDataBlock(xF::xMeshGeometry *pGeometry) {

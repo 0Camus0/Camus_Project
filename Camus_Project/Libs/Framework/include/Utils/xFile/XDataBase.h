@@ -4,13 +4,19 @@
 
 #define DEBUG_COUTS 1
 #define DEBUG_MATRICES 0
+#define DEBUG_VERTICES 0
+#define DEBUG_INDICES 0
+#define DEBUG_NORMALS 0
+#define DEBUG_TEXCOORDS 0
+#define DEBUG_GET_TEMPLATE 1
+
 
 #define PROFILE_MATRICES 1
 
 #define USE_VECTOR_RESERVE_AND_PUSH 0
 #define USE_VECTOR_ARRAY_MODE 1
 
-#define USE_STRING_STREAM 1
+#define USE_STRING_STREAM 0
 
 
 #include <Utils/xFile/xDefs.h>
