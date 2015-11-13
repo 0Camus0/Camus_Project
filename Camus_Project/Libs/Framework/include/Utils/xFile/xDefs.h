@@ -259,7 +259,11 @@ namespace xF {
 		STDRGBAColor(const float vr, const float vg, const float vb, const float v_a)
 			: r(vr), g(vg), b(vg), a(v_a){	}
 
-		xFLOAT r, g, b, a;
+		union {
+			xFLOAT v[4];
+			struct { xFLOAT r, g, b, a; };
+		};
+	
 	};
 
 	struct xEffectDefault {

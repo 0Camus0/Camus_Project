@@ -583,11 +583,9 @@ namespace xF {
 
 				case xF::STD_X_MATERIALS_LIST: {
 #if	DEBUG_COUTS
-					std::cout << "Found Mesh material list: " << rets << std::endl;
+					LogPrintDebug("Found MeshMaterialList [%s]", rets.c_str());
 #endif
-					system("pause");
 					ProcessMaterialBlock(&tmp);
-					//	GetNextEndBracket();
 				}break;
 				}
 			}
@@ -1037,6 +1035,7 @@ namespace xF {
 
 	void XDataBase::ProcessMaterialBlock(xF::xMeshGeometry *pGeometry) {
 		PROFILING_SCOPE("ProcessMaterialBlock")
+#if USE_STRING_STREAM
 		xDWORD	NumMaterials = 0;
 		xDWORD	NumFaceIndices = 0;
 
@@ -1097,10 +1096,92 @@ namespace xF {
 				}
 			}
 		}
+#else
+		xDWORD	NumMaterials = 0;
+		xDWORD	NumFaceIndices = 0;
+		int current_index = index;
+		int token = 0;
+		while (pData[current_index] != ';') {
+			current_index++;
+			if (pData[current_index] == ' ')
+				token = current_index;
+		}
+		char cInteger[8];
+		cInteger[7] = '\0';
+		memcpy(cInteger, &pData[token + 1], current_index - token);
+		NumMaterials = static_cast<xDWORD>(atoi(cInteger));
+		current_index++;
+
+		while (pData[current_index] != ';') {
+			current_index++;
+			if (pData[current_index] == ' ')
+				token = current_index;
+		}
+
+		memcpy(cInteger, &pData[token + 1], current_index - token);
+		NumFaceIndices = static_cast<xDWORD>(atoi(cInteger));
+
+		pGeometry->MaterialList.Materials = std::vector<xMaterial>(NumMaterials);
+		pGeometry->MaterialList.FaceIndices = std::vector<xDWORD>(NumFaceIndices);
+
+		current_index++;
+
+		int counter = 0;
+		while (pData[current_index] != ';') {
+			current_index++;
+
+			if (pData[current_index] == ' ' ) {
+				token = current_index;
+			}
+
+			if (pData[current_index] == ',' || pData[current_index] == ';') {
+				memcpy(cInteger, &pData[token + 1], current_index - token);
+				pGeometry->MaterialList.FaceIndices[counter++] = static_cast<xDWORD>(atoi(cInteger));
+			}
+
+		}
+		current_index++;
+
+		index = current_index;
+#if DEBUG_MATERIAL_INDICES
+		LogPrintDebug("Num materials [%d] Num faceindices [%d]", NumMaterials,NumFaceIndices);
+
+		for (std::size_t i = 0; i < pGeometry->MaterialList.FaceIndices.size(); i++) {
+			LogPrintDebug("Index [%d] value [%d]", i, pGeometry->MaterialList.FaceIndices[i]);
+		}
+#endif
+
+		while (pData[index] != '}') {
+			advance_to_next_open_brace(); {
+				std::string rets;
+				unsigned int Ret = GetxTemplateTypeChar(rets);
+				switch (Ret) {
+				case xF::STD_X_MATERIAL: {
+#if DEBUG_COUTS
+					LogPrintDebug("Found Material [%s] Material Index: [%d]", rets.c_str(), pGeometry->MaterialList.NumMatProcess);
+#endif
+					pGeometry->MaterialList.Materials[pGeometry->MaterialList.NumMatProcess].Name = rets;
+					ProcessMaterial(&pGeometry->MaterialList.Materials[pGeometry->MaterialList.NumMatProcess]);
+					pGeometry->MaterialList.NumMatProcess++;
+				}break;
+
+				case xF::STD_X_REF: {
+#if DEBUG_COUTS
+					LogPrintDebug("Found Reference [%s]", rets.c_str());
+#endif
+					
+				}break;
+				}
+			}
+		}
+		
+
+#endif
 	}
 
 	void XDataBase::ProcessMaterial(xMaterial* out) {
 		PROFILING_SCOPE("ProcessMaterial")
+#if USE_STRING_STREAM
 		m_ActualStream >> out->FaceColor.r >> c_temp >> out->FaceColor.g >> c_temp >> out->FaceColor.b >> c_temp >> out->FaceColor.a >> c_temp >> c_temp;
 
 		m_ActualStream >> out->Power >> c_temp;
@@ -1134,7 +1215,80 @@ namespace xF {
 				}
 			}
 		}
+#else
+		int current_index = index;
+		int token = 0;
+		int colo_count = 0;
+		int bracket_count = 0;
+		char cFloat[11];
+		cFloat[10] = '\0';
+		while (bracket_count<5) {
+			current_index++;
+			if (pData[current_index] == ' ')
+				token = current_index;
 
+			if (pData[current_index] == ';') {
+				memcpy(cFloat, &pData[token + 1], current_index - token);
+				out->FaceColor.v[colo_count++] = static_cast<float>(atof(cFloat));
+				token = current_index;
+				bracket_count++;
+			}
+		}
+
+		current_index++;
+
+		while (pData[current_index] != ';') {
+			current_index++;
+			if (pData[current_index] == ' ')
+				token = current_index;
+		}
+	
+		memcpy(cFloat, &pData[token + 1], current_index - token);
+		out->Power = static_cast<float>(atof(cFloat));
+	
+		current_index++;
+		colo_count = 0;
+		bracket_count = 0;
+		while (bracket_count < 4) {
+			current_index++;
+			if (pData[current_index] == ' ')
+				token = current_index;
+
+			if (pData[current_index] == ';') {
+				memcpy(cFloat, &pData[token + 1], current_index - token);
+				out->Specular.v[colo_count++] = static_cast<float>(atof(cFloat));
+				token = current_index;
+				bracket_count++;
+			}
+		}
+		out->Specular.a = 1.0f;
+
+		current_index++;
+		colo_count = 0;
+		bracket_count = 0;
+		while (bracket_count < 4) {
+			current_index++;
+			if (pData[current_index] == ' ')
+				token = current_index;
+
+			if (pData[current_index] == ';') {
+				memcpy(cFloat, &pData[token + 1], current_index - token);
+				out->Emissive.v[colo_count++] = static_cast<float>(atof(cFloat));
+				token = current_index;
+				bracket_count++;
+			}
+		}
+		out->Emissive.a = 1.0f;
+#if DEBUG_MATERIAL_COLORS
+		LogPrintDebug("Color [%f]  [%f]  [%f]  [%f]", out->FaceColor.r, out->FaceColor.g, out->FaceColor.b, out->FaceColor.a);
+		LogPrintDebug("Spec Power [%f] ", out->Power);
+		LogPrintDebug("Spec Color [%f]  [%f]  [%f]  [%f]", out->Specular.r, out->Specular.g, out->Specular.b, out->Specular.a);
+		LogPrintDebug("Emissive Color [%f]  [%f]  [%f]  [%f]", out->Emissive.r, out->Emissive.g, out->Emissive.b, out->Emissive.a);
+#endif
+
+
+		PrintNextCharsAndPause();
+#endif
 	}
 
 	void XDataBase::ProcessEffectInstance(xF::xEffectInstance *out) {
