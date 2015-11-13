@@ -5,44 +5,54 @@
 
 
 const char* xTemplatesc_Str[] = {
-	"template ",
-	"KeyValuePair ",
-	"Frame ",
-	"FrameTransformMatrix ",
-	"ObjectMatrixComment ",
-	"Mesh ",
-	"MeshNormals ",
-	"MeshTextureCoords ",
-	"DeclData ",
-	"XSkinMeshHeader ",
-	"SkinWeights ",
-	"MeshMaterialList ",
-	"Material ",
-	"EffectInstance ",
-	"EffectParamDWord ",
-	"EffectParamFloats ",
-	"EffectParamString ",
-	"TextureFilename ",
-	"AnimTicksPerSecond ",
-	"AnimationSet ",
-	"Animation ",
-	"AnimationKey ",
-	"AnimationOptions "
+	"template",
+	"KeyValuePair",
+	"Frame",
+	"FrameTransformMatrix",
+	"ObjectMatrixComment",
+	"Mesh",
+	"MeshNormals",
+	"MeshTextureCoords",
+	"DeclData",
+	"XSkinMeshHeader",
+	"SkinWeights",
+	"MeshMaterialList",
+	"Material",
+	"EffectInstance",
+	"EffectParamDWord",
+	"EffectParamFloats",
+	"EffectParamString",
+	"TextureFilename",
+	"AnimTicksPerSecond",
+	"AnimationSet",
+	"Animation",
+	"AnimationKey",
+	"AnimationOptions"
 	};
 
 namespace xF {
 #if !USE_STRING_STREAM
 	void		XDataBase::advance_to_next_open_brace() {
-		do{
+		while (pData[index] != '{'){
 			index++;
-		}while (pData[index] != '{');
+		}
+	}
+
+	bool XDataBase::is_different_from_open_brace() {
+		static char current;
+		current = pData[index];
+		return !(pData[index] != '{');
 	}
 
 	void XDataBase::advance_to_next_close_brace() {
-		do {
+		while (pData[index] != '}') {
+			index++;
+		}
+		
+		/*do {
 			index++;
 		} while (pData[index] != '}');
-		index++;
+		index++;*/
 	}
 #endif
 
@@ -106,6 +116,70 @@ namespace xF {
 		PROFILING_SCOPE("GetTemplateType");
 
 		unsigned int current_index = index;
+		
+		unsigned int first_letter_space = 0;
+		unsigned int size_word_1 = 0;
+		unsigned int index_init = index;
+		char cWord_A[32];
+		char cWord_B[32];
+
+	
+
+		while (pData[current_index] != '{') {
+			current_index++;
+		}
+		current_index--;
+
+		while (pData[current_index] == ' ') {
+			first_letter_space = current_index;
+			current_index--;
+		}
+
+		while (pData[current_index] != ' ' && pData[current_index] != '\n') {
+			current_index--;
+		}
+
+		size_word_1 = first_letter_space - current_index;
+		memcpy(cWord_A, &pData[current_index + 1], size_word_1);
+		cWord_A[size_word_1 - 1] = '\0';
+
+		while (pData[current_index] == ' ') {
+			first_letter_space = current_index;
+			current_index--;
+		}
+
+		if (pData[current_index] == '\n') {
+			for (unsigned int i = 0; i < STD_X_REF; i++) {
+				if (strcmp(cWord_A, xTemplatesc_Str[i]) == 0) {
+					retName = cWord_A;
+					return i;
+				}
+			}
+			return STD_NOT;
+		}
+
+		while (pData[current_index] != ' ' && pData[current_index] != '\n') {
+			current_index--;
+		}
+
+			
+		size_word_1 = first_letter_space - current_index;
+		memcpy(cWord_B, &pData[current_index + 1], size_word_1);
+		cWord_B[size_word_1 - 1] = '\0';
+
+		for (unsigned int i = 0; i < STD_X_REF; i++) {
+			if (strcmp(cWord_B, xTemplatesc_Str[i]) == 0) {
+				retName = cWord_A;
+				return i;
+			}
+		}
+	
+		index = index_init;
+		
+		return STD_NOT;
+	
+/*
+		unsigned int current_index = index;
 		unsigned int ret = STD_NOT;
 		while (pData[current_index] != '\n') {
 			current_index--;
@@ -146,17 +220,7 @@ namespace xF {
 	
 
 		return ret;
-		/*
-		while (pData[current_index] != ' ') {
-   current_index--;
-  }
-  while (pData[current_index] == ' ') {
-   current_index--;
-  }
-  while (pData[current_index] != ' ') {
-   current_index--;
-  }
-		*/
+*/
 
 	}
 #endif
@@ -208,9 +272,12 @@ namespace xF {
 			
 #else
 		while(pData[index]!='\0'){
-		advance_to_next_open_brace();{
+#if !USE_STRING_STREAM
+			index++;
+#endif
+		 if(is_different_from_open_brace()){ 
 			std::string rets;
-			unsigned int Ret = GetxTemplateTypeChar(rets);
+			unsigned int Ret = GetxTemplateTypeChar(rets); 
 #endif
 			switch (Ret) {
 			
@@ -238,13 +305,9 @@ namespace xF {
 #endif
 					ProcessAnimationSet(&m_pActualMesh->Animation, rets);
 				}break;
-#if !USE_STRING_STREAM
-				default: {
-					advance_to_next_close_brace();
-				}break;
-#endif
 				}//switch			
 			}//if
+
 		}
 
 
@@ -300,7 +363,8 @@ namespace xF {
 				unsigned short Ret = GetxTemplateType(Line, &rets);
 #else
 		while(pData[index]!='}'){
-				advance_to_next_open_brace(); {
+				index++;
+				if(is_different_from_open_brace()){
 				std::string rets;
 				unsigned int Ret = GetxTemplateTypeChar(rets);
 #endif
@@ -364,8 +428,6 @@ namespace xF {
 
 
 			}
-
-
 		}
 
 		if (m_Stack.size() > 0)
@@ -533,7 +595,7 @@ namespace xF {
 				unsigned int Ret = GetxTemplateType(Line, &rets);
 #else
 		while (pData[index] != '}') {
-			advance_to_next_open_brace(); {
+			if (is_different_from_open_brace()) {
 				std::string rets;
 				unsigned int Ret = GetxTemplateTypeChar(rets);
 #endif
@@ -589,7 +651,7 @@ namespace xF {
 				}break;
 				}
 			}
-
+			index++;
 		}
 
 		m_pActualMesh->Geometry.push_back(tmp);
@@ -1152,7 +1214,7 @@ namespace xF {
 #endif
 
 		while (pData[index] != '}') {
-			advance_to_next_open_brace(); {
+			if (is_different_from_open_brace()) {
 				std::string rets;
 				unsigned int Ret = GetxTemplateTypeChar(rets);
 				switch (Ret) {
@@ -1173,6 +1235,7 @@ namespace xF {
 				}break;
 				}
 			}
+			index++;
 		}
 		
 
@@ -1288,7 +1351,7 @@ namespace xF {
 		index = current_index;
 
 		while (pData[index] != '}') {
-			advance_to_next_open_brace(); {
+			if (is_different_from_open_brace()) {
 				std::string rets;
 				unsigned int Ret = GetxTemplateTypeChar(rets);
 				switch (Ret) {
@@ -1308,6 +1371,7 @@ namespace xF {
 					}break;
 				}
 			}
+			index++;
 		}
 
 
@@ -1421,7 +1485,7 @@ namespace xF {
 		out->NumProcess = 0;
 
 		while (pData[index] != '}') {
-			advance_to_next_open_brace(); {
+			if (is_different_from_open_brace()) {
 				std::string rets;
 				unsigned int Ret = GetxTemplateTypeChar(rets);
 				switch (Ret) {
@@ -1454,6 +1518,7 @@ namespace xF {
 					}break;
 				}
 			}
+			index++;
 		}
 					
 		

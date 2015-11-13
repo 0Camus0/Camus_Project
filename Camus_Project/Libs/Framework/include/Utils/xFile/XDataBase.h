@@ -90,7 +90,8 @@ namespace xF {
 		void		ProcessEffectDwords(xF::xEffectDefault *out);
 
 #if !USE_STRING_STREAM
-		void			advance_to_next_open_brace();
+		void 			advance_to_next_open_brace();
+		bool			is_different_from_open_brace();
 		void			advance_to_next_close_brace();
 		unsigned int	GetxTemplateTypeChar(std::string &retName);
 
