@@ -8,6 +8,7 @@
 #define DEBUG_INDICES 0
 #define DEBUG_NORMALS 0
 #define DEBUG_TEXCOORDS 0
+#define DEBUG_WEIGHTS 1
 #define DEBUG_GET_TEMPLATE 1
 
 
@@ -85,6 +86,8 @@ namespace xF {
 		void			advance_to_next_open_brace();
 		void			advance_to_next_close_brace();
 		unsigned int	GetxTemplateTypeChar(std::string &retName);
+
+		void		PrintNextCharsAndPause();
 #endif
 
 		std::stringstream		 m_ActualStream;

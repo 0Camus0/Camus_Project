@@ -575,11 +575,10 @@ namespace xF {
 
 				case xF::STD_X_SKIN_WEIGHTS: {
 #if	DEBUG_COUTS
-					std::cout << "Found Mesh skin weight: " << rets << std::endl;
+					LogPrintDebug("Found SkinWeights [%s]", rets.c_str());
 #endif
-					system("pause");
+			
 					ProcessSkinWeights(&tmp);
-					//	GetNextEndBracket();
 				}break;
 
 				case xF::STD_X_MATERIALS_LIST: {
@@ -795,7 +794,7 @@ namespace xF {
 			pGeometry->VertexAttributes |= xF::xMeshGeometry::HAS_SKININDEXES0;
 			pGeometry->VertexAttributes |= xF::xMeshGeometry::HAS_SKINWEIGHTS0;
 		}
-		else if (pGeometry->Info.SkinMeshHeader.MaxNumWeightPerVertex == 4) {
+		else if (pGeometry->Info.SkinMeshHeader.MaxNumWeightPerVertex == 8) {
 			pGeometry->VertexAttributes |= xF::xMeshGeometry::HAS_SKININDEXES0;
 			pGeometry->VertexAttributes |= xF::xMeshGeometry::HAS_SKINWEIGHTS0;
 			pGeometry->VertexAttributes |= xF::xMeshGeometry::HAS_SKININDEXES1;
@@ -815,15 +814,76 @@ namespace xF {
 
 		GetNextEndBracket();
 #else
-		std::string pstr = std::string(&pData[index], 5);
-		LogPrintDebug("actual [%s]", pstr.c_str());
 
-		system("pause");
+		int current_index = index;
+		int token = 0;
+		while (pData[current_index] != ';') {
+			current_index++;
+			if (pData[current_index] == ' ')
+				token = current_index;
+		}
+		char cInteger[6];
+		cInteger[5] = '\0';
+		memcpy(cInteger, &pData[token + 1], current_index - token);
+		pGeometry->Info.SkinMeshHeader.MaxNumWeightPerVertex = static_cast<xWORD>(atoi(cInteger));
+		
+		current_index++;
+
+		while (pData[current_index] != ';') {
+			current_index++;
+			if (pData[current_index] == ' ')
+				token = current_index;
+		}
+
+		memcpy(cInteger, &pData[token + 1], current_index - token);
+		pGeometry->Info.SkinMeshHeader.MaxNumWeightPerFace = static_cast<xWORD>(atoi(cInteger));
+
+		current_index++;
+
+		while (pData[current_index] != ';') {
+			current_index++;
+			if (pData[current_index] == ' ')
+				token = current_index;
+		}
+
+		memcpy(cInteger, &pData[token + 1], current_index - token);
+		pGeometry->Info.SkinMeshHeader.NumBones = static_cast<xWORD>(atoi(cInteger));
+
+#if DEBUG_COUTS
+		LogPrintDebug("MaxNumWeightPerVertex[%d] MaxNumWeightPerFace[%d] NumBones[%d]", pGeometry->Info.SkinMeshHeader.MaxNumWeightPerVertex, pGeometry->Info.SkinMeshHeader.MaxNumWeightPerFace, pGeometry->Info.SkinMeshHeader.NumBones);
+#endif
+		if (pGeometry->Info.SkinMeshHeader.MaxNumWeightPerVertex == 4) {
+			pGeometry->VertexAttributes |= xF::xMeshGeometry::HAS_SKININDEXES0;
+			pGeometry->VertexAttributes |= xF::xMeshGeometry::HAS_SKINWEIGHTS0;
+		}
+		else if (pGeometry->Info.SkinMeshHeader.MaxNumWeightPerVertex == 8) {
+			pGeometry->VertexAttributes |= xF::xMeshGeometry::HAS_SKININDEXES0;
+			pGeometry->VertexAttributes |= xF::xMeshGeometry::HAS_SKINWEIGHTS0;
+			pGeometry->VertexAttributes |= xF::xMeshGeometry::HAS_SKININDEXES1;
+			pGeometry->VertexAttributes |= xF::xMeshGeometry::HAS_SKINWEIGHTS1;
+		}
+#if USE_VECTOR_RESERVE_AND_PUSH	
+		pGeometry->Info.SkinWeights.reserve(pGeometry->Info.SkinMeshHeader.NumBones);
+		for (std::size_t i = 0; i < pGeometry->Info.SkinMeshHeader.NumBones; i++) {
+			xSkinWeights tmp;
+			pGeometry->Info.SkinWeights.push_back(tmp);
+		}
+#elif USE_VECTOR_ARRAY_MODE
+		pGeometry->Info.SkinWeights = std::vector<xSkinWeights>(pGeometry->Info.SkinMeshHeader.NumBones);
+#endif
+
+		pGeometry->Info.SkinMeshHeader.NumBonesProcess = 0;
+
+		index = current_index;
+
+		advance_to_next_close_brace();
+	
 #endif
 	}
 
 	void  XDataBase::ProcessSkinWeights(xF::xMeshGeometry* pGeometry) {
 		PROFILING_SCOPE("ProcessSkinWeights")
+#if USE_STRING_STREAM
 		xF::xSkinWeights	*pSkin = &pGeometry->Info.SkinWeights[pGeometry->Info.SkinMeshHeader.NumBonesProcess];
 
 		m_ActualStream >> c_temp >> pSkin->NodeName;
@@ -867,6 +927,112 @@ namespace xF {
 		pGeometry->Info.SkinMeshHeader.NumBonesProcess++;
 
 		GetNextEndBracket();
+#else
+		xF::xSkinWeights	*pSkin = &pGeometry->Info.SkinWeights[pGeometry->Info.SkinMeshHeader.NumBonesProcess];
+
+		int current_index = index;
+		int token = 0;
+		while (pData[current_index] != ';') {
+			current_index++;
+			if (pData[current_index] == '"' && token==0)
+				token = current_index;
+		}
+		token++;
+		pSkin->NodeName = std::string(&pData[token], (current_index-1) - token);
+		current_index++;
+
+		while (pData[current_index] != ';') {
+			current_index++;
+			if (pData[current_index] == ' ')
+				token = current_index;
+		}
+
+		char cInteger[10];
+		cInteger[9] = '\0';
+		memcpy(cInteger, &pData[token + 1], current_index - token);
+		xDWORD	NumWeights = static_cast<xDWORD>(atoi(cInteger));
+		
+		current_index++;
+
+#if USE_VECTOR_RESERVE_AND_PUSH
+		pSkin->VertexIndices.reserve(NumWeights);
+		pSkin->Weights.reserve(NumWeights);
+#elif USE_VECTOR_ARRAY_MODE
+		pSkin->VertexIndices = std::vector<xDWORD>(NumWeights);
+		pSkin->Weights = std::vector<xFLOAT>(NumWeights);
+#endif
+		token = 0;
+		int counter = 0;
+		while (pData[current_index] != ';') {
+			current_index++;
+			if (pData[current_index] == ' ')
+				token = current_index;
+
+			if (pData[current_index] == ',' || pData[current_index] == ';') {
+				memcpy(cInteger, &pData[token + 1], current_index - token);
+				pSkin->VertexIndices[counter++] = static_cast<xDWORD>(atoi(cInteger));
+			}
+		}
+		
+		current_index++;
+		counter = 0;
+		char cFloat[12];
+		cFloat[11] = '\0';
+		while (pData[current_index] != ';') {
+			current_index++;
+			if (pData[current_index] == ' ')
+				token = current_index;
+
+			if (pData[current_index] == ',' || pData[current_index] == ';') {
+				memcpy(cFloat, &pData[token + 1], current_index - token);
+				pSkin->Weights[counter++] = static_cast<float>(atof(cFloat));
+			}
+		}
+
+		current_index++;
+		counter = 0;
+		while (pData[current_index] != ';') {
+			current_index++;
+			if (pData[current_index] == ' ')
+				token = current_index;
+
+			if (pData[current_index] == ',' || pData[current_index] == ';') {
+				memcpy(cFloat, &pData[token + 1], current_index - token);
+				pSkin->MatrixOffset.mat[counter++] = static_cast<float>(atof(cFloat));
+				token = current_index;
+				if(counter==16)
+					break;
+			}
+		}
+
+#if DEBUG_WEIGHTS
+		LogPrintDebug("Node Name:[%s] Num Weights [%d]", pSkin->NodeName.c_str(), NumWeights);
+
+		for (std::size_t i = 0; i < pSkin->VertexIndices.size(); i++) {
+			LogPrintDebug("Index [%d] value [%d]", i, pSkin->VertexIndices[i] );
+		}
+
+		for (std::size_t i = 0; i < pSkin->Weights.size(); i++) {
+			LogPrintDebug("Weight [%d] value [%f]", i, pSkin->Weights[i]);
+		}
+
+		for (std::size_t i = 0; i < 16; i++) {
+			LogPrintDebug("Mat element [%d] value [%f]", i, pSkin->MatrixOffset.mat[i]);
+		}
+#endif
+
+		index = current_index;
+
+		advance_to_next_close_brace();
+	
+
+#endif
+	}
+
+	void XDataBase::PrintNextCharsAndPause() {
+		std::string str_ = std::string(&pData[index], 25);
+		LogPrintDebug("NEXT[%s]", str_.c_str());
+		system("pause");
 	}
 
 	void XDataBase::ProcessMaterialBlock(xF::xMeshGeometry *pGeometry) {
