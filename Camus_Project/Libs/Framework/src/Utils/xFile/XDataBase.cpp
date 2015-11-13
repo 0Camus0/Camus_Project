@@ -1285,6 +1285,30 @@ namespace xF {
 		LogPrintDebug("Spec Color [%f]  [%f]  [%f]  [%f]", out->Specular.r, out->Specular.g, out->Specular.b, out->Specular.a);
 		LogPrintDebug("Emissive Color [%f]  [%f]  [%f]  [%f]", out->Emissive.r, out->Emissive.g, out->Emissive.b, out->Emissive.a);
 #endif
+		index = current_index;
+
+		while (pData[index] != '}') {
+			advance_to_next_open_brace(); {
+				std::string rets;
+				unsigned int Ret = GetxTemplateTypeChar(rets);
+				switch (Ret) {
+					case xF::STD_X_EFFECT_INSTANCE: {
+	#if DEBUG_COUTS
+						LogPrintDebug("Found EffectInstance [%s]", rets.c_str());
+	#endif
+						out->bEffects = true;
+						ProcessEffectInstance(&out->EffectInstance);
+					}break;
+
+					case xF::STD_X_TEXTURE: {
+	#if DEBUG_COUTS
+						LogPrintDebug("Found Texture [%s]", rets.c_str());
+	#endif
+						advance_to_next_close_brace();
+					}break;
+				}
+			}
+		}
 
 
 		PrintNextCharsAndPause();
@@ -1293,7 +1317,7 @@ namespace xF {
 
 	void XDataBase::ProcessEffectInstance(xF::xEffectInstance *out) {
 		PROFILING_SCOPE("ProcessEffectInstance")
-
+#if USE_STRING_STREAM
 		m_ActualStream >> c_temp >> out->ShaderFileName;
 
 		out->ShaderFileName = out->ShaderFileName.substr(0, out->ShaderFileName.size() - 2);
@@ -1359,7 +1383,9 @@ namespace xF {
 				}
 			}
 		}
+#else
 
+#endif
 	}
 
 
