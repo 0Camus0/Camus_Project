@@ -38,21 +38,24 @@ namespace xF {
 		}
 	}
 
-	bool XDataBase::is_different_from_open_brace() {
-		static char current;
-		current = pData[index];
-		return !(pData[index] != '{');
+	void XDataBase::advance_to_next_space() {
+		while (pData[index] != '\n') {
+			index++;
+		}
 	}
 
 	void XDataBase::advance_to_next_close_brace() {
-		while (pData[index] != '}') {
+		while (pData[index] != '}'){
 			index++;
 		}
-		
-		/*do {
-			index++;
-		} while (pData[index] != '}');
-		index++;*/
+	}
+
+	void XDataBase::push() {
+		level++;
+	}
+
+	void XDataBase::pop() {
+		level--;
 	}
 #endif
 
@@ -87,6 +90,7 @@ namespace xF {
 		m_ActualStream.seekg(0, std::ios::beg);		
 #endif
 		index = 0;
+		level = 0;
 		Parse(Path);
 
 		delete [] pData;
@@ -113,7 +117,7 @@ namespace xF {
 	}
 #if !USE_STRING_STREAM
 	unsigned int	XDataBase::GetxTemplateTypeChar(std::string &retName) {
-		PROFILING_SCOPE("GetTemplateType");
+	//	PROFILING_SCOPE("GetTemplateType");
 
 		unsigned int current_index = index;
 		
@@ -123,11 +127,11 @@ namespace xF {
 		char cWord_A[32];
 		char cWord_B[32];
 
-	
-
+		/*
 		while (pData[current_index] != '{') {
 			current_index++;
 		}
+		*/
 		current_index--;
 
 		while (pData[current_index] == ' ') {
@@ -150,11 +154,28 @@ namespace xF {
 
 		if (pData[current_index] == '\n') {
 			for (unsigned int i = 0; i < STD_X_REF; i++) {
-				if (strcmp(cWord_A, xTemplatesc_Str[i]) == 0) {
+				if (strstr(xTemplatesc_Str[i],cWord_A) != 0) {
+
+					if(strcmp(xTemplatesc_Str[i], cWord_A)!=0)
+						continue;
+
 					retName = cWord_A;
+#if DEBUG_GET_BRACE
+					LogPrintDebug("One Word Found [%s]", cWord_A);
+#endif
+					index = index_init;
+					advance_to_next_space();
+
 					return i;
 				}
 			}
+
+#if DEBUG_GET_BRACE
+			LogPrintWarning("One Word NOT Found [%s]", cWord_A);
+#endif
+
+			index = index_init;
+			advance_to_next_space();
 			return STD_NOT;
 		}
 
@@ -168,14 +189,25 @@ namespace xF {
 		cWord_B[size_word_1 - 1] = '\0';
 
 		for (unsigned int i = 0; i < STD_X_REF; i++) {
-			if (strcmp(cWord_B, xTemplatesc_Str[i]) == 0) {
+			if (strstr(xTemplatesc_Str[i], cWord_B) != 0) {
 				retName = cWord_A;
+
+				if (strcmp(xTemplatesc_Str[i], cWord_B) != 0)
+					continue;
+#if DEBUG_GET_BRACE
+				LogPrintDebug("Two Words Found [%s] [%s]",cWord_B, cWord_A);
+#endif
+				index = index_init;
+				advance_to_next_space();
 				return i;
 			}
 		}
 	
+#if DEBUG_GET_BRACE
+		LogPrintWarning("Two Words NOT Found [%s] [%s]", cWord_B, cWord_A);
+#endif
 		index = index_init;
-		
+		advance_to_next_space();
 		return STD_NOT;
 	
 /*
@@ -271,11 +303,10 @@ namespace xF {
 			unsigned short Ret = GetxTemplateType(Line, &rets);
 			
 #else
+		int current_level = level;
 		while(pData[index]!='\0'){
-#if !USE_STRING_STREAM
-			index++;
-#endif
-		 if(is_different_from_open_brace()){ 
+
+			advance_to_next_open_brace();
 			std::string rets;
 			unsigned int Ret = GetxTemplateTypeChar(rets); 
 #endif
@@ -289,6 +320,7 @@ namespace xF {
 					tmp.Name = rets;
 					tmp.Dad = 0;
 					m_pActualMesh->Skeleton.Bones.push_back(tmp);
+
 					ProcessFrameBlock(rets);
 				}break;
 
@@ -305,10 +337,15 @@ namespace xF {
 #endif
 					ProcessAnimationSet(&m_pActualMesh->Animation, rets);
 				}break;
-				}//switch			
-			}//if
 
-		}
+				default: {
+					advance_to_next_close_brace();
+				}break;
+
+				
+			}//switch			
+	
+	}
 
 
 		for (unsigned int i = 0; i < m_pActualMesh->Skeleton.Bones.size(); i++) {
@@ -351,6 +388,7 @@ namespace xF {
 
 	void XDataBase::ProcessFrameBlock(std::string &actual) {
 		PROFILING_SCOPE("ProcessFrameBlock")
+		push();
 
 		m_Stack.push(actual);
 
@@ -362,73 +400,90 @@ namespace xF {
 				std::string rets;
 				unsigned short Ret = GetxTemplateType(Line, &rets);
 #else
-		while(pData[index]!='}'){
-				index++;
-				if(is_different_from_open_brace()){
+		while (pData[index] != '\0') {
+				advance_to_next_open_brace();
 				std::string rets;
 				unsigned int Ret = GetxTemplateTypeChar(rets);
 #endif
-				switch (Ret)
-				{
-				case xF::STD_X_FRAME: {
+				switch (Ret){
+					case xF::STD_X_FRAME: {
 
-					xBone tmp;
-					tmp.Name = rets;
-					for (unsigned int i = 0; i < m_pActualMesh->Skeleton.Bones.size(); i++) {
-						if (m_pActualMesh->Skeleton.Bones[i].Name.compare(m_Stack.top()) == 0) {
-							tmp.Dad = i;
-							m_pActualMesh->Skeleton.Bones[i].Sons.push_back(m_pActualMesh->Skeleton.Bones.size());
-							//	m_pActualMesh->SkeletonAnimated.Bones[i].Sons.push_back(m_pActualMesh->SkeletonAnimated.Bones.size());
+	#if	DEBUG_COUTS
+						LogPrintDebug("Found inside Frame [%s]", rets.c_str());
+	#endif
 
-							break;
+						xBone tmp;
+						tmp.Name = rets;
+						for (unsigned int i = 0; i < m_pActualMesh->Skeleton.Bones.size(); i++) {
+							if (m_pActualMesh->Skeleton.Bones[i].Name.compare(m_Stack.top()) == 0) {
+								tmp.Dad = i;
+								m_pActualMesh->Skeleton.Bones[i].Sons.push_back(m_pActualMesh->Skeleton.Bones.size());
+								//	m_pActualMesh->SkeletonAnimated.Bones[i].Sons.push_back(m_pActualMesh->SkeletonAnimated.Bones.size());
+
+								break;
+							}
 						}
-					}
-					m_pActualMesh->Skeleton.Bones.push_back(tmp);
-					//	m_pActualMesh->SkeletonAnimated.Bones.push_back(tmp);
+						m_pActualMesh->Skeleton.Bones.push_back(tmp);
+						//	m_pActualMesh->SkeletonAnimated.Bones.push_back(tmp);
 
 
-					ProcessFrameBlock(rets);
+						ProcessFrameBlock(rets);
 
-				}break;
-				case xF::STD_X_MESH: {
-#if	DEBUG_COUTS
-					LogPrintDebug("Found x Mesh [%s]", rets.c_str());
-#endif
-					ProcessMeshBlock(rets);
+						advance_to_next_close_brace();
 
-				}break;
+					}break;
+					case xF::STD_X_MESH: {
+	#if	DEBUG_COUTS
+						LogPrintDebug("Found x Mesh [%s]", rets.c_str());
+	#endif
+						ProcessMeshBlock(rets);
 
-				case xF::STD_X_OBJ_CMMTX: {
-					//	ProcessMatrix(&m_pActualMesh->Skeleton.Bones.back().Bone);
-#if USE_STRING_STREAM
-					GetNextEndBracket();
-#else
-					advance_to_next_close_brace();
-#endif
+						advance_to_next_close_brace();
 
-				}break;
+					}break;
 
-				case xF::STD_X_FRAME_TRANSFORM_MTX: {
-					//	std::streampos PosStream = m_ActualStream.tellg();
-					ProcessMatrix(&m_pActualMesh->Skeleton.Bones.back().Bone);
-					//	m_ActualStream.seekg(PosStream);
-					//	ProcessMatrix(&m_pActualMesh->SkeletonAnimated.Bones.back().Bone);
+					case xF::STD_X_OBJ_CMMTX: {
+						//	ProcessMatrix(&m_pActualMesh->Skeleton.Bones.back().Bone);
+	#if	DEBUG_COUTS
+						LogPrintDebug("Found ObjectMatrixComment [%s]", rets.c_str());
+	#endif
 
-					//system("pause");
-#if USE_STRING_STREAM
-					GetNextEndBracket();
-#else
-					advance_to_next_close_brace();
-#endif
+	#if USE_STRING_STREAM
+						GetNextEndBracket();
+	#else
+						advance_to_next_close_brace();
+	#endif
 
-				}break;
+					}break;
 
+					case xF::STD_X_FRAME_TRANSFORM_MTX: {
+
+	#if	DEBUG_COUTS
+						LogPrintDebug("Found FrameTransformMatrix [%s]", rets.c_str());
+	#endif
+						//	std::streampos PosStream = m_ActualStream.tellg();
+						ProcessMatrix(&m_pActualMesh->Skeleton.Bones.back().Bone);
+						//	m_ActualStream.seekg(PosStream);
+						//	ProcessMatrix(&m_pActualMesh->SkeletonAnimated.Bones.back().Bone);
+
+						//system("pause");
+	#if USE_STRING_STREAM
+						GetNextEndBracket();
+	#else
+						advance_to_next_close_brace();
+	#endif
+
+					}break;
+
+					default: {
+						advance_to_next_close_brace();
+					}break;
+					
 				}
-
-
-
-			}
+			
 		}
+
+		pop();
 
 		if (m_Stack.size() > 0)
 			m_Stack.pop();
@@ -436,7 +491,7 @@ namespace xF {
 
 	void XDataBase::ProcessMeshBlock(std::string actual) {
 		PROFILING_SCOPE("ProcessMeshBlock")
-
+		push();
 		xF::xMeshGeometry	tmp;
 		tmp.Name = actual;
 		tmp.RelativeMatrix = m_pActualMesh->Skeleton.Bones.back().Bone;
@@ -594,81 +649,96 @@ namespace xF {
 				std::string rets;
 				unsigned int Ret = GetxTemplateType(Line, &rets);
 #else
-		while (pData[index] != '}') {
-			if (is_different_from_open_brace()) {
+		while (pData[index] != '\0') {
+				advance_to_next_open_brace();
 				std::string rets;
 				unsigned int Ret = GetxTemplateTypeChar(rets);
 #endif
-				switch (Ret)
-				{
-				case xF::STD_X_MESH_NORMALS: {
-#if	DEBUG_COUTS
-					LogPrintDebug("Found MeshNormals [%s]", rets.c_str());
-#endif
-					ProcessNormalsBlock(&tmp);
+				switch (Ret){
+					case xF::STD_X_MESH_NORMALS: {
+	#if	DEBUG_COUTS
+						LogPrintDebug("Found MeshNormals [%s]", rets.c_str());
+	#endif
+						ProcessNormalsBlock(&tmp);
 						
-				}break;
+						advance_to_next_close_brace();
+					}break;
 
-				case xF::STD_X_MESH_TEXCOORD: {
-#if	DEBUG_COUTS
-					LogPrintDebug("Found TextureCoords [%s]", rets.c_str());
-#endif
-					ProcessTexCoordinatesBlock(&tmp);
+					case xF::STD_X_MESH_TEXCOORD: {
+	#if	DEBUG_COUTS
+						LogPrintDebug("Found TextureCoords [%s]", rets.c_str());
+	#endif
+						ProcessTexCoordinatesBlock(&tmp);
 
-				}break;
+						advance_to_next_close_brace();
 
-				case xF::STD_X_DECLDATA: {
-#if	DEBUG_COUTS
-					std::cout << "Found Mesh decl data: " << std::endl;
-#endif
-					system("pause");
-					ProcessDeclDataBlock(&tmp);
-					//	GetNextEndBracket();
-				}break;
+					}break;
 
-				case xF::STD_X_SKIN_HEADER: {
-#if	DEBUG_COUTS
-					LogPrintDebug("Found SkinMeshHeader [%s]", rets.c_str());
-#endif
+					case xF::STD_X_DECLDATA: {
+	#if	DEBUG_COUTS
+						std::cout << "Found Mesh decl data: " << std::endl;
+	#endif
+						system("pause");
+						ProcessDeclDataBlock(&tmp);
 
-					ProcessSkinHeader(&tmp);
+						advance_to_next_close_brace();
+					}break;
 
-				}break;
+					case xF::STD_X_SKIN_HEADER: {
+	#if	DEBUG_COUTS
+						LogPrintDebug("Found SkinMeshHeader [%s]", rets.c_str());
+	#endif
 
-				case xF::STD_X_SKIN_WEIGHTS: {
-#if	DEBUG_COUTS
-					LogPrintDebug("Found SkinWeights [%s]", rets.c_str());
-#endif
+						ProcessSkinHeader(&tmp);
+
+						advance_to_next_close_brace();
+					}break;
+
+					case xF::STD_X_SKIN_WEIGHTS: {
+	#if	DEBUG_COUTS
+						LogPrintDebug("Found SkinWeights [%s]", rets.c_str());
+	#endif
 			
-					ProcessSkinWeights(&tmp);
-				}break;
+						ProcessSkinWeights(&tmp);
 
-				case xF::STD_X_MATERIALS_LIST: {
-#if	DEBUG_COUTS
-					LogPrintDebug("Found MeshMaterialList [%s]", rets.c_str());
-#endif
-					ProcessMaterialBlock(&tmp);
-				}break;
+						advance_to_next_close_brace();
+					}break;
+
+					case xF::STD_X_MATERIALS_LIST: {
+	#if	DEBUG_COUTS
+						LogPrintDebug("Found MeshMaterialList [%s]", rets.c_str());
+	#endif
+						ProcessMaterialBlock(&tmp);
+
+						advance_to_next_close_brace();
+					}break;
+
+					default: {
+						advance_to_next_close_brace();
+					}break;
 				}
-			}
-			index++;
+			
 		}
 
 		m_pActualMesh->Geometry.push_back(tmp);
+		pop();
 	}
 
 	void XDataBase::ProcessTicksPerSecond(xF::xAnimationInfo* pAnimation) {
 		PROFILING_SCOPE("ProcessTicksPerSecond")
+		push();
 		std::string Temp;
 		m_ActualStream >> Temp;
 		Temp = Temp.substr(0, Temp.size() - 1);
 		std::stringstream toInt(Temp);
 		toInt >> pAnimation->TicksPerSecond;
 		pAnimation->isAnimInfo = true;
+		pop();
 	}
 
 	void XDataBase::ProcessAnimationSet(xF::xAnimationInfo* pAnimation, const std::string name) {
 		PROFILING_SCOPE("ProcessAnimationSet")
+		push();
 		xF::xAnimationSet tmp;
 		pAnimation->Animations.push_back(tmp);
 		xF::xAnimationSet* pActualAnimationSet = &pAnimation->Animations.back();
@@ -691,10 +761,12 @@ namespace xF {
 			}
 		}
 
+		pop();
 	}
 
 	void XDataBase::ProcessAnimation(xF::xAnimationSet* out) {
 		PROFILING_SCOPE("ProcessAnimation")
+		push();
 		xF::xSTRING Line;
 		while ((Line.find("{") == -1) && (Line.find("}") == -1)) {
 			std::getline(m_ActualStream, Line);
@@ -752,11 +824,12 @@ namespace xF {
 				} // switch(GetTemplateType(Line,&rets)){
 			}
 		}
-
+		pop();
 	}
 
 	void XDataBase::ProcessAnimationKey_Rotation(xF::xAnimationBone* out) {
 		PROFILING_SCOPE("ProcessAnimationKey_Rotation")
+		push();
 		int size_vec = 0;
 		m_ActualStream >> size_vec >> c_temp;
 
@@ -783,11 +856,12 @@ namespace xF {
 		}
 
 		m_ActualStream >> c_temp;
-
+		pop();
 	}
 
 	void XDataBase::ProcessAnimationKey_Scale(xF::xAnimationBone* out) {
 		PROFILING_SCOPE("ProcessAnimationKey_Scale")
+		push();
 		int size_vec = 0;
 		m_ActualStream >> size_vec >> c_temp;
 #if USE_VECTOR_RESERVE_AND_PUSH	
@@ -812,10 +886,12 @@ namespace xF {
 		}
 
 		m_ActualStream >> c_temp;
+		pop();
 	}
 
 	void XDataBase::ProcessAnimationKey_Position(xF::xAnimationBone* out) {
 		PROFILING_SCOPE("ProcessAnimationKey_Position")
+		push();
 		int size_vec = 0;
 		m_ActualStream >> size_vec >> c_temp;
 #if USE_VECTOR_RESERVE_AND_PUSH	
@@ -841,10 +917,12 @@ namespace xF {
 		}
 
 		m_ActualStream >> c_temp;
+		pop();
 	}
 
 	void XDataBase::ProcessSkinHeader(xF::xMeshGeometry* pGeometry) {
 		PROFILING_SCOPE("ProcessSkinHeader")
+		push();
 #if USE_STRING_STREAM
 		m_ActualStream >> pGeometry->Info.SkinMeshHeader.MaxNumWeightPerVertex >> c_temp;
 		m_ActualStream >> pGeometry->Info.SkinMeshHeader.MaxNumWeightPerFace >> c_temp;
@@ -934,15 +1012,16 @@ namespace xF {
 
 		pGeometry->Info.SkinMeshHeader.NumBonesProcess = 0;
 
-		index = current_index;
-
-		advance_to_next_close_brace();
-	
+		index = current_index;	
 #endif
+
+		pop();
 	}
 
 	void  XDataBase::ProcessSkinWeights(xF::xMeshGeometry* pGeometry) {
 		PROFILING_SCOPE("ProcessSkinWeights")
+
+		push();
 #if USE_STRING_STREAM
 		xF::xSkinWeights	*pSkin = &pGeometry->Info.SkinWeights[pGeometry->Info.SkinMeshHeader.NumBonesProcess];
 
@@ -1083,9 +1162,7 @@ namespace xF {
 
 		index = current_index;
 
-		advance_to_next_close_brace();
-	
-
+		pop();
 #endif
 	}
 
@@ -1213,29 +1290,34 @@ namespace xF {
 		}
 #endif
 
-		while (pData[index] != '}') {
-			if (is_different_from_open_brace()) {
+		while (pData[index] != '\0') {
+				advance_to_next_open_brace();
 				std::string rets;
 				unsigned int Ret = GetxTemplateTypeChar(rets);
 				switch (Ret) {
-				case xF::STD_X_MATERIAL: {
-#if DEBUG_COUTS
-					LogPrintDebug("Found Material [%s] Material Index: [%d]", rets.c_str(), pGeometry->MaterialList.NumMatProcess);
-#endif
-					pGeometry->MaterialList.Materials[pGeometry->MaterialList.NumMatProcess].Name = rets;
-					ProcessMaterial(&pGeometry->MaterialList.Materials[pGeometry->MaterialList.NumMatProcess]);
-					pGeometry->MaterialList.NumMatProcess++;
-				}break;
+					case xF::STD_X_MATERIAL: {
+	#if DEBUG_COUTS
+						LogPrintDebug("Found Material [%s] Material Index: [%d]", rets.c_str(), pGeometry->MaterialList.NumMatProcess);
+	#endif
+						pGeometry->MaterialList.Materials[pGeometry->MaterialList.NumMatProcess].Name = rets;
+						ProcessMaterial(&pGeometry->MaterialList.Materials[pGeometry->MaterialList.NumMatProcess]);
+						pGeometry->MaterialList.NumMatProcess++;
+						advance_to_next_close_brace();
+					}break;
 
-				case xF::STD_X_REF: {
-#if DEBUG_COUTS
-					LogPrintDebug("Found Reference [%s]", rets.c_str());
-#endif
+					case xF::STD_X_REF: {
+	#if DEBUG_COUTS
+						LogPrintDebug("Found Reference [%s]", rets.c_str());
+	#endif
+						advance_to_next_close_brace();
 					
-				}break;
+					}break;
+
+					default: {
+						advance_to_next_close_brace();
+					}break;
 				}
-			}
-			index++;
+
 		}
 		
 
@@ -1350,8 +1432,8 @@ namespace xF {
 #endif
 		index = current_index;
 
-		while (pData[index] != '}') {
-			if (is_different_from_open_brace()) {
+		while (pData[index] != '\0') {
+				advance_to_next_open_brace();
 				std::string rets;
 				unsigned int Ret = GetxTemplateTypeChar(rets);
 				switch (Ret) {
@@ -1361,6 +1443,8 @@ namespace xF {
 	#endif
 						out->bEffects = true;
 						ProcessEffectInstance(&out->EffectInstance);
+
+						advance_to_next_close_brace();
 					}break;
 
 					case xF::STD_X_TEXTURE: {
@@ -1369,9 +1453,11 @@ namespace xF {
 	#endif
 						advance_to_next_close_brace();
 					}break;
+
+					default: {
+						advance_to_next_close_brace();
+					}
 				}
-			}
-			index++;
 		}
 
 
@@ -1381,6 +1467,7 @@ namespace xF {
 
 	void XDataBase::ProcessEffectInstance(xF::xEffectInstance *out) {
 		PROFILING_SCOPE("ProcessEffectInstance")
+		push();
 #if USE_STRING_STREAM
 		m_ActualStream >> c_temp >> out->ShaderFileName;
 
@@ -1463,18 +1550,19 @@ namespace xF {
 
 		
 		out->NumDefaults = 0;
-		while (pData[index] != '}') {
-			if (pData[index] != '{') {
+		unsigned int currentlevel = level;
+
+		while (currentlevel>=level) {
+				advance_to_next_open_brace();
 				std::string rets;
 				unsigned int Ret = GetxTemplateTypeChar(rets);
+				push();
 				if (Ret == xF::STD_X_EFFECT_PARAMS_DWORD || Ret == xF::STD_X_EFFECT_PARAMS_FLOAT || Ret == xF::STD_X_EFFECT_PARAMS_STRING) {
 					out->NumDefaults++;
-					while (pData[index] != '}') {
-						index++;
-					}
+					LogPrintDebug("Default num [%d]", out->NumDefaults);
 				}
-			}
-			index++;
+				pop();
+				advance_to_next_close_brace();
 		}
 	
 		out->pDefaults = std::vector<xEffectDefault>(out->NumDefaults);
@@ -1485,7 +1573,7 @@ namespace xF {
 		out->NumProcess = 0;
 
 		while (pData[index] != '}') {
-			if (is_different_from_open_brace()) {
+				advance_to_next_open_brace();
 				std::string rets;
 				unsigned int Ret = GetxTemplateTypeChar(rets);
 				switch (Ret) {
@@ -1496,6 +1584,8 @@ namespace xF {
 						ProcessEffectDwords(&out->pDefaults[out->NumProcess]);
 
 						out->NumProcess++;
+
+						advance_to_next_close_brace();
 					}break;
 
 					case xF::STD_X_EFFECT_PARAMS_FLOAT: {
@@ -1505,6 +1595,8 @@ namespace xF {
 						ProcessEffectFloats(&out->pDefaults[out->NumProcess]);
 
 						out->NumProcess++;
+
+						advance_to_next_close_brace();
 					}break;
 
 					case xF::STD_X_EFFECT_PARAMS_STRING: {
@@ -1515,20 +1607,26 @@ namespace xF {
 
 						out->NumProcess++;
 
+						advance_to_next_close_brace();
+					}break;
+
+					default: {
+						advance_to_next_close_brace();
 					}break;
 				}
-			}
-			index++;
+			
 		}
 					
 		
 		PrintNextCharsAndPause();
 #endif
+		pop();
 	}
 
 
 	void XDataBase::ProcessEffectString(xF::xEffectDefault *out) {
 	//	PROFILING_SCOPE("ProcessEffectString")
+		push();
 #if USE_STRING_STREAM
 		out->Type = xF::STDX_STRINGS;
 
@@ -1572,13 +1670,15 @@ namespace xF {
 
 		index = current_index;
 
-		advance_to_next_close_brace();
+
 
 #endif
+		pop();
 	}
 
 	void XDataBase::ProcessEffectFloats(xF::xEffectDefault *out) {
 		//	PROFILING_SCOPE("ProcessEffectFloats")
+		push();
 #if USE_STRING_STREAM
 		out->Type = xF::STDX_FLOATS;
 
@@ -1660,14 +1760,14 @@ namespace xF {
 	
 		index = current_index;
 
-		advance_to_next_close_brace();
-
 		
 #endif
+		pop();
 	}
 
 	void XDataBase::ProcessEffectDwords(xEffectDefault *out) {
 		//PROFILING_SCOPE("ProcessEffectDwords")
+		push();
 #if USE_STRING_STREAM
 		out->Type = xF::STDX_DWORDS;
 
@@ -1707,11 +1807,15 @@ namespace xF {
 #endif
 
 		index = current_index;
-		advance_to_next_close_brace();
+
+	
 #endif
+		pop();
 	}
 
 	void XDataBase::ProcessNormalsBlock(xF::xMeshGeometry *pGeometry) {
+		push();
+
 #if USE_STRING_STREAM
 		xDWORD NumVertices = 0;
 		m_ActualStream >> NumVertices >> c_temp;
@@ -1788,13 +1892,15 @@ namespace xF {
 #endif
 		index = current_index;
 
-		advance_to_next_close_brace();
+	
 #endif
-
+		pop();
 	}
 
 	void  XDataBase::ProcessTexCoordinatesBlock(xF::xMeshGeometry *pGeometry) {
 		PROFILING_SCOPE("ProcessTexCoordinatesBlock")
+		push();
+
 		xDWORD NumTexcoords = 0;
 
 #if USE_STRING_STREAM
@@ -1883,13 +1989,13 @@ namespace xF {
 		}
 #endif
 		index = current_index;
-
-		advance_to_next_close_brace();
 #endif
+		pop();
 	}
 
 	void XDataBase::ProcessDeclDataBlock(xF::xMeshGeometry *pGeometry) {
 		PROFILING_SCOPE("ProcessDeclDataBlock")
+		push();
 
 		xF::xDeclData	Data;
 		xDWORD NumElements = 0;
@@ -2047,7 +2153,7 @@ namespace xF {
 			}
 		}
 
-		GetNextEndBracket();
+		pop();
 	}
 
 	void XDataBase::GetNextEndBracket() {

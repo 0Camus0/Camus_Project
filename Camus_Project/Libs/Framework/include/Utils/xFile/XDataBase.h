@@ -3,13 +3,14 @@
 #define XDATABASE_H
 
 #define DEBUG_COUTS 1
+#define DEBUG_GET_BRACE 1
 #define DEBUG_MATRICES 0
 #define DEBUG_VERTICES 0
 #define DEBUG_INDICES 0
 #define DEBUG_NORMALS 0
 #define DEBUG_TEXCOORDS 0
 #define DEBUG_WEIGHTS 0
-#define DEBUG_GET_TEMPLATE 1
+#define DEBUG_GET_TEMPLATE 0
 #define DEBUG_MATERIAL_INDICES 0
 #define DEBUG_MATERIAL_COLORS 0
 
@@ -91,9 +92,12 @@ namespace xF {
 
 #if !USE_STRING_STREAM
 		void 			advance_to_next_open_brace();
-		bool			is_different_from_open_brace();
+		void			advance_to_next_space();
 		void			advance_to_next_close_brace();
 		unsigned int	GetxTemplateTypeChar(std::string &retName);
+
+		void		push();
+		void		pop();
 
 
 		void		PrintNextCharsAndPause();
@@ -104,6 +108,7 @@ namespace xF {
 		xMesh					*m_pActualMesh;
 		char					 *pData;
 		unsigned int			 index;
+		unsigned int			 level;
 
 		// ...
 		char					c_temp;
