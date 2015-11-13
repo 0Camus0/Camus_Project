@@ -13,6 +13,11 @@
 #define DEBUG_MATERIAL_INDICES 0
 #define DEBUG_MATERIAL_COLORS 0
 
+#define DEBUG_EFFECT_INSTANCE 1
+#define DEBUG_EFFECT_DWORDS 1
+#define DEBUG_EFFECT_FLOATS 1
+#define DEBUG_EFFECT_STRING 1
+
 
 #define PROFILE_MATRICES 0
 
@@ -88,6 +93,7 @@ namespace xF {
 		void			advance_to_next_open_brace();
 		void			advance_to_next_close_brace();
 		unsigned int	GetxTemplateTypeChar(std::string &retName);
+
 
 		void		PrintNextCharsAndPause();
 #endif

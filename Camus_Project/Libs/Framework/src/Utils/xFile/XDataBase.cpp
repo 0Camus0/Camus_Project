@@ -1293,7 +1293,7 @@ namespace xF {
 				unsigned int Ret = GetxTemplateTypeChar(rets);
 				switch (Ret) {
 					case xF::STD_X_EFFECT_INSTANCE: {
-	#if DEBUG_COUTS
+	#if DEBUG_EFFECT_INSTANCE
 						LogPrintDebug("Found EffectInstance [%s]", rets.c_str());
 	#endif
 						out->bEffects = true;
@@ -1384,14 +1384,87 @@ namespace xF {
 			}
 		}
 #else
+		int current_index = index;
+		int token = 0;
+		while (pData[current_index] != ';') {
+			current_index++;
+			if (pData[current_index] == '"' && token == 0)
+				token = current_index;
+		}
+		token++;
+		out->ShaderFileName = std::string(&pData[token], (current_index - 1) - token);
+		current_index++;
 
+		index = current_index;
+
+		
+		out->NumDefaults = 0;
+		while (pData[index] != '}') {
+			if (pData[index] != '{') {
+				std::string rets;
+				unsigned int Ret = GetxTemplateTypeChar(rets);
+				if (Ret == xF::STD_X_EFFECT_PARAMS_DWORD || Ret == xF::STD_X_EFFECT_PARAMS_FLOAT || Ret == xF::STD_X_EFFECT_PARAMS_STRING) {
+					out->NumDefaults++;
+					while (pData[index] != '}') {
+						index++;
+					}
+				}
+			}
+			index++;
+		}
+	
+		out->pDefaults = std::vector<xEffectDefault>(out->NumDefaults);
+#if DEBUG_EFFECT_INSTANCE
+		LogPrintDebug("Shader Name [%s] num defaults: [%d]", out->ShaderFileName.c_str(), out->NumDefaults);
+#endif
+		index = current_index;
+		out->NumProcess = 0;
+
+		while (pData[index] != '}') {
+			advance_to_next_open_brace(); {
+				std::string rets;
+				unsigned int Ret = GetxTemplateTypeChar(rets);
+				switch (Ret) {
+					case xF::STD_X_EFFECT_PARAMS_DWORD: {
+	#if DEBUG_EFFECT_DWORDS
+						LogPrintDebug("Found EffectParamDWord [%s] index [%d]", rets.c_str(), out->NumProcess);
+	#endif
+						ProcessEffectDwords(&out->pDefaults[out->NumProcess]);
+
+						out->NumProcess++;
+					}break;
+
+					case xF::STD_X_EFFECT_PARAMS_FLOAT: {
+	#if DEBUG_EFFECT_FLOATS
+						LogPrintDebug("Found EffectParamFloats [%s] index [%d]", rets.c_str(), out->NumProcess);
+	#endif
+						ProcessEffectFloats(&out->pDefaults[out->NumProcess]);
+
+						out->NumProcess++;
+					}break;
+
+					case xF::STD_X_EFFECT_PARAMS_STRING: {
+	#if DEBUG_COUTS
+						LogPrintDebug("Found EffectParamString [%s] index [%d]", rets.c_str(), out->NumProcess);
+	#endif
+						ProcessEffectString(&out->pDefaults[out->NumProcess]);
+
+						out->NumProcess++;
+
+					}break;
+				}
+			}
+		}
+					
+		
+		PrintNextCharsAndPause();
 #endif
 	}
 
 
 	void XDataBase::ProcessEffectString(xF::xEffectDefault *out) {
 	//	PROFILING_SCOPE("ProcessEffectString")
-
+#if USE_STRING_STREAM
 		out->Type = xF::STDX_STRINGS;
 
 		m_ActualStream >> c_temp >> out->NameParam;
@@ -1403,11 +1476,45 @@ namespace xF {
 		out->CaseString = out->CaseString.substr(0, out->CaseString.size() - 2);
 
 		GetNextEndBracket();
+#else
+		out->Type = xF::STDX_STRINGS;
+
+		int current_index = index;
+		int token = 0;
+		while (pData[current_index] != ';') {
+			current_index++;
+			if (pData[current_index] == '"' && token == 0)
+				token = current_index;
+		}
+
+		token++;
+		out->NameParam = std::string(&pData[token], (current_index - 1) - token);
+
+		current_index++;
+		token = 0;
+		while (pData[current_index] != ';') {
+			current_index++;
+			if (pData[current_index] == '"' && token == 0)
+				token = current_index;
+		}
+
+		token++;
+		out->CaseString = std::string(&pData[token], (current_index - 1) - token);
+
+#if DEBUG_EFFECT_STRING
+		LogPrintDebug("Name String [%s] value [%s]", out->NameParam.c_str(), out->CaseString.c_str());
+#endif
+
+		index = current_index;
+
+		advance_to_next_close_brace();
+
+#endif
 	}
 
 	void XDataBase::ProcessEffectFloats(xF::xEffectDefault *out) {
-	//	PROFILING_SCOPE("ProcessEffectFloats")
-
+		//	PROFILING_SCOPE("ProcessEffectFloats")
+#if USE_STRING_STREAM
 		out->Type = xF::STDX_FLOATS;
 
 		m_ActualStream >> c_temp >> out->NameParam;
@@ -1436,10 +1543,67 @@ namespace xF {
 
 
 		GetNextEndBracket();
+#else
+		out->Type = xF::STDX_FLOATS;
+
+		int current_index = index;
+		int token = 0;
+		while (pData[current_index] != ';') {
+			current_index++;
+			if (pData[current_index] == '"' && token == 0)
+				token = current_index;
+		}
+		token++;
+		out->NameParam = std::string(&pData[token], (current_index - 1) - token);
+		current_index++;
+
+		while (pData[current_index] != ';') {
+			current_index++;
+			if (pData[current_index] == ' ')
+				token = current_index;
+		}
+		xDWORD NumElements = 0;
+		char cInteger[8];
+		cInteger[7] = '\0';
+		memcpy(cInteger, &pData[token + 1], current_index - token);
+		NumElements = static_cast<xDWORD>(atoi(cInteger));
+		current_index++;
+
+		if (NumElements > 0)
+			out->CaseFloat = std::vector<xFLOAT>(NumElements);
+
+		char cFloat[12];
+		cFloat[11] = '\0';
+		unsigned int cont = 0;
+		while (cont<NumElements){
+
+			if (pData[current_index] == ' ')
+				token = current_index;
+
+			if (pData[current_index] == ',' || pData[current_index] == ';') {
+				memcpy(cFloat, &pData[token + 1], current_index - token);
+				out->CaseFloat[cont++] = static_cast<xFLOAT>(atof(cFloat));
+			}
+			current_index++;
+		}
+
+#if DEBUG_EFFECT_FLOATS
+		for (std::size_t i = 0; i < out->CaseFloat.size(); i++) {
+			LogPrintDebug("Name Floats Param [%s] value [%f]", out->NameParam.c_str(), out->CaseFloat[i]);
+		}
+#endif
+	
+		index = current_index;
+
+		advance_to_next_close_brace();
+
+		
+#endif
 	}
 
 	void XDataBase::ProcessEffectDwords(xEffectDefault *out) {
 		//PROFILING_SCOPE("ProcessEffectDwords")
+#if USE_STRING_STREAM
 		out->Type = xF::STDX_DWORDS;
 
 		m_ActualStream >> c_temp >> out->NameParam;
@@ -1449,6 +1613,37 @@ namespace xF {
 		m_ActualStream >> out->CaseDWORD >> c_temp;
 
 		GetNextEndBracket();
+#else
+		out->Type = xF::STDX_DWORDS;
+
+		int current_index = index;
+		int token = 0;
+		while (pData[current_index] != ';') {
+			current_index++;
+			if (pData[current_index] == '"' && token == 0)
+				token = current_index;
+		}
+		token++;
+		out->NameParam = std::string(&pData[token], (current_index - 1) - token);
+		current_index++;
+
+		while (pData[current_index] != ';') {
+			current_index++;
+			if (pData[current_index] == ' ')
+				token = current_index;
+		}
+		char cInteger[8];
+		cInteger[7] = '\0';
+		memcpy(cInteger, &pData[token + 1], current_index - token);
+		out->CaseDWORD = static_cast<xDWORD>(atoi(cInteger));
+
+#if DEBUG_EFFECT_DWORDS
+		LogPrintDebug("Name Dword Param [%s] value [%d]", out->NameParam.c_str(), out->CaseDWORD);
+#endif
+
+		index = current_index;
+		advance_to_next_close_brace();
+#endif
 	}
 
 	void XDataBase::ProcessNormalsBlock(xF::xMeshGeometry *pGeometry) {
