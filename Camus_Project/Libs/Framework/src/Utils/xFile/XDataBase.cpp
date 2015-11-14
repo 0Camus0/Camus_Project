@@ -5,29 +5,29 @@
 
 
 const char* xTemplatesc_Str[] = {
-	"template ",
-	"KeyValuePair ",
-	"Frame ",
-	"FrameTransformMatrix ",
-	"ObjectMatrixComment ",
-	"Mesh ",
-	"MeshNormals ",
-	"MeshTextureCoords ",
-	"DeclData ",
-	"XSkinMeshHeader ",
-	"SkinWeights ",
-	"MeshMaterialList ",
-	"Material ",
-	"EffectInstance ",
-	"EffectParamDWord ",
-	"EffectParamFloats ",
-	"EffectParamString ",
-	"TextureFilename ",
-	"AnimTicksPerSecond ",
-	"AnimationSet ",
-	"Animation ",
-	"AnimationKey ",
-	"AnimationOptions "
+	"template",
+	"KeyValuePair",
+	"Frame",
+	"FrameTransformMatrix",
+	"ObjectMatrixComment",
+	"Mesh",
+	"MeshNormals",
+	"MeshTextureCoords",
+	"DeclData",
+	"XSkinMeshHeader",
+	"SkinWeights",
+	"MeshMaterialList",
+	"Material",
+	"EffectInstance",
+	"EffectParamDWord",
+	"EffectParamFloats",
+	"EffectParamString",
+	"TextureFilename",
+	"AnimTicksPerSecond",
+	"AnimationSet",
+	"Animation",
+	"AnimationKey",
+	"AnimationOptions"
 	};
 
 namespace xF {
@@ -43,6 +43,12 @@ namespace xF {
 			index++;
 		} while (pData[index] != '}');
 		index++;
+	}
+
+	void XDataBase::advance_to_next_space() {
+		do {
+			index++;
+		} while (pData[index] != ' ');
 	}
 #endif
 
@@ -103,9 +109,100 @@ namespace xF {
 	}
 #if !USE_STRING_STREAM
 	unsigned int	XDataBase::GetxTemplateTypeChar(std::string &retName) {
+#if PROFILE_BRACES
 		PROFILING_SCOPE("GetTemplateType");
-
+#endif
 		unsigned int current_index = index;
+
+		unsigned int first_letter_space = 0;
+		unsigned int size_word_1 = 0;
+		unsigned int index_init = index;
+		char cWord_A[32];
+		char cWord_B[32];
+
+
+		while (pData[current_index] != '{') {
+			current_index++;
+		}
+
+		current_index--;
+
+		while (pData[current_index] == ' ') {
+			first_letter_space = current_index;
+			current_index--;
+		}
+
+		while (pData[current_index] != ' ' && pData[current_index] != '\n') {
+			current_index--;
+		}
+
+		size_word_1 = first_letter_space - current_index;
+		memcpy(cWord_A, &pData[current_index + 1], size_word_1);
+		cWord_A[size_word_1 - 1] = '\0';
+
+		while (pData[current_index] == ' ') {
+			first_letter_space = current_index;
+			current_index--;
+		}
+
+		if (pData[current_index] == '\n') {
+			for (unsigned int i = 0; i < STD_X_REF; i++) {
+				if (strstr(xTemplatesc_Str[i], cWord_A) != 0) {
+
+					if (strcmp(xTemplatesc_Str[i], cWord_A) != 0)
+						continue;
+
+					retName = cWord_A;
+#if DEBUG_GET_BRACE
+					LogPrintDebug("One Word Found [%s]", cWord_A);
+#endif
+					index = index_init;
+					advance_to_next_space();
+
+					return i;
+				}
+			}
+
+#if DEBUG_GET_BRACE
+			LogPrintWarning("One Word NOT Found [%s]", cWord_A);
+#endif
+
+			index = index_init;
+			advance_to_next_space();
+			return STD_NOT;
+		}
+
+		while (pData[current_index] != ' ' && pData[current_index] != '\n') {
+			current_index--;
+		}
+
+
+		size_word_1 = first_letter_space - current_index;
+		memcpy(cWord_B, &pData[current_index + 1], size_word_1);
+		cWord_B[size_word_1 - 1] = '\0';
+
+		for (unsigned int i = 0; i < STD_X_REF; i++) {
+			if (strstr(xTemplatesc_Str[i], cWord_B) != 0) {
+				retName = cWord_A;
+
+				if (strcmp(xTemplatesc_Str[i], cWord_B) != 0)
+					continue;
+#if DEBUG_GET_BRACE
+				LogPrintDebug("Two Words Found [%s] [%s]", cWord_B, cWord_A);
+#endif
+				index = index_init;
+				advance_to_next_space();
+				return i;
+			}
+		}
+
+#if DEBUG_GET_BRACE
+		LogPrintWarning("Two Words NOT Found [%s] [%s]", cWord_B, cWord_A);
+#endif
+		index = index_init;
+		advance_to_next_space();
+		return STD_NOT;
+	/*	unsigned int current_index = index;
 		unsigned int ret = STD_NOT;
 		while (pData[current_index] != '\n') {
 			current_index--;
@@ -146,17 +243,7 @@ namespace xF {
 	
 
 		return ret;
-		/*
-		while (pData[current_index] != ' ') {
-   current_index--;
-  }
-  while (pData[current_index] == ' ') {
-   current_index--;
-  }
-  while (pData[current_index] != ' ') {
-   current_index--;
-  }
-		*/
+*/
 
 	}
 #endif
@@ -880,7 +967,9 @@ namespace xF {
 	}
 
 	void  XDataBase::ProcessSkinWeights(xF::xMeshGeometry* pGeometry) {
+#if PROFILE_SKIN_WEIGHTS
 		PROFILING_SCOPE("ProcessSkinWeights")
+#endif
 #if USE_STRING_STREAM
 		xF::xSkinWeights	*pSkin = &pGeometry->Info.SkinWeights[pGeometry->Info.SkinMeshHeader.NumBonesProcess];
 
@@ -1999,33 +2088,33 @@ namespace xF {
 #endif
 
 #if USE_STRING_STREAM
-		char tmp;
+			char tmp;
 		for (int i = 0; i < 16; i++) {
 			m_ActualStream >> out->mat[i] >> tmp;
 		}
 #else
-		char NumTemp[10];
-		NumTemp[9] = '\0';
+		unsigned int current_index = index;
+		unsigned int token = 0;
+		char cFloat[12];
+		cFloat[11] = '\0';
+		unsigned int cont = 0;
+		unsigned int size_f = 0;
+		while (cont < 16) {
 
-		int space = index;
-		while (pData[index] != ',') {
-			index++;
-			if (pData[index] == ' ')
-				space = index;
+			if (pData[current_index] == ' ')
+				token = current_index;
+
+			if (pData[current_index] == ',' || pData[current_index] == ';') {
+				size_f = current_index - token;
+				memcpy(cFloat, &pData[token + 1], size_f);
+				cFloat[size_f-1] = '\0';				
+				out->mat[cont++] = static_cast<xFLOAT>(atof(cFloat));
+				token = current_index;
+			}
+			current_index++;
 		}
-		int firstcoma = index;
-		int matCount = 0;
-		index = firstcoma + 1;
-		while (pData[index] != ' ') {
-			if (pData[index] == ',' || pData[index] == ';') {
-				memcpy(NumTemp, &pData[space + 1], 9);
-				out->mat[matCount++] = static_cast<float>(atof(NumTemp));
-				space = index;
-				if(pData[index] == ';')
-					break;
-			}	
-			index++;
-		}
+
+		index = current_index;
 	#if DEBUG_MATRICES
 			for (unsigned int i = 0; i < 16; i++) {
 				LogPrintDebug("[%f]", out->mat[i]);

@@ -3,6 +3,7 @@
 #define XDATABASE_H
 
 #define DEBUG_COUTS 1
+#define DEBUG_GET_BRACE 1
 #define DEBUG_MATRICES 0
 #define DEBUG_VERTICES 0
 #define DEBUG_INDICES 0
@@ -20,6 +21,8 @@
 
 
 #define PROFILE_MATRICES 0
+#define PROFILE_BRACES 0
+#define PROFILE_SKIN_WEIGHTS 0
 
 #define USE_VECTOR_RESERVE_AND_PUSH 0
 #define USE_VECTOR_ARRAY_MODE 1
@@ -92,6 +95,7 @@ namespace xF {
 #if !USE_STRING_STREAM
 		void			advance_to_next_open_brace();
 		void			advance_to_next_close_brace();
+		void			advance_to_next_space();
 		unsigned int	GetxTemplateTypeChar(std::string &retName);
 
 
