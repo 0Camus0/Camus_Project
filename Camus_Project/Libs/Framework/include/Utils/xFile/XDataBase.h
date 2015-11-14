@@ -3,7 +3,7 @@
 #define XDATABASE_H
 
 #define DEBUG_COUTS 1
-#define DEBUG_GET_BRACE 1
+#define DEBUG_GET_BRACE 0
 #define DEBUG_MATRICES 0
 #define DEBUG_VERTICES 0
 #define DEBUG_INDICES 0
@@ -13,16 +13,18 @@
 #define DEBUG_GET_TEMPLATE 1
 #define DEBUG_MATERIAL_INDICES 0
 #define DEBUG_MATERIAL_COLORS 0
+#define DEBUG_NUMBER_MATERIALS 1
 
 #define DEBUG_EFFECT_INSTANCE 1
-#define DEBUG_EFFECT_DWORDS 1
-#define DEBUG_EFFECT_FLOATS 1
-#define DEBUG_EFFECT_STRING 1
+#define DEBUG_EFFECT_DWORDS 0
+#define DEBUG_EFFECT_FLOATS 0
+#define DEBUG_EFFECT_STRING 0
 
 
 #define PROFILE_MATRICES 0
 #define PROFILE_BRACES 0
 #define PROFILE_SKIN_WEIGHTS 0
+#define PROFILE_FRAME_BONE 0
 
 #define USE_VECTOR_RESERVE_AND_PUSH 0
 #define USE_VECTOR_ARRAY_MODE 1
@@ -100,6 +102,8 @@ namespace xF {
 
 
 		void		PrintNextCharsAndPause();
+
+		void			advance_to_next_close_brace_pre();
 #endif
 
 		std::stringstream		 m_ActualStream;

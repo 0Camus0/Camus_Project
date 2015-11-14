@@ -45,6 +45,12 @@ namespace xF {
 		index++;
 	}
 
+	void XDataBase::advance_to_next_close_brace_pre() {
+		while (pData[index] != '}') {
+			index++;
+		}
+	}
+
 	void XDataBase::advance_to_next_space() {
 		do {
 			index++;
@@ -123,6 +129,12 @@ namespace xF {
 
 		while (pData[current_index] != '{') {
 			current_index++;
+
+			if (pData[current_index] == '}') {
+				index = current_index;
+				return STD_BREAK;
+			}
+			
 		}
 
 		current_index--;
@@ -374,8 +386,9 @@ namespace xF {
 
 
 	void XDataBase::ProcessFrameBlock(std::string &actual) {
+#if PROFILE_FRAME_BONE
 		PROFILING_SCOPE("ProcessFrameBlock")
-
+#endif
 		m_Stack.push(actual);
 
 #if USE_STRING_STREAM
@@ -387,72 +400,74 @@ namespace xF {
 				unsigned short Ret = GetxTemplateType(Line, &rets);
 #else
 		while(pData[index]!='}'){
-				advance_to_next_open_brace(); {
+			if (pData[index] != '{') {
 				std::string rets;
 				unsigned int Ret = GetxTemplateTypeChar(rets);
 #endif
-				switch (Ret)
-				{
-				case xF::STD_X_FRAME: {
+				if (Ret == STD_BREAK)
+					break;
 
-					xBone tmp;
-					tmp.Name = rets;
-					for (unsigned int i = 0; i < m_pActualMesh->Skeleton.Bones.size(); i++) {
-						if (m_pActualMesh->Skeleton.Bones[i].Name.compare(m_Stack.top()) == 0) {
-							tmp.Dad = i;
-							m_pActualMesh->Skeleton.Bones[i].Sons.push_back(m_pActualMesh->Skeleton.Bones.size());
-							//	m_pActualMesh->SkeletonAnimated.Bones[i].Sons.push_back(m_pActualMesh->SkeletonAnimated.Bones.size());
+				switch (Ret){
+					case xF::STD_X_FRAME: {
 
-							break;
+						xBone tmp;
+						tmp.Name = rets;
+						for (unsigned int i = 0; i < m_pActualMesh->Skeleton.Bones.size(); i++) {
+							if (m_pActualMesh->Skeleton.Bones[i].Name.compare(m_Stack.top()) == 0) {
+								tmp.Dad = i;
+								m_pActualMesh->Skeleton.Bones[i].Sons.push_back(m_pActualMesh->Skeleton.Bones.size());
+								//	m_pActualMesh->SkeletonAnimated.Bones[i].Sons.push_back(m_pActualMesh->SkeletonAnimated.Bones.size());
+
+								break;
+							}
 						}
-					}
-					m_pActualMesh->Skeleton.Bones.push_back(tmp);
-					//	m_pActualMesh->SkeletonAnimated.Bones.push_back(tmp);
+						m_pActualMesh->Skeleton.Bones.push_back(tmp);
+						//	m_pActualMesh->SkeletonAnimated.Bones.push_back(tmp);
 
+						advance_to_next_open_brace();
+						ProcessFrameBlock(rets);
 
-					ProcessFrameBlock(rets);
+					}break;
+					case xF::STD_X_MESH: {
+	#if	DEBUG_COUTS
+						LogPrintDebug("Found x Mesh [%s]", rets.c_str());
+	#endif
+						ProcessMeshBlock(rets);
 
-				}break;
-				case xF::STD_X_MESH: {
-#if	DEBUG_COUTS
-					LogPrintDebug("Found x Mesh [%s]", rets.c_str());
-#endif
-					ProcessMeshBlock(rets);
+					}break;
 
-				}break;
+					case xF::STD_X_OBJ_CMMTX: {
+						//	ProcessMatrix(&m_pActualMesh->Skeleton.Bones.back().Bone);
+	#if USE_STRING_STREAM
+						GetNextEndBracket();
+	#else
+						
+	#endif
 
-				case xF::STD_X_OBJ_CMMTX: {
-					//	ProcessMatrix(&m_pActualMesh->Skeleton.Bones.back().Bone);
-#if USE_STRING_STREAM
-					GetNextEndBracket();
-#else
-					advance_to_next_close_brace();
-#endif
+					}break;
 
-				}break;
+					case xF::STD_X_FRAME_TRANSFORM_MTX: {
+						//	std::streampos PosStream = m_ActualStream.tellg();
+						ProcessMatrix(&m_pActualMesh->Skeleton.Bones.back().Bone);
+						//	m_ActualStream.seekg(PosStream);
+						//	ProcessMatrix(&m_pActualMesh->SkeletonAnimated.Bones.back().Bone);
 
-				case xF::STD_X_FRAME_TRANSFORM_MTX: {
-					//	std::streampos PosStream = m_ActualStream.tellg();
-					ProcessMatrix(&m_pActualMesh->Skeleton.Bones.back().Bone);
-					//	m_ActualStream.seekg(PosStream);
-					//	ProcessMatrix(&m_pActualMesh->SkeletonAnimated.Bones.back().Bone);
+						//system("pause");
+	#if USE_STRING_STREAM
+						GetNextEndBracket();
+	#else
+						
+	#endif
 
-					//system("pause");
-#if USE_STRING_STREAM
-					GetNextEndBracket();
-#else
-					advance_to_next_close_brace();
-#endif
+					}break;
 
-				}break;
-
+					default: {
+						
+					}break;
 				}
-
-
-
+				advance_to_next_close_brace_pre();
 			}
-
-
+			index++;
 		}
 
 		if (m_Stack.size() > 0)
@@ -463,48 +478,51 @@ namespace xF {
 		PROFILING_SCOPE("ProcessMeshBlock")
 
 		xF::xMeshGeometry	tmp;
-		tmp.Name = actual;
-		tmp.RelativeMatrix = m_pActualMesh->Skeleton.Bones.back().Bone;
+		m_pActualMesh->Geometry.push_back(tmp);
+
+		xMeshGeometry *ptr = &m_pActualMesh->Geometry.back();
+		ptr->Name = actual;
+		ptr->RelativeMatrix = m_pActualMesh->Skeleton.Bones.back().Bone;
 
 #if USE_STRING_STREAM
-		m_ActualStream >> tmp.NumVertices >> c_temp;
+		m_ActualStream >> ptr->NumVertices >> c_temp;
 #if USE_VECTOR_RESERVE_AND_PUSH
-		tmp.Positions.reserve(tmp.NumVertices);
+		ptr->Positions.reserve(ptr->NumVertices);
 #elif USE_VECTOR_ARRAY_MODE
-		tmp.Positions = std::vector<XVECTOR3>(tmp.NumVertices);
+		ptr->Positions = std::vector<XVECTOR3>(ptr->NumVertices);
 #endif
 
 		float x = 0.0f, y = 0.0f, z = 0.0f;
-		for (std_uint i = 0; i < tmp.NumVertices; i++) {
+		for (std_uint i = 0; i < ptr->NumVertices; i++) {
 			m_ActualStream >> x >> c_temp >> y >> c_temp >> z >> c_temp >> c_temp;
 #if USE_VECTOR_RESERVE_AND_PUSH
-			tmp.Positions.push_back(XVECTOR3(x, y, z));
+			ptr->Positions.push_back(XVECTOR3(x, y, z));
 #elif USE_VECTOR_ARRAY_MODE
-			tmp.Positions[i].x = x;
-			tmp.Positions[i].y = y;
-			tmp.Positions[i].z = z;
+			ptr->Positions[i].x = x;
+			ptr->Positions[i].y = y;
+			ptr->Positions[i].z = z;
 #endif
 		}
 
-		m_ActualStream >> tmp.NumTriangles >> c_temp;
+		m_ActualStream >> ptr->NumTriangles >> c_temp;
 
 #if USE_VECTOR_RESERVE_AND_PUSH	
-		tmp.Triangles.reserve(3 * tmp.NumTriangles);
+		ptr->Triangles.reserve(3 * ptr->NumTriangles);
 #elif USE_VECTOR_ARRAY_MODE
-		tmp.Triangles = std::vector<xWORD>(3 * tmp.NumTriangles);
+		ptr->Triangles = std::vector<xWORD>(3 * ptr->NumTriangles);
 #endif
 		unsigned int counter = 0;
 		unsigned short a, b, c;
-		for (unsigned int i = 0; i < tmp.NumTriangles; i++) {
+		for (unsigned int i = 0; i < ptr->NumTriangles; i++) {
 			m_ActualStream >> c_temp >> c_temp >> a >> c_temp >> b >> c_temp >> c >> c_temp >> c_temp;
 #if USE_VECTOR_RESERVE_AND_PUSH	
-			tmp.Triangles.push_back(a);
-			tmp.Triangles.push_back(b);
-			tmp.Triangles.push_back(c);
+			ptr->Triangles.push_back(a);
+			ptr->Triangles.push_back(b);
+			ptr->Triangles.push_back(c);
 #elif USE_VECTOR_ARRAY_MODE
-			tmp.Triangles[counter++] = a;
-			tmp.Triangles[counter++] = b;
-			tmp.Triangles[counter++] = c;
+			ptr->Triangles[counter++] = a;
+			ptr->Triangles[counter++] = b;
+			ptr->Triangles[counter++] = c;
 #endif
 		}
 
@@ -519,19 +537,19 @@ namespace xF {
 		char cNumVerts[10];
 		cNumVerts[7] = '\0';
 		memcpy(cNumVerts, &pData[token + 1], current_index - token);
-		tmp.NumVertices = static_cast<xDWORD>(atof(cNumVerts));
+		ptr->NumVertices = static_cast<xDWORD>(atof(cNumVerts));
 
 		current_index++;
 #if USE_VECTOR_RESERVE_AND_PUSH
-		tmp.Positions.reserve(tmp.NumVertices);
+		ptr->Positions.reserve(ptr->NumVertices);
 #elif USE_VECTOR_ARRAY_MODE
-		tmp.Positions = std::vector<XVECTOR3>(tmp.NumVertices);
+		ptr->Positions = std::vector<XVECTOR3>(ptr->NumVertices);
 #endif
 
 		char cVertComponent[15];
 		cVertComponent[14] = '\0';
 		int cont = 0;
-		for (unsigned int i = 0; i < tmp.NumVertices; i++) {
+		for (unsigned int i = 0; i < ptr->NumVertices; i++) {
 			cont = 0;
 			while (pData[current_index] != ',') {
 
@@ -540,7 +558,7 @@ namespace xF {
 
 				if (pData[current_index] == ';') {
 					memcpy(cVertComponent, &pData[token + 1], current_index - token);
-					tmp.Positions[i].v[cont++] = static_cast<float>(atof(cVertComponent));
+					ptr->Positions[i].v[cont++] = static_cast<float>(atof(cVertComponent));
 					token = current_index;
 					if (cont == 4)
 						break;
@@ -561,7 +579,7 @@ namespace xF {
 		}
 
 		memcpy(cNumVerts, &pData[token + 1], current_index - token);
-		tmp.NumTriangles = static_cast<xDWORD>(atoi(cNumVerts));
+		ptr->NumTriangles = static_cast<xDWORD>(atoi(cNumVerts));
 
 
 		while (pData[current_index] != ' ') {
@@ -569,21 +587,21 @@ namespace xF {
 		}
 
 #if USE_VECTOR_RESERVE_AND_PUSH	
-		tmp.Triangles.reserve(3 * tmp.NumTriangles);
+		ptr->Triangles.reserve(3 * ptr->NumTriangles);
 #elif USE_VECTOR_ARRAY_MODE
-		tmp.Triangles = std::vector<xWORD>(3 * tmp.NumTriangles);
+		ptr->Triangles = std::vector<xWORD>(3 * ptr->NumTriangles);
 #endif
 		char cTriang[8];
 		cTriang[7] = '\0';
 		cont = 0;
 		int delim = 0;
-		for (unsigned int i = 0; i < tmp.NumTriangles; i++) {
+		for (unsigned int i = 0; i < ptr->NumTriangles; i++) {
 			delim = 0;
 			while (delim < 5) {
 				if (pData[current_index] == ',' || pData[current_index] == ';') {
 					if (delim != 0 && delim != 4) {
 						memcpy(cTriang, &pData[token + 1], current_index - token);
-						tmp.Triangles[cont++] = static_cast<unsigned short>(atoi(cTriang));
+						ptr->Triangles[cont++] = static_cast<unsigned short>(atoi(cTriang));
 					}
 					token = current_index;
 
@@ -594,14 +612,14 @@ namespace xF {
 		}
 		current_index++;
 #if DEBUG_VERTICES
-		for (unsigned int i = 0; i < tmp.NumVertices; i++) {
-			LogPrintDebug("[%f;%f;%f;,]", tmp.Positions[i].x, tmp.Positions[i].y, tmp.Positions[i].z);
+		for (unsigned int i = 0; i < ptr->NumVertices; i++) {
+			LogPrintDebug("[%f;%f;%f;,]", ptr->Positions[i].x, ptr->Positions[i].y, ptr->Positions[i].z);
 		}
 #endif
 
 #if DEBUG_INDICES
-		for (unsigned int i = 0; i < tmp.Triangles.size(); i++) {
-			LogPrintDebug("[%d]", tmp.Triangles[i]);
+		for (unsigned int i = 0; i < ptr->Triangles.size(); i++) {
+			LogPrintDebug("[%d]", ptr->Triangles[i]);
 		}
 #endif
 		index = current_index;
@@ -620,17 +638,20 @@ namespace xF {
 				unsigned int Ret = GetxTemplateType(Line, &rets);
 #else
 		while (pData[index] != '}') {
-			advance_to_next_open_brace(); {
+			if (pData[index] != '{') {
 				std::string rets;
 				unsigned int Ret = GetxTemplateTypeChar(rets);
 #endif
+				if (Ret == STD_BREAK)
+					break;
+
 				switch (Ret)
 				{
 				case xF::STD_X_MESH_NORMALS: {
 #if	DEBUG_COUTS
 					LogPrintDebug("Found MeshNormals [%s]", rets.c_str());
 #endif
-					ProcessNormalsBlock(&tmp);
+					ProcessNormalsBlock(ptr);
 						
 				}break;
 
@@ -638,7 +659,7 @@ namespace xF {
 #if	DEBUG_COUTS
 					LogPrintDebug("Found TextureCoords [%s]", rets.c_str());
 #endif
-					ProcessTexCoordinatesBlock(&tmp);
+					ProcessTexCoordinatesBlock(ptr);
 
 				}break;
 
@@ -647,7 +668,7 @@ namespace xF {
 					std::cout << "Found Mesh decl data: " << std::endl;
 #endif
 					system("pause");
-					ProcessDeclDataBlock(&tmp);
+					ProcessDeclDataBlock(ptr);
 					//	GetNextEndBracket();
 				}break;
 
@@ -656,7 +677,7 @@ namespace xF {
 					LogPrintDebug("Found SkinMeshHeader [%s]", rets.c_str());
 #endif
 
-					ProcessSkinHeader(&tmp);
+					ProcessSkinHeader(ptr);
 
 				}break;
 
@@ -665,21 +686,24 @@ namespace xF {
 					LogPrintDebug("Found SkinWeights [%s]", rets.c_str());
 #endif
 			
-					ProcessSkinWeights(&tmp);
+					ProcessSkinWeights(ptr);
 				}break;
 
 				case xF::STD_X_MATERIALS_LIST: {
 #if	DEBUG_COUTS
 					LogPrintDebug("Found MeshMaterialList [%s]", rets.c_str());
 #endif
-					ProcessMaterialBlock(&tmp);
+					ProcessMaterialBlock(ptr);
 				}break;
 				}
+			
+				advance_to_next_close_brace_pre();
 			}
 
+			index++;
 		}
 
-		m_pActualMesh->Geometry.push_back(tmp);
+		LogPrintDebug("End of ProcessMeshBlock");
 	}
 
 	void XDataBase::ProcessTicksPerSecond(xF::xAnimationInfo* pAnimation) {
@@ -961,7 +985,7 @@ namespace xF {
 
 		index = current_index;
 
-		advance_to_next_close_brace();
+		
 	
 #endif
 	}
@@ -1110,7 +1134,6 @@ namespace xF {
 
 		index = current_index;
 
-		advance_to_next_close_brace();
 	
 
 #endif
@@ -1232,18 +1255,24 @@ namespace xF {
 		current_index++;
 
 		index = current_index;
-#if DEBUG_MATERIAL_INDICES
+#if DEBUG_NUMBER_MATERIALS 
 		LogPrintDebug("Num materials [%d] Num faceindices [%d]", NumMaterials,NumFaceIndices);
+#endif
 
+#if DEBUG_MATERIAL_INDICES
 		for (std::size_t i = 0; i < pGeometry->MaterialList.FaceIndices.size(); i++) {
 			LogPrintDebug("Index [%d] value [%d]", i, pGeometry->MaterialList.FaceIndices[i]);
 		}
 #endif
 
 		while (pData[index] != '}') {
-			advance_to_next_open_brace(); {
+			if (pData[index] != '{') {
 				std::string rets;
 				unsigned int Ret = GetxTemplateTypeChar(rets);
+
+				if(Ret==STD_BREAK)
+					break;
+
 				switch (Ret) {
 				case xF::STD_X_MATERIAL: {
 #if DEBUG_COUTS
@@ -1252,6 +1281,9 @@ namespace xF {
 					pGeometry->MaterialList.Materials[pGeometry->MaterialList.NumMatProcess].Name = rets;
 					ProcessMaterial(&pGeometry->MaterialList.Materials[pGeometry->MaterialList.NumMatProcess]);
 					pGeometry->MaterialList.NumMatProcess++;
+
+				
+
 				}break;
 
 				case xF::STD_X_REF: {
@@ -1261,11 +1293,18 @@ namespace xF {
 					
 				}break;
 				}
+
+				advance_to_next_close_brace_pre();
 			}
+			index++;
 		}
 		
 
 #endif
+
+		LogPrintDebug("End mesh");
+
+
 	}
 
 	void XDataBase::ProcessMaterial(xMaterial* out) {
@@ -1377,9 +1416,13 @@ namespace xF {
 		index = current_index;
 
 		while (pData[index] != '}') {
-			advance_to_next_open_brace(); {
+				if (pData[index] != '{') {
 				std::string rets;
 				unsigned int Ret = GetxTemplateTypeChar(rets);
+				
+				if(Ret==STD_BREAK)
+					break;
+				
 				switch (Ret) {
 					case xF::STD_X_EFFECT_INSTANCE: {
 	#if DEBUG_EFFECT_INSTANCE
@@ -1387,21 +1430,24 @@ namespace xF {
 	#endif
 						out->bEffects = true;
 						ProcessEffectInstance(&out->EffectInstance);
+
 					}break;
 
 					case xF::STD_X_TEXTURE: {
 	#if DEBUG_COUTS
 						LogPrintDebug("Found Texture [%s]", rets.c_str());
 	#endif
-						advance_to_next_close_brace();
+	
 					}break;
 				}
+			
+				advance_to_next_close_brace_pre();
 			}
+			index++;
 		}
-
-
-		PrintNextCharsAndPause();
 #endif
+
+		LogPrintDebug("End of ProcessMaterial");
 	}
 
 	void XDataBase::ProcessEffectInstance(xF::xEffectInstance *out) {
@@ -1486,17 +1532,21 @@ namespace xF {
 
 		index = current_index;
 
-		
 		out->NumDefaults = 0;
 		while (pData[index] != '}') {
 			if (pData[index] != '{') {
 				std::string rets;
 				unsigned int Ret = GetxTemplateTypeChar(rets);
+
+				if(Ret==STD_BREAK)
+					break;
+				
 				if (Ret == xF::STD_X_EFFECT_PARAMS_DWORD || Ret == xF::STD_X_EFFECT_PARAMS_FLOAT || Ret == xF::STD_X_EFFECT_PARAMS_STRING) {
 					out->NumDefaults++;
-					while (pData[index] != '}') {
-						index++;
-					}
+				}
+
+				while (pData[index] != '}') {
+					index++;
 				}
 			}
 			index++;
@@ -1510,44 +1560,52 @@ namespace xF {
 		out->NumProcess = 0;
 
 		while (pData[index] != '}') {
-			advance_to_next_open_brace(); {
+			if (pData[index] != '{') {
 				std::string rets;
 				unsigned int Ret = GetxTemplateTypeChar(rets);
+
+				if (Ret == STD_BREAK)
+					break;
+
 				switch (Ret) {
 					case xF::STD_X_EFFECT_PARAMS_DWORD: {
 	#if DEBUG_EFFECT_DWORDS
 						LogPrintDebug("Found EffectParamDWord [%s] index [%d]", rets.c_str(), out->NumProcess);
 	#endif
-						ProcessEffectDwords(&out->pDefaults[out->NumProcess]);
+						ProcessEffectDwords(&out->pDefaults[out->NumProcess++]);
 
-						out->NumProcess++;
+
 					}break;
 
 					case xF::STD_X_EFFECT_PARAMS_FLOAT: {
 	#if DEBUG_EFFECT_FLOATS
 						LogPrintDebug("Found EffectParamFloats [%s] index [%d]", rets.c_str(), out->NumProcess);
 	#endif
-						ProcessEffectFloats(&out->pDefaults[out->NumProcess]);
+						ProcessEffectFloats(&out->pDefaults[out->NumProcess++]);
 
-						out->NumProcess++;
+
 					}break;
-
+						 
 					case xF::STD_X_EFFECT_PARAMS_STRING: {
-	#if DEBUG_COUTS
+	#if DEBUG_EFFECT_STRING
 						LogPrintDebug("Found EffectParamString [%s] index [%d]", rets.c_str(), out->NumProcess);
 	#endif
-						ProcessEffectString(&out->pDefaults[out->NumProcess]);
+						ProcessEffectString(&out->pDefaults[out->NumProcess++]);
 
-						out->NumProcess++;
+					
 
 					}break;
 				}
+
+				advance_to_next_close_brace_pre();
 			}
+			index++;
 		}
 					
 		
-		PrintNextCharsAndPause();
 #endif
+
+		LogPrintDebug("Out of effect instance");
 	}
 
 
@@ -1595,9 +1653,6 @@ namespace xF {
 #endif
 
 		index = current_index;
-
-		advance_to_next_close_brace();
-
 #endif
 	}
 
@@ -1683,9 +1738,6 @@ namespace xF {
 #endif
 	
 		index = current_index;
-
-		advance_to_next_close_brace();
-
 		
 #endif
 	}
@@ -1731,7 +1783,7 @@ namespace xF {
 #endif
 
 		index = current_index;
-		advance_to_next_close_brace();
+
 #endif
 	}
 
@@ -1812,7 +1864,7 @@ namespace xF {
 #endif
 		index = current_index;
 
-		advance_to_next_close_brace();
+		
 #endif
 
 	}
@@ -1908,7 +1960,7 @@ namespace xF {
 #endif
 		index = current_index;
 
-		advance_to_next_close_brace();
+	
 #endif
 	}
 

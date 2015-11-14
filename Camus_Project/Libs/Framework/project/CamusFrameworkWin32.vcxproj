@@ -164,6 +164,7 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;OS_WIN32;USE_DEBUG;USE_C11_THREADS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(ProjectDir)..\include;$(SolutionDir)..\..\Externals\SDL-1.2.14\include;$(SolutionDir)..\..\Externals\OGLES2\Include;$(SolutionDir)..\..\Externals\pthreads\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>false</MultiProcessorCompilation>
+      <SDLCheck>true</SDLCheck>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -195,6 +196,7 @@
       <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;OS_WIN32;USE_DEBUG;USE_C11_THREADS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(ProjectDir)..\include;$(SolutionDir)..\..\Externals\SDL-1.2.14\include;$(SolutionDir)..\..\Externals\OGLES3\Include;$(SolutionDir)..\..\Externals\OGLES2\Include;$(SolutionDir)..\..\Externals\pthreads\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>false</MultiProcessorCompilation>
+      <SDLCheck>true</SDLCheck>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

@@ -108,7 +108,8 @@ namespace xF {
 		STD_X_ANIMATION_KEY,
 		STD_X_ANIMATION_OPTIONS,
 		STD_X_REF,
-		STD_NOT
+		STD_NOT,
+		STD_BREAK
 	};
 
 	const std::string xTemplatesStr[] = {
