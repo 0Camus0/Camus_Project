@@ -122,11 +122,12 @@ namespace xF {
 
 		unsigned int first_letter_space = 0;
 		unsigned int size_word_1 = 0;
+		unsigned int size_word_2 = 0;
 		unsigned int index_init = index;
 		char cWord_A[32];
 		char cWord_B[32];
 
-
+	
 		while (pData[current_index] != '{') {
 			current_index++;
 
@@ -164,7 +165,7 @@ namespace xF {
 					if (strcmp(xTemplatesc_Str[i], cWord_A) != 0)
 						continue;
 
-					retName = cWord_A;
+					retName = std::string(cWord_A, size_word_1);
 #if DEBUG_GET_BRACE
 					LogPrintDebug("One Word Found [%s]", cWord_A);
 #endif
@@ -189,13 +190,13 @@ namespace xF {
 		}
 
 
-		size_word_1 = first_letter_space - current_index;
-		memcpy(cWord_B, &pData[current_index + 1], size_word_1);
-		cWord_B[size_word_1 - 1] = '\0';
+		size_word_2 = first_letter_space - current_index;
+		memcpy(cWord_B, &pData[current_index + 1], size_word_2);
+		cWord_B[size_word_2 - 1] = '\0';
 
 		for (unsigned int i = 0; i < STD_X_REF; i++) {
 			if (strstr(xTemplatesc_Str[i], cWord_B) != 0) {
-				retName = cWord_A;
+				retName = std::string(cWord_A, size_word_1);
 
 				if (strcmp(xTemplatesc_Str[i], cWord_B) != 0)
 					continue;
@@ -214,49 +215,6 @@ namespace xF {
 		index = index_init;
 		advance_to_next_space();
 		return STD_NOT;
-	/*	unsigned int current_index = index;
-		unsigned int ret = STD_NOT;
-		while (pData[current_index] != '\n') {
-			current_index--;
-		}
-		int size = index - current_index;
-		char *tmpLine = new char[size+1];
-		memcpy(tmpLine, &pData[current_index + 1],size);
-		tmpLine[size] = '\0';
-		for (unsigned int i = 0; i < STD_X_REF; i++) {
-			if (strstr(tmpLine, xTemplatesc_Str[i])) {
-				current_index = index;
-				while (pData[current_index] != ' ') {
-					current_index--;
-				}
-				
-				while (pData[current_index] == ' ') {
-					current_index--;
-				}	
-				ret = current_index+1;
-				while (pData[current_index] != ' ') {
-					current_index--;
-				}
-				current_index++;
-				
-				if (current_index < (index-size))
-					current_index = (index - size) + 1;
-
-				retName = std::string(&pData[current_index], ret - current_index);
-				ret = i;
-#if DEBUG_GET_TEMPLATE
-				LogPrintDebug("Template type found [%s] name [%s]", xTemplatesc_Str[i], retName.c_str());
-#endif
-				break;
-			}
-		}
-
-		delete[] tmpLine;
-	
-
-		return ret;
-*/
-
 	}
 #endif
 
@@ -534,10 +492,12 @@ namespace xF {
 			if (pData[current_index] == ' ')
 				token = current_index;
 		}
-		char cNumVerts[10];
-		cNumVerts[7] = '\0';
-		memcpy(cNumVerts, &pData[token + 1], current_index - token);
-		ptr->NumVertices = static_cast<xDWORD>(atof(cNumVerts));
+		char cNumVerts[16];
+		cNumVerts[15] = '\0';
+		unsigned int size_g = current_index - token;
+		memcpy(cNumVerts, &pData[token + 1], size_g);
+		cNumVerts[size_g - 1] = '\0';
+		ptr->NumVertices = static_cast<xDWORD>(atoi(cNumVerts));
 
 		current_index++;
 #if USE_VECTOR_RESERVE_AND_PUSH
@@ -546,21 +506,28 @@ namespace xF {
 		ptr->Positions = std::vector<XVECTOR3>(ptr->NumVertices);
 #endif
 
-		char cVertComponent[15];
-		cVertComponent[14] = '\0';
-		int cont = 0;
+		char cVertComponent[16];
+		cVertComponent[15] = '\0';
+		int bracket_cont = 0;
+		int component_count = 0;
 		for (unsigned int i = 0; i < ptr->NumVertices; i++) {
-			cont = 0;
+			bracket_cont = 0;
+			component_count = 0;
 			while (pData[current_index] != ',') {
 
 				if (pData[current_index] == ' ')
 					token = current_index;
 
 				if (pData[current_index] == ';') {
-					memcpy(cVertComponent, &pData[token + 1], current_index - token);
-					ptr->Positions[i].v[cont++] = static_cast<float>(atof(cVertComponent));
+					bracket_cont++;
+					size_g = current_index - token;
+					memcpy(cVertComponent, &pData[token + 1], size_g);
+					cVertComponent[size_g - 1] = '\0';
+					if (component_count < 3) {
+						ptr->Positions[i].v[component_count++] = static_cast<float>(atof(cVertComponent));
+					}
 					token = current_index;
-					if (cont == 4)
+					if (bracket_cont == 4)
 						break;
 				}
 				current_index++;
@@ -570,15 +537,21 @@ namespace xF {
 
 		current_index++;
 
-
-
+#if DEBUG_VERTICES
+		for (unsigned int i = 0; i < ptr->NumVertices; i++) {
+			LogPrintDebug("[%f;%f;%f;,]", ptr->Positions[i].x, ptr->Positions[i].y, ptr->Positions[i].z);
+		}
+#endif
+	
 		while (pData[current_index] != ';') {
 			current_index++;
 			if (pData[current_index] == ' ')
 				token = current_index;
 		}
 
-		memcpy(cNumVerts, &pData[token + 1], current_index - token);
+		size_g = current_index - token;
+		memcpy(cNumVerts, &pData[token + 1], size_g);
+		cNumVerts[size_g - 1] = '\0';
 		ptr->NumTriangles = static_cast<xDWORD>(atoi(cNumVerts));
 
 
@@ -591,16 +564,18 @@ namespace xF {
 #elif USE_VECTOR_ARRAY_MODE
 		ptr->Triangles = std::vector<xWORD>(3 * ptr->NumTriangles);
 #endif
-		char cTriang[8];
-		cTriang[7] = '\0';
-		cont = 0;
+		char cTriang[16];
+		cTriang[15] = '\0';
+		int cont = 0;
 		int delim = 0;
 		for (unsigned int i = 0; i < ptr->NumTriangles; i++) {
 			delim = 0;
 			while (delim < 5) {
 				if (pData[current_index] == ',' || pData[current_index] == ';') {
 					if (delim != 0 && delim != 4) {
+						size_g = current_index - token;
 						memcpy(cTriang, &pData[token + 1], current_index - token);
+						cTriang[size_g - 1] = '\0';
 						ptr->Triangles[cont++] = static_cast<unsigned short>(atoi(cTriang));
 					}
 					token = current_index;
@@ -611,11 +586,6 @@ namespace xF {
 			}
 		}
 		current_index++;
-#if DEBUG_VERTICES
-		for (unsigned int i = 0; i < ptr->NumVertices; i++) {
-			LogPrintDebug("[%f;%f;%f;,]", ptr->Positions[i].x, ptr->Positions[i].y, ptr->Positions[i].z);
-		}
-#endif
 
 #if DEBUG_INDICES
 		for (unsigned int i = 0; i < ptr->Triangles.size(); i++) {
@@ -660,7 +630,13 @@ namespace xF {
 					LogPrintDebug("Found TextureCoords [%s]", rets.c_str());
 #endif
 					ProcessTexCoordinatesBlock(ptr);
+					/*
+					advance_to_next_close_brace_pre();
 
+					index--;
+					index--;
+					index--;
+					*/
 				}break;
 
 				case xF::STD_X_DECLDATA: {
@@ -931,9 +907,10 @@ namespace xF {
 			if (pData[current_index] == ' ')
 				token = current_index;
 		}
-		char cInteger[6];
-		cInteger[5] = '\0';
-		memcpy(cInteger, &pData[token + 1], current_index - token);
+		char cInteger[16];		
+		unsigned int g_size = current_index - token;
+		memcpy(cInteger, &pData[token + 1], g_size);
+		cInteger[g_size-1] = '\0';
 		pGeometry->Info.SkinMeshHeader.MaxNumWeightPerVertex = static_cast<xWORD>(atoi(cInteger));
 		
 		current_index++;
@@ -944,7 +921,9 @@ namespace xF {
 				token = current_index;
 		}
 
-		memcpy(cInteger, &pData[token + 1], current_index - token);
+		g_size = current_index - token;
+		memcpy(cInteger, &pData[token + 1], g_size);
+		cInteger[g_size - 1] = '\0';
 		pGeometry->Info.SkinMeshHeader.MaxNumWeightPerFace = static_cast<xWORD>(atoi(cInteger));
 
 		current_index++;
@@ -955,7 +934,9 @@ namespace xF {
 				token = current_index;
 		}
 
-		memcpy(cInteger, &pData[token + 1], current_index - token);
+		g_size = current_index - token;
+		memcpy(cInteger, &pData[token + 1], g_size);
+		cInteger[g_size - 1] = '\0';
 		pGeometry->Info.SkinMeshHeader.NumBones = static_cast<xWORD>(atoi(cInteger));
 
 #if DEBUG_COUTS
@@ -1058,9 +1039,11 @@ namespace xF {
 				token = current_index;
 		}
 
-		char cInteger[10];
-		cInteger[9] = '\0';
-		memcpy(cInteger, &pData[token + 1], current_index - token);
+		char cInteger[16];
+		cInteger[15] = '\0';
+		unsigned int g_size = current_index - token;
+		memcpy(cInteger, &pData[token + 1], g_size);
+		cInteger[g_size-1] = '\0';
 		xDWORD	NumWeights = static_cast<xDWORD>(atoi(cInteger));
 		
 		current_index++;
@@ -1080,22 +1063,26 @@ namespace xF {
 				token = current_index;
 
 			if (pData[current_index] == ',' || pData[current_index] == ';') {
-				memcpy(cInteger, &pData[token + 1], current_index - token);
+				g_size = current_index - token;
+				memcpy(cInteger, &pData[token + 1], g_size);
+				cInteger[g_size - 1] = '\0';
 				pSkin->VertexIndices[counter++] = static_cast<xDWORD>(atoi(cInteger));
 			}
 		}
 		
 		current_index++;
 		counter = 0;
-		char cFloat[12];
-		cFloat[11] = '\0';
+		char cFloat[16];
+		cFloat[15] = '\0';
 		while (pData[current_index] != ';') {
 			current_index++;
 			if (pData[current_index] == ' ')
 				token = current_index;
 
 			if (pData[current_index] == ',' || pData[current_index] == ';') {
-				memcpy(cFloat, &pData[token + 1], current_index - token);
+				g_size = current_index - token;
+				memcpy(cFloat, &pData[token + 1], g_size);
+				cFloat[g_size - 1] = '\0';
 				pSkin->Weights[counter++] = static_cast<float>(atof(cFloat));
 			}
 		}
@@ -1108,7 +1095,9 @@ namespace xF {
 				token = current_index;
 
 			if (pData[current_index] == ',' || pData[current_index] == ';') {
-				memcpy(cFloat, &pData[token + 1], current_index - token);
+				g_size = current_index - token;
+				memcpy(cFloat, &pData[token + 1], g_size);
+				cFloat[g_size - 1] = '\0';
 				pSkin->MatrixOffset.mat[counter++] = static_cast<float>(atof(cFloat));
 				token = current_index;
 				if(counter==16)
@@ -1218,9 +1207,11 @@ namespace xF {
 			if (pData[current_index] == ' ')
 				token = current_index;
 		}
-		char cInteger[8];
-		cInteger[7] = '\0';
-		memcpy(cInteger, &pData[token + 1], current_index - token);
+		char cInteger[16];
+		cInteger[15] = '\0';
+		unsigned int g_size = current_index - token;
+		memcpy(cInteger, &pData[token + 1], g_size);
+		cInteger[g_size - 1] = '\0';
 		NumMaterials = static_cast<xDWORD>(atoi(cInteger));
 		current_index++;
 
@@ -1230,7 +1221,9 @@ namespace xF {
 				token = current_index;
 		}
 
-		memcpy(cInteger, &pData[token + 1], current_index - token);
+		g_size = current_index - token;
+		memcpy(cInteger, &pData[token + 1], g_size);
+		cInteger[g_size - 1] = '\0';
 		NumFaceIndices = static_cast<xDWORD>(atoi(cInteger));
 
 		pGeometry->MaterialList.Materials = std::vector<xMaterial>(NumMaterials);
@@ -1247,7 +1240,9 @@ namespace xF {
 			}
 
 			if (pData[current_index] == ',' || pData[current_index] == ';') {
-				memcpy(cInteger, &pData[token + 1], current_index - token);
+				g_size = current_index - token;
+				memcpy(cInteger, &pData[token + 1], g_size);
+				cInteger[g_size - 1] = '\0';
 				pGeometry->MaterialList.FaceIndices[counter++] = static_cast<xDWORD>(atoi(cInteger));
 			}
 
@@ -1348,15 +1343,18 @@ namespace xF {
 		int token = 0;
 		int colo_count = 0;
 		int bracket_count = 0;
-		char cFloat[11];
-		cFloat[10] = '\0';
+		char cFloat[16];
+		cFloat[15] = '\0';
+		unsigned g_size = 0;
 		while (bracket_count<5) {
 			current_index++;
 			if (pData[current_index] == ' ')
 				token = current_index;
 
 			if (pData[current_index] == ';') {
-				memcpy(cFloat, &pData[token + 1], current_index - token);
+				g_size = current_index - token;
+				memcpy(cFloat, &pData[token + 1], g_size);
+				cFloat[g_size-1] = '\0';
 				out->FaceColor.v[colo_count++] = static_cast<float>(atof(cFloat));
 				token = current_index;
 				bracket_count++;
@@ -1370,8 +1368,9 @@ namespace xF {
 			if (pData[current_index] == ' ')
 				token = current_index;
 		}
-	
-		memcpy(cFloat, &pData[token + 1], current_index - token);
+		g_size = current_index - token;
+		memcpy(cFloat, &pData[token + 1], g_size);
+		cFloat[g_size - 1] = '\0';
 		out->Power = static_cast<float>(atof(cFloat));
 	
 		current_index++;
@@ -1383,7 +1382,9 @@ namespace xF {
 				token = current_index;
 
 			if (pData[current_index] == ';') {
-				memcpy(cFloat, &pData[token + 1], current_index - token);
+				g_size = current_index - token;
+				memcpy(cFloat, &pData[token + 1], g_size);
+				cFloat[g_size - 1] = '\0';
 				out->Specular.v[colo_count++] = static_cast<float>(atof(cFloat));
 				token = current_index;
 				bracket_count++;
@@ -1400,7 +1401,9 @@ namespace xF {
 				token = current_index;
 
 			if (pData[current_index] == ';') {
-				memcpy(cFloat, &pData[token + 1], current_index - token);
+				g_size = current_index - token;
+				memcpy(cFloat, &pData[token + 1], g_size);
+				cFloat[g_size - 1] = '\0';
 				out->Emissive.v[colo_count++] = static_cast<float>(atof(cFloat));
 				token = current_index;
 				bracket_count++;
@@ -1707,17 +1710,19 @@ namespace xF {
 				token = current_index;
 		}
 		xDWORD NumElements = 0;
-		char cInteger[8];
-		cInteger[7] = '\0';
-		memcpy(cInteger, &pData[token + 1], current_index - token);
+		char cInteger[16];
+		cInteger[15] = '\0';
+		unsigned int g_size = current_index - token;
+		memcpy(cInteger, &pData[token + 1],g_size);
+		cInteger[g_size-1] = '\0';
 		NumElements = static_cast<xDWORD>(atoi(cInteger));
 		current_index++;
 
 		if (NumElements > 0)
 			out->CaseFloat = std::vector<xFLOAT>(NumElements);
 
-		char cFloat[12];
-		cFloat[11] = '\0';
+		char cFloat[16];
+		cFloat[15] = '\0';
 		unsigned int cont = 0;
 		while (cont<NumElements){
 
@@ -1725,7 +1730,9 @@ namespace xF {
 				token = current_index;
 
 			if (pData[current_index] == ',' || pData[current_index] == ';') {
-				memcpy(cFloat, &pData[token + 1], current_index - token);
+				g_size = current_index - token;
+				memcpy(cFloat, &pData[token + 1], g_size);
+				cFloat[g_size - 1] = '\0';
 				out->CaseFloat[cont++] = static_cast<xFLOAT>(atof(cFloat));
 			}
 			current_index++;
@@ -1773,9 +1780,11 @@ namespace xF {
 			if (pData[current_index] == ' ')
 				token = current_index;
 		}
-		char cInteger[8];
-		cInteger[7] = '\0';
-		memcpy(cInteger, &pData[token + 1], current_index - token);
+		char cInteger[16];
+		cInteger[15] = '\0';
+		unsigned int g_size = current_index - token;
+		memcpy(cInteger, &pData[token + 1], g_size);
+		cInteger[g_size - 1] = '\0';
 		out->CaseDWORD = static_cast<xDWORD>(atoi(cInteger));
 
 #if DEBUG_EFFECT_DWORDS
@@ -1820,10 +1829,12 @@ namespace xF {
 			if (pData[current_index] == ' ')
 				token = current_index;
 		}
-		char cNumVerts[10];
-		cNumVerts[7] = '\0';
-		memcpy(cNumVerts, &pData[token + 1], current_index - token);
-		NumVertices = static_cast<xDWORD>(atof(cNumVerts));
+		char cNumVerts[16];
+		cNumVerts[15] = '\0';
+		unsigned int g_size = current_index - token;
+		memcpy(cNumVerts, &pData[token + 1], g_size);
+		cNumVerts[g_size-1] = '\0';
+		NumVertices = static_cast<xDWORD>(atoi(cNumVerts));
 		current_index++;
 
 #if USE_VECTOR_RESERVE_AND_PUSH
@@ -1843,7 +1854,9 @@ namespace xF {
 					token = current_index;
 
 				if (pData[current_index] == ';') {
-					memcpy(cVertComponent, &pData[token + 1], current_index - token);
+					g_size = current_index - token;
+					memcpy(cVertComponent, &pData[token + 1], g_size);
+					cVertComponent[g_size - 1] = '\0';
 					pGeometry->Normals[i].v[cont++] = static_cast<float>(atof(cVertComponent));
 					token = current_index;
 					if (cont == 4)
@@ -1919,33 +1932,46 @@ namespace xF {
 			if (pData[current_index] == ' ')
 				token = current_index;
 		}
-		char cNumVerts[10];
-		cNumVerts[7] = '\0';
-		memcpy(cNumVerts, &pData[token + 1], current_index - token);
-		NumTexcoords = static_cast<xDWORD>(atof(cNumVerts));
+		char cNumVerts[16];
+		cNumVerts[15] = '\0';
+		unsigned int g_size = current_index - token;
+		memcpy(cNumVerts, &pData[token + 1], g_size);
+		cNumVerts[g_size - 1] = '\0';
+		NumTexcoords = static_cast<xDWORD>(atoi(cNumVerts));
 		current_index++;
 
+	
 #if USE_VECTOR_RESERVE_AND_PUSH
 		pGeometry->TexCoordinates[pGeometry->NumChannelsTexCoords].reserve(NumTexcoords);
 #elif USE_VECTOR_ARRAY_MODE
 		pGeometry->TexCoordinates[pGeometry->NumChannelsTexCoords] = std::vector<XVECTOR2>(NumTexcoords);
 #endif
-
-		char cVertComponent[15];
-		cVertComponent[14] = '\0';
-		int cont = 0;
+		
+		char cVertComponent[16];
+		cVertComponent[15] = '\0';
+		int cont_brackets = 0;
+		int cont_components = 0;
 		for (unsigned int i = 0; i < NumTexcoords; i++) {
-			cont = 0;
+			cont_brackets = 0;
+			cont_components = 0;
 			while (pData[current_index] != ',') {
 
 				if (pData[current_index] == ' ')
 					token = current_index;
 
 				if (pData[current_index] == ';') {
-					memcpy(cVertComponent, &pData[token + 1], current_index - token);
-					pGeometry->TexCoordinates[pGeometry->NumChannelsTexCoords][i].v[cont++] = static_cast<float>(atof(cVertComponent));
+					cont_brackets++;
+					g_size = current_index - token;
+					memcpy(cVertComponent, &pData[token + 1], g_size);
+					cVertComponent[g_size - 1] = '\0';
+
+					if (cont_components < 2) {
+						pGeometry->TexCoordinates[pGeometry->NumChannelsTexCoords][i].v[cont_components++] = static_cast<float>(atof(cVertComponent));
+					}
+
 					token = current_index;
-					if (cont == 3)
+
+					if (cont_brackets == 3)
 						break;
 				}
 				current_index++;
@@ -1958,6 +1984,22 @@ namespace xF {
 			LogPrintDebug("[%f;%f;,]", pGeometry->TexCoordinates[pGeometry->NumChannelsTexCoords][i].x, pGeometry->TexCoordinates[pGeometry->NumChannelsTexCoords][i].y);
 		}
 #endif
+
+		pGeometry->NumChannelsTexCoords++;
+
+		if (pGeometry->NumChannelsTexCoords == 1) {
+			pGeometry->VertexAttributes |= xF::xMeshGeometry::HAS_TEXCOORD0;
+		}
+		else if (pGeometry->NumChannelsTexCoords == 2) {
+			pGeometry->VertexAttributes |= xF::xMeshGeometry::HAS_TEXCOORD1;
+	}
+		else if (pGeometry->NumChannelsTexCoords == 3) {
+			pGeometry->VertexAttributes |= xF::xMeshGeometry::HAS_TEXCOORD2;
+		}
+		else if (pGeometry->NumChannelsTexCoords == 4) {
+			pGeometry->VertexAttributes |= xF::xMeshGeometry::HAS_TEXCOORD3;
+		}
+
 		index = current_index;
 
 	
@@ -2147,8 +2189,8 @@ namespace xF {
 #else
 		unsigned int current_index = index;
 		unsigned int token = 0;
-		char cFloat[12];
-		cFloat[11] = '\0';
+		char cFloat[16];
+		cFloat[15] = '\0';
 		unsigned int cont = 0;
 		unsigned int size_f = 0;
 		while (cont < 16) {
