@@ -2,7 +2,9 @@
 #ifndef XDATABASE_H
 #define XDATABASE_H
 
-#define DEBUG_COUTS 1
+#define DEBUG_COUTS 0
+#define DEBUG_GET_TEMPLATE 1
+
 #define DEBUG_GET_BRACE 0
 #define DEBUG_MATRICES 0
 #define DEBUG_VERTICES 0
@@ -10,12 +12,15 @@
 #define DEBUG_NORMALS 0
 #define DEBUG_TEXCOORDS 0
 #define DEBUG_WEIGHTS 0
-#define DEBUG_GET_TEMPLATE 1
 #define DEBUG_MATERIAL_INDICES 0
 #define DEBUG_MATERIAL_COLORS 0
-#define DEBUG_NUMBER_MATERIALS 1
+#define DEBUG_NUMBER_MATERIALS 0
+#define DEBUG_ANIMATION 1
+#define DEBUG_TICKS_PER_SECOND 0
 
-#define DEBUG_EFFECT_INSTANCE 1
+#define DEBUG_END_BLOCKS 0
+
+#define DEBUG_EFFECT_INSTANCE 0
 #define DEBUG_EFFECT_DWORDS 0
 #define DEBUG_EFFECT_FLOATS 0
 #define DEBUG_EFFECT_STRING 0
@@ -26,6 +31,7 @@
 #define PROFILE_SKIN_WEIGHTS 0
 #define PROFILE_FRAME_BONE 0
 
+#define USE_PREFETCH_ANIMATION_SETS_NUM 0
 #define USE_VECTOR_RESERVE_AND_PUSH 0
 #define USE_VECTOR_ARRAY_MODE 1
 
@@ -104,6 +110,7 @@ namespace xF {
 		void		PrintNextCharsAndPause();
 
 		void			advance_to_next_close_brace_pre();
+		unsigned int	prefetch_animation_num();
 #endif
 
 		std::stringstream		 m_ActualStream;

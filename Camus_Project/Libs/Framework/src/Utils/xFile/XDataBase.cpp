@@ -124,7 +124,7 @@ namespace xF {
 		unsigned int size_word_1 = 0;
 		unsigned int size_word_2 = 0;
 		unsigned int index_init = index;
-		char cWord_A[32];
+		char cWord_A[64];
 		char cWord_B[32];
 
 	
@@ -264,6 +264,7 @@ namespace xF {
 			unsigned short Ret = GetxTemplateType(Line, &rets);
 			
 #else
+		
 		while(pData[index]!='\0'){
 		advance_to_next_open_brace();{
 			std::string rets;
@@ -284,14 +285,14 @@ namespace xF {
 
 				case xF::STD_X_TICKSPERSECCOND: {
 #if	DEBUG_COUTS
-					std::cout << "Found Ticks : " << rets << std::endl;
+					LogPrintDebug("Found AnimTicksPerSecond [%s]", rets.c_str());
 #endif
 					ProcessTicksPerSecond(&m_pActualMesh->Animation);
 				}break;
 
 				case STD_X_ANIMATIONSET: {
 #if	DEBUG_COUTS
-					std::cout << "Found Animation Set : " << rets << std::endl;
+					LogPrintDebug("Found AnimationSet [%s]", rets.c_str());
 #endif
 					ProcessAnimationSet(&m_pActualMesh->Animation, rets);
 				}break;
@@ -678,23 +679,48 @@ namespace xF {
 
 			index++;
 		}
-
+		#if DEBUG_END_BLOCKS
 		LogPrintDebug("End of ProcessMeshBlock");
+		#endif
 	}
 
 	void XDataBase::ProcessTicksPerSecond(xF::xAnimationInfo* pAnimation) {
 		PROFILING_SCOPE("ProcessTicksPerSecond")
+#if USE_STRING_STREAM
 		std::string Temp;
 		m_ActualStream >> Temp;
 		Temp = Temp.substr(0, Temp.size() - 1);
 		std::stringstream toInt(Temp);
 		toInt >> pAnimation->TicksPerSecond;
 		pAnimation->isAnimInfo = true;
+#else
+		int current_index = index;
+		int token = 0;
+		while (pData[current_index] != ';') {		
+			if (pData[current_index] == ' ')
+				token = current_index;
+
+			current_index++;
+		}
+		char cTicksPerSecond[16];
+		cTicksPerSecond[15] = '\0';
+		unsigned int size_g = current_index - token;
+		memcpy(cTicksPerSecond, &pData[token + 1], size_g);
+		cTicksPerSecond[size_g - 1] = '\0';
+		pAnimation->TicksPerSecond = static_cast<xDWORD>(atoi(cTicksPerSecond));
+		pAnimation->isAnimInfo = true;
+#if DEBUG_TICKS_PER_SECOND
+		LogPrintDebug("Ticks per Second: [%d]", pAnimation->TicksPerSecond);
+#endif
+
+#endif
 	}
 
 	void XDataBase::ProcessAnimationSet(xF::xAnimationInfo* pAnimation, const std::string name) {
 		PROFILING_SCOPE("ProcessAnimationSet")
-		xF::xAnimationSet tmp;
+
+#if USE_STRING_STREAM
+			xF::xAnimationSet tmp;
 		pAnimation->Animations.push_back(tmp);
 		xF::xAnimationSet* pActualAnimationSet = &pAnimation->Animations.back();
 
@@ -716,10 +742,80 @@ namespace xF {
 			}
 		}
 
-	}
+#else
+		xF::xAnimationSet tmp;
+		pAnimation->Animations.push_back(tmp);
+		xF::xAnimationSet* pActualAnimationSet = &pAnimation->Animations.back();
+		pActualAnimationSet->Name = name;
 
+		while (pData[index] != '}') {
+			if (pData[index] != '{') {
+				std::string rets;
+				unsigned int Ret = GetxTemplateTypeChar(rets);
+
+				if (Ret == STD_BREAK)
+					break;
+
+				switch (Ret) {
+					case xF::STD_X_ANIMATION: {
+	#if DEBUG_ANIMATION
+						LogPrintDebug("Found Animation [%s] ", rets.c_str());
+	#endif
+						ProcessAnimation(pActualAnimationSet);
+
+					}break;
+				}
+
+				advance_to_next_close_brace_pre();
+			}
+			index++;
+		}
+
+
+
+#endif
+	}
+#if !USE_STRING_STREAM && USE_PREFETCH_ANIMATION_SETS_NUM
+	unsigned int XDataBase::prefetch_animation_num() {
+		PROFILING_SCOPE("prefetch_animation_num");
+
+			unsigned int current_index = index;
+			unsigned int animation_sets = 0;
+			bool ended = false;
+			while (!ended) {
+
+				while (pData[index] != '{') {
+
+					if (pData[index] == '\0') {
+						ended = true;
+						break;
+					}
+
+					index++;
+				}
+
+				if (ended)
+					break;
+
+				std::string rets;
+				unsigned int Ret = GetxTemplateTypeChar(rets);
+
+				if (Ret == STD_X_ANIMATIONSET)
+					animation_sets++;
+
+
+
+				advance_to_next_close_brace();
+			}
+
+			index = current_index;
+
+		return animation_sets;
+	}
+#endif
 	void XDataBase::ProcessAnimation(xF::xAnimationSet* out) {
 		PROFILING_SCOPE("ProcessAnimation")
+#if USE_STRING_STREAM
 		xF::xSTRING Line;
 		while ((Line.find("{") == -1) && (Line.find("}") == -1)) {
 			std::getline(m_ActualStream, Line);
@@ -777,11 +873,117 @@ namespace xF {
 				} // switch(GetTemplateType(Line,&rets)){
 			}
 		}
+#else 
+		while(pData[index] != '{') {
+			index++;
+		}
+		index++;
+		while (pData[index] != '{'){
+			index++;
+		}
+		index++;
+		while (pData[index] == ' ') {
+			index++;
+		}
+		unsigned int token = index;
+		index++;
+		while (pData[index] != ' ') {
+			index++;
+		}
+		index++;
+		char cBoneName[32];
+		cBoneName[31] = '\0';
+		unsigned int g_size = index - token;
+		memcpy(cBoneName,&pData[token], g_size);
+		cBoneName[g_size-1] = '\0';
+		
+		xF::xAnimationBone	tmp;
+		out->BonesRef.push_back(tmp);
+		xF::xAnimationBone* pCurrentAnimBone = &out->BonesRef.back();
+		pCurrentAnimBone->BoneName = std::string(cBoneName, g_size - 1);
 
+		LogPrintDebug("Bone name: [%s]",pCurrentAnimBone->BoneName.c_str());
+
+		while (pData[index] != '}') {
+			index++;
+		}
+		index++;
+
+		while (pData[index] != '}') {
+			if (pData[index] != '{') {
+				std::string rets;
+				unsigned int Ret = GetxTemplateTypeChar(rets);
+
+				if (Ret == STD_BREAK)
+					break;
+
+				switch (Ret) {
+					case xF::STD_X_ANIMATION_OPTIONS: {
+	#if DEBUG_ANIMATION
+					LogPrintDebug("Found AnimationOptions [%s] ", rets.c_str());
+	#endif
+
+
+					}break;
+
+					case xF::STD_X_ANIMATION_KEY: {
+	#if DEBUG_ANIMATION
+					LogPrintDebug("Found AnimationKey [%s] ", rets.c_str());
+	#endif
+
+						unsigned int token = 0;
+						while (pData[index] != ';') {
+							if(pData[index] != ' ')
+								token = index;
+							index++;
+						}
+						index++;
+
+						char cIngeger[16];
+						cIngeger[15] = '\0';
+						g_size = index - token;
+						memcpy(cIngeger,&pData[token+1], g_size);
+						cIngeger[g_size-1] = '\0';
+						unsigned int type = static_cast<xDWORD>(atoi(cIngeger));
+
+#if DEBUG_ANIMATION
+						LogPrintDebug("Found AnimationKey type [%d] ", type);
+#endif
+							switch (type) {
+								case '0': {
+		#if DEBUG_ANIMATION
+									LogPrintDebug("Found AnimationKey type Rotation");
+		#endif
+									ProcessAnimationKey_Rotation(pCurrentAnimBone);
+								}break;
+								case '1': {
+		#if DEBUG_ANIMATION
+									LogPrintDebug("Found AnimationKey type Scale");
+		#endif
+									ProcessAnimationKey_Scale(pCurrentAnimBone);
+								}break;
+								case '2': {
+		#if DEBUG_ANIMATION
+									LogPrintDebug("Found AnimationKey type Position");
+		#endif
+									ProcessAnimationKey_Position(pCurrentAnimBone);
+								}break;
+							}
+					
+					}break;
+				}
+
+				advance_to_next_close_brace_pre();
+			}
+			index++;
+		}
+
+#endif
 	}
 
 	void XDataBase::ProcessAnimationKey_Rotation(xF::xAnimationBone* out) {
 		PROFILING_SCOPE("ProcessAnimationKey_Rotation")
+#if USE_STRING_STREAM
 		int size_vec = 0;
 		m_ActualStream >> size_vec >> c_temp;
 
@@ -806,8 +1008,10 @@ namespace xF {
 			out->RotationKeys[i].Rot.w = tmp.Rot.w;
 #endif
 		}
-
 		m_ActualStream >> c_temp;
+#else
+
+#endif
 
 	}
 
@@ -1296,9 +1500,9 @@ namespace xF {
 		
 
 #endif
-
+#if DEBUG_END_BLOCKS
 		LogPrintDebug("End mesh");
-
+#endif
 
 	}
 
@@ -1449,8 +1653,9 @@ namespace xF {
 			index++;
 		}
 #endif
-
+#if DEBUG_END_BLOCKS
 		LogPrintDebug("End of ProcessMaterial");
+#endif
 	}
 
 	void XDataBase::ProcessEffectInstance(xF::xEffectInstance *out) {
@@ -1607,8 +1812,9 @@ namespace xF {
 					
 		
 #endif
-
-		LogPrintDebug("Out of effect instance");
+#if DEBUG_END_BLOCKS
+		LogPrintDebug("End of effect instance");
+#endif
 	}
 
 
