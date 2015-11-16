@@ -4,6 +4,7 @@
 #include <Utils/Log.h>
 
 
+
 const char* xTemplatesc_Str[] = {
 	"template",
 	"KeyValuePair",
@@ -245,7 +246,7 @@ namespace xF {
 
 	bool	XDataBase::Parse(std::string name) {
 		PROFILING_SCOPE("Parse")
-
+		
 		while (!m_Stack.empty()) {
 			m_Stack.pop();
 		}
@@ -950,19 +951,19 @@ namespace xF {
 						LogPrintDebug("Found AnimationKey type [%d] ", type);
 #endif
 							switch (type) {
-								case '0': {
+								case 0: {
 		#if DEBUG_ANIMATION
 									LogPrintDebug("Found AnimationKey type Rotation");
 		#endif
 									ProcessAnimationKey_Rotation(pCurrentAnimBone);
 								}break;
-								case '1': {
+								case 1: {
 		#if DEBUG_ANIMATION
 									LogPrintDebug("Found AnimationKey type Scale");
 		#endif
 									ProcessAnimationKey_Scale(pCurrentAnimBone);
 								}break;
-								case '2': {
+								case 2: {
 		#if DEBUG_ANIMATION
 									LogPrintDebug("Found AnimationKey type Position");
 		#endif
@@ -1011,12 +1012,142 @@ namespace xF {
 		m_ActualStream >> c_temp;
 #else
 
+		unsigned int token = 0;
+		while (pData[index] != ';') {
+			if (pData[index] == ' ')
+				token = index;
+			index++;
+		}
+		
+		char cIngeger[16];
+		cIngeger[15] = '\0';
+		unsigned int g_size = index - token;
+		memcpy(cIngeger, &pData[token + 1], g_size);
+		cIngeger[g_size - 1] = '\0';
+		unsigned int num_keys = static_cast<xDWORD>(atoi(cIngeger));
+
+#if USE_VECTOR_RESERVE_AND_PUSH	
+		out->RotationKeys.reserve(size_vec);
+#elif USE_VECTOR_ARRAY_MODE
+		out->RotationKeys = std::vector<xRotationKey>(num_keys);
+#endif
+
+		while (pData[index] != ';') {
+			index++;
+		}
+		index++;
+		while (pData[index] != ';') {
+			index++;
+			if(pData[index] == ' ')
+				token = index;
+		}
+		{
+
+		TimeEvent T("Keys Profile Rot keys.");
+		char cVar[16];
+		cVar[15] = '\0';
+		unsigned int current_index = index;
+		unsigned int num_components = 0;
+		for(unsigned int i=0;i<num_keys;i++){
+			num_components = 0;
+			while(num_components < 6) {
+
+				while (pData[current_index] != ';' && num_components < 2) {
+
+					current_index++;
+				}
+
+				while (pData[current_index] != ',' && num_components >= 2 && num_components != 5) {
+
+					current_index++;
+				}
+
+				while (pData[current_index] != ';' && num_components == 5) {
+					current_index++;
+				}
+
+				if (pData[current_index] == ';' && num_components == 5) {
+					g_size = current_index - token;
+					memcpy(cVar, &pData[token + 1], g_size);
+					cVar[g_size - 1] = '\0';
+					out->RotationKeys[i].Rot.v[3] = static_cast<float>(atof(cVar));
+					token = current_index;
+					while (pData[current_index] != ',') {
+						current_index++;
+					}
+					current_index++;
+					while (pData[current_index] != ';') {
+						current_index++;
+						if (pData[current_index] == ' ')
+							token = current_index;
+					}
+					break;
+				}
+
+				if (pData[current_index] == ',' && num_components == 4) {
+
+					g_size = current_index - token;
+					memcpy(cVar, &pData[token + 1], g_size);
+					cVar[g_size - 1] = '\0';
+					out->RotationKeys[i].Rot.v[2] = static_cast<float>(atof(cVar));
+					token = current_index;
+					num_components = 5;
+				}
+
+				if (pData[current_index] == ',' && num_components == 3) {
+
+					g_size = current_index - token;
+					memcpy(cVar, &pData[token + 1], g_size);
+					cVar[g_size - 1] = '\0';
+					out->RotationKeys[i].Rot.v[1] = static_cast<float>(atof(cVar));
+					token = current_index;
+					num_components = 4;
+				}
+
+				if (pData[current_index] == ',' && num_components == 2) {
+
+					g_size = current_index - token;
+					memcpy(cVar, &pData[token + 1], g_size);
+					cVar[g_size - 1] = '\0';
+					out->RotationKeys[i].Rot.v[0] = static_cast<float>(atof(cVar));
+					token = current_index;
+					num_components = 3;
+				}
+
+				if (pData[current_index] == ';' && num_components == 1) {
+					token = current_index;
+					num_components = 2;
+				}
+
+				if(pData[current_index] == ';' && num_components == 0){
+					char cIngeger[16];
+					cIngeger[15] = '\0';
+					g_size = current_index - token;
+					memcpy(cIngeger, &pData[token + 1], g_size);
+					cIngeger[g_size - 1] = '\0';
+					out->RotationKeys[i].t.i_atTime = static_cast<xDWORD>(atoi(cIngeger));
+					token = current_index;
+					num_components=1;
+				}
+
+				current_index++;
+			}
+		}
+		index = current_index;
+		}
+#if DEBUG_ANIMATION_KEYS
+		for(unsigned int i=0;i<out->RotationKeys.size();i++){
+			LogPrintDebug("Rotation key time [%d] keys [%f] [%f] [%f] [%f] ", out->RotationKeys[i].t.i_atTime, out->RotationKeys[i].Rot.x, out->RotationKeys[i].Rot.y, out->RotationKeys[i].Rot.z, out->RotationKeys[i].Rot.w);
+		}
+#endif
+	system("pause");
 #endif
 
 	}
 
 	void XDataBase::ProcessAnimationKey_Scale(xF::xAnimationBone* out) {
 		PROFILING_SCOPE("ProcessAnimationKey_Scale")
+#if USE_STRING_STREAM
 		int size_vec = 0;
 		m_ActualStream >> size_vec >> c_temp;
 #if USE_VECTOR_RESERVE_AND_PUSH	
@@ -1041,6 +1172,126 @@ namespace xF {
 		}
 
 		m_ActualStream >> c_temp;
+#else
+		unsigned int token = 0;
+		while (pData[index] != ';') {
+			if (pData[index] == ' ')
+				token = index;
+			index++;
+		}
+
+		char cIngeger[16];
+		cIngeger[15] = '\0';
+		unsigned int g_size = index - token;
+		memcpy(cIngeger, &pData[token + 1], g_size);
+		cIngeger[g_size - 1] = '\0';
+		unsigned int num_keys = static_cast<xDWORD>(atoi(cIngeger));
+
+#if USE_VECTOR_RESERVE_AND_PUSH	
+		out->ScaleKeys.reserve(size_vec);
+#elif USE_VECTOR_ARRAY_MODE
+		out->ScaleKeys = std::vector<xScaleKey>(num_keys);
+#endif
+
+		while (pData[index] != ';') {
+			index++;
+		}
+		index++;
+		while (pData[index] != ';') {
+			index++;
+			if (pData[index] == ' ')
+				token = index;
+		}
+		
+		{
+			TimeEvent T("Keys Profile Scale keys.");
+			char cVar[16];
+			cVar[15] = '\0';
+			unsigned int current_index = index;
+			unsigned int num_components = 0;
+			for (unsigned int i = 0; i < num_keys; i++) {
+				num_components = 0;
+				while (num_components < 5) {
+
+					while (pData[current_index] != ';' && num_components < 2) {
+
+						current_index++;
+					}
+
+					while (pData[current_index] != ',' && num_components >= 2 && num_components != 4) {
+
+						current_index++;
+					}
+
+					while (pData[current_index] != ';' && num_components == 4) {
+						current_index++;
+					}
+
+					if (pData[current_index] == ';' && num_components == 4) {
+						g_size = current_index - token;
+						memcpy(cVar, &pData[token + 1], g_size);
+						cVar[g_size - 1] = '\0';
+						out->ScaleKeys[i].Scale.v[2] = static_cast<float>(atof(cVar));
+						token = current_index;
+						while (pData[current_index] != ',') {
+							current_index++;
+						}
+						current_index++;
+						while (pData[current_index] != ';') {
+							current_index++;
+							if (pData[current_index] == ' ')
+								token = current_index;
+						}
+						break;
+					}
+
+					if (pData[current_index] == ',' && num_components == 3) {
+						g_size = current_index - token;
+						memcpy(cVar, &pData[token + 1], g_size);
+						cVar[g_size - 1] = '\0';
+						out->ScaleKeys[i].Scale.v[1] = static_cast<float>(atof(cVar));
+						token = current_index;
+						num_components = 4;
+					}
+
+					if (pData[current_index] == ',' && num_components == 2) {
+
+						g_size = current_index - token;
+						memcpy(cVar, &pData[token + 1], g_size);
+						cVar[g_size - 1] = '\0';
+						out->ScaleKeys[i].Scale.v[0] = static_cast<float>(atof(cVar));
+						token = current_index;
+						num_components = 3;
+					}
+
+					if (pData[current_index] == ';' && num_components == 1) {
+						token = current_index;
+						num_components = 2;
+					}
+
+					if (pData[current_index] == ';' && num_components == 0) {
+						char cIngeger[16];
+						cIngeger[15] = '\0';
+						g_size = current_index - token;
+						memcpy(cIngeger, &pData[token + 1], g_size);
+						cIngeger[g_size - 1] = '\0';
+						out->ScaleKeys[i].t.i_atTime = static_cast<xDWORD>(atoi(cIngeger));
+						token = current_index;
+						num_components = 1;
+					}
+
+					current_index++;
+				}
+			}
+			index = current_index;
+		}
+#if DEBUG_ANIMATION_KEYS
+		for (unsigned int i = 0; i < out->RotationKeys.size(); i++) {
+			LogPrintDebug("Rotation key time [%d] keys [%f] [%f] [%f] [%f] ", out->RotationKeys[i].t.i_atTime, out->RotationKeys[i].Rot.x, out->RotationKeys[i].Rot.y, out->RotationKeys[i].Rot.z, out->RotationKeys[i].Rot.w);
+		}
+#endif
+		system("pause");
+#endif
 	}
 
 	void XDataBase::ProcessAnimationKey_Position(xF::xAnimationBone* out) {
@@ -1550,7 +1801,7 @@ namespace xF {
 		char cFloat[16];
 		cFloat[15] = '\0';
 		unsigned g_size = 0;
-		while (bracket_count<5) {
+		while (bracket_count<4) {
 			current_index++;
 			if (pData[current_index] == ' ')
 				token = current_index;
@@ -1566,6 +1817,7 @@ namespace xF {
 		}
 
 		current_index++;
+		current_index++;
 
 		while (pData[current_index] != ';') {
 			current_index++;
@@ -1580,7 +1832,7 @@ namespace xF {
 		current_index++;
 		colo_count = 0;
 		bracket_count = 0;
-		while (bracket_count < 4) {
+		while (bracket_count < 3) {
 			current_index++;
 			if (pData[current_index] == ' ')
 				token = current_index;
@@ -1599,7 +1851,7 @@ namespace xF {
 		current_index++;
 		colo_count = 0;
 		bracket_count = 0;
-		while (bracket_count < 4) {
+		while (bracket_count < 3) {
 			current_index++;
 			if (pData[current_index] == ' ')
 				token = current_index;
@@ -2051,22 +2303,25 @@ namespace xF {
 
 		char cVertComponent[15];
 		cVertComponent[14] = '\0';
-		int cont = 0;
+		int bracket_cont = 0;
+		int component_count = 0;
 		for (unsigned int i = 0; i < NumVertices; i++) {
-			cont = 0;
+			bracket_cont = 0;
+			component_count = 0;
 			while (pData[current_index] != ',') {
 
 				if (pData[current_index] == ' ')
 					token = current_index;
 
-				if (pData[current_index] == ';') {
+				if (pData[current_index] == ';' && bracket_cont < 3) {
+					bracket_cont++;
 					g_size = current_index - token;
 					memcpy(cVertComponent, &pData[token + 1], g_size);
 					cVertComponent[g_size - 1] = '\0';
-					pGeometry->Normals[i].v[cont++] = static_cast<float>(atof(cVertComponent));
+					if (component_count < 3) {
+						pGeometry->Normals[i].v[component_count++] = static_cast<float>(atof(cVertComponent));
+					}
 					token = current_index;
-					if (cont == 4)
-						break;
 				}
 				current_index++;
 			}
@@ -2081,6 +2336,7 @@ namespace xF {
 			LogPrintDebug("[%f;%f;%f;,]", pGeometry->Normals[i].x, pGeometry->Normals[i].y, pGeometry->Normals[i].z);
 		}
 #endif
+
 		index = current_index;
 
 		

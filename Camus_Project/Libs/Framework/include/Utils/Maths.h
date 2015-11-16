@@ -8,6 +8,50 @@
 
 #include <string.h>
 
+#define ATOF_ANGEL 1
+#define ATOF_TOM_VAN  0
+#define ATOF_VS 1
+
+#if ATOF_VS
+
+#ifndef ATOF_ANGEL
+#undef ATOF_ANGEL
+#endif
+
+#ifndef ATOF_TOM_VAN
+#undef ATOF_TOM_VAN
+#endif
+
+#define ATOF_ANGEL 0
+#define ATOF_TOM_VAN  0
+#endif
+
+
+#if (ATOF_ANGEL) || (ATOF_TOM_VAN)
+
+#ifdef atof
+#undef atof
+#endif
+
+#if ATOF_ANGEL
+#define atof(a) CadenaAnumeroFlotantePersonalizada(a)
+#elif ATOF_TOM_VAN
+#define atof(a) atof_tom(a)
+#endif
+
+#endif
+
+#if ATOF_TOM_VAN
+#define white_space(c) ((c) == ' ' || (c) == '\t')
+#define valid_digit(c) ((c) >= '0' && (c) <= '9')
+double atof_tom(const char *p);
+#endif
+
+#if ATOF_ANGEL
+#define  inicioNumeros 48
+float CadenaAnumeroFlotantePersonalizada(char *c);
+#endif
+
 #ifndef xNULL
 #define  xNULL 0
 #endif

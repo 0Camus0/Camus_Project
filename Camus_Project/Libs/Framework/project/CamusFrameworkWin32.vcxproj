@@ -34,6 +34,7 @@
     <ClCompile Include="..\src\Utils\FileSystem.cpp" />
     <ClCompile Include="..\src\Utils\InputImplWin32.cpp" />
     <ClCompile Include="..\src\Utils\Log.cpp" />
+    <ClCompile Include="..\src\Utils\Maths.cpp" />
     <ClCompile Include="..\src\Utils\WindowProperties.cpp" />
     <ClCompile Include="..\src\Utils\xFile\XDataBase.cpp" />
     <ClCompile Include="..\src\Utils\xFile\xMesh.cpp" />
