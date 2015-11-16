@@ -30,7 +30,7 @@ namespace xF {
 
 	struct xFinalGeometry {
 
-		xFinalGeometry() :Id(0), IdIBO(0), VertexSize(0), NumVertex(0), pData(0) {}
+		xFinalGeometry() : pData(0), pDataDest(0), Id(0), IdIBO(0), VertexSize(0), NumVertex(0) {}
 
 
 		xFinalGeometry(const xFinalGeometry &fg) { *this = fg; }
@@ -128,7 +128,7 @@ namespace xF {
 		void	UpdateLerp();
 
 		xF::xAnimationInfo  *m_pAInfo;
-		xF::xSkeleton		*m_pSkeletonBind;
+	//	xF::xSkeleton		*m_pSkeletonBind; // TOCHECK;
 		xF::xSkeleton		*m_pSkeletonOut;
 #if !BYPASS_TIMER
 		Timer				 m_Timer;

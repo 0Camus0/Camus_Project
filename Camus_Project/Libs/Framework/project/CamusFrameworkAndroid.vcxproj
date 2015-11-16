@@ -44,6 +44,7 @@
     <ClInclude Include="..\include\Utils\InputBase.h" />
     <ClInclude Include="..\include\Utils\Log.h" />
     <ClInclude Include="..\include\Utils\Maths.h" />
+    <ClInclude Include="..\include\Utils\Time.h" />
     <ClInclude Include="..\include\Utils\WindowProperties.h" />
     <ClInclude Include="..\include\Utils\xFile\XDataBase.h" />
     <ClInclude Include="..\include\Utils\xFile\xDefs.h" />
@@ -63,6 +64,7 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\include\Utils\Time.cpp" />
     <ClCompile Include="..\src\Core\Core.cpp" />
     <ClCompile Include="..\src\Driver\BufferOpenGL.cpp" />
     <ClCompile Include="..\src\Driver\DriverProperties.cpp" />
@@ -77,6 +79,7 @@
     <ClCompile Include="..\src\Utils\FileSystem.cpp" />
     <ClCompile Include="..\src\Utils\InputImplAndroid.cpp" />
     <ClCompile Include="..\src\Utils\Log.cpp" />
+    <ClCompile Include="..\src\Utils\Maths.cpp" />
     <ClCompile Include="..\src\Utils\WindowProperties.cpp" />
     <ClCompile Include="..\src\Utils\xFile\XDataBase.cpp" />
     <ClCompile Include="..\src\Utils\xFile\xMesh.cpp" />
@@ -126,7 +129,7 @@
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>Clang_3_6</PlatformToolset>
     <UseOfStl>gnustl_static</UseOfStl>
-    <AndroidAPILevel>android-21</AndroidAPILevel>
+    <AndroidAPILevel>android-19</AndroidAPILevel>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings" />
@@ -171,7 +174,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>$(VS_NdkRoot)\platforms\$(AndroidAPILevel)\arch-arm\usr\include;$(StlIncludeDirectories)%(AdditionalIncludeDirectories);$(ProjectDir)..\include;</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>OS_ANDROID;USE_DEBUG;USE_C11_THREADS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>OS_ANDROID;USE_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <CppLanguageStandard>c++11</CppLanguageStandard>
       <DebugInformationFormat>None</DebugInformationFormat>
     </ClCompile>

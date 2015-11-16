@@ -5,6 +5,7 @@
 #include <Driver/TextureGL.h>
 
 #include <Utils/xFile/XDataBase.h>
+#include <Utils/Time.h>
 
 #ifdef OS_WIN32
 #ifdef min
@@ -13,6 +14,8 @@
 #ifdef max
 #undef max
 #endif
+#else
+#include <unistd.h>
 #endif
 
 #include <algorithm>
@@ -38,7 +41,12 @@ void TestApp::CreateAssets() {
 
 	xF::XDataBase xDataBase;
 
+
+
+	{
+	TimeEvent t("Load_model");
 	xDataBase.LoadXFile("DealerA14.X");
+	}
 
 
 
@@ -98,6 +106,8 @@ void TestApp::DestroyAssets() {
 }
 
 void TestApp::OnUpdate(unsigned int dt) {
+	
+
 
 }
 
@@ -115,6 +125,8 @@ void TestApp::OnDraw() {
 	pFramework->pVideoDriver->Clear(hyperspace::video::draw_bits_::COLOR_BIT, R, G, B, 1.0f);
 
 	pFramework->pVideoDriver->SwapBuffers();
+
+	
 }
 
 void TestApp::OnInput() {

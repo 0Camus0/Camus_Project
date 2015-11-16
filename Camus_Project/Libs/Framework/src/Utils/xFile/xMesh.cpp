@@ -1,4 +1,5 @@
 #include <Utils/xFile/xMesh.h>
+#include <Utils/Time.h>
 
 #include <GLES2/gl2.h>
 #include <GLES2/gl2ext.h>
@@ -7,12 +8,14 @@
 using namespace hyperspace;
 namespace xF {
 
-	AnimationController::AnimationController(xF::xAnimationInfo* aInfo, xF::xSkeleton *skInfoBind, xF::xSkeleton *skInfoOut) :m_pAInfo(aInfo), m_pSkeletonBind(skInfoBind), m_pSkeletonOut(skInfoOut) {
+	AnimationController::AnimationController(xF::xAnimationInfo* aInfo, xF::xSkeleton *skInfoBind, xF::xSkeleton *skInfoOut) :m_pAInfo(aInfo),/* m_pSkeletonBind(skInfoBind),*/ m_pSkeletonOut(skInfoOut) {
 		Ticks = 4800;
 		msPerTick = 4800.0;
 		m_Speed = 1.0;
 		std::cout << "tick: " << msPerTick << std::endl;
 
+		{
+		TimeEvent s("AnimationController:: for");
 		for (unsigned int i = 0; i < m_pAInfo->Animations.size(); i++) {
 			xF::xAnimationSet *pActualAS = &m_pAInfo->Animations[i];
 			for (unsigned int j = 0; j < pActualAS->BonesRef.size(); j++) {
@@ -25,13 +28,16 @@ namespace xF {
 				}
 			}
 		}
+		}
 
 		m_ActualAnimationSet = 0;
 		m_LoopingAnimations = false;
 		m_LerpAnimations = false;
 		m_TotalAnimationsSets = m_pAInfo->Animations.size();
-
+		{
+		TimeEvent s("AnimationController:: ResetLocals");
 		ResetLocals(AnimationController::POSITION_KEY | AnimationController::ROTATION_KEY | AnimationController::SCALE_KEY);
+		}
 #if !BYPASS_TIMER
 		m_Timer.Start();
 #endif
@@ -154,7 +160,7 @@ namespace xF {
 
 					long NextTick = pNextPosKey->t.i_atTime;
 					long ActualTick = static_cast<long>(msPerTick*pActualBone->ActualKey.LocaltimePos);
-					double Unit = static_cast<double>(pNextPosKey->t.i_atTime - pActualPosKey->t.i_atTime) / msPerTick;
+					//double Unit = static_cast<double>(pNextPosKey->t.i_atTime - pActualPosKey->t.i_atTime) / msPerTick;	// TOCHECK;
 
 					if (ActualTick >= NextTick) {
 						pActualBone->ActualKey.LocalIndexPos++;
@@ -194,7 +200,7 @@ namespace xF {
 
 					long NextTick = pNextRotKey->t.i_atTime;
 					long ActualTick = static_cast<long>(msPerTick*pActualBone->ActualKey.LocaltimeRot);
-					float Unit = static_cast<float>((pNextRotKey->t.i_atTime - pActualRotKey->t.i_atTime) / msPerTick);
+				//	float Unit = static_cast<float>((pNextRotKey->t.i_atTime - pActualRotKey->t.i_atTime) / msPerTick); // TOCHECK;
 
 					if (ActualTick >= NextTick) {
 						pActualBone->ActualKey.LocalIndexRot++;
@@ -237,7 +243,7 @@ namespace xF {
 
 					long NextTick = pNextScaleKey->t.i_atTime;
 					long ActualTick = static_cast<long>(msPerTick*pActualBone->ActualKey.LocaltimeSc);
-					float Unit = static_cast<float>(pNextScaleKey->t.i_atTime - pActualScaleKey->t.i_atTime) / msPerTick;
+				//	float Unit = static_cast<float>(pNextScaleKey->t.i_atTime - pActualScaleKey->t.i_atTime) / msPerTick; // TOCHECK;
 
 					if (ActualTick >= NextTick) {
 						pActualBone->ActualKey.LocalIndexRot++;
@@ -769,7 +775,7 @@ namespace xF {
 			memcpy(pDest, pSrc, MeshInfo[i].NumVertex*MeshInfo[i].VertexSize);
 
 			unsigned int   VertsIndex = 0;
-			unsigned int   NumWeights = 0;
+			//unsigned int   NumWeights = 0; // TOCHECK;
 			unsigned int   VectorSizeinBytes = 0;
 			unsigned int   VertexAttrib = pActualMesh->VertexAttributes;
 			float		   VertsWeight = 0;

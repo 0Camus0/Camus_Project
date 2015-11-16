@@ -401,7 +401,7 @@ namespace xF {
 			HAS_CUSTOM_DATA_8BYTES = HAS_POSITION << 14,
 			HAS_CUSTOM_DATA_16BYTES = HAS_POSITION << 15,
 		};
-		xMeshGeometry() :NumChannelsTexCoords(0), NumVertices(0), NumTriangles(0), NumIndices(0), VertexSize(0), VertexAttributes(HAS_POSITION) {}
+		xMeshGeometry() : NumVertices(0), NumTriangles(0), NumIndices(0), VertexSize(0), VertexAttributes(HAS_POSITION), NumChannelsTexCoords(0) {}
 		~xMeshGeometry() {}
 
 		std::vector<XVECTOR3>	 Positions;

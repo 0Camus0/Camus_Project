@@ -132,6 +132,9 @@
     <ClInclude Include="..\include\Utils\xFile\xMesh.h">
       <Filter>Source Files\Utils\xFile</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\Utils\Time.h">
+      <Filter>Source Files\Utils</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\Driver\DriverProperties.cpp">
@@ -196,6 +199,12 @@
     </ClCompile>
     <ClCompile Include="..\src\Utils\xFile\xMesh.cpp">
       <Filter>Source Files\Utils\xFile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\include\Utils\Time.cpp">
+      <Filter>Source Files\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Utils\Maths.cpp">
+      <Filter>Source Files\Utils</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

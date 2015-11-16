@@ -4,7 +4,7 @@
 
 #include <GLES2/gl2.h>
 #include <GLES2/gl2ext.h>
-#include <GLES3/gl3.h>
+//#include <GLES3/gl3.h>
 
 
 #ifdef OS_ANDROID
@@ -103,7 +103,7 @@ namespace hyperspace {
 			}
 
 			if (props & compress_format::ETC2) {
-				glFormat = GL_COMPRESSED_RGBA8_ETC2_EAC;
+			//	glFormat = GL_COMPRESSED_RGBA8_ETC2_EAC;
 				bpp = 8;
 			}
 
@@ -113,7 +113,7 @@ namespace hyperspace {
 			}
 
 			if (props & compress_format::DXT5) {
-				glFormat = GL_COMPRESSED_RGBA_S3TC_DXT5_EXT;
+			//	glFormat = GL_COMPRESSED_RGBA_S3TC_DXT5_EXT;
 				bpp = 8;
 			}
 		}

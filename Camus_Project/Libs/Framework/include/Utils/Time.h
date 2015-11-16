@@ -7,7 +7,7 @@
 #ifdef OS_WIN32
 #include <windows.h>
 #elif defined(OS_ANDROID)
-
+#include <time.h>
 #endif
 
 #include <string>

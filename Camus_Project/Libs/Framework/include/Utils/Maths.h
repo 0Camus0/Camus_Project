@@ -8,22 +8,28 @@
 
 #include <string.h>
 
-#define ATOF_ANGEL 1
+#ifndef ATOF_ANGEL
+#define ATOF_ANGEL 0
+#endif
+
+#ifndef ATOF_TOM_VAN 
 #define ATOF_TOM_VAN  0
-#define ATOF_VS 1
+#endif
+
+#ifndef ATOF_VS 
+#define ATOF_VS 0
+#endif
 
 #if ATOF_VS
 
 #ifndef ATOF_ANGEL
 #undef ATOF_ANGEL
+#define ATOF_ANGEL 0
 #endif
-
 #ifndef ATOF_TOM_VAN
 #undef ATOF_TOM_VAN
-#endif
-
-#define ATOF_ANGEL 0
 #define ATOF_TOM_VAN  0
+#endif
 #endif
 
 
