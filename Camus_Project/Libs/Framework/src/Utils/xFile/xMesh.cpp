@@ -14,7 +14,7 @@ namespace xF {
 		m_Speed = 1.0;
 		std::cout << "tick: " << msPerTick << std::endl;
 
-		{
+	/*	{
 		TimeEvent s("AnimationController:: for");
 		for (unsigned int i = 0; i < m_pAInfo->Animations.size(); i++) {
 			xF::xAnimationSet *pActualAS = &m_pAInfo->Animations[i];
@@ -28,16 +28,15 @@ namespace xF {
 				}
 			}
 		}
-		}
+		}*/
 
 		m_ActualAnimationSet = 0;
 		m_LoopingAnimations = false;
 		m_LerpAnimations = false;
 		m_TotalAnimationsSets = m_pAInfo->Animations.size();
-		{
-		TimeEvent s("AnimationController:: ResetLocals");
+		
 		ResetLocals(AnimationController::POSITION_KEY | AnimationController::ROTATION_KEY | AnimationController::SCALE_KEY);
-		}
+		
 #if !BYPASS_TIMER
 		m_Timer.Start();
 #endif

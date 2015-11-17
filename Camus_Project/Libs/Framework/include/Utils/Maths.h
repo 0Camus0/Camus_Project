@@ -9,7 +9,7 @@
 #include <string.h>
 
 #ifndef ATOF_ANGEL
-#define ATOF_ANGEL 0
+#define ATOF_ANGEL 1
 #endif
 
 #ifndef ATOF_TOM_VAN 

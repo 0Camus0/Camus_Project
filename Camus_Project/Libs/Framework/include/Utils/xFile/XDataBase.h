@@ -26,6 +26,8 @@
 #define DEBUG_EFFECT_STRING 0
 
 
+#define PROFILE_PARSING 0
+#define PROFILE_LOAD_X_FILE 0
 #define PROFILE_MATRICES 0
 #define PROFILE_BRACES 0
 #define PROFILE_SKIN_WEIGHTS 0
@@ -137,7 +139,6 @@ namespace xF {
 		xMesh					*m_pActualMesh;
 		char					 *pData;
 		unsigned int			 index;
-
 		// ...
 		char					c_temp;
 

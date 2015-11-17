@@ -68,8 +68,9 @@ namespace xF {
 #endif
 
 	bool	XDataBase::LoadXFile(const std::string	&FileName) {
+#if PROFILE_LOAD_X_FILE
 		PROFILING_SCOPE("LoadXFile")
-
+#endif
 		std::string Path = fs::Filesystem::instance()->GetResourcesPath();
 		Path += "Models/";
 		Path += FileName;
@@ -253,8 +254,9 @@ namespace xF {
 	}
 
 	bool	XDataBase::Parse(std::string name) {
+#if PROFILE_PARSING
 		PROFILING_SCOPE("Parse")
-		
+#endif
 		while (!m_Stack.empty()) {
 			m_Stack.pop();
 		}
@@ -318,6 +320,7 @@ namespace xF {
 			}//if
 		}
 
+		
 
 		for (unsigned int i = 0; i < m_pActualMesh->Skeleton.Bones.size(); i++) {
 			for (unsigned int j = 0; j < m_pActualMesh->Skeleton.Bones[i].Sons.size(); j++) {
@@ -345,16 +348,14 @@ namespace xF {
 				}
 			}
 		}
+		
 
-		{
-		TimeEvent a("create buffers");
 		m_pActualMesh->CreateBuffers();
-		}
+		
 
-		{
-		TimeEvent a("create animation controller");
+	
 		m_pActualMesh->m_AnimController = new AnimationController(&m_pActualMesh->Animation, &m_pActualMesh->Skeleton, &m_pActualMesh->SkeletonAnimated);
-		}
+
 
 
 		return true;
@@ -932,11 +933,22 @@ namespace xF {
 		unsigned int g_size = index - token;
 		memcpy(cBoneName,&pData[token], g_size);
 		cBoneName[g_size-1] = '\0';
-		
+
 		xF::xAnimationBone	tmp;
 		out->BonesRef.push_back(tmp);
 		xF::xAnimationBone* pCurrentAnimBone = &out->BonesRef.back();
+		//pCurrentAnimBone->BoneName = std::string(cBoneName, g_size - 1);
+		
+		for(std::size_t i =0;i<m_pActualMesh->Skeleton.Bones.size();i++){
+			if(strcmp(cBoneName, m_pActualMesh->Skeleton.Bones[i].Name.c_str())==0){
+				pCurrentAnimBone->BoneID = i;
+				break;
+			}				
+		}			
+
 		pCurrentAnimBone->BoneName = std::string(cBoneName, g_size - 1);
+	
+
 #if DEBUG_ANIMATION
 		LogPrintDebug("Bone name: [%s]",pCurrentAnimBone->BoneName.c_str());
 #endif
