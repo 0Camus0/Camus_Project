@@ -8,8 +8,6 @@
 namespace hyperspace {
 	namespace video {
 
-		typedef std::map<std::string, int> GLHandlers;
-	
 		class TechniqueGL : public CTechnique_ {
 		public:
 			TechniqueGL() : CurrentPass(0) {
@@ -19,6 +17,7 @@ namespace hyperspace {
 			 void			RemovePass(std::size_t id);
 			 std::int32_t	GetNumPasses();
 			 void			SetPass(std::size_t id);
+			 bool			BindAttribute(std::string &name, unsigned int &pass, unsigned int &binding);
 
 			 void			SetBool(std::string handler, bool &);
 			 void			SetInt(std::string handler, int &);

@@ -57,6 +57,14 @@ namespace hyperspace {
 			glUseProgram(CurrentPass->program);
 		}
 
+		bool TechniqueGL::BindAttribute(std::string &name, unsigned int &pass, unsigned int &binding){
+			if (pass >= Passes.size())
+				return false;
+
+		//	std::map<shader::Shader_Var_, int>::iterator it = Passes[pass].info.find(name);
+
+		}
+
 		unsigned int TechniqueGL::CompileShader(shader::stage_ type_, std::string path, std::string args) {
 			GLuint type;
 			
@@ -133,10 +141,7 @@ namespace hyperspace {
 			for (std::size_t i = 0; i < Parser.attributes.size(); i++) {
 				int loc = glGetAttribLocation(pass.program, Parser.attributes[i].name.c_str());
 				if (loc != -1) {
-					shader::Shader_Var_ handler;
-					handler = Parser.attributes[i];
-					pass.info.insert(std::pair<shader::Shader_Var_, int>(handler, loc));
-					pass.handlers.insert(std::pair<std::string, int>(handler.name, loc));
+					pass.handlers.insert(std::pair<std::string, shader::Shader_Var_>(Parser.attributes[i].name, Parser.attributes[i]));
 					number++;
 				}
 			}
@@ -144,10 +149,7 @@ namespace hyperspace {
 			for (std::size_t i = 0; i < Parser.uniforms.size(); i++) {
 				int loc = glGetUniformLocation(pass.program, Parser.uniforms[i].name.c_str());
 				if (loc != -1) {
-					shader::Shader_Var_ handler;
-					handler = Parser.uniforms[i];
-					pass.info.insert(std::pair<shader::Shader_Var_, int>(handler, loc));
-					pass.handlers.insert(std::pair<std::string, int>(handler.name, loc));
+					pass.handlers.insert(std::pair<std::string, shader::Shader_Var_>(Parser.uniforms[i].name, Parser.uniforms[i]));
 					number++;
 				}
 			}		
@@ -157,63 +159,63 @@ namespace hyperspace {
 		void TechniqueGL::SetBool(std::string handler, bool &b) {
 			Handlers::iterator it = CurrentPass->handlers.find(handler);
 			if (it != CurrentPass->handlers.end()) {
-				glUniform1i(it->second, static_cast<int>(b) );
+				glUniform1i(it->second.loc, static_cast<int>(b) );
 			}
 		}
 
 		void TechniqueGL::SetInt(std::string handler, int &i) {
 			Handlers::iterator it = CurrentPass->handlers.find(handler);
 			if (it != CurrentPass->handlers.end()) {
-				glUniform1i(it->second, i);
+				glUniform1i(it->second.loc, i);
 			}
 		}
 
 		void TechniqueGL::SetFloat(std::string handler, float &f) {
 			Handlers::iterator it = CurrentPass->handlers.find(handler);
 			if (it != CurrentPass->handlers.end()) {
-				glUniform1f(it->second, f);
+				glUniform1f(it->second.loc, f);
 			}
 		}
 
 		void TechniqueGL::SetVec2(std::string handler, XVECTOR2 &v) {
 			Handlers::iterator it = CurrentPass->handlers.find(handler);
 			if (it != CurrentPass->handlers.end()) {
-				glUniform2fv(it->second,1,v);
+				glUniform2fv(it->second.loc,1,v);
 			}
 		}
 
 		void TechniqueGL::SetVec3(std::string handler, XVECTOR3 &v) {
 			Handlers::iterator it = CurrentPass->handlers.find(handler);
 			if (it != CurrentPass->handlers.end()) {
-				glUniform3fv(it->second, 1, v);
+				glUniform3fv(it->second.loc, 1, v);
 			}
 		}
 
 		void TechniqueGL::SetVec4(std::string handler, XVECTOR3 &v) {
 			Handlers::iterator it = CurrentPass->handlers.find(handler);
 			if (it != CurrentPass->handlers.end()) {
-				glUniform4fv(it->second, 1, v);
+				glUniform4fv(it->second.loc, 1, v);
 			}
 		}
 
 		void TechniqueGL::SetMat2(std::string handler, float*m) {
 			Handlers::iterator it = CurrentPass->handlers.find(handler);
 			if (it != CurrentPass->handlers.end()) {
-				glUniformMatrix2fv(it->second, 1, GL_FALSE, m);
+				glUniformMatrix2fv(it->second.loc, 1, GL_FALSE, m);
 			}
 		}
 
 		void TechniqueGL::SetMat3(std::string handler, float*m) {
 			Handlers::iterator it = CurrentPass->handlers.find(handler);
 			if (it != CurrentPass->handlers.end()) {
-				glUniformMatrix3fv(it->second, 1, GL_FALSE, m);
+				glUniformMatrix3fv(it->second.loc, 1, GL_FALSE, m);
 			}
 		}
 
 		void TechniqueGL::SetMat4(std::string handler, XMATRIX44 &m) {
 			Handlers::iterator it = CurrentPass->handlers.find(handler);
 			if (it != CurrentPass->handlers.end()) {
-				glUniformMatrix3fv(it->second, 1, GL_FALSE, m);
+				glUniformMatrix3fv(it->second.loc, 1, GL_FALSE, m);
 			}
 		}
 

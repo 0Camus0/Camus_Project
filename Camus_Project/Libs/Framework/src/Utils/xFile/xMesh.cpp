@@ -12,23 +12,6 @@ namespace xF {
 		Ticks = 4800;
 		msPerTick = 4800.0;
 		m_Speed = 1.0;
-		std::cout << "tick: " << msPerTick << std::endl;
-
-	/*	{
-		TimeEvent s("AnimationController:: for");
-		for (unsigned int i = 0; i < m_pAInfo->Animations.size(); i++) {
-			xF::xAnimationSet *pActualAS = &m_pAInfo->Animations[i];
-			for (unsigned int j = 0; j < pActualAS->BonesRef.size(); j++) {
-				xF::xAnimationBone *pActualBone = &pActualAS->BonesRef[j];
-				for (unsigned int k = 0; k < m_pSkeletonOut->Bones.size(); k++) {
-					if (pActualBone->BoneName.compare(m_pSkeletonOut->Bones[k].Name) == 0) {
-						pActualBone->BoneID = k;
-						break;
-					}
-				}
-			}
-		}
-		}*/
 
 		m_ActualAnimationSet = 0;
 		m_LoopingAnimations = false;

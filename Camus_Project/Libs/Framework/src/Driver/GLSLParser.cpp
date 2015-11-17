@@ -74,86 +74,73 @@ namespace hyperspace{
 			shader::Shader_Var_ var_;
 			var_.name = v[token_pos].substr(0, v[token_pos].size() - 1);
 			var_.name[var_.name.size()] = 0;
-			var_.stage = current_stage;
+			var_.props |= current_stage;
 			DetermineSemantic(var_, v[pos]);
 			DetermineType(var_, v[token_pos - 1]);
 
-			switch (var_.sem) {
-			case shader::semantic_::ATTRIBUTE: {
+			if(var_.props & shader::semantic_::ATTRIBUTE) {
 				attributes.push_back(var_);
-			}break;
-			case shader::semantic_::UNIFORM: {
+			}else if(var_.props & shader::semantic_::UNIFORM) {
 				uniforms.push_back(var_);
-			}break;
-			case shader::semantic_::VARYING: {
+			}else if (var_.props & shader::semantic_::VARYING) {
 				varying.push_back(var_);
-			}break;
-			case shader::semantic_::UNKNOWN_SEMANTIC: {
-			}break;
 			}
-
 		}
 
 		void GLSL_Parser::DetermineSemantic(shader::Shader_Var_ &var, std::string &str) {
 			if (str.find("uniform") != std::string::npos) {
-				var.sem = shader::semantic_::UNIFORM;
+				var.props |= shader::semantic_::UNIFORM;
 			}
 			else if (str.find("varying") != std::string::npos) {
-				var.sem = shader::semantic_::VARYING;
+				var.props |= shader::semantic_::VARYING;
 			}
 			else if (str.find("attribute") != std::string::npos) {
-				var.sem = shader::semantic_::ATTRIBUTE;
-			}
-			else {
-				var.sem = shader::semantic_::UNKNOWN_SEMANTIC;
+				var.props |= shader::semantic_::ATTRIBUTE;
 			}
 		}
 
 		void GLSL_Parser::DetermineType(shader::Shader_Var_ &var, std::string &str) {
 			if (str.find("int") != std::string::npos) {
-				var.type = shader::datatype_::INT_;
+				var.props |= shader::datatype_::INT_;
 			}
 			else if (str.find("float") != std::string::npos) {
-				var.type = shader::datatype_::FLOAT_;
+				var.props |= shader::datatype_::FLOAT_;
 			}
 			else if (str.find("bool") != std::string::npos) {
-				var.type = shader::datatype_::BOOLEAN_;
+				var.props |= shader::datatype_::BOOLEAN_;
 			}
 			else if (str.find("vec2") != std::string::npos) {
-				var.type = shader::datatype_::VECTOR2_;
+				var.props |= shader::datatype_::VECTOR2_;
 			}
 			else if (str.find("vec3") != std::string::npos) {
-				var.type = shader::datatype_::VECTOR3_;
+				var.props |= shader::datatype_::VECTOR3_;
 			}
 			else if (str.find("vec4") != std::string::npos) {
-				var.type = shader::datatype_::VECTOR4_;
+				var.props |= shader::datatype_::VECTOR4_;
 			}
 			else if (str.find("mat2") != std::string::npos) {
-				var.type = shader::datatype_::MAT2_;
+				var.props |= shader::datatype_::MAT2_;
 			}
 			else if (str.find("mat3") != std::string::npos) {
-				var.type = shader::datatype_::MAT3_;
+				var.props |= shader::datatype_::MAT3_;
 			}
 			else if (str.find("mat4") != std::string::npos) {
-				var.type = shader::datatype_::MAT4_;
+				var.props |= shader::datatype_::MAT4_;
 			}
 			else if (str.find("sampler1D") != std::string::npos) {
-				var.type = shader::datatype_::SAMPLER1D_;
+				var.props |= shader::datatype_::SAMPLER1D_;
 			}
 			else if (str.find("sampler2D") != std::string::npos) {
-				var.type = shader::datatype_::SAMPLER2D_;
+				var.props |= shader::datatype_::SAMPLER2D_;
 			}
 			else if (str.find("sampler3D") != std::string::npos) {
-				var.type = shader::datatype_::SAMPLER3D_;
+				var.props |= shader::datatype_::SAMPLER3D_;
 			}
 			else if (str.find("samplerCube?") != std::string::npos) {
-				var.type = shader::datatype_::SAMPLERCUBE_;
+				var.props |= shader::datatype_::SAMPLERCUBE_;
 			}
 			else if (str.find("sampler2DShadow?") != std::string::npos) {
-				var.type = shader::datatype_::SAMPLERSHADOW_;
-			}
-			else {
-				var.type = shader::datatype_::UNKNOWN_TYPE;
+				var.props |= shader::datatype_::SAMPLERSHADOW_;
 			}
 		}
 	}

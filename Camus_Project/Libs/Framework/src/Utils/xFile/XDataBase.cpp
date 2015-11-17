@@ -937,8 +937,7 @@ namespace xF {
 		xF::xAnimationBone	tmp;
 		out->BonesRef.push_back(tmp);
 		xF::xAnimationBone* pCurrentAnimBone = &out->BonesRef.back();
-		//pCurrentAnimBone->BoneName = std::string(cBoneName, g_size - 1);
-		
+			
 		for(std::size_t i =0;i<m_pActualMesh->Skeleton.Bones.size();i++){
 			if(strcmp(cBoneName, m_pActualMesh->Skeleton.Bones[i].Name.c_str())==0){
 				pCurrentAnimBone->BoneID = i;
