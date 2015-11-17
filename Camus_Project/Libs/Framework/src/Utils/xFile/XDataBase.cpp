@@ -451,7 +451,9 @@ namespace xF {
 	}
 
 	void XDataBase::ProcessMeshBlock(std::string actual) {
+#if PROFILE_MESH_BLOCK
 		PROFILING_SCOPE("ProcessMeshBlock")
+#endif
 
 		xF::xMeshGeometry	tmp;
 		m_pActualMesh->Geometry.push_back(tmp);
@@ -503,6 +505,9 @@ namespace xF {
 		}
 
 #else
+#if PROFILE_VERTICES_BLOCK
+{		TimeEvent v("Vertex Block");
+#endif
 		int current_index = index;
 		int token = 0;
 		while (pData[current_index] != ';') {
@@ -552,7 +557,9 @@ namespace xF {
 			}
 			current_index++;
 		}
-
+#if PROFILE_VERTICES_BLOCK
+}
+#endif
 		current_index++;
 
 #if DEBUG_VERTICES
@@ -566,7 +573,9 @@ namespace xF {
 			if (pData[current_index] == ' ')
 				token = current_index;
 		}
-
+#if PROFILE_INDICES_BLOCK
+{		TimeEvent t("Indices Block");
+#endif
 		size_g = current_index - token;
 		memcpy(cNumVerts, &pData[token + 1], size_g);
 		cNumVerts[size_g - 1] = '\0';
@@ -604,6 +613,9 @@ namespace xF {
 			}
 		}
 		current_index++;
+#if PROFILE_INDICES_BLOCK
+}
+#endif
 
 #if DEBUG_INDICES
 		for (unsigned int i = 0; i < ptr->Triangles.size(); i++) {
@@ -1486,7 +1498,9 @@ namespace xF {
 	}
 
 	void XDataBase::ProcessSkinHeader(xF::xMeshGeometry* pGeometry) {
+#if PROFILE_SKIN_HEADER
 		PROFILING_SCOPE("ProcessSkinHeader")
+#endif
 #if USE_STRING_STREAM
 		m_ActualStream >> pGeometry->Info.SkinMeshHeader.MaxNumWeightPerVertex >> c_temp;
 		m_ActualStream >> pGeometry->Info.SkinMeshHeader.MaxNumWeightPerFace >> c_temp;
@@ -1752,7 +1766,9 @@ namespace xF {
 	}
 
 	void XDataBase::ProcessMaterialBlock(xF::xMeshGeometry *pGeometry) {
+#if PROFILE_MATERIAL_BLOCK
 		PROFILING_SCOPE("ProcessMaterialBlock")
+#endif
 #if USE_STRING_STREAM
 		xDWORD	NumMaterials = 0;
 		xDWORD	NumFaceIndices = 0;
@@ -1920,7 +1936,9 @@ namespace xF {
 	}
 
 	void XDataBase::ProcessMaterial(xMaterial* out) {
+#if PROFILE_MATERIAL
 		PROFILING_SCOPE("ProcessMaterial")
+#endif
 #if USE_STRING_STREAM
 		m_ActualStream >> out->FaceColor.r >> c_temp >> out->FaceColor.g >> c_temp >> out->FaceColor.b >> c_temp >> out->FaceColor.a >> c_temp >> c_temp;
 
@@ -2073,7 +2091,9 @@ namespace xF {
 	}
 
 	void XDataBase::ProcessEffectInstance(xF::xEffectInstance *out) {
+#if PROFILE_EFFECT_INSTANCE
 		PROFILING_SCOPE("ProcessEffectInstance")
+#endif
 #if USE_STRING_STREAM
 		m_ActualStream >> c_temp >> out->ShaderFileName;
 
@@ -2233,7 +2253,9 @@ namespace xF {
 
 
 	void XDataBase::ProcessEffectString(xF::xEffectDefault *out) {
-	//	PROFILING_SCOPE("ProcessEffectString")
+#if PROFILE_EFFECT_STRING
+		PROFILING_SCOPE("ProcessEffectString")
+#endif
 #if USE_STRING_STREAM
 		out->Type = xF::STDX_STRINGS;
 
@@ -2280,7 +2302,9 @@ namespace xF {
 	}
 
 	void XDataBase::ProcessEffectFloats(xF::xEffectDefault *out) {
-		//	PROFILING_SCOPE("ProcessEffectFloats")
+#if PROFILE_EFFECT_FLOATS
+		PROFILING_SCOPE("ProcessEffectFloats")
+#endif
 #if USE_STRING_STREAM
 		out->Type = xF::STDX_FLOATS;
 
@@ -2370,7 +2394,9 @@ namespace xF {
 	}
 
 	void XDataBase::ProcessEffectDwords(xEffectDefault *out) {
-		//PROFILING_SCOPE("ProcessEffectDwords")
+#if PROFILE_EFFECT_DWORDS
+		PROFILING_SCOPE("ProcessEffectDwords")
+#endif
 #if USE_STRING_STREAM
 		out->Type = xF::STDX_DWORDS;
 
@@ -2417,6 +2443,9 @@ namespace xF {
 	}
 
 	void XDataBase::ProcessNormalsBlock(xF::xMeshGeometry *pGeometry) {
+#if PROFILE_NORMALS_BLOCK
+		PROFILING_SCOPE("ProcessNormalsBlock")
+#endif
 #if USE_STRING_STREAM
 		xDWORD NumVertices = 0;
 		m_ActualStream >> NumVertices >> c_temp;
@@ -2507,7 +2536,9 @@ namespace xF {
 	}
 
 	void  XDataBase::ProcessTexCoordinatesBlock(xF::xMeshGeometry *pGeometry) {
+#if PROFILE_TEXCOORD_BLOCK
 		PROFILING_SCOPE("ProcessTexCoordinatesBlock")
+#endif
 		xDWORD NumTexcoords = 0;
 
 #if USE_STRING_STREAM
@@ -2631,7 +2662,9 @@ namespace xF {
 	}
 
 	void XDataBase::ProcessDeclDataBlock(xF::xMeshGeometry *pGeometry) {
+#if PROFILE_DECL_DATA_BLOCK
 		PROFILING_SCOPE("ProcessDeclDataBlock")
+#endif
 
 		xF::xDeclData	Data;
 		xDWORD NumElements = 0;

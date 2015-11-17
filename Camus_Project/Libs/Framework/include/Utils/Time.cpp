@@ -24,7 +24,7 @@ namespace hyperspace {
 		timeval actual;
 		gettimeofday(&actual, NULL);
 		double time_ = double((actual.tv_sec - t.duration.tv_sec)*1000.0 + (actual.tv_usec - t.duration.tv_usec)/1000.0);
-		LogPrintInfo("[Profiling][%s] Time: [%f]", t.name.c_str(), time_);
 #endif
+		LogPrintInfo("[Profiling][%s] Time: [%f]", t.name.c_str(), time_);
 	}
 }
