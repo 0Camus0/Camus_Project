@@ -57,12 +57,47 @@ namespace hyperspace {
 			glUseProgram(CurrentPass->program);
 		}
 
-		bool TechniqueGL::BindAttribute(std::string &name, unsigned int &pass, unsigned int &binding){
+		bool TechniqueGL::BindAttribute(std::string name, unsigned int pass, unsigned int binding){
 			if (pass >= Passes.size())
 				return false;
 
-		//	std::map<shader::Shader_Var_, int>::iterator it = Passes[pass].info.find(name);
+			Handlers::iterator it = Passes[pass].handlers.find(name);
 
+			if(it!=Passes[pass].handlers.end()){
+				it->second.props |= binding;
+			}
+		
+		}
+
+		void TechniqueGL::DebugPassesContent(){
+			for(std::size_t i=0;i<Passes.size();i++){
+				for(Handlers::iterator it = Passes[i].handlers.begin(); it != Passes[i].handlers.end();it++){
+					if (!(it->second.props & shader::semantic_::ATTRIBUTE))
+						continue;
+
+					std::string tmp_bind = "";
+					if(it->second.props & shader::bind_::POSITION)
+						tmp_bind  = "POSITION";
+					if (it->second.props & shader::bind_::NORMAL)
+						tmp_bind = "NORMAL";
+					if (it->second.props & shader::bind_::TEXCOORD_1)
+						tmp_bind = "TEXCOORD_1";
+					if (it->second.props & shader::bind_::TEXCOORD_2)
+						tmp_bind = "TEXCOORD_2";
+					if (it->second.props & shader::bind_::TEXCOORD_3)
+						tmp_bind = "TEXCOORD_3";
+					if (it->second.props & shader::bind_::TANGENT)
+						tmp_bind = "TANGENT";
+					if (it->second.props & shader::bind_::BINORMAL)
+						tmp_bind = "BINORMAL";
+					if (it->second.props & shader::bind_::BONE_WEIGHTS)
+						tmp_bind = "BONE_WEIGHTS";
+					if (it->second.props & shader::bind_::BONE_INDICES)
+						tmp_bind = "BONE_INDICES";
+
+					LogPrintDebug("Name [%s] Binding [%s]",it->first.c_str(), tmp_bind.c_str());
+				}
+			}
 		}
 
 		unsigned int TechniqueGL::CompileShader(shader::stage_ type_, std::string path, std::string args) {

@@ -96,7 +96,7 @@ namespace hyperspace {
 			virtual void			RemovePass(std::size_t id) = 0;
 			virtual std::int32_t	GetNumPasses() = 0;
 			virtual void			SetPass(std::size_t id) = 0;
-			virtual bool			BindAttribute(std::string &name,unsigned int &pass,unsigned int &binding) = 0;
+			virtual bool			BindAttribute(std::string name,unsigned int pass,unsigned int binding) = 0;
 			virtual unsigned int	CompileShader(shader::stage_ type, std::string path, std::string args) = 0;
 
 			virtual	void	SetBool(std::string handler, bool &) = 0;

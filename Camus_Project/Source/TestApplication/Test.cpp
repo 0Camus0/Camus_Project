@@ -34,17 +34,19 @@ void TestApp::CreateAssets() {
 
 	hyperspace::video::CTechnique_ *AllTechnique = new hyperspace::video::TechniqueGL();
 	AllTechnique->Initialize("All-tech", "All");
+	AllTechnique->BindAttribute("myVertex",0,hyperspace::video::shader::bind_::POSITION);
 
-	LogPrintDebug("Version cpp %d", __cplusplus);
+	((hyperspace::video::TechniqueGL*)AllTechnique)->DebugPassesContent();
 
 //	delete AllTechnique;
 
-	xF::XDataBase xDataBase;
+	
 
 
 
 	{
 	TimeEvent t("Load_model");
+	xF::XDataBase xDataBase;
 	xDataBase.LoadXFile("DealerA14.X");
 	}
 

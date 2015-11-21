@@ -17,7 +17,7 @@ namespace hyperspace {
 			 void			RemovePass(std::size_t id);
 			 std::int32_t	GetNumPasses();
 			 void			SetPass(std::size_t id);
-			 bool			BindAttribute(std::string &name, unsigned int &pass, unsigned int &binding);
+			 bool			BindAttribute(std::string name, unsigned int pass, unsigned int binding);
 
 			 void			SetBool(std::string handler, bool &);
 			 void			SetInt(std::string handler, int &);
@@ -28,6 +28,8 @@ namespace hyperspace {
 			 void			SetMat2(std::string handler, float*);
 			 void			SetMat3(std::string handler, float*);
 			 void			SetMat4(std::string handler, XMATRIX44 &);
+
+			 void			DebugPassesContent();
 
 			 ~TechniqueGL() {
 			 }
