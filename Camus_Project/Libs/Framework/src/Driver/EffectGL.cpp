@@ -9,7 +9,7 @@
 namespace hyperspace {
 	namespace video {
 
-		void TechniqueGL::Initialize(std::string name, std::string shader) {
+		void TechniqueGL::Initialize(std::string name, std::string shader, ArgumentsManager args) {
 #if USE_LOG_DEBUG_TECHNIQUES
 			LogPrintDebug("[TechniqueGL::Initialize] %s  shader: %s ", name.c_str(), shader.c_str());
 #endif
@@ -20,7 +20,7 @@ namespace hyperspace {
 			Path += shader;
 
 			Parser.Parse(Path);
-			AddPass("0", ArgumentsManager("NORMAL;TANGENT;"), Path, CRenderStateDesc());
+			AddPass("0", args , Path, CRenderStateDesc());
 
 		}
 

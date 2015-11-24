@@ -417,11 +417,11 @@ namespace xF {
 
 		XMATRIX44				 RelativeMatrix;
 		std::string				 Name;
-		xDWORD				 NumVertices;
-		xDWORD				 NumTriangles;
-		xDWORD				 NumIndices;
-		xDWORD				 VertexSize;
-		xDWORD				 VertexAttributes;
+		xDWORD					 NumVertices;
+		xDWORD					 NumTriangles;
+		xDWORD					 NumIndices;
+		xDWORD					 VertexSize;
+		xDWORD					 VertexAttributes;
 		xWORD					 NumChannelsTexCoords;
 	};
 

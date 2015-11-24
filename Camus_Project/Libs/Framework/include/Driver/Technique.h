@@ -91,7 +91,7 @@ namespace hyperspace {
 			CTechnique_() {
 		
 			}
-			virtual void			Initialize(std::string name, std::string shader) = 0;
+			virtual void			Initialize(std::string name, std::string shader, ArgumentsManager args = ArgumentsManager() ) = 0;
 			virtual void			AddPass(std::string name, ArgumentsManager args,std::string path,CRenderStateDesc desc) = 0;
 			virtual void			RemovePass(std::size_t id) = 0;
 			virtual std::int32_t	GetNumPasses() = 0;

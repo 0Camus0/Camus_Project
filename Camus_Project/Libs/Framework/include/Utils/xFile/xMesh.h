@@ -4,6 +4,7 @@
 
 
 #include <Utils/xFile/xDefs.h>
+#include <Driver/EffectGL.h>
 
 
 
@@ -213,6 +214,7 @@ namespace xF {
 		void	BuildSubsets();
 
 
+		hyperspace::video::TechniqueGL					technique;
 
 		xMeshDesc					 Desc;
 

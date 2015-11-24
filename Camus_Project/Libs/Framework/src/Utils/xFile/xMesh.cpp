@@ -512,6 +512,7 @@ namespace xF {
 	}
 
 	void xMesh::BuildSubsets() {
+		technique.Initialize("Animated","Anim");
 		for (unsigned int i = 0; i < Geometry.size(); i++) {
 			unsigned int VertexSizeinBytes = 0;
 			unsigned int VectorSizeinBytes = 0;
