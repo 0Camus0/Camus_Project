@@ -2,7 +2,13 @@
 #include <Utils/FileSystem.h>
 #include <Utils/Log.h>
 
+#ifdef __APPLE__
+#include <OpenGLES/ES2/gl.h>
+#include <OpenGLES/ES2/glext.h>
+#else
 #include <GLES2/gl2.h>
+#include <GLES2/gl2ext.h>
+#endif
 
 #include <fstream>
 
@@ -49,7 +55,7 @@ namespace hyperspace {
 		}
 
 		std::int32_t TechniqueGL::GetNumPasses() {
-			return Passes.size();
+			return static_cast<int>(Passes.size());
 		}
 
 		void TechniqueGL::SetPass(std::size_t id) {
@@ -66,7 +72,8 @@ namespace hyperspace {
 			if(it!=Passes[pass].handlers.end()){
 				it->second.props |= binding;
 			}
-		
+            
+            return true;
 		}
 
 		void TechniqueGL::DebugPassesContent(){
@@ -101,7 +108,7 @@ namespace hyperspace {
 		}
 
 		unsigned int TechniqueGL::CompileShader(shader::stage_ type_, std::string path, std::string args) {
-			GLuint type;
+			GLuint type = GL_VERTEX_SHADER;
 			
 			if (type_ == shader::stage_::VERTEX_SHADER)
 				type = GL_VERTEX_SHADER;

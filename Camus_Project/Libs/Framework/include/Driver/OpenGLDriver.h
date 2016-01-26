@@ -4,9 +4,16 @@
 #include <Driver/BaseDriver.h>
 
 // Headers for EGL and OGLES
+
+#ifdef __APPLE__
+#include <OpenGLES/EAGL.h>
+#include <OpenGLES/ES2/gl.h>
+#include <OpenGLES/ES2/glext.h>
+#else
 #include <EGL/egl.h>
 #include <GLES2/gl2.h>
 #include <GLES2/gl2ext.h>
+#endif
 
 #ifdef OS_ANDROID
 #include <android/configuration.h>
@@ -34,12 +41,15 @@ namespace hyperspace {
 			void	SwapBuffers();
 
 			void	ResetDriver();
-
+#ifdef __APPLE__
+            EAGLContext                *eglContext;
+#else
 			EGLDisplay			eglDisplay;
 			EGLConfig			eglConfig;
 			EGLSurface			eglSurface;
 			EGLContext			eglContext;
-
+#endif
+            
 #ifdef OS_WIN32
 			EGLNativeWindowType	eglWindow;
 #elif defined(OS_ANDROID)

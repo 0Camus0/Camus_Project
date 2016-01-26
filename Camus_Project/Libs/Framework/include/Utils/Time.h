@@ -8,6 +8,8 @@
 #include <windows.h>
 #elif defined(OS_ANDROID)
 #include <time.h>
+#elif defined(__APPLE__)
+#include <sys/time.h>
 #endif
 
 #include <string>
@@ -24,7 +26,7 @@ namespace hyperspace {
 		std::string		name;
 #ifdef OS_WIN32
 		LARGE_INTEGER	duration;
-#elif defined(OS_ANDROID)
+#elif defined(OS_ANDROID) || defined(__APPLE__)
 		timeval			duration;
 #endif
 	};

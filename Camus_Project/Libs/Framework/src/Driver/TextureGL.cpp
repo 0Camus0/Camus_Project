@@ -2,17 +2,28 @@
 #include <Driver/DriverProperties.h>
 #include <Utils/Log.h>
 
+#ifdef __APPLE__
+#include <OpenGLES/ES2/gl.h>
+#include <OpenGLES/ES2/glext.h>
+#else
 #include <GLES2/gl2.h>
 #include <GLES2/gl2ext.h>
+#endif
 //#include <GLES3/gl3.h>
 
 
-#ifdef OS_ANDROID
+#if defined(OS_ANDROID) || defined(__APPLE__) 
 #ifndef GL_IMG_texture_compression_pvrtc2
 #define GL_IMG_texture_compression_pvrtc2 1
 #define GL_COMPRESSED_RGBA_PVRTC_2BPPV2_IMG 0x9137
 #define GL_COMPRESSED_RGBA_PVRTC_4BPPV2_IMG 0x9138
 #endif
+
+#ifdef __APPLE__
+#define GL_ETC1_RGB8_OES 0
+#define GL_COMPRESSED_RGB_S3TC_DXT1_EXT 0
+#endif
+
 #endif
 
 

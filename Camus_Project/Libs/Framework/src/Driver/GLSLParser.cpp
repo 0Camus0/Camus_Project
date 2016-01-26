@@ -65,7 +65,7 @@ namespace hyperspace{
 		}
 
 		void GLSL_Parser::ProcessToken(std::size_t &pos, std::vector<std::string> &v) {
-			int token_pos = pos;
+			int token_pos = static_cast<int>(pos);
 			for (;;) {
 				if (v[token_pos].find(";") != std::string::npos) break;
 				token_pos++;

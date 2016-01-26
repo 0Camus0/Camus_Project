@@ -18,11 +18,14 @@ namespace hyperspace {
 	namespace video {
 		OpenGLDriver::OpenGLDriver() {
 			bInited = false;
+#ifdef __APPLE__
+            eglContext = 0;
+#else
 			eglWindow = 0;
 			eglDisplay = 0;
 			eglSurface = 0;
 			eglContext = 0;
-			
+#endif
 		}
 
 		OpenGLDriver::~OpenGLDriver() {
@@ -33,14 +36,14 @@ namespace hyperspace {
 			LogPrintDebug("OpenGLDriver::SetWindow");
 #ifdef OS_ANDROID
 			eglWindow = (ANativeWindow*)window;
-#else
+#elif OS_WIN32
 			eglWindow = GetActiveWindow();
 #endif	
 		}
 
 		void	OpenGLDriver::InitDriver() {
 			LogPrintDebug("OpenGLDriver::InitDriver");
-
+#if defined(OS_WIN32) || defined(OS_ANDROID)
 			if (eglWindow == 0) {
 				LogPrintDebug("OpenGLDriver::InitDriver - No egl window yet");
 				return;
@@ -119,11 +122,13 @@ namespace hyperspace {
 			properties.SetExtensions(std::string((const char*)glGetString(GL_EXTENSIONS)));
 			properties.ListExtensions();
 
+#endif
 			bInited = true;
 
 		}
 
 		void OpenGLDriver::ResetDriver() {
+#if defined(OS_WIN32) || defined(OS_ANDROID)
 			EGLint w, h;
 #ifdef OS_ANDROID
 			EGLint format;
@@ -142,20 +147,24 @@ namespace hyperspace {
 			eglQuerySurface(eglDisplay, eglSurface, EGL_HEIGHT, &h);
 
 			GetWindowParameters().SetParametersFromDriver(w, h);
-
+#endif
 			LogPrintDebug("Driver successfuly restarted.");
 		}
 
 		void	OpenGLDriver::CreateSurfaces() {
 			LogPrintDebug("OpenGLDriver::CreateSurfaces");
+#if defined(OS_WIN32) || defined(OS_ANDROID)
 			eglSurface = eglCreateWindowSurface(eglDisplay, eglConfig, eglWindow, NULL);
 			ReportEGLError("eglCreateWindowSurface");
+#endif
 		}
 
 		void	OpenGLDriver::DestroySurfaces() {
 			LogPrintDebug("OpenGLDriver::DestroySurfaces");
+ #if defined(OS_WIN32) || defined(OS_ANDROID)
 			eglDestroySurface(eglDisplay, eglSurface);
 			eglMakeCurrent(eglDisplay, 0, 0, eglContext);
+#endif
 		}
 
 		
@@ -208,7 +217,9 @@ namespace hyperspace {
 		}
 
 		void	OpenGLDriver::SwapBuffers() {
+#if defined(OS_WIN32) || defined(OS_ANDROID)
 			eglSwapBuffers(eglDisplay, eglSurface);
+#endif
 		}
 
 		void	OpenGLDriver::DestroyDriver() {
