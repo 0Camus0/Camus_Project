@@ -7,10 +7,12 @@
 #define ReportEGLError(...) ((void)0)
 #else
 void ReportEGLError(const char* c_ptr){
+#if !defined(__APPLE__)
 	EGLint iErr = eglGetError();
 	if (iErr != EGL_SUCCESS){
 		LogPrintError("%s failed (%d).\n", c_ptr, iErr);
 	}
+#endif
 }
 #endif
 

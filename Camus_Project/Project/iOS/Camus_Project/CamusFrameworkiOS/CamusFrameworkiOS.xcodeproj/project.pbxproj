@@ -30,6 +30,8 @@
 		652636AF1C572E9800BF1B16 /* AppPlatform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 652636AD1C572E9800BF1B16 /* AppPlatform.cpp */; };
 		652636B01C572E9800BF1B16 /* FrameworkManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 652636AE1C572E9800BF1B16 /* FrameworkManager.cpp */; };
 		652636B31C5732E100BF1B16 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 652636B21C5732E100BF1B16 /* OpenGLES.framework */; };
+		65B17A2E1C5861950078EFD6 /* Win32Framework.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65B17A2D1C5861950078EFD6 /* Win32Framework.cpp */; };
+		65B17A301C58646D0078EFD6 /* AndroidFramework.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65B17A2F1C58646D0078EFD6 /* AndroidFramework.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -94,13 +96,15 @@
 		652636A11C572E1400BF1B16 /* FileSystem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FileSystem.cpp; path = ../../../../../Libs/Framework/src/Utils/FileSystem.cpp; sourceTree = "<group>"; };
 		652636A21C572E1400BF1B16 /* InputImplAndroid.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = InputImplAndroid.cpp; path = ../../../../../Libs/Framework/src/Utils/InputImplAndroid.cpp; sourceTree = "<group>"; };
 		652636A31C572E1400BF1B16 /* InputImplWin32.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = InputImplWin32.cpp; path = ../../../../../Libs/Framework/src/Utils/InputImplWin32.cpp; sourceTree = "<group>"; };
-		652636A41C572E1400BF1B16 /* Log.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Log.cpp; path = ../../../../../Libs/Framework/src/Utils/Log.cpp; sourceTree = "<group>"; };
+		652636A41C572E1400BF1B16 /* Log.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; name = Log.cpp; path = ../../../../../Libs/Framework/src/Utils/Log.cpp; sourceTree = "<group>"; };
 		652636A51C572E1400BF1B16 /* Maths.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Maths.cpp; path = ../../../../../Libs/Framework/src/Utils/Maths.cpp; sourceTree = "<group>"; };
 		652636A61C572E1400BF1B16 /* WindowProperties.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WindowProperties.cpp; path = ../../../../../Libs/Framework/src/Utils/WindowProperties.cpp; sourceTree = "<group>"; };
 		652636AD1C572E9800BF1B16 /* AppPlatform.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AppPlatform.cpp; path = ../../../../../Libs/Framework/src/WindowManager/AppPlatform.cpp; sourceTree = "<group>"; };
 		652636AE1C572E9800BF1B16 /* FrameworkManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FrameworkManager.cpp; path = ../../../../../Libs/Framework/src/WindowManager/FrameworkManager.cpp; sourceTree = "<group>"; };
 		652636B11C572EBE00BF1B16 /* FrameworkManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FrameworkManager.h; path = ../../../../../Libs/Framework/include/WindowManager/FrameworkManager.h; sourceTree = "<group>"; };
 		652636B21C5732E100BF1B16 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
+		65B17A2D1C5861950078EFD6 /* Win32Framework.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Win32Framework.cpp; path = ../../../../../Libs/Framework/src/WindowManager/Win32Framework.cpp; sourceTree = "<group>"; };
+		65B17A2F1C58646D0078EFD6 /* AndroidFramework.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AndroidFramework.cpp; path = ../../../../../Libs/Framework/src/WindowManager/AndroidFramework.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -216,6 +220,8 @@
 		6526365E1C57207300BF1B16 /* WindowManager */ = {
 			isa = PBXGroup;
 			children = (
+				65B17A2F1C58646D0078EFD6 /* AndroidFramework.cpp */,
+				65B17A2D1C5861950078EFD6 /* Win32Framework.cpp */,
 				652636B11C572EBE00BF1B16 /* FrameworkManager.h */,
 				652636AD1C572E9800BF1B16 /* AppPlatform.cpp */,
 				652636AE1C572E9800BF1B16 /* FrameworkManager.cpp */,
@@ -341,6 +347,7 @@
 				652636A71C572E1400BF1B16 /* FileSystem.cpp in Sources */,
 				6526367C1C57276700BF1B16 /* GLSLParser.cpp in Sources */,
 				6526368E1C5728CD00BF1B16 /* Camera.cpp in Sources */,
+				65B17A2E1C5861950078EFD6 /* Win32Framework.cpp in Sources */,
 				652636971C572AD200BF1B16 /* XDataBase.cpp in Sources */,
 				6526367D1C57276700BF1B16 /* OpenGlDriver.cpp in Sources */,
 				6526368F1C5728CD00BF1B16 /* Node.cpp in Sources */,
@@ -356,6 +363,7 @@
 				652636741C57271E00BF1B16 /* Texture.cpp in Sources */,
 				652636AF1C572E9800BF1B16 /* AppPlatform.cpp in Sources */,
 				652636871C57284F00BF1B16 /* DriverProperties.cpp in Sources */,
+				65B17A301C58646D0078EFD6 /* AndroidFramework.cpp in Sources */,
 				652636A01C572E0500BF1B16 /* Time.cpp in Sources */,
 				6526367E1C57276700BF1B16 /* TextureGL.cpp in Sources */,
 				652636A91C572E1400BF1B16 /* InputImplWin32.cpp in Sources */,
@@ -449,6 +457,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				FRAMEWORK_SEARCH_PATHS = "";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					USE_DEBUG,
+					"DEBUG=1",
+				);
 				HEADER_SEARCH_PATHS = ../../../../Libs/Framework/include;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -460,6 +472,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				FRAMEWORK_SEARCH_PATHS = "";
+				GCC_PREPROCESSOR_DEFINITIONS = USE_DEBUG;
 				HEADER_SEARCH_PATHS = ../../../../Libs/Framework/include;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";

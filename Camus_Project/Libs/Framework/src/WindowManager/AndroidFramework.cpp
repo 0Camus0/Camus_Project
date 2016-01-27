@@ -1,3 +1,6 @@
+
+#ifdef OS_ANDROID
+
 #include <WindowManager/AndroidFramework.h>
 #include <Utils/WindowProperties.h>
 #include <Utils/Log.h>
@@ -604,3 +607,5 @@ void AndroidFramework::onInputQueueDestroyed(ANativeActivity* activity, AInputQu
 	pthread_mutex_unlock(&g_mutex);
 #endif
 }
+
+#endif

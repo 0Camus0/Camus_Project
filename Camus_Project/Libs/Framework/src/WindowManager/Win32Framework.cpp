@@ -1,4 +1,6 @@
 
+#ifdef OS_WIN32
+
 #include <WindowManager/Win32Framework.h>
 #include <Utils/WindowProperties.h>
 #include <Utils/FileSystem.h>
@@ -142,3 +144,5 @@ void Win32Framework::ProcessInput() {
 
 	pBaseApp->OnInput();
 }
+
+#endif

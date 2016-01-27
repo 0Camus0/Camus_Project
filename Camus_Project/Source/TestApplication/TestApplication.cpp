@@ -60,4 +60,33 @@ int main()
     return 0;
 }
 
+#elif defined(__APPLE__)
+
+#include <Utils/Log.h>
+
+#import <UIKit/UIKit.h>
+#import "AppDelegate.h"
+
+#ifdef printf
+#undef printf
 #endif
+
+int printf(const char * __restrict format, ...)
+{
+    va_list args;
+    va_start(args,format);
+    NSLogv([NSString stringWithUTF8String:format], args) ;
+    va_end(args);
+    return 1;
+}
+
+int main(int argc, char * argv[]) {
+    LogPrintDebug("main here");
+    printf("ESTOY AQUI");
+    @autoreleasepool {
+        return UIApplicationMain(argc, argv, nil, NSStringFromClass([AppDelegate class]));
+    }
+}
+
+#endif
+

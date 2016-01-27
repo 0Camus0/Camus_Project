@@ -7,12 +7,14 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		652636291C57192300BF1B16 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 652636281C57192300BF1B16 /* main.m */; };
 		6526362C1C57192300BF1B16 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 6526362B1C57192300BF1B16 /* AppDelegate.m */; };
 		6526362F1C57192300BF1B16 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6526362E1C57192300BF1B16 /* ViewController.m */; };
 		652636321C57192300BF1B16 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 652636301C57192300BF1B16 /* Main.storyboard */; };
 		652636341C57192300BF1B16 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 652636331C57192300BF1B16 /* Assets.xcassets */; };
 		652636371C57192300BF1B16 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 652636351C57192300BF1B16 /* LaunchScreen.storyboard */; };
+		65B17A361C586A1B0078EFD6 /* Test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65B17A331C586A1B0078EFD6 /* Test.cpp */; };
+		65B17A371C586A1B0078EFD6 /* TestApplication.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65B17A351C586A1B0078EFD6 /* TestApplication.cpp */; };
+		65B17A381C586D190078EFD6 /* libCamusFrameworkiOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 652636581C571FA900BF1B16 /* libCamusFrameworkiOS.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -27,7 +29,6 @@
 
 /* Begin PBXFileReference section */
 		652636241C57192200BF1B16 /* TestApplication.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TestApplication.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		652636281C57192300BF1B16 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		6526362A1C57192300BF1B16 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		6526362B1C57192300BF1B16 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		6526362D1C57192300BF1B16 /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
@@ -37,6 +38,9 @@
 		652636361C57192300BF1B16 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		652636381C57192300BF1B16 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		652636531C571FA800BF1B16 /* CamusFrameworkiOS.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = CamusFrameworkiOS.xcodeproj; path = CamusFrameworkiOS/CamusFrameworkiOS.xcodeproj; sourceTree = "<group>"; };
+		65B17A331C586A1B0078EFD6 /* Test.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Test.cpp; path = ../../../../Source/TestApplication/Test.cpp; sourceTree = "<group>"; };
+		65B17A341C586A1B0078EFD6 /* Test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Test.h; path = ../../../../Source/TestApplication/Test.h; sourceTree = "<group>"; };
+		65B17A351C586A1B0078EFD6 /* TestApplication.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; name = TestApplication.cpp; path = ../../../../Source/TestApplication/TestApplication.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -44,6 +48,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				65B17A381C586D190078EFD6 /* libCamusFrameworkiOS.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -70,25 +75,13 @@
 		652636261C57192300BF1B16 /* Camus_Project */ = {
 			isa = PBXGroup;
 			children = (
-				6526362A1C57192300BF1B16 /* AppDelegate.h */,
-				6526362B1C57192300BF1B16 /* AppDelegate.m */,
-				6526362D1C57192300BF1B16 /* ViewController.h */,
-				6526362E1C57192300BF1B16 /* ViewController.m */,
+				65B17A311C58694C0078EFD6 /* TestApp */,
 				652636301C57192300BF1B16 /* Main.storyboard */,
 				652636331C57192300BF1B16 /* Assets.xcassets */,
 				652636351C57192300BF1B16 /* LaunchScreen.storyboard */,
 				652636381C57192300BF1B16 /* Info.plist */,
-				652636271C57192300BF1B16 /* Supporting Files */,
 			);
 			path = Camus_Project;
-			sourceTree = "<group>";
-		};
-		652636271C57192300BF1B16 /* Supporting Files */ = {
-			isa = PBXGroup;
-			children = (
-				652636281C57192300BF1B16 /* main.m */,
-			);
-			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
 		652636541C571FA800BF1B16 /* Products */ = {
@@ -97,6 +90,20 @@
 				652636581C571FA900BF1B16 /* libCamusFrameworkiOS.a */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		65B17A311C58694C0078EFD6 /* TestApp */ = {
+			isa = PBXGroup;
+			children = (
+				65B17A331C586A1B0078EFD6 /* Test.cpp */,
+				65B17A341C586A1B0078EFD6 /* Test.h */,
+				65B17A351C586A1B0078EFD6 /* TestApplication.cpp */,
+				6526362A1C57192300BF1B16 /* AppDelegate.h */,
+				6526362B1C57192300BF1B16 /* AppDelegate.m */,
+				6526362D1C57192300BF1B16 /* ViewController.h */,
+				6526362E1C57192300BF1B16 /* ViewController.m */,
+			);
+			name = TestApp;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -185,9 +192,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				65B17A371C586A1B0078EFD6 /* TestApplication.cpp in Sources */,
 				6526362F1C57192300BF1B16 /* ViewController.m in Sources */,
+				65B17A361C586A1B0078EFD6 /* Test.cpp in Sources */,
 				6526362C1C57192300BF1B16 /* AppDelegate.m in Sources */,
-				652636291C57192300BF1B16 /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -297,6 +305,11 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					USE_DEBUG,
+					"DEBUG=1",
+				);
+				HEADER_SEARCH_PATHS = ../../../Libs/Framework/include;
 				INFOPLIST_FILE = Camus_Project/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "dev.Camus-Project";
@@ -308,6 +321,11 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					USE_DEBUG,
+					"DEBUG=1",
+				);
+				HEADER_SEARCH_PATHS = ../../../Libs/Framework/include;
 				INFOPLIST_FILE = Camus_Project/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "dev.Camus-Project";
