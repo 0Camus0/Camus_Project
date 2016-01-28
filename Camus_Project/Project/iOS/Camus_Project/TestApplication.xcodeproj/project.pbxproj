@@ -7,8 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		6526362C1C57192300BF1B16 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 6526362B1C57192300BF1B16 /* AppDelegate.m */; };
-		6526362F1C57192300BF1B16 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6526362E1C57192300BF1B16 /* ViewController.m */; };
+		65047BD91C59D3D3007F16C0 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 65047BD81C59D3D3007F16C0 /* UIKit.framework */; };
+		65047BE51C59E841007F16C0 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 65047BE41C59E841007F16C0 /* OpenGLES.framework */; };
+		6526362F1C57192300BF1B16 /* ViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 6526362E1C57192300BF1B16 /* ViewController.mm */; };
 		652636321C57192300BF1B16 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 652636301C57192300BF1B16 /* Main.storyboard */; };
 		652636341C57192300BF1B16 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 652636331C57192300BF1B16 /* Assets.xcassets */; };
 		652636371C57192300BF1B16 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 652636351C57192300BF1B16 /* LaunchScreen.storyboard */; };
@@ -28,11 +29,11 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		65047BD81C59D3D3007F16C0 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		65047BE41C59E841007F16C0 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
 		652636241C57192200BF1B16 /* TestApplication.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TestApplication.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		6526362A1C57192300BF1B16 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
-		6526362B1C57192300BF1B16 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		6526362D1C57192300BF1B16 /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
-		6526362E1C57192300BF1B16 /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
+		6526362E1C57192300BF1B16 /* ViewController.mm */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = ViewController.mm; sourceTree = "<group>"; };
 		652636311C57192300BF1B16 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		652636331C57192300BF1B16 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		652636361C57192300BF1B16 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -48,6 +49,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				65047BE51C59E841007F16C0 /* OpenGLES.framework in Frameworks */,
+				65047BD91C59D3D3007F16C0 /* UIKit.framework in Frameworks */,
 				65B17A381C586D190078EFD6 /* libCamusFrameworkiOS.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -58,6 +61,8 @@
 		6526361B1C57192200BF1B16 = {
 			isa = PBXGroup;
 			children = (
+				65047BE41C59E841007F16C0 /* OpenGLES.framework */,
+				65047BD81C59D3D3007F16C0 /* UIKit.framework */,
 				652636531C571FA800BF1B16 /* CamusFrameworkiOS.xcodeproj */,
 				652636261C57192300BF1B16 /* Camus_Project */,
 				652636251C57192200BF1B16 /* Products */,
@@ -98,10 +103,8 @@
 				65B17A331C586A1B0078EFD6 /* Test.cpp */,
 				65B17A341C586A1B0078EFD6 /* Test.h */,
 				65B17A351C586A1B0078EFD6 /* TestApplication.cpp */,
-				6526362A1C57192300BF1B16 /* AppDelegate.h */,
-				6526362B1C57192300BF1B16 /* AppDelegate.m */,
 				6526362D1C57192300BF1B16 /* ViewController.h */,
-				6526362E1C57192300BF1B16 /* ViewController.m */,
+				6526362E1C57192300BF1B16 /* ViewController.mm */,
 			);
 			name = TestApp;
 			sourceTree = "<group>";
@@ -193,9 +196,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				65B17A371C586A1B0078EFD6 /* TestApplication.cpp in Sources */,
-				6526362F1C57192300BF1B16 /* ViewController.m in Sources */,
+				6526362F1C57192300BF1B16 /* ViewController.mm in Sources */,
 				65B17A361C586A1B0078EFD6 /* Test.cpp in Sources */,
-				6526362C1C57192300BF1B16 /* AppDelegate.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

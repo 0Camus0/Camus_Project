@@ -282,8 +282,6 @@ void	LogPrintWarning(const char* format, ...) {
 
 #if defined(__APPLE__) && defined(USE_DEBUG)
 
-
-
 void	LogPrintInfo(const char* format,...) {
     std::stringstream ss;
     std::stringstream extra_info_debug;
@@ -291,6 +289,8 @@ void	LogPrintInfo(const char* format,...) {
     va_start(arg, format);
     vsprintf(Log_Buffer, format, arg);
     va_end(arg);
+    
+    extra_info_debug << "[INFO] ";
 
 #if USE_SHOW_THREADS_IDS
     mach_port_t tid = pthread_mach_thread_np(pthread_self());
@@ -304,9 +304,8 @@ void	LogPrintInfo(const char* format,...) {
 #endif
     
     ss << extra_info_debug.str() << std::string(Log_Buffer);
-//    std::cout << extra_info_debug.str() << Log_Buffer << std::endl;
-    
-    asl_log(NULL,NULL,ASL_LEVEL_INFO, "%s", ss.str().c_str());
+    std::cout << extra_info_debug.str() << Log_Buffer << std::endl;
+
 
 }
 
@@ -318,6 +317,8 @@ void	LogPrintDebug(const char* format, ...){
     vsprintf(Log_Buffer, format, arg);
     va_end(arg);
    
+    extra_info_debug << "[DEBUG] ";
+    
 #if USE_SHOW_THREADS_IDS
     mach_port_t tid = pthread_mach_thread_np(pthread_self());
     extra_info_debug << "tid[" << (int)tid << "] ";
@@ -330,10 +331,7 @@ void	LogPrintDebug(const char* format, ...){
 #endif
     
     ss << extra_info_debug.str() << std::string(Log_Buffer);
-    //    std::cout << extra_info_debug.str() << Log_Buffer << std::endl;
-    
-    asl_log(NULL,NULL,ASL_LEVEL_DEBUG, "%s", ss.str().c_str());
-
+    std::cout << extra_info_debug.str() << Log_Buffer << std::endl;
 }
 
 void	LogPrintError(const char* format, ...) {
@@ -343,6 +341,9 @@ void	LogPrintError(const char* format, ...) {
     va_start(arg, format);
     vsprintf(Log_Buffer, format, arg);
     va_end(arg);
+    
+    extra_info_debug << "[ERROR] ";
+    
 #if USE_COLORED_CONSOLE
     SetConsoleTextAttribute(h, 4 | FOREGROUND_INTENSITY);
 #endif
@@ -359,10 +360,7 @@ void	LogPrintError(const char* format, ...) {
 #endif
     
     ss << extra_info_debug.str() << std::string(Log_Buffer);
-    //    std::cout << extra_info_debug.str() << Log_Buffer << std::endl;
-    
-    asl_log(NULL,NULL,ASL_LEVEL_ERR, "%s", ss.str().c_str());
-
+    std::cout << extra_info_debug.str() << Log_Buffer << std::endl;
 }
 
 void	LogPrintWarning(const char* format, ...) {
@@ -374,6 +372,8 @@ void	LogPrintWarning(const char* format, ...) {
     vsprintf(Log_Buffer, format, arg);
     va_end(arg);
 
+    extra_info_debug << "[WARNING] ";
+    
 #if USE_SHOW_THREADS_IDS
     mach_port_t tid = pthread_mach_thread_np(pthread_self());
     extra_info_debug << "tid[" << (int)tid << "] ";
@@ -386,10 +386,8 @@ void	LogPrintWarning(const char* format, ...) {
 #endif
     
     ss << extra_info_debug.str() << std::string(Log_Buffer);
-    //    std::cout << extra_info_debug.str() << Log_Buffer << std::endl;
+    std::cout << extra_info_debug.str() << Log_Buffer << std::endl;
     
-    asl_log(NULL,NULL,ASL_LEVEL_WARNING, "%s", ss.str().c_str());
-
 }
 
 

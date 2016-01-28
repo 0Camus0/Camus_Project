@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		65047BE11C59D759007F16C0 /* iOSFramework.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65047BE01C59D759007F16C0 /* iOSFramework.cpp */; };
+		65047BE31C59E7BD007F16C0 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 65047BE21C59E7BD007F16C0 /* UIKit.framework */; };
 		652636641C57210500BF1B16 /* Core.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 652636631C57210500BF1B16 /* Core.cpp */; };
 		652636741C57271E00BF1B16 /* Texture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 652636731C57271E00BF1B16 /* Texture.cpp */; };
 		6526367A1C57276700BF1B16 /* BufferOpenGL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 652636751C57276700BF1B16 /* BufferOpenGL.cpp */; };
@@ -47,6 +49,11 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		65047BDA1C59D5BF007F16C0 /* AndroidFramework.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AndroidFramework.h; path = ../../../../../Libs/Framework/include/WindowManager/AndroidFramework.h; sourceTree = "<group>"; };
+		65047BDB1C59D5BF007F16C0 /* Win32Framework.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Win32Framework.h; path = ../../../../../Libs/Framework/include/WindowManager/Win32Framework.h; sourceTree = "<group>"; };
+		65047BDD1C59D6D4007F16C0 /* iOSFramework.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = iOSFramework.h; path = ../../../../../Libs/Framework/include/WindowManager/iOSFramework.h; sourceTree = "<group>"; };
+		65047BE01C59D759007F16C0 /* iOSFramework.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; name = iOSFramework.cpp; path = ../../../../../Libs/Framework/src/WindowManager/iOSFramework.cpp; sourceTree = "<group>"; };
+		65047BE21C59E7BD007F16C0 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		652636471C571FA800BF1B16 /* libCamusFrameworkiOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libCamusFrameworkiOS.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		6526365F1C5720CA00BF1B16 /* config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = config.h; path = ../../../../../Libs/Framework/include/config.h; sourceTree = "<group>"; };
 		652636611C5720F000BF1B16 /* Core.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Core.h; path = ../../../../../Libs/Framework/include/Core/Core.h; sourceTree = "<group>"; };
@@ -100,7 +107,7 @@
 		652636A51C572E1400BF1B16 /* Maths.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Maths.cpp; path = ../../../../../Libs/Framework/src/Utils/Maths.cpp; sourceTree = "<group>"; };
 		652636A61C572E1400BF1B16 /* WindowProperties.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WindowProperties.cpp; path = ../../../../../Libs/Framework/src/Utils/WindowProperties.cpp; sourceTree = "<group>"; };
 		652636AD1C572E9800BF1B16 /* AppPlatform.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AppPlatform.cpp; path = ../../../../../Libs/Framework/src/WindowManager/AppPlatform.cpp; sourceTree = "<group>"; };
-		652636AE1C572E9800BF1B16 /* FrameworkManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FrameworkManager.cpp; path = ../../../../../Libs/Framework/src/WindowManager/FrameworkManager.cpp; sourceTree = "<group>"; };
+		652636AE1C572E9800BF1B16 /* FrameworkManager.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; name = FrameworkManager.cpp; path = ../../../../../Libs/Framework/src/WindowManager/FrameworkManager.cpp; sourceTree = "<group>"; };
 		652636B11C572EBE00BF1B16 /* FrameworkManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FrameworkManager.h; path = ../../../../../Libs/Framework/include/WindowManager/FrameworkManager.h; sourceTree = "<group>"; };
 		652636B21C5732E100BF1B16 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
 		65B17A2D1C5861950078EFD6 /* Win32Framework.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Win32Framework.cpp; path = ../../../../../Libs/Framework/src/WindowManager/Win32Framework.cpp; sourceTree = "<group>"; };
@@ -112,6 +119,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				65047BE31C59E7BD007F16C0 /* UIKit.framework in Frameworks */,
 				652636B31C5732E100BF1B16 /* OpenGLES.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -122,6 +130,7 @@
 		6526363E1C571FA800BF1B16 = {
 			isa = PBXGroup;
 			children = (
+				65047BE21C59E7BD007F16C0 /* UIKit.framework */,
 				652636B21C5732E100BF1B16 /* OpenGLES.framework */,
 				652636491C571FA800BF1B16 /* CamusFrameworkiOS */,
 				652636481C571FA800BF1B16 /* Products */,
@@ -220,6 +229,10 @@
 		6526365E1C57207300BF1B16 /* WindowManager */ = {
 			isa = PBXGroup;
 			children = (
+				65047BE01C59D759007F16C0 /* iOSFramework.cpp */,
+				65047BDD1C59D6D4007F16C0 /* iOSFramework.h */,
+				65047BDA1C59D5BF007F16C0 /* AndroidFramework.h */,
+				65047BDB1C59D5BF007F16C0 /* Win32Framework.h */,
 				65B17A2F1C58646D0078EFD6 /* AndroidFramework.cpp */,
 				65B17A2D1C5861950078EFD6 /* Win32Framework.cpp */,
 				652636B11C572EBE00BF1B16 /* FrameworkManager.h */,
@@ -347,6 +360,7 @@
 				652636A71C572E1400BF1B16 /* FileSystem.cpp in Sources */,
 				6526367C1C57276700BF1B16 /* GLSLParser.cpp in Sources */,
 				6526368E1C5728CD00BF1B16 /* Camera.cpp in Sources */,
+				65047BE11C59D759007F16C0 /* iOSFramework.cpp in Sources */,
 				65B17A2E1C5861950078EFD6 /* Win32Framework.cpp in Sources */,
 				652636971C572AD200BF1B16 /* XDataBase.cpp in Sources */,
 				6526367D1C57276700BF1B16 /* OpenGlDriver.cpp in Sources */,

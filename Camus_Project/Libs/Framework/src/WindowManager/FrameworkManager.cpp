@@ -9,6 +9,8 @@
 #include <errno.h>
 int							g_Mgread;
 int							g_Msgwrite;
+#elif defined(__APPLE__)
+#include <WindowManager/iOSFramework.h>
 #endif
 
 #include <iostream>
@@ -47,6 +49,8 @@ void FrameworkManager::CreateApp(hyperspace::AppBase* pApp) {
 	}
 	g_Mgread = msgpipe[0];
 	g_Msgwrite = msgpipe[1];
+#elif defined(__APPLE__)
+    pFramework = new iOSFramework(pApp);
 #endif
 
 	pApp->SetParentFramework(pFramework);
@@ -78,7 +82,7 @@ void FrameworkManager::CreateAppThread() {
 
 #ifdef USE_C11_THREADS
 		g_thread = std::thread(&FrameworkManager::BridgeFunction, this);
-#ifdef OS_ANDROID
+#if defined(OS_ANDROID) || defined(__APPLE__)
 		g_thread.detach();
 #endif
 
@@ -89,7 +93,7 @@ void FrameworkManager::CreateAppThread() {
 			}
 		}
 #else
-	#ifdef OS_ANDROID
+	#if defined(OS_ANDROID) || defined(__APPLE__)
 		pthread_attr_t attr;
 		pthread_attr_init(&attr);
 		pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
@@ -98,11 +102,17 @@ void FrameworkManager::CreateAppThread() {
 	#else
 		pthread_create(&g_thread, NULL, &FrameworkManager::BridgeFunction, this);
 	#endif
+    
+#ifndef __APPLE__
+        LogPrintDebug("Before semaphore");
 		pthread_mutex_lock(&g_mutex);
 		while (!g_bAppRunning) {
+            LogPrintDebug("semaphore wait");
 			pthread_cond_wait(&g_cond, &g_mutex);
 		}
 		pthread_mutex_unlock(&g_mutex);
+        LogPrintDebug("After semaphore");
+#endif
 
 #endif
 }
@@ -110,11 +120,23 @@ void FrameworkManager::CreateAppThread() {
 void FrameworkManager::MainAppThread() {
 
 	LogPrintDebug("MainAppThread");
-
+    
+#ifdef __APPLE__
+    LogPrintDebug("Before semaphore");
+    pthread_mutex_lock(&g_mutex);
+    while (!g_bAppRunning) {
+        LogPrintDebug("semaphore wait");
+        pthread_cond_wait(&g_cond, &g_mutex);
+    }
+    pthread_mutex_unlock(&g_mutex);
+    LogPrintDebug("After semaphore");
+#endif
+    
 	pFramework->InitGlobalVars();
 
 	pFramework->OnCreateApplication();
-
+    
+#ifndef __APPLE__
 #ifdef USE_C11_THREADS
 	g_mutex.lock();
 	g_bAppRunning = true;
@@ -125,6 +147,7 @@ void FrameworkManager::MainAppThread() {
 	g_bAppRunning = true;
 	pthread_cond_broadcast(&g_cond);
 	pthread_mutex_unlock(&g_mutex);
+#endif
 #endif
 
 	LogPrintDebug("MainAppThread start");
