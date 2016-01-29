@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		65047BE11C59D759007F16C0 /* iOSFramework.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65047BE01C59D759007F16C0 /* iOSFramework.cpp */; };
 		65047BE31C59E7BD007F16C0 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 65047BE21C59E7BD007F16C0 /* UIKit.framework */; };
-		652636641C57210500BF1B16 /* Core.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 652636631C57210500BF1B16 /* Core.cpp */; };
 		652636741C57271E00BF1B16 /* Texture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 652636731C57271E00BF1B16 /* Texture.cpp */; };
 		6526367A1C57276700BF1B16 /* BufferOpenGL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 652636751C57276700BF1B16 /* BufferOpenGL.cpp */; };
 		6526367B1C57276700BF1B16 /* EffectGL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 652636761C57276700BF1B16 /* EffectGL.cpp */; };
@@ -34,6 +33,7 @@
 		652636B31C5732E100BF1B16 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 652636B21C5732E100BF1B16 /* OpenGLES.framework */; };
 		65B17A2E1C5861950078EFD6 /* Win32Framework.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65B17A2D1C5861950078EFD6 /* Win32Framework.cpp */; };
 		65B17A301C58646D0078EFD6 /* AndroidFramework.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65B17A2F1C58646D0078EFD6 /* AndroidFramework.cpp */; };
+		65F3BAEA1C5B2E4F00273E3F /* Core.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65F3BAE91C5B2E4F00273E3F /* Core.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -49,69 +49,69 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		65047BDA1C59D5BF007F16C0 /* AndroidFramework.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AndroidFramework.h; path = ../../../../../Libs/Framework/include/WindowManager/AndroidFramework.h; sourceTree = "<group>"; };
-		65047BDB1C59D5BF007F16C0 /* Win32Framework.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Win32Framework.h; path = ../../../../../Libs/Framework/include/WindowManager/Win32Framework.h; sourceTree = "<group>"; };
-		65047BDD1C59D6D4007F16C0 /* iOSFramework.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = iOSFramework.h; path = ../../../../../Libs/Framework/include/WindowManager/iOSFramework.h; sourceTree = "<group>"; };
-		65047BE01C59D759007F16C0 /* iOSFramework.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; name = iOSFramework.cpp; path = ../../../../../Libs/Framework/src/WindowManager/iOSFramework.cpp; sourceTree = "<group>"; };
+		65047BDA1C59D5BF007F16C0 /* AndroidFramework.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AndroidFramework.h; path = ../../../../Libs/Framework/include/WindowManager/AndroidFramework.h; sourceTree = "<group>"; };
+		65047BDB1C59D5BF007F16C0 /* Win32Framework.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Win32Framework.h; path = ../../../../Libs/Framework/include/WindowManager/Win32Framework.h; sourceTree = "<group>"; };
+		65047BDD1C59D6D4007F16C0 /* iOSFramework.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = iOSFramework.h; path = ../../../../Libs/Framework/include/WindowManager/iOSFramework.h; sourceTree = "<group>"; };
+		65047BE01C59D759007F16C0 /* iOSFramework.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; name = iOSFramework.cpp; path = ../../../../Libs/Framework/src/WindowManager/iOSFramework.cpp; sourceTree = "<group>"; };
 		65047BE21C59E7BD007F16C0 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		652636471C571FA800BF1B16 /* libCamusFrameworkiOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libCamusFrameworkiOS.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		6526365F1C5720CA00BF1B16 /* config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = config.h; path = ../../../../../Libs/Framework/include/config.h; sourceTree = "<group>"; };
-		652636611C5720F000BF1B16 /* Core.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Core.h; path = ../../../../../Libs/Framework/include/Core/Core.h; sourceTree = "<group>"; };
-		652636621C5720F000BF1B16 /* OS_Selector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OS_Selector.h; path = ../../../../../Libs/Framework/include/Core/OS_Selector.h; sourceTree = "<group>"; };
-		652636631C57210500BF1B16 /* Core.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Core.cpp; path = ../../../../../Libs/Framework/src/Core/Core.cpp; sourceTree = "<group>"; };
-		652636661C57253C00BF1B16 /* BufferOpenGL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BufferOpenGL.h; path = ../../../../../Libs/Framework/include/Driver/BufferOpenGL.h; sourceTree = "<group>"; };
-		652636671C57253C00BF1B16 /* EffectGL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EffectGL.h; path = ../../../../../Libs/Framework/include/Driver/EffectGL.h; sourceTree = "<group>"; };
-		652636681C57253C00BF1B16 /* GLSLParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GLSLParser.h; path = ../../../../../Libs/Framework/include/Driver/GLSLParser.h; sourceTree = "<group>"; };
-		652636691C57253C00BF1B16 /* OpenGLDriver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OpenGLDriver.h; path = ../../../../../Libs/Framework/include/Driver/OpenGLDriver.h; sourceTree = "<group>"; };
-		6526366A1C57253C00BF1B16 /* TextureGL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TextureGL.h; path = ../../../../../Libs/Framework/include/Driver/TextureGL.h; sourceTree = "<group>"; };
-		6526366C1C5725C900BF1B16 /* Texture.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Texture.h; path = ../../../../../Libs/Framework/include/Driver/Texture.h; sourceTree = "<group>"; };
-		6526366F1C5726A900BF1B16 /* cil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = cil.h; path = ../../../../../Libs/Framework/include/Driver/cil/cil.h; sourceTree = "<group>"; };
-		652636701C5726BD00BF1B16 /* stb_image.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = stb_image.h; path = ../../../../../Libs/Framework/include/Driver/stb/stb_image.h; sourceTree = "<group>"; };
-		652636711C5726BD00BF1B16 /* stb_truetype.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = stb_truetype.h; path = ../../../../../Libs/Framework/include/Driver/stb/stb_truetype.h; sourceTree = "<group>"; };
-		652636721C5726BD00BF1B16 /* stb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = stb.h; path = ../../../../../Libs/Framework/include/Driver/stb/stb.h; sourceTree = "<group>"; };
-		652636731C57271E00BF1B16 /* Texture.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; name = Texture.cpp; path = ../../../../../Libs/Framework/src/Driver/Texture.cpp; sourceTree = "<group>"; };
-		652636751C57276700BF1B16 /* BufferOpenGL.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; name = BufferOpenGL.cpp; path = ../../../../../Libs/Framework/src/Driver/BufferOpenGL.cpp; sourceTree = "<group>"; };
-		652636761C57276700BF1B16 /* EffectGL.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; name = EffectGL.cpp; path = ../../../../../Libs/Framework/src/Driver/EffectGL.cpp; sourceTree = "<group>"; };
-		652636771C57276700BF1B16 /* GLSLParser.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; name = GLSLParser.cpp; path = ../../../../../Libs/Framework/src/Driver/GLSLParser.cpp; sourceTree = "<group>"; };
-		652636781C57276700BF1B16 /* OpenGlDriver.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; name = OpenGlDriver.cpp; path = ../../../../../Libs/Framework/src/Driver/OpenGlDriver.cpp; sourceTree = "<group>"; };
-		652636791C57276700BF1B16 /* TextureGL.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; name = TextureGL.cpp; path = ../../../../../Libs/Framework/src/Driver/TextureGL.cpp; sourceTree = "<group>"; };
-		6526367F1C57283600BF1B16 /* BaseDriver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BaseDriver.h; path = ../../../../../Libs/Framework/include/Driver/BaseDriver.h; sourceTree = "<group>"; };
-		652636801C57283600BF1B16 /* Buffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Buffer.h; path = ../../../../../Libs/Framework/include/Driver/Buffer.h; sourceTree = "<group>"; };
-		652636811C57283600BF1B16 /* DriverProperties.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DriverProperties.h; path = ../../../../../Libs/Framework/include/Driver/DriverProperties.h; sourceTree = "<group>"; };
-		652636821C57283600BF1B16 /* RenderState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RenderState.h; path = ../../../../../Libs/Framework/include/Driver/RenderState.h; sourceTree = "<group>"; };
-		652636831C57283600BF1B16 /* ShaderBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ShaderBase.h; path = ../../../../../Libs/Framework/include/Driver/ShaderBase.h; sourceTree = "<group>"; };
-		652636841C57283600BF1B16 /* Technique.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Technique.h; path = ../../../../../Libs/Framework/include/Driver/Technique.h; sourceTree = "<group>"; };
-		652636851C57284F00BF1B16 /* DriverProperties.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; name = DriverProperties.cpp; path = ../../../../../Libs/Framework/src/Driver/DriverProperties.cpp; sourceTree = "<group>"; };
-		652636861C57284F00BF1B16 /* ShaderBase.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; name = ShaderBase.cpp; path = ../../../../../Libs/Framework/src/Driver/ShaderBase.cpp; sourceTree = "<group>"; };
-		652636891C5728BB00BF1B16 /* Camera.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Camera.h; path = ../../../../../Libs/Framework/include/Scene/Camera.h; sourceTree = "<group>"; };
-		6526368A1C5728BB00BF1B16 /* Node.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Node.h; path = ../../../../../Libs/Framework/include/Scene/Node.h; sourceTree = "<group>"; };
-		6526368B1C5728BB00BF1B16 /* Scene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Scene.h; path = ../../../../../Libs/Framework/include/Scene/Scene.h; sourceTree = "<group>"; };
-		6526368C1C5728CD00BF1B16 /* Camera.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Camera.cpp; path = ../../../../../Libs/Framework/src/Scene/Camera.cpp; sourceTree = "<group>"; };
-		6526368D1C5728CD00BF1B16 /* Node.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Node.cpp; path = ../../../../../Libs/Framework/src/Scene/Node.cpp; sourceTree = "<group>"; };
-		652636921C572AC200BF1B16 /* XDataBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = XDataBase.h; path = ../../../../../Libs/Framework/include/Utils/xFile/XDataBase.h; sourceTree = "<group>"; };
-		652636931C572AC200BF1B16 /* xDefs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = xDefs.h; path = ../../../../../Libs/Framework/include/Utils/xFile/xDefs.h; sourceTree = "<group>"; };
-		652636941C572AC200BF1B16 /* xMesh.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = xMesh.h; path = ../../../../../Libs/Framework/include/Utils/xFile/xMesh.h; sourceTree = "<group>"; };
-		652636951C572AD200BF1B16 /* XDataBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = XDataBase.cpp; path = ../../../../../Libs/Framework/src/Utils/xFile/XDataBase.cpp; sourceTree = "<group>"; };
-		652636961C572AD200BF1B16 /* xMesh.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = xMesh.cpp; path = ../../../../../Libs/Framework/src/Utils/xFile/xMesh.cpp; sourceTree = "<group>"; };
-		652636991C572E0500BF1B16 /* FileSystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileSystem.h; path = ../../../../../Libs/Framework/include/Utils/FileSystem.h; sourceTree = "<group>"; };
-		6526369A1C572E0500BF1B16 /* InputBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = InputBase.h; path = ../../../../../Libs/Framework/include/Utils/InputBase.h; sourceTree = "<group>"; };
-		6526369B1C572E0500BF1B16 /* Log.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Log.h; path = ../../../../../Libs/Framework/include/Utils/Log.h; sourceTree = "<group>"; };
-		6526369C1C572E0500BF1B16 /* Maths.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Maths.h; path = ../../../../../Libs/Framework/include/Utils/Maths.h; sourceTree = "<group>"; };
-		6526369D1C572E0500BF1B16 /* Time.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Time.cpp; path = ../../../../../Libs/Framework/include/Utils/Time.cpp; sourceTree = "<group>"; };
-		6526369E1C572E0500BF1B16 /* Time.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Time.h; path = ../../../../../Libs/Framework/include/Utils/Time.h; sourceTree = "<group>"; };
-		6526369F1C572E0500BF1B16 /* WindowProperties.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WindowProperties.h; path = ../../../../../Libs/Framework/include/Utils/WindowProperties.h; sourceTree = "<group>"; };
-		652636A11C572E1400BF1B16 /* FileSystem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FileSystem.cpp; path = ../../../../../Libs/Framework/src/Utils/FileSystem.cpp; sourceTree = "<group>"; };
-		652636A21C572E1400BF1B16 /* InputImplAndroid.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = InputImplAndroid.cpp; path = ../../../../../Libs/Framework/src/Utils/InputImplAndroid.cpp; sourceTree = "<group>"; };
-		652636A31C572E1400BF1B16 /* InputImplWin32.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = InputImplWin32.cpp; path = ../../../../../Libs/Framework/src/Utils/InputImplWin32.cpp; sourceTree = "<group>"; };
-		652636A41C572E1400BF1B16 /* Log.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; name = Log.cpp; path = ../../../../../Libs/Framework/src/Utils/Log.cpp; sourceTree = "<group>"; };
-		652636A51C572E1400BF1B16 /* Maths.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Maths.cpp; path = ../../../../../Libs/Framework/src/Utils/Maths.cpp; sourceTree = "<group>"; };
-		652636A61C572E1400BF1B16 /* WindowProperties.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WindowProperties.cpp; path = ../../../../../Libs/Framework/src/Utils/WindowProperties.cpp; sourceTree = "<group>"; };
-		652636AD1C572E9800BF1B16 /* AppPlatform.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AppPlatform.cpp; path = ../../../../../Libs/Framework/src/WindowManager/AppPlatform.cpp; sourceTree = "<group>"; };
-		652636AE1C572E9800BF1B16 /* FrameworkManager.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; name = FrameworkManager.cpp; path = ../../../../../Libs/Framework/src/WindowManager/FrameworkManager.cpp; sourceTree = "<group>"; };
-		652636B11C572EBE00BF1B16 /* FrameworkManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FrameworkManager.h; path = ../../../../../Libs/Framework/include/WindowManager/FrameworkManager.h; sourceTree = "<group>"; };
+		6526365F1C5720CA00BF1B16 /* config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = config.h; path = ../../../../Libs/Framework/include/config.h; sourceTree = "<group>"; };
+		652636611C5720F000BF1B16 /* Core.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Core.h; path = ../../../../Libs/Framework/include/Core/Core.h; sourceTree = "<group>"; };
+		652636621C5720F000BF1B16 /* OS_Selector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OS_Selector.h; path = ../../../../Libs/Framework/include/Core/OS_Selector.h; sourceTree = "<group>"; };
+		652636661C57253C00BF1B16 /* BufferOpenGL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BufferOpenGL.h; path = ../../../../Libs/Framework/include/Driver/BufferOpenGL.h; sourceTree = "<group>"; };
+		652636671C57253C00BF1B16 /* EffectGL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EffectGL.h; path = ../../../../Libs/Framework/include/Driver/EffectGL.h; sourceTree = "<group>"; };
+		652636681C57253C00BF1B16 /* GLSLParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GLSLParser.h; path = ../../../../Libs/Framework/include/Driver/GLSLParser.h; sourceTree = "<group>"; };
+		652636691C57253C00BF1B16 /* OpenGLDriver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OpenGLDriver.h; path = ../../../../Libs/Framework/include/Driver/OpenGLDriver.h; sourceTree = "<group>"; };
+		6526366A1C57253C00BF1B16 /* TextureGL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TextureGL.h; path = ../../../../Libs/Framework/include/Driver/TextureGL.h; sourceTree = "<group>"; };
+		6526366C1C5725C900BF1B16 /* Texture.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Texture.h; path = ../../../../Libs/Framework/include/Driver/Texture.h; sourceTree = "<group>"; };
+		6526366F1C5726A900BF1B16 /* cil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = cil.h; path = ../../../../Libs/Framework/include/Driver/cil/cil.h; sourceTree = "<group>"; };
+		652636701C5726BD00BF1B16 /* stb_image.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = stb_image.h; path = ../../../../Libs/Framework/include/Driver/stb/stb_image.h; sourceTree = "<group>"; };
+		652636711C5726BD00BF1B16 /* stb_truetype.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = stb_truetype.h; path = ../../../../Libs/Framework/include/Driver/stb/stb_truetype.h; sourceTree = "<group>"; };
+		652636721C5726BD00BF1B16 /* stb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = stb.h; path = ../../../../Libs/Framework/include/Driver/stb/stb.h; sourceTree = "<group>"; };
+		652636731C57271E00BF1B16 /* Texture.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; name = Texture.cpp; path = ../../../../Libs/Framework/src/Driver/Texture.cpp; sourceTree = "<group>"; };
+		652636751C57276700BF1B16 /* BufferOpenGL.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; name = BufferOpenGL.cpp; path = ../../../../Libs/Framework/src/Driver/BufferOpenGL.cpp; sourceTree = "<group>"; };
+		652636761C57276700BF1B16 /* EffectGL.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; name = EffectGL.cpp; path = ../../../../Libs/Framework/src/Driver/EffectGL.cpp; sourceTree = "<group>"; };
+		652636771C57276700BF1B16 /* GLSLParser.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; name = GLSLParser.cpp; path = ../../../../Libs/Framework/src/Driver/GLSLParser.cpp; sourceTree = "<group>"; };
+		652636781C57276700BF1B16 /* OpenGlDriver.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; name = OpenGlDriver.cpp; path = ../../../../Libs/Framework/src/Driver/OpenGlDriver.cpp; sourceTree = "<group>"; };
+		652636791C57276700BF1B16 /* TextureGL.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; name = TextureGL.cpp; path = ../../../../Libs/Framework/src/Driver/TextureGL.cpp; sourceTree = "<group>"; };
+		6526367F1C57283600BF1B16 /* BaseDriver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BaseDriver.h; path = ../../../../Libs/Framework/include/Driver/BaseDriver.h; sourceTree = "<group>"; };
+		652636801C57283600BF1B16 /* Buffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Buffer.h; path = ../../../../Libs/Framework/include/Driver/Buffer.h; sourceTree = "<group>"; };
+		652636811C57283600BF1B16 /* DriverProperties.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DriverProperties.h; path = ../../../../Libs/Framework/include/Driver/DriverProperties.h; sourceTree = "<group>"; };
+		652636821C57283600BF1B16 /* RenderState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RenderState.h; path = ../../../../Libs/Framework/include/Driver/RenderState.h; sourceTree = "<group>"; };
+		652636831C57283600BF1B16 /* ShaderBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ShaderBase.h; path = ../../../../Libs/Framework/include/Driver/ShaderBase.h; sourceTree = "<group>"; };
+		652636841C57283600BF1B16 /* Technique.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Technique.h; path = ../../../../Libs/Framework/include/Driver/Technique.h; sourceTree = "<group>"; };
+		652636851C57284F00BF1B16 /* DriverProperties.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; name = DriverProperties.cpp; path = ../../../../Libs/Framework/src/Driver/DriverProperties.cpp; sourceTree = "<group>"; };
+		652636861C57284F00BF1B16 /* ShaderBase.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; name = ShaderBase.cpp; path = ../../../../Libs/Framework/src/Driver/ShaderBase.cpp; sourceTree = "<group>"; };
+		652636891C5728BB00BF1B16 /* Camera.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Camera.h; path = ../../../../Libs/Framework/include/Scene/Camera.h; sourceTree = "<group>"; };
+		6526368A1C5728BB00BF1B16 /* Node.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Node.h; path = ../../../../Libs/Framework/include/Scene/Node.h; sourceTree = "<group>"; };
+		6526368B1C5728BB00BF1B16 /* Scene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Scene.h; path = ../../../../Libs/Framework/include/Scene/Scene.h; sourceTree = "<group>"; };
+		6526368C1C5728CD00BF1B16 /* Camera.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Camera.cpp; path = ../../../../Libs/Framework/src/Scene/Camera.cpp; sourceTree = "<group>"; };
+		6526368D1C5728CD00BF1B16 /* Node.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Node.cpp; path = ../../../../Libs/Framework/src/Scene/Node.cpp; sourceTree = "<group>"; };
+		652636921C572AC200BF1B16 /* XDataBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = XDataBase.h; path = ../../../../Libs/Framework/include/Utils/xFile/XDataBase.h; sourceTree = "<group>"; };
+		652636931C572AC200BF1B16 /* xDefs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = xDefs.h; path = ../../../../Libs/Framework/include/Utils/xFile/xDefs.h; sourceTree = "<group>"; };
+		652636941C572AC200BF1B16 /* xMesh.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = xMesh.h; path = ../../../../Libs/Framework/include/Utils/xFile/xMesh.h; sourceTree = "<group>"; };
+		652636951C572AD200BF1B16 /* XDataBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = XDataBase.cpp; path = ../../../../Libs/Framework/src/Utils/xFile/XDataBase.cpp; sourceTree = "<group>"; };
+		652636961C572AD200BF1B16 /* xMesh.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = xMesh.cpp; path = ../../../../Libs/Framework/src/Utils/xFile/xMesh.cpp; sourceTree = "<group>"; };
+		652636991C572E0500BF1B16 /* FileSystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileSystem.h; path = ../../../../Libs/Framework/include/Utils/FileSystem.h; sourceTree = "<group>"; };
+		6526369A1C572E0500BF1B16 /* InputBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = InputBase.h; path = ../../../../Libs/Framework/include/Utils/InputBase.h; sourceTree = "<group>"; };
+		6526369B1C572E0500BF1B16 /* Log.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Log.h; path = ../../../../Libs/Framework/include/Utils/Log.h; sourceTree = "<group>"; };
+		6526369C1C572E0500BF1B16 /* Maths.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Maths.h; path = ../../../../Libs/Framework/include/Utils/Maths.h; sourceTree = "<group>"; };
+		6526369D1C572E0500BF1B16 /* Time.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Time.cpp; path = ../../../../Libs/Framework/include/Utils/Time.cpp; sourceTree = "<group>"; };
+		6526369E1C572E0500BF1B16 /* Time.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Time.h; path = ../../../../Libs/Framework/include/Utils/Time.h; sourceTree = "<group>"; };
+		6526369F1C572E0500BF1B16 /* WindowProperties.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WindowProperties.h; path = ../../../../Libs/Framework/include/Utils/WindowProperties.h; sourceTree = "<group>"; };
+		652636A11C572E1400BF1B16 /* FileSystem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FileSystem.cpp; path = ../../../../Libs/Framework/src/Utils/FileSystem.cpp; sourceTree = "<group>"; };
+		652636A21C572E1400BF1B16 /* InputImplAndroid.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = InputImplAndroid.cpp; path = ../../../../Libs/Framework/src/Utils/InputImplAndroid.cpp; sourceTree = "<group>"; };
+		652636A31C572E1400BF1B16 /* InputImplWin32.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = InputImplWin32.cpp; path = ../../../../Libs/Framework/src/Utils/InputImplWin32.cpp; sourceTree = "<group>"; };
+		652636A41C572E1400BF1B16 /* Log.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; name = Log.cpp; path = ../../../../Libs/Framework/src/Utils/Log.cpp; sourceTree = "<group>"; };
+		652636A51C572E1400BF1B16 /* Maths.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Maths.cpp; path = ../../../../Libs/Framework/src/Utils/Maths.cpp; sourceTree = "<group>"; };
+		652636A61C572E1400BF1B16 /* WindowProperties.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WindowProperties.cpp; path = ../../../../Libs/Framework/src/Utils/WindowProperties.cpp; sourceTree = "<group>"; };
+		652636AD1C572E9800BF1B16 /* AppPlatform.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AppPlatform.cpp; path = ../../../../Libs/Framework/src/WindowManager/AppPlatform.cpp; sourceTree = "<group>"; };
+		652636AE1C572E9800BF1B16 /* FrameworkManager.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; name = FrameworkManager.cpp; path = ../../../../Libs/Framework/src/WindowManager/FrameworkManager.cpp; sourceTree = "<group>"; };
+		652636B11C572EBE00BF1B16 /* FrameworkManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FrameworkManager.h; path = ../../../../Libs/Framework/include/WindowManager/FrameworkManager.h; sourceTree = "<group>"; };
 		652636B21C5732E100BF1B16 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
-		65B17A2D1C5861950078EFD6 /* Win32Framework.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Win32Framework.cpp; path = ../../../../../Libs/Framework/src/WindowManager/Win32Framework.cpp; sourceTree = "<group>"; };
-		65B17A2F1C58646D0078EFD6 /* AndroidFramework.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AndroidFramework.cpp; path = ../../../../../Libs/Framework/src/WindowManager/AndroidFramework.cpp; sourceTree = "<group>"; };
+		65B17A2D1C5861950078EFD6 /* Win32Framework.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Win32Framework.cpp; path = ../../../../Libs/Framework/src/WindowManager/Win32Framework.cpp; sourceTree = "<group>"; };
+		65B17A2F1C58646D0078EFD6 /* AndroidFramework.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AndroidFramework.cpp; path = ../../../../Libs/Framework/src/WindowManager/AndroidFramework.cpp; sourceTree = "<group>"; };
+		65F3BAE91C5B2E4F00273E3F /* Core.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Core.cpp; path = ../../../../Libs/Framework/src/Core/Core.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -168,7 +168,7 @@
 		6526365A1C57204200BF1B16 /* Core */ = {
 			isa = PBXGroup;
 			children = (
-				652636631C57210500BF1B16 /* Core.cpp */,
+				65F3BAE91C5B2E4F00273E3F /* Core.cpp */,
 				652636611C5720F000BF1B16 /* Core.h */,
 				652636621C5720F000BF1B16 /* OS_Selector.h */,
 				6526365F1C5720CA00BF1B16 /* config.h */,
@@ -340,6 +340,7 @@
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
+				Base,
 			);
 			mainGroup = 6526363E1C571FA800BF1B16;
 			productRefGroup = 652636481C571FA800BF1B16 /* Products */;
@@ -372,7 +373,6 @@
 				652636981C572AD200BF1B16 /* xMesh.cpp in Sources */,
 				652636B01C572E9800BF1B16 /* FrameworkManager.cpp in Sources */,
 				652636881C57284F00BF1B16 /* ShaderBase.cpp in Sources */,
-				652636641C57210500BF1B16 /* Core.cpp in Sources */,
 				652636AA1C572E1400BF1B16 /* Log.cpp in Sources */,
 				652636741C57271E00BF1B16 /* Texture.cpp in Sources */,
 				652636AF1C572E9800BF1B16 /* AppPlatform.cpp in Sources */,
@@ -381,6 +381,7 @@
 				652636A01C572E0500BF1B16 /* Time.cpp in Sources */,
 				6526367E1C57276700BF1B16 /* TextureGL.cpp in Sources */,
 				652636A91C572E1400BF1B16 /* InputImplWin32.cpp in Sources */,
+				65F3BAEA1C5B2E4F00273E3F /* Core.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
