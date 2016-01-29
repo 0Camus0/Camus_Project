@@ -15,13 +15,13 @@
 		652636371C57192300BF1B16 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 652636351C57192300BF1B16 /* LaunchScreen.storyboard */; };
 		65B17A361C586A1B0078EFD6 /* Test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65B17A331C586A1B0078EFD6 /* Test.cpp */; };
 		65B17A371C586A1B0078EFD6 /* TestApplication.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65B17A351C586A1B0078EFD6 /* TestApplication.cpp */; };
-		65B17A381C586D190078EFD6 /* libCamusFrameworkiOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 652636581C571FA900BF1B16 /* libCamusFrameworkiOS.a */; };
+		65F3BB701C5B344B00273E3F /* libCamusFrameworkiOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 65F3BB061C5B30FF00273E3F /* libCamusFrameworkiOS.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		652636571C571FA900BF1B16 /* PBXContainerItemProxy */ = {
+		65F3BB051C5B30FF00273E3F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 652636531C571FA800BF1B16 /* CamusFrameworkiOS.xcodeproj */;
+			containerPortal = 65F3BB011C5B30FE00273E3F /* CamusFrameworkiOS.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = 652636471C571FA800BF1B16;
 			remoteInfo = CamusFrameworkiOS;
@@ -38,10 +38,10 @@
 		652636331C57192300BF1B16 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		652636361C57192300BF1B16 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		652636381C57192300BF1B16 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		652636531C571FA800BF1B16 /* CamusFrameworkiOS.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = CamusFrameworkiOS.xcodeproj; path = CamusFrameworkiOS/CamusFrameworkiOS.xcodeproj; sourceTree = "<group>"; };
 		65B17A331C586A1B0078EFD6 /* Test.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Test.cpp; path = ../../../../Source/TestApplication/Test.cpp; sourceTree = "<group>"; };
 		65B17A341C586A1B0078EFD6 /* Test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Test.h; path = ../../../../Source/TestApplication/Test.h; sourceTree = "<group>"; };
 		65B17A351C586A1B0078EFD6 /* TestApplication.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; name = TestApplication.cpp; path = ../../../../Source/TestApplication/TestApplication.cpp; sourceTree = "<group>"; };
+		65F3BB011C5B30FE00273E3F /* CamusFrameworkiOS.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = CamusFrameworkiOS.xcodeproj; path = CamusFrameworkiOS/CamusFrameworkiOS.xcodeproj; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -49,9 +49,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				65F3BB701C5B344B00273E3F /* libCamusFrameworkiOS.a in Frameworks */,
 				65047BE51C59E841007F16C0 /* OpenGLES.framework in Frameworks */,
 				65047BD91C59D3D3007F16C0 /* UIKit.framework in Frameworks */,
-				65B17A381C586D190078EFD6 /* libCamusFrameworkiOS.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -61,9 +61,9 @@
 		6526361B1C57192200BF1B16 = {
 			isa = PBXGroup;
 			children = (
+				65F3BB011C5B30FE00273E3F /* CamusFrameworkiOS.xcodeproj */,
 				65047BE41C59E841007F16C0 /* OpenGLES.framework */,
 				65047BD81C59D3D3007F16C0 /* UIKit.framework */,
-				652636531C571FA800BF1B16 /* CamusFrameworkiOS.xcodeproj */,
 				652636261C57192300BF1B16 /* Camus_Project */,
 				652636251C57192200BF1B16 /* Products */,
 			);
@@ -89,14 +89,6 @@
 			path = Camus_Project;
 			sourceTree = "<group>";
 		};
-		652636541C571FA800BF1B16 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				652636581C571FA900BF1B16 /* libCamusFrameworkiOS.a */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
 		65B17A311C58694C0078EFD6 /* TestApp */ = {
 			isa = PBXGroup;
 			children = (
@@ -107,6 +99,14 @@
 				6526362E1C57192300BF1B16 /* ViewController.mm */,
 			);
 			name = TestApp;
+			sourceTree = "<group>";
+		};
+		65F3BB021C5B30FE00273E3F /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				65F3BB061C5B30FF00273E3F /* libCamusFrameworkiOS.a */,
+			);
+			name = Products;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -156,8 +156,8 @@
 			projectDirPath = "";
 			projectReferences = (
 				{
-					ProductGroup = 652636541C571FA800BF1B16 /* Products */;
-					ProjectRef = 652636531C571FA800BF1B16 /* CamusFrameworkiOS.xcodeproj */;
+					ProductGroup = 65F3BB021C5B30FE00273E3F /* Products */;
+					ProjectRef = 65F3BB011C5B30FE00273E3F /* CamusFrameworkiOS.xcodeproj */;
 				},
 			);
 			projectRoot = "";
@@ -168,11 +168,11 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		652636581C571FA900BF1B16 /* libCamusFrameworkiOS.a */ = {
+		65F3BB061C5B30FF00273E3F /* libCamusFrameworkiOS.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
 			path = libCamusFrameworkiOS.a;
-			remoteRef = 652636571C571FA900BF1B16 /* PBXContainerItemProxy */;
+			remoteRef = 65F3BB051C5B30FF00273E3F /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
