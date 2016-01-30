@@ -8,12 +8,37 @@
 
 
 #import <UIKit/UIKit.h>
+#import <OpenGLES/EAGL.h>
+#import <OpenGLES/ES2/gl.h>
+#import <OpenGLES/ES2/glext.h>
+#import <QuartzCore/QuartzCore.h>
+#import <OpenGLES/ES1/gl.h>
+#import <OpenGLES/ES1/glext.h>
 
-@interface AppDelegate : UIResponder <UIApplicationDelegate>
+@interface GLView : UIView {
+@public
+   
+    
+}
+@end
 
-@property (strong, nonatomic) UIWindow *window;
+
+@interface AppDelegate : NSObject <UIApplicationDelegate> {
+
+}
+
+- (void) timecheck;
+
+@property (nonatomic, retain) IBOutlet UIWindow *window;
 
 
+@end
+
+@interface GLViewController : UIViewController {
+@public
+    
+    
+}
 @end
 
 class iOSFramework : public hyperspace::RootFramework {
@@ -32,6 +57,8 @@ public:
     ~iOSFramework() {
         
     }
+    
+    
 };
 
 

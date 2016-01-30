@@ -1,4 +1,12 @@
 #include <Utils/FileSystem.h>
+#include <Utils/Log.h>
+
+#ifdef __APPLE__
+#import <UIKit/UIKit.h>
+#endif
+
+#include <fstream>
+
 namespace hyperspace {
 	namespace fs {
 
@@ -9,9 +17,12 @@ namespace hyperspace {
 
 		void Filesystem::InitFS() {
 #ifdef OS_WIN32
-			ResPath = "Resources/";
+			ResPath = "Resourcez/";
 #elif defined(OS_ANDROID)
-			ResPath = "/storage/sdcard0/Resources/";
+			ResPath = "/storage/sdcard0/Resourcez/";
+#elif defined(__APPLE__)
+            const char* paths = [[[NSBundle mainBundle] resourcePath] UTF8String];
+            ResPath = std::string(paths) + std::string("/Resourcez/");
 #endif
 		}
 

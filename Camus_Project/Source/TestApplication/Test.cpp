@@ -54,8 +54,14 @@ void TestApp::CreateAssets() {
 
 	hyperspace::video::TextureManager	*TexManager = new hyperspace::video::TextureManagerGL();
 
+   // TexManager->LoadTexture("bones.BMP");
+   // TexManager->LoadTexture("floor_normal.tga");
+    TexManager->LoadTexture("pvr/Cubemap.pvr");
+    TexManager->LoadTexture("pvr/BatBody_pvrtc2_rgba.pvr");
+    TexManager->LoadTexture("pvr/CrocBody_pvrtc4_rgba.pvr");
+    
 	
-	TexManager->LoadTexture("etc1/BatBody_ETC1.ktx");
+//	TexManager->LoadTexture("etc1/BatBody_ETC1.ktx");
 /*	TexManager->LoadTexture("etc1/BatHead_ETC1.ktx");
 	TexManager->LoadTexture("etc1/CrocBody_ETC1.ktx");
 	TexManager->LoadTexture("etc1/CrocHead_ETC1.ktx");
@@ -114,11 +120,12 @@ void TestApp::OnUpdate(unsigned int dt) {
 }
 
 void TestApp::OnDraw() {
+   // LogPrintDebug("TestApp::OnDraw");
 	static float ang = 0.0f;
 
 	float R = 0.0f, G = 0.0f, B = 0.0f;
 
-	ang += 0.0001f;
+	ang += 0.01f;
 
 	R = (clip(std::sin(ang), 0.0f, 1.0f))*0.5f + 0.5f;
 	G = (clip(std::cos(ang + .70f), 0.0f, 1.0f))*0.5f + 0.5f;

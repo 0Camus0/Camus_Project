@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		65047BE31C59E7BD007F16C0 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 65047BE21C59E7BD007F16C0 /* UIKit.framework */; };
 		652636B31C5732E100BF1B16 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 652636B21C5732E100BF1B16 /* OpenGLES.framework */; };
+		65CC87C51C5CAA850050DFDA /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 65CC87C41C5CAA850050DFDA /* QuartzCore.framework */; };
 		65F3BB281C5B32FD00273E3F /* Core.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65F3BB0B1C5B32FD00273E3F /* Core.cpp */; };
 		65F3BB291C5B32FD00273E3F /* BufferOpenGL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65F3BB0D1C5B32FD00273E3F /* BufferOpenGL.cpp */; };
 		65F3BB2A1C5B32FD00273E3F /* DriverProperties.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65F3BB0E1C5B32FD00273E3F /* DriverProperties.cpp */; };
@@ -52,6 +53,7 @@
 		65047BE21C59E7BD007F16C0 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		652636471C571FA800BF1B16 /* libCamusFrameworkiOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libCamusFrameworkiOS.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		652636B21C5732E100BF1B16 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
+		65CC87C41C5CAA850050DFDA /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		65F3BB0B1C5B32FD00273E3F /* Core.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Core.cpp; sourceTree = "<group>"; };
 		65F3BB0D1C5B32FD00273E3F /* BufferOpenGL.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = BufferOpenGL.cpp; sourceTree = "<group>"; };
 		65F3BB0E1C5B32FD00273E3F /* DriverProperties.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DriverProperties.cpp; sourceTree = "<group>"; };
@@ -63,7 +65,7 @@
 		65F3BB141C5B32FD00273E3F /* TextureGL.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = TextureGL.cpp; sourceTree = "<group>"; };
 		65F3BB161C5B32FD00273E3F /* Camera.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Camera.cpp; sourceTree = "<group>"; };
 		65F3BB171C5B32FD00273E3F /* Node.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Node.cpp; sourceTree = "<group>"; };
-		65F3BB191C5B32FD00273E3F /* FileSystem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FileSystem.cpp; sourceTree = "<group>"; };
+		65F3BB191C5B32FD00273E3F /* FileSystem.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = FileSystem.cpp; sourceTree = "<group>"; };
 		65F3BB1A1C5B32FD00273E3F /* InputImplAndroid.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InputImplAndroid.cpp; sourceTree = "<group>"; };
 		65F3BB1B1C5B32FD00273E3F /* InputImplWin32.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InputImplWin32.cpp; sourceTree = "<group>"; };
 		65F3BB1C1C5B32FD00273E3F /* Log.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Log.cpp; sourceTree = "<group>"; };
@@ -120,6 +122,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				65CC87C51C5CAA850050DFDA /* QuartzCore.framework in Frameworks */,
 				65047BE31C59E7BD007F16C0 /* UIKit.framework in Frameworks */,
 				652636B31C5732E100BF1B16 /* OpenGLES.framework in Frameworks */,
 			);
@@ -131,6 +134,7 @@
 		6526363E1C571FA800BF1B16 = {
 			isa = PBXGroup;
 			children = (
+				65CC87C41C5CAA850050DFDA /* QuartzCore.framework */,
 				65F3BB6F1C5B335200273E3F /* CamusFrameWork */,
 				65047BE21C59E7BD007F16C0 /* UIKit.framework */,
 				652636B21C5732E100BF1B16 /* OpenGLES.framework */,

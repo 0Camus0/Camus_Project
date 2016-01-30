@@ -6,9 +6,11 @@
 // Headers for EGL and OGLES
 
 #ifdef __APPLE__
-#include <OpenGLES/EAGL.h>
-#include <OpenGLES/ES2/gl.h>
-#include <OpenGLES/ES2/glext.h>
+#import <OpenGLES/EAGL.h>
+#import <QuartzCore/QuartzCore.h>
+#import <OpenGLES/ES2/gl.h>
+#import <OpenGLES/ES2/glext.h>
+
 #else
 #include <EGL/egl.h>
 #include <GLES2/gl2.h>
@@ -41,9 +43,7 @@ namespace hyperspace {
 			void	SwapBuffers();
 
 			void	ResetDriver();
-#ifdef __APPLE__
-            EAGLContext                *eglContext;
-#else
+#ifndef __APPLE__
 			EGLDisplay			eglDisplay;
 			EGLConfig			eglConfig;
 			EGLSurface			eglSurface;

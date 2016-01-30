@@ -10,11 +10,11 @@
 		65047BD91C59D3D3007F16C0 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 65047BD81C59D3D3007F16C0 /* UIKit.framework */; };
 		65047BE51C59E841007F16C0 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 65047BE41C59E841007F16C0 /* OpenGLES.framework */; };
 		6526362F1C57192300BF1B16 /* ViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 6526362E1C57192300BF1B16 /* ViewController.mm */; };
-		652636321C57192300BF1B16 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 652636301C57192300BF1B16 /* Main.storyboard */; };
 		652636341C57192300BF1B16 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 652636331C57192300BF1B16 /* Assets.xcassets */; };
-		652636371C57192300BF1B16 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 652636351C57192300BF1B16 /* LaunchScreen.storyboard */; };
 		65B17A361C586A1B0078EFD6 /* Test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65B17A331C586A1B0078EFD6 /* Test.cpp */; };
 		65B17A371C586A1B0078EFD6 /* TestApplication.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65B17A351C586A1B0078EFD6 /* TestApplication.cpp */; };
+		65CC87C71C5CAA960050DFDA /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 65CC87C61C5CAA960050DFDA /* QuartzCore.framework */; };
+		65CC87C91C5CC16A0050DFDA /* Resourcez in Resources */ = {isa = PBXBuildFile; fileRef = 65CC87C81C5CC16A0050DFDA /* Resourcez */; };
 		65F3BB701C5B344B00273E3F /* libCamusFrameworkiOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 65F3BB061C5B30FF00273E3F /* libCamusFrameworkiOS.a */; };
 /* End PBXBuildFile section */
 
@@ -31,16 +31,16 @@
 /* Begin PBXFileReference section */
 		65047BD81C59D3D3007F16C0 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		65047BE41C59E841007F16C0 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
-		652636241C57192200BF1B16 /* TestApplication.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TestApplication.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		652636241C57192200BF1B16 /* TemplateApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TemplateApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6526362D1C57192300BF1B16 /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
 		6526362E1C57192300BF1B16 /* ViewController.mm */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = ViewController.mm; sourceTree = "<group>"; };
-		652636311C57192300BF1B16 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		652636331C57192300BF1B16 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		652636361C57192300BF1B16 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		652636381C57192300BF1B16 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		65B17A331C586A1B0078EFD6 /* Test.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Test.cpp; path = ../../../../Source/TestApplication/Test.cpp; sourceTree = "<group>"; };
 		65B17A341C586A1B0078EFD6 /* Test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Test.h; path = ../../../../Source/TestApplication/Test.h; sourceTree = "<group>"; };
 		65B17A351C586A1B0078EFD6 /* TestApplication.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; name = TestApplication.cpp; path = ../../../../Source/TestApplication/TestApplication.cpp; sourceTree = "<group>"; };
+		65CC87C61C5CAA960050DFDA /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		65CC87C81C5CC16A0050DFDA /* Resourcez */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Resourcez; path = ../../../Resourcez; sourceTree = "<group>"; };
 		65F3BB011C5B30FE00273E3F /* CamusFrameworkiOS.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = CamusFrameworkiOS.xcodeproj; path = CamusFrameworkiOS/CamusFrameworkiOS.xcodeproj; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -49,6 +49,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				65CC87C71C5CAA960050DFDA /* QuartzCore.framework in Frameworks */,
 				65F3BB701C5B344B00273E3F /* libCamusFrameworkiOS.a in Frameworks */,
 				65047BE51C59E841007F16C0 /* OpenGLES.framework in Frameworks */,
 				65047BD91C59D3D3007F16C0 /* UIKit.framework in Frameworks */,
@@ -61,6 +62,8 @@
 		6526361B1C57192200BF1B16 = {
 			isa = PBXGroup;
 			children = (
+				65CC87C81C5CC16A0050DFDA /* Resourcez */,
+				65CC87C61C5CAA960050DFDA /* QuartzCore.framework */,
 				65F3BB011C5B30FE00273E3F /* CamusFrameworkiOS.xcodeproj */,
 				65047BE41C59E841007F16C0 /* OpenGLES.framework */,
 				65047BD81C59D3D3007F16C0 /* UIKit.framework */,
@@ -72,7 +75,7 @@
 		652636251C57192200BF1B16 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				652636241C57192200BF1B16 /* TestApplication.app */,
+				652636241C57192200BF1B16 /* TemplateApp.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -81,9 +84,7 @@
 			isa = PBXGroup;
 			children = (
 				65B17A311C58694C0078EFD6 /* TestApp */,
-				652636301C57192300BF1B16 /* Main.storyboard */,
 				652636331C57192300BF1B16 /* Assets.xcassets */,
-				652636351C57192300BF1B16 /* LaunchScreen.storyboard */,
 				652636381C57192300BF1B16 /* Info.plist */,
 			);
 			path = Camus_Project;
@@ -112,9 +113,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		652636231C57192200BF1B16 /* TestApplication */ = {
+		652636231C57192200BF1B16 /* TemplateApp */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 6526363B1C57192300BF1B16 /* Build configuration list for PBXNativeTarget "TestApplication" */;
+			buildConfigurationList = 6526363B1C57192300BF1B16 /* Build configuration list for PBXNativeTarget "TemplateApp" */;
 			buildPhases = (
 				652636201C57192200BF1B16 /* Sources */,
 				652636211C57192200BF1B16 /* Frameworks */,
@@ -124,9 +125,9 @@
 			);
 			dependencies = (
 			);
-			name = TestApplication;
+			name = TemplateApp;
 			productName = Camus_Project;
-			productReference = 652636241C57192200BF1B16 /* TestApplication.app */;
+			productReference = 652636241C57192200BF1B16 /* TemplateApp.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -143,7 +144,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 6526361F1C57192200BF1B16 /* Build configuration list for PBXProject "TestApplication" */;
+			buildConfigurationList = 6526361F1C57192200BF1B16 /* Build configuration list for PBXProject "TemplateApp" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -162,7 +163,7 @@
 			);
 			projectRoot = "";
 			targets = (
-				652636231C57192200BF1B16 /* TestApplication */,
+				652636231C57192200BF1B16 /* TemplateApp */,
 			);
 		};
 /* End PBXProject section */
@@ -182,9 +183,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				652636371C57192300BF1B16 /* LaunchScreen.storyboard in Resources */,
 				652636341C57192300BF1B16 /* Assets.xcassets in Resources */,
-				652636321C57192300BF1B16 /* Main.storyboard in Resources */,
+				65CC87C91C5CC16A0050DFDA /* Resourcez in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -202,25 +202,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXVariantGroup section */
-		652636301C57192300BF1B16 /* Main.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				652636311C57192300BF1B16 /* Base */,
-			);
-			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
-		652636351C57192300BF1B16 /* LaunchScreen.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				652636361C57192300BF1B16 /* Base */,
-			);
-			name = LaunchScreen.storyboard;
-			sourceTree = "<group>";
-		};
-/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		652636391C57192300BF1B16 /* Debug */ = {
@@ -313,9 +294,11 @@
 				);
 				HEADER_SEARCH_PATHS = ../../../Libs/Framework/include;
 				INFOPLIST_FILE = Camus_Project/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.1;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "dev.Camus-Project";
-				PRODUCT_NAME = TestApplication;
+				PRODUCT_NAME = TemplateApp;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
 		};
@@ -329,16 +312,18 @@
 				);
 				HEADER_SEARCH_PATHS = ../../../Libs/Framework/include;
 				INFOPLIST_FILE = Camus_Project/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.1;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "dev.Camus-Project";
-				PRODUCT_NAME = TestApplication;
+				PRODUCT_NAME = TemplateApp;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
 		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		6526361F1C57192200BF1B16 /* Build configuration list for PBXProject "TestApplication" */ = {
+		6526361F1C57192200BF1B16 /* Build configuration list for PBXProject "TemplateApp" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				652636391C57192300BF1B16 /* Debug */,
@@ -347,7 +332,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		6526363B1C57192300BF1B16 /* Build configuration list for PBXNativeTarget "TestApplication" */ = {
+		6526363B1C57192300BF1B16 /* Build configuration list for PBXNativeTarget "TemplateApp" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				6526363C1C57192300BF1B16 /* Debug */,

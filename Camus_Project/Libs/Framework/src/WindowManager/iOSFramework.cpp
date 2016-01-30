@@ -22,6 +22,11 @@ extern pthread_mutex_t					g_mutex;
 extern pthread_cond_t					g_cond;
 #endif
 extern bool g_bAppRunning;
+extern hyperspace::RootFramework			*pFramework;
+
+EAGLContext *g_EAGLContext = nil;
+
+GLView*     g_View = nil;
 
 void Suspend() {
     LogPrintDebug("Suspend APP");
@@ -51,12 +56,50 @@ void Resume() {
 #endif
 }
 
+void CheckSuspend(iOSFramework* pApp) {
+#ifdef USE_C11_THREADS
+    std::unique_lock<std::mutex> locker(g_mutex);
+    while (!g_bAppRunning) {
+        pFramework->OnInterruptApplication();
+        LogPrintDebug("CheckSuspend while waiting");
+        g_cond.wait(locker);
+    }
+#else
+    pthread_mutex_lock(&g_mutex);
+    while (!g_bAppRunning) {
+        LogPrintDebug("CheckSuspend while waiting");
+        pthread_cond_wait(&g_cond, &g_mutex);
+    }
+    pthread_mutex_unlock(&g_mutex);
+#endif
+}
+
 void iOSFramework::InitGlobalVars(){
     LogPrintDebug("iOSFramework - InitGlobalVars");
 }
 
 void iOSFramework::OnCreateApplication(){
    LogPrintDebug("iOSFramework - OnCreateApplication");
+    
+   hyperspace::fs::Filesystem::instance()->InitFS();
+    
+  
+    
+   pVideoDriver = new hyperspace::video::OpenGLDriver();
+
+
+    if(!g_EAGLContext || ![EAGLContext setCurrentContext:g_EAGLContext]){
+        LogPrintDebug("iOSFramework - OnCreateApplication - Can attach GL Context");
+        exit( 1 );
+    }
+  
+ 
+   pVideoDriver->InitDriver();
+    
+   pBaseApp->CreateAssets();
+    
+    
+
 }
 
 void iOSFramework::OnDestroyApplication(){
@@ -72,9 +115,17 @@ void iOSFramework::OnResumeApplication(){
 }
 
 void iOSFramework::UpdateApplication(){
-   LogPrintDebug("iOSFramework - UpdateApplication");
+  // LogPrintDebug("iOSFramework - UpdateApplication");
     
-    sleep(1);
+    
+    if (!pBaseApp->bPaused) {
+        pVideoDriver->Update();
+        pBaseApp->OnUpdate(0);
+        pBaseApp->OnDraw();
+    }
+   // sleep(1);
+    
+    CheckSuspend(this);
 }
 
 void iOSFramework::ProcessInput(){
@@ -87,24 +138,116 @@ void iOSFramework::ResetApplication(){
 
 #include <Utils/Log.h>
 
-@interface AppDelegate ()
+@implementation GLViewController
+
+-(void)loadView
+{
+    CGRect screenBounds = [[UIScreen mainScreen] bounds];
+    GLView*   View = [[GLView alloc] initWithFrame:screenBounds];
+    
+    self.view = View;
+    
+}
+
+
+@end
+
+
+@implementation GLView
+
++ (Class) layerClass
+{
+    return [CAEAGLLayer class];
+}
+
+
+- (id)initWithFrame:(CGRect)frame
+{
+    self = [super initWithFrame:frame];
+    if (self) {
+        self.contentScaleFactor = 2.0;
+        CAEAGLLayer* eaglLayer = (CAEAGLLayer*)super.layer;
+        
+        eaglLayer.opaque = YES;
+        eaglLayer.contentsScale = 2.0f;
+        self.multipleTouchEnabled = true;
+        
+        g_EAGLContext = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2];
+        
+        if(!g_EAGLContext || ![EAGLContext setCurrentContext:g_EAGLContext]){
+            return nil;
+        }
+        
+        GLuint framebuffer,renderbuffer;
+        glGenFramebuffersOES(1,&framebuffer);
+        glGenRenderbuffersOES(1,&renderbuffer);
+        
+        glBindFramebufferOES(GL_FRAMEBUFFER_OES, framebuffer);
+        glBindRenderbufferOES(GL_RENDERBUFFER_OES, renderbuffer);
+        
+        [g_EAGLContext renderbufferStorage:GL_RENDERBUFFER_OES fromDrawable:eaglLayer];
+        
+        glFramebufferRenderbufferOES(GL_FRAMEBUFFER_OES,GL_COLOR_ATTACHMENT0_OES,GL_RENDERBUFFER_OES,renderbuffer);
+        
+        CGSize o = [[[UIScreen mainScreen] currentMode] size];
+
+        glViewport(0,0,o.width,o.height);
+        
+        
+        
+    }
+    return self;
+}
+
+
+- (void)dealloc
+{
+    if([EAGLContext currentContext]==g_EAGLContext)
+        [EAGLContext setCurrentContext:nil];
+    
+}
+
 
 @end
 
 @implementation AppDelegate
 
 
+@synthesize window=_window;
+
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
     LogPrintDebug("AppDelegate didFinishLaunchingWithOptions");
+
+    CGRect screenBounds = [[UIScreen mainScreen] bounds];
+    CGSize o = [[[UIScreen mainScreen] currentMode] size];
+    
+    hyperspace::GetWindowParameters().SetParametersFromDriver(o.width,o.height);
+    
+    _window = [[UIWindow alloc] initWithFrame:screenBounds];
+    g_View = [[GLView alloc] initWithFrame:screenBounds];
+    [UIApplication sharedApplication].idleTimerDisabled = YES;
+    
+    UIViewController *m_ViewController = [UIViewController alloc];
+    
+    m_ViewController.view = g_View;
+    
+    [self.window addSubview:g_View];
+    
+    [self.window setRootViewController:m_ViewController];
+    
+    [self.window makeKeyAndVisible];
+   
     
     Resume();
+    
     return YES;
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application {
     // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
     // Use this method to pause ongoing tasks, disable timers, and throttle down OpenGL ES frame rates. Games should use this method to pause the game.
+    Suspend();
     LogPrintDebug("AppDelegate applicationWillResignActive");
 }
 
@@ -121,6 +264,7 @@ void iOSFramework::ResetApplication(){
 
 - (void)applicationDidBecomeActive:(UIApplication *)application {
     // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
+    Resume();
     LogPrintDebug("AppDelegate applicationDidBecomeActive");
 }
 
@@ -128,6 +272,22 @@ void iOSFramework::ResetApplication(){
     // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
     LogPrintDebug("AppDelegate applicationWillTerminate");
 }
+
+- (void) timecheck{
+    static double timed = 0.0;
+    
+    //  double dif = [[NSDate date] timeIntervalSince1970] - timed;
+    
+    //  printf("time main: %f\n",1.0f/dif);
+    
+    //if(!Rthread.alive)
+    //      [self applicationWillTerminate];
+    
+    
+    timed = [[NSDate date] timeIntervalSince1970];
+    
+}
+
 
 @end
 

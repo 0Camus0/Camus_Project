@@ -3,6 +3,9 @@
 #include <Utils/WindowProperties.h>
 #include <Utils/Log.h>
 
+#ifdef __APPLE__
+extern EAGLContext *g_EAGLContext;
+#endif
 #ifndef USE_DEBUG
 #define ReportEGLError(...) ((void)0)
 #else
@@ -20,9 +23,7 @@ namespace hyperspace {
 	namespace video {
 		OpenGLDriver::OpenGLDriver() {
 			bInited = false;
-#ifdef __APPLE__
-            eglContext = 0;
-#else
+#ifndef __APPLE__
 			eglWindow = 0;
 			eglDisplay = 0;
 			eglSurface = 0;
@@ -56,8 +57,10 @@ namespace hyperspace {
 				ResetDriver();
 				return;
 			}
-
+#endif
 			auto &properties = GetDriverProperties();
+            
+ #if defined(OS_WIN32) || defined(OS_ANDROID)
 			EGLint numConfigs, w, h;
 
 #ifdef OS_WIN32
@@ -119,12 +122,14 @@ namespace hyperspace {
 
 			GetWindowParameters().SetParametersFromDriver(w, h);
 
-			properties.Version = std::string((const char*)glGetString(GL_VERSION));
-			LogPrintDebug("Driver successfuly inited version: %s", properties.Version.c_str());
-			properties.SetExtensions(std::string((const char*)glGetString(GL_EXTENSIONS)));
-			properties.ListExtensions();
+			
 
 #endif
+            properties.Version = std::string((const char*)glGetString(GL_VERSION));
+            LogPrintDebug("Driver successfuly inited version: %s", properties.Version.c_str());
+            properties.SetExtensions(std::string((const char*)glGetString(GL_EXTENSIONS)));
+            properties.ListExtensions();
+            
 			bInited = true;
 
 		}
@@ -221,6 +226,8 @@ namespace hyperspace {
 		void	OpenGLDriver::SwapBuffers() {
 #if defined(OS_WIN32) || defined(OS_ANDROID)
 			eglSwapBuffers(eglDisplay, eglSurface);
+#elif defined(__APPLE__)
+           [g_EAGLContext presentRenderbuffer:GL_RENDERBUFFER];
 #endif
 		}
 
