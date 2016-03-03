@@ -210,5 +210,8 @@
     <ClInclude Include="..\include\Utils\Time.h">
       <Filter>Source Files\Utils</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\Driver\Material.h">
+      <Filter>Source Files\Driver</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

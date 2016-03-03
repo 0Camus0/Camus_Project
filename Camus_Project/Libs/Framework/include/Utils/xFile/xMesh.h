@@ -4,7 +4,7 @@
 
 
 #include <Utils/xFile/xDefs.h>
-#include <Driver/EffectGL.h>
+#include <Driver/Technique.h>
 
 
 
@@ -147,7 +147,8 @@ namespace xF {
 
 	class xMesh : public xMeshContainer {
 	public:
-		xMesh() {}
+		xMesh() : technique (0){
+		}
 		xMesh(const xMesh &Bn) { *this = Bn; }
 		xMesh(xMesh &Bn) { *this = Bn; }
 		xMesh & operator= (const xMesh & other) {
@@ -214,7 +215,7 @@ namespace xF {
 		void	BuildSubsets();
 
 
-		hyperspace::video::TechniqueGL					technique;
+		hyperspace::video::CTechnique_		*technique;
 
 		xMeshDesc					 Desc;
 

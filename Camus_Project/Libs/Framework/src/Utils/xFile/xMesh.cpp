@@ -9,6 +9,8 @@
 #include <GLES2/gl2ext.h>
 #endif
 
+#include <Driver/EffectGL.h>
+
 
 using namespace hyperspace;
 namespace xF {
@@ -517,8 +519,13 @@ namespace xF {
 	}
 
 	void xMesh::BuildSubsets() {
-		technique.Initialize("Animated","Anim");
-		for (unsigned int i = 0; i < Geometry.size(); i++) {
+		const std::size_t size_geometry = Geometry.size();
+		if(size_geometry>0){
+			technique = new hyperspace::video::TechniqueGL();
+			technique->Initialize("Animated", "Anim");
+		}
+		
+		for (unsigned int i = 0; i < size_geometry; i++) {
 			unsigned int VertexSizeinBytes = 0;
 			unsigned int VectorSizeinBytes = 0;
 
@@ -528,9 +535,10 @@ namespace xF {
 				VectorSizeinBytes = 12;
 
 			xMeshGeometry *pActual = &Geometry[i];
-
+	
 			if (pActual->VertexAttributes&xMeshGeometry::HAS_POSITION) {
 				VertexSizeinBytes += VectorSizeinBytes;
+				technique->BindAttribute("Position_", 0, hyperspace::video::shader::bind_::POSITION);
 			}
 
 			if (pActual->VertexAttributes&xMeshGeometry::HAS_NORMAL) {

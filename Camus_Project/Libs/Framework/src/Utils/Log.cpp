@@ -4,7 +4,6 @@
 #include <sstream>
 #include <stdarg.h> 
 #include <iosfwd>
-#include <unistd.h>
 #include <string>
 
 #if defined(__APPLE__)
@@ -17,10 +16,12 @@
 
 #if defined(OS_ANDROID)
 #include <stdlib.h>
+#include <unistd.h>
 #elif defined(OS_WIN32)
 #include <windows.h>
 #include <Psapi.h>
 #elif defined(__APPLE__)
+#include <unistd.h>
 #include <mach/mach.h>
 #include <stdlib.h>
 #endif

@@ -157,7 +157,7 @@ xcopy "$(SolutionDir)..\..\Resources" "$(SolutionDir)..\..\bin\Resources\" /S /E
 copy "$(SolutionDir)..\..\Externals\OGLES2\Lib\libGLESv2.dll" "$(SolutionDir)..\..\bin" /Y
 copy "$(SolutionDir)..\..\Externals\pthreads\dll\pthreadVC2.dll" "$(SolutionDir)..\..\bin" /Y
 copy "$(SolutionDir)..\..\Externals\SDL-1.2.14\lib\SDL.dll" "$(SolutionDir)..\..\bin" /Y
-xcopy "$(SolutionDir)..\..\Resources" "$(SolutionDir)..\..\bin\Resources\" /S /E /Y</Command>
+xcopy "$(SolutionDir)..\..\Resourcez" "$(SolutionDir)..\..\bin\Resourcez\" /S /E /Y</Command>
       <Message>Copying dlls to the bin location.</Message>
     </PreBuildEvent>
   </ItemDefinitionGroup>

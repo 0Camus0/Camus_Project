@@ -66,6 +66,7 @@
     <ClInclude Include="..\include\Driver\DriverProperties.h" />
     <ClInclude Include="..\include\Driver\EffectGL.h" />
     <ClInclude Include="..\include\Driver\GLSLParser.h" />
+    <ClInclude Include="..\include\Driver\Material.h" />
     <ClInclude Include="..\include\Driver\OpenGLDriver.h" />
     <ClInclude Include="..\include\Driver\RenderState.h" />
     <ClInclude Include="..\include\Driver\ShaderBase.h" />
