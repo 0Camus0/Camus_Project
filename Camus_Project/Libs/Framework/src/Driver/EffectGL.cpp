@@ -87,11 +87,11 @@ namespace hyperspace {
 						tmp_bind  = "POSITION";
 					if (it->second.props & shader::bind_::NORMAL)
 						tmp_bind = "NORMAL";
-					if (it->second.props & shader::bind_::TEXCOORD_1)
+					if (it->second.props & shader::bind_::TEXCOORD_0)
 						tmp_bind = "TEXCOORD_1";
-					if (it->second.props & shader::bind_::TEXCOORD_2)
+					if (it->second.props & shader::bind_::TEXCOORD_1)
 						tmp_bind = "TEXCOORD_2";
-					if (it->second.props & shader::bind_::TEXCOORD_3)
+					if (it->second.props & shader::bind_::TEXCOORD_2)
 						tmp_bind = "TEXCOORD_3";
 					if (it->second.props & shader::bind_::TANGENT)
 						tmp_bind = "TANGENT";

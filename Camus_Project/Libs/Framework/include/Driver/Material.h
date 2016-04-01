@@ -1,6 +1,8 @@
 #ifndef CA_MATERIAL_H
 #define CA_MATERIAL_H
 
+#include <vector>
+
 namespace hyperspace {
 	namespace video {
 
@@ -67,6 +69,13 @@ namespace hyperspace {
 			IS_FOR_ALPHA_TEST		= (1 << 19),
 		};
 
+		enum Unit_Kind{
+			UNKNOWN = 0,
+			MAP,
+			COLOR,
+			VALUE
+		};
+
 		struct Map_ {
 			Map_() : kind(INVALID_MAP) {}
 			int kind;
@@ -80,17 +89,25 @@ namespace hyperspace {
 		};
 
 		struct Value_{
-			Value_() : Value_(INVALID_VALUE) {}
+			Value_() : kind(INVALID_VALUE) {}
 			int kind;
 			float value;
 		};
 
 		struct MatUnit{
+			MatUnit() : kind(UNKNOWN) {}
+			int		kind;
 			Map_	map;
 			Color_	color;
 			Value_	value;
 		};
 
+		
+		std::vector<MatUnit>	props;
+		
+		bool	Initialized(){
+			return !(props.size()==0);
+		}
 
 
 	};

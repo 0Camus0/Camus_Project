@@ -5,6 +5,7 @@
 
 #include <Utils/xFile/xDefs.h>
 #include <Driver/Technique.h>
+#include <Driver/Material.h>
 
 
 
@@ -147,7 +148,7 @@ namespace xF {
 
 	class xMesh : public xMeshContainer {
 	public:
-		xMesh() : technique (0){
+		xMesh() {
 		}
 		xMesh(const xMesh &Bn) { *this = Bn; }
 		xMesh(xMesh &Bn) { *this = Bn; }
@@ -206,20 +207,19 @@ namespace xF {
 		void	UpdateAnimation();
 
 
-
-		std::vector<xFinalGeometry>	 MeshInfo;
-		AnimationController			 *m_AnimController;
-
-	private:
-
 		void	BuildSubsets();
 
+		void	GatherMaterials(video::Material_ &mat,xF::xMaterial &xMat);
 
-		hyperspace::video::CTechnique_		*technique;
+		AnimationController				*m_AnimController;
+
+		std::vector<xFinalGeometry>		MeshInfo;
+		
+		std::vector<video::CTechnique_*> techniques;
+
+		std::vector<video::Material_>	materials;
 
 		xMeshDesc					 Desc;
-
-
 
 	};
 

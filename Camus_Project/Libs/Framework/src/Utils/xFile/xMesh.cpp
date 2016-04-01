@@ -520,10 +520,6 @@ namespace xF {
 
 	void xMesh::BuildSubsets() {
 		const std::size_t size_geometry = Geometry.size();
-		if(size_geometry>0){
-			technique = new hyperspace::video::TechniqueGL();
-			technique->Initialize("Animated", "Anim");
-		}
 		
 		for (unsigned int i = 0; i < size_geometry; i++) {
 			unsigned int VertexSizeinBytes = 0;
@@ -535,6 +531,14 @@ namespace xF {
 				VectorSizeinBytes = 12;
 
 			xMeshGeometry *pActual = &Geometry[i];
+
+			video::CTechnique_ *technique = new video::TechniqueGL();
+
+			if(pActual->Info.SkinMeshHeader.NumBones>0){
+				technique->Initialize("Animated", "Anim");
+			}else{
+				technique->Initialize("Static", "All");
+			}
 	
 			if (pActual->VertexAttributes&xMeshGeometry::HAS_POSITION) {
 				VertexSizeinBytes += VectorSizeinBytes;
@@ -543,30 +547,37 @@ namespace xF {
 
 			if (pActual->VertexAttributes&xMeshGeometry::HAS_NORMAL) {
 				VertexSizeinBytes += VectorSizeinBytes;
+				technique->BindAttribute("Normal_", 0, hyperspace::video::shader::bind_::NORMAL);
 			}
 
 			if (pActual->VertexAttributes&xMeshGeometry::HAS_TANGENT) {
 				VertexSizeinBytes += VectorSizeinBytes;
+				technique->BindAttribute("Tangent_", 0, hyperspace::video::shader::bind_::TANGENT);
 			}
 
 			if (pActual->VertexAttributes&xMeshGeometry::HAS_BINORMAL) {
 				VertexSizeinBytes += VectorSizeinBytes;
+				technique->BindAttribute("Binormal_", 0, hyperspace::video::shader::bind_::BINORMAL);
 			}
 
 			if (pActual->VertexAttributes&xMeshGeometry::HAS_TEXCOORD0) {
 				VertexSizeinBytes += 8;
+				technique->BindAttribute("Texcoord0_", 0, hyperspace::video::shader::bind_::TEXCOORD_0);
 			}
 
 			if (pActual->VertexAttributes&xMeshGeometry::HAS_TEXCOORD1) {
 				VertexSizeinBytes += 8;
+				technique->BindAttribute("Texcoord1_", 0, hyperspace::video::shader::bind_::TEXCOORD_1);
 			}
 
 			if (pActual->VertexAttributes&xMeshGeometry::HAS_TEXCOORD2) {
 				VertexSizeinBytes += 8;
+				technique->BindAttribute("Texcoord2_", 0, hyperspace::video::shader::bind_::TEXCOORD_2);
 			}
 
 			if (pActual->VertexAttributes&xMeshGeometry::HAS_TEXCOORD3) {
 				VertexSizeinBytes += 8;
+				technique->BindAttribute("Texcoord3_", 0, hyperspace::video::shader::bind_::TEXCOORD_3);
 			}
 
 			xFinalGeometry tmpGeo;
@@ -650,6 +661,8 @@ namespace xF {
 			xDWORD NumFaceIndices = pActual->MaterialList.FaceIndices.size();
 
 			for (unsigned int j = 0; j < NumMaterials; j++) {
+
+			//	pActual->MaterialList.Materials[j].
 				xSubsetInfo tmpSubset;
 				tmpSubset.NumTris = 0;
 				for (unsigned int k = 0; k < NumFaceIndices; k++) {
@@ -688,11 +701,49 @@ namespace xF {
 				tmpGeo.Subsets.push_back(tmpSubset);
 				delete[] tmpIndexex;
 			}
+			techniques.push_back(technique);
 			MeshInfo.push_back(tmpGeo);
 		}
 
 	}
 
+	void xMesh::GatherMaterials(video::Material_ &mat, xF::xMaterial &xMat){
+		video::Material_::MatUnit face_color;
+		video::Material_::MatUnit specular_color;
+		video::Material_::MatUnit specular_power;
+		video::Material_::MatUnit emissive_color;
+
+		face_color.kind  = video::Material_::Unit_Kind::COLOR;
+		face_color.color.kind = video::Material_::Kind_Color::DIFFUSE_COLOR;
+		face_color.color.rgba[0] = xMat.FaceColor.r;
+		face_color.color.rgba[1] = xMat.FaceColor.g;
+		face_color.color.rgba[2] = xMat.FaceColor.b;
+		face_color.color.rgba[3] = xMat.FaceColor.a;
+
+		specular_color.kind = video::Material_::Unit_Kind::COLOR;
+		specular_color.color.kind = video::Material_::Kind_Color::SPECULAR_COLOR;
+		specular_color.color.rgba[0] = xMat.Specular.r;
+		specular_color.color.rgba[1] = xMat.Specular.g;
+		specular_color.color.rgba[2] = xMat.Specular.b;
+		specular_color.color.rgba[3] = 1.0;
+
+		emissive_color.kind = video::Material_::Unit_Kind::COLOR;
+		emissive_color.color.kind = video::Material_::Kind_Color::AMBIENT_COLOR;
+		emissive_color.color.rgba[0] = xMat.Emissive.r;
+		emissive_color.color.rgba[1] = xMat.Emissive.g;
+		emissive_color.color.rgba[2] = xMat.Emissive.b;
+		emissive_color.color.rgba[3] = 1.0;
+
+		specular_power.kind = video::Material_::Unit_Kind::VALUE;
+		specular_power.value.kind = video::Material_::Kind_Value::SPECULAR_POWER;
+		specular_power.value.value = xMat.Power;
+
+		mat.props.push_back(face_color);
+		mat.props.push_back(specular_color);
+		mat.props.push_back(emissive_color);
+		mat.props.push_back(specular_power);
+		
+	}
 
 	void xMesh::ReleaseBuffers() {
 		for (unsigned int i = 0; i < MeshInfo.size(); i++) {
