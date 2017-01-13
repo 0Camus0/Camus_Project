@@ -1,6 +1,7 @@
 #ifndef CA_WINDOW_PROPERTIES_H
 #define CA_WINDOW_PROPERTIES_H
 
+#include <vector>
 
 namespace hyperspace {
 	class WindowParameters {
@@ -18,13 +19,22 @@ namespace hyperspace {
 			, MODIFIED_BY_DEVICE = 512
 		};
 
-		short	Width;
-		short	Height;
+		struct displaymode {
+			short	Width;
+			short	Height;
+			int		RefreshRate;
+		};
+
+		std::vector<displaymode>	ResolutionList;
+		short	SelectedWidth;
+		short	SelectedHeight;
+		int		SelectedRefreshRate;		
 		int		Properties;
 
 		WindowParameters() :
-			Width(1280)
-			, Height(720)
+			  SelectedWidth(1280)
+			, SelectedHeight(720)
+			, SelectedRefreshRate(60)
 			, Properties(LANDSCAPE_0 | WINDOWED | RESIZEABLE | SHOW_CURSOR) {	
 			
 			}
