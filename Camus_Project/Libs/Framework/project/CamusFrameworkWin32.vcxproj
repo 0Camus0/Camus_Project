@@ -27,6 +27,7 @@
     <ClCompile Include="..\src\Driver\GLSLParser.cpp" />
     <ClCompile Include="..\src\Driver\OpenGlDriver.cpp" />
     <ClCompile Include="..\src\Driver\ShaderBase.cpp" />
+    <ClCompile Include="..\src\Driver\Direct3D11Driver.cpp" />
     <ClCompile Include="..\src\Driver\Texture.cpp" />
     <ClCompile Include="..\src\Driver\TextureGL.cpp" />
     <ClCompile Include="..\src\Scene\Camera.cpp" />
@@ -63,6 +64,7 @@
     <ClInclude Include="..\include\Driver\Buffer.h" />
     <ClInclude Include="..\include\Driver\BufferOpenGL.h" />
     <ClInclude Include="..\include\Driver\cil\cil.h" />
+    <ClInclude Include="..\include\Driver\Direct3D11Driver.h" />
     <ClInclude Include="..\include\Driver\DriverProperties.h" />
     <ClInclude Include="..\include\Driver\EffectGL.h" />
     <ClInclude Include="..\include\Driver\GLSLParser.h" />
@@ -99,6 +101,9 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ClassDiagram.cd" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{260648F0-902D-4587-B992-AF273A735290}</ProjectGuid>
@@ -164,7 +169,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;OS_WIN32;USE_DEBUG;USE_C11_THREADS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\include;$(SolutionDir)..\..\Externals\SDL-1.2.14\include;$(SolutionDir)..\..\Externals\OGLES2\Include;$(SolutionDir)..\..\Externals\pthreads\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\include;$(SolutionDir)..\..\Externals\SDL-1.2.14\include;$(SolutionDir)..\..\Externals\OGLES3\Include;$(SolutionDir)..\..\Externals\OGLES2\Include;$(SolutionDir)..\..\Externals\pthreads\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>false</MultiProcessorCompilation>
       <SDLCheck>true</SDLCheck>
     </ClCompile>

@@ -35,6 +35,9 @@
     <Filter Include="Source Files\Utils\xFile">
       <UniqueIdentifier>{12397a05-b068-4071-944a-227d93c57daf}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Driver\Direct3D">
+      <UniqueIdentifier>{fad6d388-aecf-4ae2-bc8c-0ab79801678c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\Utils\WindowProperties.cpp">
@@ -105,6 +108,9 @@
     </ClCompile>
     <ClCompile Include="..\src\Utils\Maths.cpp">
       <Filter>Source Files\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Driver\Direct3D11Driver.cpp">
+      <Filter>Source Files\Driver\Direct3D</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -213,5 +219,11 @@
     <ClInclude Include="..\include\Driver\Material.h">
       <Filter>Source Files\Driver</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\Driver\Direct3D11Driver.h">
+      <Filter>Source Files\Driver\Direct3D</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ClassDiagram.cd" />
   </ItemGroup>
 </Project>
