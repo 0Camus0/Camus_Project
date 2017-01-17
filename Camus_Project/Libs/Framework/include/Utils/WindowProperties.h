@@ -48,7 +48,7 @@ namespace hyperspace {
 			, FullScreenSelectedWidth(0)
 			, FullScreenSelectedHeight(0)
 			, FullScreenSelectedRefreshRate(60)
-			, Properties(LANDSCAPE_0 | RESIZEABLE | SHOW_CURSOR) {
+			, Properties(FULL_SCREEN |LANDSCAPE_0 | RESIZEABLE | SHOW_CURSOR) {
 			
 			}
 
