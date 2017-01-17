@@ -54,8 +54,14 @@ void Win32Framework::OnCreateApplication() {
 	int flags = SDL_HWSURFACE;
 	auto parameters = hyperspace::GetWindowParameters();
 
-	if (parameters.Properties & hyperspace::WindowParameters::FULL_SCREEN)
+	int width = parameters.WindowedWidth;
+	int height = parameters.WindowedHeight;
+
+	if (parameters.Properties & hyperspace::WindowParameters::FULL_SCREEN) {
 		flags |= SDL_FULLSCREEN;
+		width = parameters.FullScreenSelectedWidth;
+		height = parameters.FullScreenSelectedHeight;
+	}
 
 	if (parameters.Properties & hyperspace::WindowParameters::BORDERLESS)
 		flags |= SDL_NOFRAME;
@@ -63,7 +69,7 @@ void Win32Framework::OnCreateApplication() {
 	if (parameters.Properties & hyperspace::WindowParameters::RESIZEABLE)
 		flags |= SDL_RESIZABLE;
 
-	SDL_SetVideoMode(parameters.Width, parameters.Height, 32, flags);
+	SDL_SetVideoMode(width, height, 32, flags);
 
 	ShowCursor((parameters.Properties & hyperspace::WindowParameters::SHOW_CURSOR) ? TRUE : FALSE);
 

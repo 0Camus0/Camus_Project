@@ -12,7 +12,7 @@ namespace hyperspace {
 			, LANDSCAPE_0 = 4
 			, LANDSCAPE_180 = 8
 			, FULL_SCREEN = 16
-			, WINDOWED = 32
+			, RESERVED = 32
 			, BORDERLESS = 64
 			, RESIZEABLE = 128
 			, SHOW_CURSOR = 256
@@ -25,17 +25,30 @@ namespace hyperspace {
 			int		RefreshRate;
 		};
 
-		std::vector<displaymode>	ResolutionList;
-		short	SelectedWidth;
-		short	SelectedHeight;
-		int		SelectedRefreshRate;		
+		struct adapter {
+			wchar_t Desc[128];
+			size_t DedicatedVideoMemory;
+			size_t DedicatedSystemMemory;
+			size_t SharedSystemMemory;
+			std::vector<displaymode>	ResolutionList;
+		};
+
+		std::vector<adapter>	adapters;
+
+		short	FullScreenSelectedWidth;
+		short	FullScreenSelectedHeight;
+		short	WindowedWidth;
+		short	WindowedHeight;
+		int		FullScreenSelectedRefreshRate;		
 		int		Properties;
 
 		WindowParameters() :
-			  SelectedWidth(1280)
-			, SelectedHeight(720)
-			, SelectedRefreshRate(60)
-			, Properties(LANDSCAPE_0 | WINDOWED | RESIZEABLE | SHOW_CURSOR) {	
+			  WindowedWidth(1280)
+			, WindowedHeight(720)
+			, FullScreenSelectedWidth(0)
+			, FullScreenSelectedHeight(0)
+			, FullScreenSelectedRefreshRate(60)
+			, Properties(LANDSCAPE_0 | RESIZEABLE | SHOW_CURSOR) {
 			
 			}
 

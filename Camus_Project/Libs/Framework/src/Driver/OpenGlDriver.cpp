@@ -229,6 +229,11 @@ namespace hyperspace {
 #elif defined(__APPLE__)
            [g_EAGLContext presentRenderbuffer:GL_RENDERBUFFER];
 #endif
+
+		   if (eglMakeCurrent(eglDisplay, eglSurface, eglSurface, eglContext) == EGL_FALSE) {
+			   LogPrintError("Failed to Make Current (eglMakeCurrent)");
+			   return;
+		   }
 		}
 
 		void	OpenGLDriver::DestroyDriver() {

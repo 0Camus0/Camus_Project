@@ -17,12 +17,12 @@ namespace hyperspace {
 		}
 		
 		void	Direc3D11Driver::InitDriver() {
-			auto &driver_properties = GetDriverProperties();
+			/*auto &driver_properties = GetDriverProperties();
 			auto &window_parameters = GetWindowParameters();
 			DXGI_SWAP_CHAIN_DESC SwapChainDesc;
 			SwapChainDesc.BufferCount = 1;
 			SwapChainDesc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-			SwapChainDesc.
+			SwapChainDesc.*/
 		}
 		
 		void	Direc3D11Driver::CreateSurfaces() {

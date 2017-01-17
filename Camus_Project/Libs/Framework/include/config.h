@@ -23,6 +23,9 @@
 // Textures
 #define USE_LOG_DEBUG_TEX_LOADING 0
 
+// Window Properties
+#define USE_LOG_WINDOW_PROPERTIES 1
+
 // Memory
 #define USE_MEMORY_TRACKER 1
 
