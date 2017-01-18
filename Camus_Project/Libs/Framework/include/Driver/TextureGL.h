@@ -5,15 +5,15 @@
 
 namespace hyperspace {
 	namespace video {
-		class TextureManagerGL : public TextureManager {
+		class TextureGL : public Texture {
 		public:
-			TextureManagerGL(){}
+			TextureGL(){}
 
 			void	SetTextureParams(unsigned int &params,unsigned int &target);
 			void	GetFormatBpp(unsigned int &props, unsigned int &glFormat, unsigned int &bpp);
 
-			void	LoadAPITexture(Texture *tex, unsigned char* buffer);
-			void	LoadAPITextureCompressed(Texture *tex, unsigned char* buffer);
+			void	LoadAPITexture(unsigned char* buffer);
+			void	LoadAPITextureCompressed(unsigned char* buffer);
 		};
 	}
 }

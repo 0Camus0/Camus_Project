@@ -112,6 +112,9 @@
     <ClCompile Include="..\src\Driver\Direct3D11Driver.cpp">
       <Filter>Source Files\Driver\Direct3D</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\Driver\TextureManager.cpp">
+      <Filter>Source Files\Driver\Texture</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\Core\Core.h">
@@ -221,6 +224,9 @@
     </ClInclude>
     <ClInclude Include="..\include\Driver\Direct3D11Driver.h">
       <Filter>Source Files\Driver\Direct3D</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Driver\TextureManager.h">
+      <Filter>Source Files\Driver\Texture</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

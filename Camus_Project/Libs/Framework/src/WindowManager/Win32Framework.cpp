@@ -1,6 +1,6 @@
 
 #ifdef OS_WIN32
-
+#include<config.h>
 #include <WindowManager/Win32Framework.h>
 #include <Utils/WindowProperties.h>
 #include <Utils/FileSystem.h>
@@ -73,7 +73,11 @@ void Win32Framework::OnCreateApplication() {
 
 	ShowCursor((parameters.Properties & hyperspace::WindowParameters::SHOW_CURSOR) ? TRUE : FALSE);
 
+#if defined(USING_OPENGL_ES)
 	pVideoDriver = new hyperspace::video::OpenGLDriver();
+#elif defined(USING_D3D11)
+	pVideoDriver = new hyperspace::video::Direc3D11Driver();
+#endif
 	pVideoDriver->SetWindow(0);
 	pVideoDriver->InitDriver();
 

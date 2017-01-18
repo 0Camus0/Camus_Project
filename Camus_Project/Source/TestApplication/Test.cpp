@@ -2,6 +2,7 @@
 #include <Utils/Log.h>
 #include <Driver/Technique.h>
 #include <Driver/EffectGL.h>
+#include <Driver/TextureManager.h>
 #include <Driver/TextureGL.h>
 
 #include <Utils/xFile/XDataBase.h>
@@ -52,7 +53,7 @@ void TestApp::CreateAssets() {
 
 
 
-	hyperspace::video::TextureManager	*TexManager = new hyperspace::video::TextureManagerGL();
+	hyperspace::video::TextureManager	*TexManager = new hyperspace::video::TextureManager();
 
    // TexManager->LoadTexture("bones.BMP");
    // TexManager->LoadTexture("floor_normal.tga");

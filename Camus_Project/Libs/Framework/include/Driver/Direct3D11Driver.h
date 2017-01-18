@@ -4,6 +4,7 @@
 #include <Driver/BaseDriver.h>
 
 #include <d3d11.h>
+#include <dxgi.h>
 
 namespace hyperspace {
 	namespace video {
@@ -26,9 +27,10 @@ namespace hyperspace {
 
 			void	ResetDriver();
 
-			IDXGISwapChain		*DXGISwapchain;             
-			ID3D11Device		*D3D11Device;                     
-			ID3D11DeviceContext *D3D11DeviceContext;
+			IDXGISwapChain			*DXGISwapchain;             
+			ID3D11Device			*D3D11Device;                     
+			ID3D11DeviceContext		*D3D11DeviceContext;
+			ID3D11RenderTargetView  *D3D11RenderTargetView;
 
 			HWND				hwnd;
 
