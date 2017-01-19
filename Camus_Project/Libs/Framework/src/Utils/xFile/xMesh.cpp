@@ -1,3 +1,4 @@
+#include <Utils/Log.h>
 #include <Utils/xFile/xMesh.h>
 #include <Utils/Time.h>
 
@@ -532,52 +533,52 @@ namespace xF {
 
 			xMeshGeometry *pActual = &Geometry[i];
 
-			video::CTechnique_ *technique = new video::TechniqueGL();
+		//	video::CTechnique_ *technique = new video::TechniqueGL();
 
 			if(pActual->Info.SkinMeshHeader.NumBones>0){
-				technique->Initialize("Animated", "Anim");
+			//	technique->Initialize("Animated", "Anim");
 			}else{
-				technique->Initialize("Static", "All");
+			//	technique->Initialize("Static", "All");
 			}
 	
 			if (pActual->VertexAttributes&xMeshGeometry::HAS_POSITION) {
 				VertexSizeinBytes += VectorSizeinBytes;
-				technique->BindAttribute("Position_", 0, hyperspace::video::shader::bind_::POSITION);
+			//	technique->BindAttribute("Position_", 0, hyperspace::video::shader::bind_::POSITION);
 			}
 
 			if (pActual->VertexAttributes&xMeshGeometry::HAS_NORMAL) {
 				VertexSizeinBytes += VectorSizeinBytes;
-				technique->BindAttribute("Normal_", 0, hyperspace::video::shader::bind_::NORMAL);
+			//	technique->BindAttribute("Normal_", 0, hyperspace::video::shader::bind_::NORMAL);
 			}
 
 			if (pActual->VertexAttributes&xMeshGeometry::HAS_TANGENT) {
 				VertexSizeinBytes += VectorSizeinBytes;
-				technique->BindAttribute("Tangent_", 0, hyperspace::video::shader::bind_::TANGENT);
+			//	technique->BindAttribute("Tangent_", 0, hyperspace::video::shader::bind_::TANGENT);
 			}
 
 			if (pActual->VertexAttributes&xMeshGeometry::HAS_BINORMAL) {
 				VertexSizeinBytes += VectorSizeinBytes;
-				technique->BindAttribute("Binormal_", 0, hyperspace::video::shader::bind_::BINORMAL);
+			//	technique->BindAttribute("Binormal_", 0, hyperspace::video::shader::bind_::BINORMAL);
 			}
 
 			if (pActual->VertexAttributes&xMeshGeometry::HAS_TEXCOORD0) {
 				VertexSizeinBytes += 8;
-				technique->BindAttribute("Texcoord0_", 0, hyperspace::video::shader::bind_::TEXCOORD_0);
+			//	technique->BindAttribute("Texcoord0_", 0, hyperspace::video::shader::bind_::TEXCOORD_0);
 			}
 
 			if (pActual->VertexAttributes&xMeshGeometry::HAS_TEXCOORD1) {
 				VertexSizeinBytes += 8;
-				technique->BindAttribute("Texcoord1_", 0, hyperspace::video::shader::bind_::TEXCOORD_1);
+			//	technique->BindAttribute("Texcoord1_", 0, hyperspace::video::shader::bind_::TEXCOORD_1);
 			}
 
 			if (pActual->VertexAttributes&xMeshGeometry::HAS_TEXCOORD2) {
 				VertexSizeinBytes += 8;
-				technique->BindAttribute("Texcoord2_", 0, hyperspace::video::shader::bind_::TEXCOORD_2);
+			//	technique->BindAttribute("Texcoord2_", 0, hyperspace::video::shader::bind_::TEXCOORD_2);
 			}
 
 			if (pActual->VertexAttributes&xMeshGeometry::HAS_TEXCOORD3) {
 				VertexSizeinBytes += 8;
-				technique->BindAttribute("Texcoord3_", 0, hyperspace::video::shader::bind_::TEXCOORD_3);
+			//	technique->BindAttribute("Texcoord3_", 0, hyperspace::video::shader::bind_::TEXCOORD_3);
 			}
 
 			xFinalGeometry tmpGeo;
@@ -659,10 +660,13 @@ namespace xF {
 			tmpGeo.Subsets.reserve(NumMaterials);
 
 			xDWORD NumFaceIndices = pActual->MaterialList.FaceIndices.size();
+			
 
 			for (unsigned int j = 0; j < NumMaterials; j++) {
 
 			//	pActual->MaterialList.Materials[j].
+				video::Material_ mat;
+				GatherMaterials(mat,pActual->MaterialList.Materials[j]);
 				xSubsetInfo tmpSubset;
 				tmpSubset.NumTris = 0;
 				for (unsigned int k = 0; k < NumFaceIndices; k++) {
@@ -701,7 +705,7 @@ namespace xF {
 				tmpGeo.Subsets.push_back(tmpSubset);
 				delete[] tmpIndexex;
 			}
-			techniques.push_back(technique);
+			//techniques.push_back(technique);
 			MeshInfo.push_back(tmpGeo);
 		}
 
@@ -742,6 +746,29 @@ namespace xF {
 		mat.props.push_back(specular_color);
 		mat.props.push_back(emissive_color);
 		mat.props.push_back(specular_power);
+
+		if(!xMat.bEffects)
+			return;
+	
+		LogPrintDebug("Num Params vector %d  NumInt %d \n", xMat.EffectInstance.pDefaults.size(),xMat.EffectInstance.NumDefaults);
+		for(unsigned int i=0;i<xMat.EffectInstance.pDefaults.size();i++){
+			if(xMat.EffectInstance.pDefaults[i].Type==xF::xEFFECTENUM::STDX_STRINGS){
+				LogPrintDebug("Index [%d] Name: [%s] String Val [%s] \n", i, xMat.EffectInstance.pDefaults[i].NameParam.c_str(), xMat.EffectInstance.pDefaults[i].CaseString.c_str());
+			}
+
+			if (xMat.EffectInstance.pDefaults[i].Type == xF::xEFFECTENUM::STDX_DWORDS) {
+				LogPrintDebug("Index [%d] Name: [%s] DWORD Val [%d] \n", i, xMat.EffectInstance.pDefaults[i].NameParam.c_str(), xMat.EffectInstance.pDefaults[i].CaseDWORD);
+			}
+
+			if (xMat.EffectInstance.pDefaults[i].Type == xF::xEFFECTENUM::STDX_FLOATS) {
+				LogPrintDebug("Index [%d] Name: [%s] Float Val [%f,%f,%f] \n", i, xMat.EffectInstance.pDefaults[i].NameParam.c_str(), xMat.EffectInstance.pDefaults[i].CaseFloat[0],
+					xMat.EffectInstance.pDefaults[i].CaseFloat[1], xMat.EffectInstance.pDefaults[i].CaseFloat[2]);
+			}
+			
+			
+			system("pause");
+		}
+
 		
 	}
 

@@ -45,9 +45,9 @@ void TestApp::CreateAssets() {
 
 
 	{
-	TimeEvent t("Load_model");
-	xF::XDataBase xDataBase;
-	xDataBase.LoadXFile("DealerA14.X");
+	//TimeEvent t("Load_model");
+	//xF::XDataBase xDataBase;
+	//xDataBase.LoadXFile("DealerA14.X");
 	}
 
 
