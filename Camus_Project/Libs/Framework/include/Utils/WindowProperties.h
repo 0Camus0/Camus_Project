@@ -1,6 +1,7 @@
 #ifndef CA_WINDOW_PROPERTIES_H
 #define CA_WINDOW_PROPERTIES_H
 
+#include <vector>
 
 namespace hyperspace {
 	class WindowParameters {
@@ -11,21 +12,43 @@ namespace hyperspace {
 			, LANDSCAPE_0 = 4
 			, LANDSCAPE_180 = 8
 			, FULL_SCREEN = 16
-			, WINDOWED = 32
+			, RESERVED = 32
 			, BORDERLESS = 64
 			, RESIZEABLE = 128
 			, SHOW_CURSOR = 256
 			, MODIFIED_BY_DEVICE = 512
 		};
 
-		short	Width;
-		short	Height;
+		struct displaymode {
+			short	Width;
+			short	Height;
+			int		RefreshRate;
+		};
+
+		struct adapter {
+			wchar_t Desc[128];
+			size_t DedicatedVideoMemory;
+			size_t DedicatedSystemMemory;
+			size_t SharedSystemMemory;
+			std::vector<displaymode>	ResolutionList;
+		};
+
+		std::vector<adapter>	adapters;
+
+		short	FullScreenSelectedWidth;
+		short	FullScreenSelectedHeight;
+		short	WindowedWidth;
+		short	WindowedHeight;
+		int		FullScreenSelectedRefreshRate;		
 		int		Properties;
 
 		WindowParameters() :
-			Width(1280)
-			, Height(720)
-			, Properties(LANDSCAPE_0 | WINDOWED | RESIZEABLE | SHOW_CURSOR) {	
+			  WindowedWidth(1280)
+			, WindowedHeight(720)
+			, FullScreenSelectedWidth(0)
+			, FullScreenSelectedHeight(0)
+			, FullScreenSelectedRefreshRate(60)
+			, Properties(LANDSCAPE_0 | RESIZEABLE | SHOW_CURSOR) {
 			
 			}
 

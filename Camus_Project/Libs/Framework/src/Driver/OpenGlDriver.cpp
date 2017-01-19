@@ -36,7 +36,9 @@ namespace hyperspace {
 		}
 
 		void OpenGLDriver::SetWindow(void *window) {
+#if USER_LOG_DEBUG_DRIVER_FLOW
 			LogPrintDebug("OpenGLDriver::SetWindow");
+#endif
 #ifdef OS_ANDROID
 			eglWindow = (ANativeWindow*)window;
 #elif OS_WIN32
@@ -45,15 +47,22 @@ namespace hyperspace {
 		}
 
 		void	OpenGLDriver::InitDriver() {
+#if USER_LOG_DEBUG_DRIVER_FLOW
 			LogPrintDebug("OpenGLDriver::InitDriver");
+#endif
+
 #if defined(OS_WIN32) || defined(OS_ANDROID)
 			if (eglWindow == 0) {
+#if USER_LOG_DEBUG_DRIVER_FLOW
 				LogPrintDebug("OpenGLDriver::InitDriver - No egl window yet");
+#endif
 				return;
 			}
 
 			if (bInited) {
+#if USER_LOG_DEBUG_DRIVER_FLOW
 				LogPrintDebug("OpenGLDriver::InitDriver - Driver already intied, reseting it.");
+#endif
 				ResetDriver();
 				return;
 			}
@@ -71,17 +80,23 @@ namespace hyperspace {
 			eglDisplay = eglGetDisplay(EGL_DEFAULT_DISPLAY);
 #endif
 
+#if USER_LOG_DEBUG_DRIVER_CALLS
 			ReportEGLError("eglGetDisplay");
+#endif
 
 			EGLint iMajorVersion, iMinorVersion;
 
 			if (!eglInitialize(eglDisplay, &iMajorVersion, &iMinorVersion)) {
+#if USER_LOG_DEBUG_DRIVER_CALLS
 				ReportEGLError("eglInitialize");
+#endif
 			}
 
 			eglBindAPI(EGL_OPENGL_ES_API);		// To check later
 
+#if USER_LOG_DEBUG_DRIVER_CALLS
 			ReportEGLError("eglBindAPI");
+#endif
 
 			const EGLint attribs[] = {
 				EGL_SURFACE_TYPE,	EGL_WINDOW_BIT,
@@ -97,23 +112,33 @@ namespace hyperspace {
 
 
 			eglChooseConfig(eglDisplay, attribs, &eglConfig, 1, &numConfigs);
-
+#if USER_LOG_DEBUG_DRIVER_CALLS
 			ReportEGLError("eglChooseConfig");
+#endif
 
 #ifdef OS_ANDROID
 			eglGetConfigAttrib(eglDisplay, eglConfig, EGL_NATIVE_VISUAL_ID, &format);
 			ANativeWindow_setBuffersGeometry(eglWindow, 0, 0, format);
+#if USER_LOG_DEBUG_DRIVER_CALLS
 			ReportEGLError("eglGetConfigAttrib");
 #endif
+#endif
 			eglSurface = eglCreateWindowSurface(eglDisplay, eglConfig, eglWindow, NULL);
+#if USER_LOG_DEBUG_DRIVER_CALLS
 			ReportEGLError("eglCreateWindowSurface");
+#endif
 
 			EGLint ai32ContextAttribs[] = { EGL_CONTEXT_CLIENT_VERSION, 3, EGL_NONE };
 			eglContext = eglCreateContext(eglDisplay, eglConfig, NULL, ai32ContextAttribs);
+
+#if USER_LOG_DEBUG_DRIVER_CALLS
 			ReportEGLError("eglCreateContext");
+#endif
 
 			if (eglMakeCurrent(eglDisplay, eglSurface, eglSurface, eglContext) == EGL_FALSE) {
+#if USER_LOG_DEBUG_DRIVER_CALLS
 				LogPrintError("Failed to Make Current (eglMakeCurrent)");
+#endif
 				return;
 			}
 
@@ -126,9 +151,13 @@ namespace hyperspace {
 
 #endif
             properties.Version = std::string((const char*)glGetString(GL_VERSION));
+#if USER_LOG_DEBUG_DRIVER_FLOW
             LogPrintDebug("Driver successfuly inited version: %s", properties.Version.c_str());
+#endif
             properties.SetExtensions(std::string((const char*)glGetString(GL_EXTENSIONS)));
+#if USER_LOG_DEBUG_DRIVER_FLOW
             properties.ListExtensions();
+#endif
             
 			bInited = true;
 
@@ -141,12 +170,16 @@ namespace hyperspace {
 			EGLint format;
 			eglGetConfigAttrib(eglDisplay, eglConfig, EGL_NATIVE_VISUAL_ID, &format);
 			ANativeWindow_setBuffersGeometry(eglWindow, 0, 0, format);
+#if USER_LOG_DEBUG_DRIVER_CALLS
 			ReportEGLError("eglGetConfigAttrib");
+#endif
 #endif
 			CreateSurfaces();
 
 			if (eglMakeCurrent(eglDisplay, eglSurface, eglSurface, eglContext) == EGL_FALSE) {
+#if USER_LOG_DEBUG_DRIVER_CALLS
 				LogPrintError("Failed to Make Current (eglMakeCurrent)");
+#endif
 				return;
 			}
 
@@ -154,12 +187,16 @@ namespace hyperspace {
 			eglQuerySurface(eglDisplay, eglSurface, EGL_HEIGHT, &h);
 
 			GetWindowParameters().SetParametersFromDriver(w, h);
-#endif
+#if USER_LOG_DEBUG_DRIVER_FLOW
 			LogPrintDebug("Driver successfuly restarted.");
+#endif
+#endif
 		}
 
 		void	OpenGLDriver::CreateSurfaces() {
+#if USER_LOG_DEBUG_DRIVER_FLOW
 			LogPrintDebug("OpenGLDriver::CreateSurfaces");
+#endif
 #if defined(OS_WIN32) || defined(OS_ANDROID)
 			eglSurface = eglCreateWindowSurface(eglDisplay, eglConfig, eglWindow, NULL);
 			ReportEGLError("eglCreateWindowSurface");
@@ -167,7 +204,9 @@ namespace hyperspace {
 		}
 
 		void	OpenGLDriver::DestroySurfaces() {
+#if USER_LOG_DEBUG_DRIVER_FLOW
 			LogPrintDebug("OpenGLDriver::DestroySurfaces");
+#endif
  #if defined(OS_WIN32) || defined(OS_ANDROID)
 			eglDestroySurface(eglDisplay, eglSurface);
 			eglMakeCurrent(eglDisplay, 0, 0, eglContext);

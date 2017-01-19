@@ -1,12 +1,10 @@
 #ifndef CA_TEXTURE_H
 #define CA_TEXTURE_H
 
-
 #include <fstream>
 #include <string>
 
 #include <config.h>
-
 
 #define TEXTURE_NOT_LOADED	0xFFFF
 #define TEXTURE_LOADED	0
@@ -14,7 +12,6 @@
 
 namespace hyperspace {
 	namespace video {
-
 		enum channelS_ {
 			CH_ALPHA	 = (1 << 0),
 			CH_RGB		 = (1 << 1),
@@ -80,7 +77,6 @@ namespace hyperspace {
 		class Texture {
 		public:
 			Texture() :	
-						optname(0), 
 						size(0),						
 						props(0),
 						params(0),
@@ -97,7 +93,14 @@ namespace hyperspace {
 			~Texture() {
 			
 			}
-			char*			optname;
+
+			virtual void	LoadAPITexture(unsigned char* buffer);
+			virtual void	LoadAPITextureCompressed(unsigned char* buffer);
+
+			virtual void	SetTextureParams(unsigned int &params, unsigned int &target);
+			virtual void	GetFormatBpp(unsigned int &props, unsigned int &format, unsigned int &bpp);
+
+			char			optname[128];
 			unsigned int	size;
 			unsigned int	props;
 			unsigned int	params;
@@ -105,45 +108,7 @@ namespace hyperspace {
 			unsigned short	id;
 			unsigned char	bounded;
 			unsigned char	mipmaps;
-		};
-
-
-		class TextureManager {
-		public:
-			TextureManager();
-			
-			Texture			LoadTexture(std::string filename,unsigned int params = GENERATE_MIPMAPS| FILTER_LINEAR_MIPMAP_LINEAR | FILTER_ANISOTROPIC |WRAP_CLAMP);
-			Texture			LoadBufferUncompressed(std::string &Path,unsigned int format, unsigned int params);
-			Texture			LoadBufferCompressed(std::string &Path,unsigned int format, unsigned int params);
-
-			unsigned int	AddTextureToLoadingQueue(std::string filename, unsigned int params = GENERATE_MIPMAPS | FILTER_LINEAR_MIPMAP_LINEAR | FILTER_ANISOTROPIC | WRAP_CLAMP);
-			unsigned int	LoadBufferUncompressedQueue(unsigned int &index);
-			unsigned int    LoadBufferCompressedQueue(unsigned int &index);
-			void			LoadTextureQueue();
-
-			virtual void	LoadAPITexture(Texture *tex, unsigned char* buffer);
-			virtual void	LoadAPITextureCompressed(Texture *tex, unsigned char* buffer);
-
-
-			unsigned int	CheckFormat(std::ifstream &in);
-			bool			CheckIfExtensionIsSupported(char *name, unsigned int &props);
-
-#if USE_LOG_DEBUG_TEX_LOADING
-			void	PrintTextureInfo(std::string &name,Texture *tex);
-#endif
-			~TextureManager() {
-
-		}
-
-			static unsigned int		num_textures_loaded;
-			static unsigned int		current_index;
-
-			static unsigned int		queue[MAX_TEXURE_LIMIT];
-			static unsigned int		queueoffsets[MAX_TEXURE_LIMIT];
-			static Texture			textures[MAX_TEXURE_LIMIT];
-			static unsigned char	tex_mem_pool[TEXTURE_BUDGET_SIZE_BYTES];
-			static			char	tex_paths_pool[MAX_TEXURE_LIMIT][MAX_PATH_SIZE];
-		};
+		};	
 	}
 }
 

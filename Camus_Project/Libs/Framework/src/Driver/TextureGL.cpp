@@ -32,7 +32,7 @@
 namespace hyperspace {
 	namespace video {
 
-		void	TextureManagerGL::SetTextureParams(unsigned int &params, unsigned int &target) {
+		void	TextureGL::SetTextureParams(unsigned int &params, unsigned int &target) {
 			unsigned int glFiltering = 0;
 			unsigned int glWrap = 0;
 
@@ -72,7 +72,7 @@ namespace hyperspace {
 			}
 		}
 
-		void TextureManagerGL::GetFormatBpp(unsigned int &props, unsigned int &glFormat, unsigned int &bpp) {
+		void TextureGL::GetFormatBpp(unsigned int &props, unsigned int &glFormat, unsigned int &bpp) {
 
 			if (props & compress_format::PVRTC2) {
 				if (props & channelS_::CH_RGB) {
@@ -129,45 +129,45 @@ namespace hyperspace {
 			}
 		}
 
-		void TextureManagerGL::LoadAPITexture(Texture *tex, unsigned char* buffer) {
+		void TextureGL::LoadAPITexture(unsigned char* buffer) {
 			unsigned int id;
 			unsigned int glFormat = 0;
 			unsigned int glChannel = GL_UNSIGNED_BYTE;
 			unsigned int glTarget = GL_TEXTURE_2D;
 			
-			if (tex->props&channelS_::CH_ALPHA)
+			if (this->props&channelS_::CH_ALPHA)
 				glFormat = GL_ALPHA;
-			else if (tex->props&channelS_::CH_RGB)
+			else if (this->props&channelS_::CH_RGB)
 				glFormat = GL_RGB;
-			else if (tex->props&channelS_::CH_RGBA)
+			else if (this->props&channelS_::CH_RGBA)
 				glFormat = GL_RGBA;
 
 			glGenTextures(1, &id);
 			glBindTexture(glTarget, id);
 
-			if (tex->x % 4 != 0)
+			if (this->x % 4 != 0)
 				glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 			else
 				glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
 
-			glTexImage2D(glTarget, 0, glFormat, tex->x, tex->y, 0, glFormat, glChannel, (void*)(buffer));
+			glTexImage2D(glTarget, 0, glFormat, this->x, this->y, 0, glFormat, glChannel, (void*)(buffer));
 
-			if (tex->params&params_in::GENERATE_MIPMAPS)
+			if (this->params&params_in::GENERATE_MIPMAPS)
 				glGenerateMipmap(glTarget);
 
-			SetTextureParams(tex->params, glTarget);
+			SetTextureParams(this->params, glTarget);
 
-			tex->id = static_cast<unsigned short>(id);
+			this->id = static_cast<unsigned short>(id);
 
 		}
 
-		void TextureManagerGL::LoadAPITextureCompressed(Texture *tex, unsigned char* buffer) {
+		void TextureGL::LoadAPITextureCompressed(unsigned char* buffer) {
 			unsigned int id;
 			unsigned int glFormat = 0;
-			unsigned int mipmaps_count = tex->mipmaps;
-			unsigned int props = tex->props;
+			unsigned int mipmaps_count = this->mipmaps;
+			unsigned int props = this->props;
 			unsigned int bpp = 0;
-			int current_x = tex->x, current_y = tex->y;
+			int current_x = this->x, current_y = this->y;
 			unsigned int glTarget = 0;
 			unsigned int glfaceTarget = 0;
 			unsigned int faces = (props&props_::CUBE_MAP) ? 6 : 1;
@@ -234,9 +234,9 @@ namespace hyperspace {
 				}
 			}
 
-			SetTextureParams(tex->params, glTarget);
+			SetTextureParams(this->params, glTarget);
 
-			tex->id = static_cast<unsigned short>(id);
+			this->id = static_cast<unsigned short>(id);
 		}
 	}
 }
