@@ -10,8 +10,11 @@
 #include <windows.h>
 #include <mmsystem.h>
 
+#if defined(USING_OPENGL_ES)
 #include <Driver/OpenGLDriver.h>
-
+#else
+#include <driver/Direct3D11Driver.h>
+#endif
 // #ifdef OS_WIN32
 // #ifdef min
 // #undef min
@@ -76,7 +79,7 @@ void Win32Framework::OnCreateApplication() {
 #if defined(USING_OPENGL_ES)
 	pVideoDriver = new hyperspace::video::OpenGLDriver();
 #elif defined(USING_D3D11)
-	pVideoDriver = new hyperspace::video::Direc3D11Driver();
+	pVideoDriver = new hyperspace::video::Direct3D11Driver();
 #endif
 	pVideoDriver->SetWindow(0);
 	pVideoDriver->InitDriver();

@@ -11,17 +11,17 @@
 #endif
 namespace hyperspace {
 	namespace video {
-		class CVertexBuffer : public CBuffer_ {
+		class VertexBufferGL : public CBuffer_ {
 		public:
-			CVertexBuffer();
+			VertexBufferGL();
 			void CreateBuffer(void *data, std::size_t size, unsigned int offset, unsigned int FLAGS = 0);
 			void DestroyBuffer();
 			void UpdateBuffer(void *data, std::size_t size, unsigned int offset);
 		};
 
-		class CIndexBuffer : public CBuffer_ {
+		class IndexBufferGL : public CBuffer_ {
 		public:
-			CIndexBuffer();
+			IndexBufferGL();
 			void CreateBuffer(void *data, std::size_t size, unsigned int offset, unsigned int FLAGS = 0);
 			void DestroyBuffer();
 			void UpdateBuffer(void *data, std::size_t size, unsigned int offset);

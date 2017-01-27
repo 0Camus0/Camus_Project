@@ -1,15 +1,15 @@
-#include <Driver/BufferOpenGL.h>
+#include <Driver/BuffersGL.h>
 
 #include <cstring>
 
 namespace hyperspace {
 	namespace video {
 		// VBO
-		CVertexBuffer::CVertexBuffer() : CBuffer_() {
+		VertexBufferGL::VertexBufferGL() : CBuffer_() {
 
 		}
 
-		void CVertexBuffer::CreateBuffer(void *data, std::size_t size, unsigned int offset, unsigned int FLAGS) {
+		void VertexBufferGL::CreateBuffer(void *data, std::size_t size, unsigned int offset, unsigned int FLAGS) {
 			int gl_flags = 0;
 
 			if (FLAGS & FLAGS_::DYNAMIC_BUFFER)
@@ -38,7 +38,7 @@ namespace hyperspace {
 			}
 		}
 
-		void CVertexBuffer::DestroyBuffer() {
+		void VertexBufferGL::DestroyBuffer() {
 			glDeleteBuffers(1, &id);
 			if (flags & FLAGS_::SAVE_COPY_ON_RAM) {
 				delete[] buffer;
@@ -50,7 +50,7 @@ namespace hyperspace {
 			size = 0;
 		}
 
-		void CVertexBuffer::UpdateBuffer(void *data, std::size_t size, unsigned int offset) {
+		void VertexBufferGL::UpdateBuffer(void *data, std::size_t size, unsigned int offset) {
 			glBindBuffer(GL_ARRAY_BUFFER, id);
 			glBufferSubData(GL_ARRAY_BUFFER, offset, size, data);
 			glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -63,11 +63,11 @@ namespace hyperspace {
 
 		// IBO
 
-		CIndexBuffer::CIndexBuffer() : CBuffer_() {
+		IndexBufferGL::IndexBufferGL() : CBuffer_() {
 
 		}
 
-		void CIndexBuffer::CreateBuffer(void *data, std::size_t size, unsigned int offset, unsigned int FLAGS) {
+		void IndexBufferGL::CreateBuffer(void *data, std::size_t size, unsigned int offset, unsigned int FLAGS) {
 			int gl_flags = 0;
 
 			if (FLAGS & FLAGS_::DYNAMIC_BUFFER)
@@ -96,7 +96,7 @@ namespace hyperspace {
 			}
 		}
 
-		void CIndexBuffer::DestroyBuffer() {
+		void IndexBufferGL::DestroyBuffer() {
 			glDeleteBuffers(1, &id);
 			if (flags & FLAGS_::SAVE_COPY_ON_RAM) {
 				delete[] buffer;
@@ -108,7 +108,7 @@ namespace hyperspace {
 			size = 0;
 		}
 
-		void CIndexBuffer::UpdateBuffer(void *data, std::size_t size, unsigned int offset) {
+		void IndexBufferGL::UpdateBuffer(void *data, std::size_t size, unsigned int offset) {
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, id);
 			glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, offset, size, data);
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);

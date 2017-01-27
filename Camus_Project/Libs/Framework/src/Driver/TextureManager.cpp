@@ -4,7 +4,12 @@
 #include <Driver/DriverProperties.h>
 #include <Utils/Log.h>
 
+#if  defined(USING_OPENGL_ES)
 #include <Driver/TextureGL.h>
+#elif defined(USING_D3D11)
+#include <Driver/TextureD3D11.h>
+#endif
+
 
 #define STB_IMAGE_IMPLEMENTATION
 #include <Driver/stb/stb_image.h>
@@ -296,7 +301,7 @@ namespace hyperspace {
 #if  defined(USING_OPENGL_ES)
 			Texture *texture = new TextureGL;
 #elif defined(USING_D3D11)
-
+			Texture *texture = new TextureD3D11;
 #endif
 			texture->bounded = 1;
 			texture->x = x;
@@ -397,7 +402,7 @@ namespace hyperspace {
 #if  defined(USING_OPENGL_ES)
 			Texture *texture = new TextureGL;
 #elif defined(USING_D3D11)
-
+			Texture *texture = new TextureD3D11;
 #endif
 			texture->size = buffer_size;
 			texture->props = props;
@@ -445,7 +450,7 @@ namespace hyperspace {
 					#if  defined(USING_OPENGL_ES)
 						TextureGL *texture = dynamic_cast<TextureGL*>(textures[i]);
 					#elif defined(USING_D3D11)
-
+						TextureD3D11 *texture = dynamic_cast<TextureD3D11*>(textures[i]);
 					#endif
 					if (texture->props&props_::COMPRESSED) {
 						texture->LoadAPITextureCompressed((tex_mem_pool + offset));

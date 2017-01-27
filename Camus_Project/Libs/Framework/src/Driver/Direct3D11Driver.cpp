@@ -49,18 +49,18 @@ void D3DReturnCodeCheck(char* f,HRESULT &r) {
 
 namespace hyperspace {
 	namespace video {
-		Direc3D11Driver::Direc3D11Driver() {
+		Direct3D11Driver::Direct3D11Driver() {
 			bInited				= false;
 			DXGISwapchain		= 0;
 			D3D11Device			= 0;
 			D3D11DeviceContext	= 0;
 		}
 
-		Direc3D11Driver::~Direc3D11Driver() {
+		Direct3D11Driver::~Direct3D11Driver() {
 
 		}
 		
-		void	Direc3D11Driver::InitDriver() {
+		void	Direct3D11Driver::InitDriver() {
 			auto &driver_properties = GetDriverProperties();
 			auto &window_parameters = GetWindowParameters();
 
@@ -94,7 +94,9 @@ namespace hyperspace {
 			SwapChainDesc.Windowed = !FS;
 			SwapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
 			
-			HRESULT hr = D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, NULL, NULL, NULL,
+			HRESULT hr = D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, 
+				D3D11_CREATE_DEVICE_DEBUG
+			, NULL, NULL,
 				D3D11_SDK_VERSION, &SwapChainDesc, &DXGISwapchain, &D3D11Device, NULL, &D3D11DeviceContext);
 #if USER_LOG_DEBUG_DRIVER_CALLS			
 			D3DReturnCodeCheck("D3D11CreateDeviceAndSwapChain", hr);
@@ -103,7 +105,7 @@ namespace hyperspace {
 
 		}
 		
-		void	Direc3D11Driver::CreateSurfaces() {
+		void	Direct3D11Driver::CreateSurfaces() {
 			ID3D11Texture2D* BackBuffer;
 			HRESULT hr = DXGISwapchain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)&BackBuffer);
 
@@ -120,27 +122,27 @@ namespace hyperspace {
 			D3D11DeviceContext->OMSetRenderTargets(1, &D3D11RenderTargetView, NULL);
 		}
 		
-		void	Direc3D11Driver::DestroySurfaces() {
+		void	Direct3D11Driver::DestroySurfaces() {
 			D3D11DeviceContext->OMSetRenderTargets(1, 0, 0);
 			D3D11RenderTargetView->Release();
 			
 		}
 		
-		void	Direc3D11Driver::Update() {
+		void	Direct3D11Driver::Update() {
 		
 		}
 
-		void	Direc3D11Driver::DestroyDriver() {
+		void	Direct3D11Driver::DestroyDriver() {
 			DXGISwapchain->Release();
 			D3D11Device->Release();
 			D3D11DeviceContext->Release();
 		}
 		
-		void	Direc3D11Driver::SetWindow(void *window) {
+		void	Direct3D11Driver::SetWindow(void *window) {
 			hwnd = GetActiveWindow();
 		}
 
-		void	Direc3D11Driver::Clear(draw_bits_ mask, int r, int g, int b, int a, float depth) {
+		void	Direct3D11Driver::Clear(draw_bits_ mask, int r, int g, int b, int a, float depth) {
 			float rgba[4];
 			rgba[0] = static_cast<float>(r) / 255.0f;
 			rgba[1] = static_cast<float>(g) / 255.0f;
@@ -152,7 +154,7 @@ namespace hyperspace {
 				
 		}
 
-		void	Direc3D11Driver::Clear(draw_bits_ mask, float r, float g, float b, float a, float depth) {
+		void	Direct3D11Driver::Clear(draw_bits_ mask, float r, float g, float b, float a, float depth) {
 			float rgba[4];
 			rgba[0] = r;
 			rgba[1] = g;
@@ -163,11 +165,11 @@ namespace hyperspace {
 				D3D11DeviceContext->ClearRenderTargetView(D3D11RenderTargetView, rgba);
 		}
 		
-		void	Direc3D11Driver::SwapBuffers() {
+		void	Direct3D11Driver::SwapBuffers() {
 			DXGISwapchain->Present(0, 0);
 		}
 
-		void	Direc3D11Driver::ResetDriver() {
+		void	Direct3D11Driver::ResetDriver() {
 
 		}
 	}

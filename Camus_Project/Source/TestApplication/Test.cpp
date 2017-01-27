@@ -33,11 +33,11 @@ float clip(float n, float lower, float upper) {
 void TestApp::CreateAssets() {
 	LogPrintDebug("TestApp::CreateAssets\n");
 
-	hyperspace::video::CTechnique_ *AllTechnique = new hyperspace::video::TechniqueGL();
-	AllTechnique->Initialize("All-tech", "All");
-	AllTechnique->BindAttribute("myVertex",0,hyperspace::video::shader::bind_::POSITION);
+//	hyperspace::video::CTechnique_ *AllTechnique = new hyperspace::video::TechniqueGL();
+//	AllTechnique->Initialize("All-tech", "All");
+//	AllTechnique->BindAttribute("myVertex",0,hyperspace::video::shader::bind_::POSITION);
 
-	((hyperspace::video::TechniqueGL*)AllTechnique)->DebugPassesContent();
+//	((hyperspace::video::TechniqueGL*)AllTechnique)->DebugPassesContent();
 
 //	delete AllTechnique;
 
