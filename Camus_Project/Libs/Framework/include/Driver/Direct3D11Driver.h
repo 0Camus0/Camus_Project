@@ -8,10 +8,10 @@
 
 namespace hyperspace {
 	namespace video {
-		class Direc3D11Driver : public BaseDriver {
+		class Direct3D11Driver : public BaseDriver {
 		public:
-			Direc3D11Driver();
-			~Direc3D11Driver();
+			Direct3D11Driver();
+			~Direct3D11Driver();
 			void	InitDriver();
 			void	CreateSurfaces();
 			void	DestroySurfaces();

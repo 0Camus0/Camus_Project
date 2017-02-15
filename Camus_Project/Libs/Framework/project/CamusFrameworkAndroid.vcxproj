@@ -24,7 +24,7 @@
     <ClInclude Include="..\include\Core\OS_Selector.h" />
     <ClInclude Include="..\include\Driver\BaseDriver.h" />
     <ClInclude Include="..\include\Driver\Buffer.h" />
-    <ClInclude Include="..\include\Driver\BufferOpenGL.h" />
+    <ClInclude Include="..\include\Driver\VertexBufferGL.h" />
     <ClInclude Include="..\include\Driver\cil\cil.h" />
     <ClInclude Include="..\include\Driver\DriverProperties.h" />
     <ClInclude Include="..\include\Driver\EffectGL.h" />
@@ -66,7 +66,7 @@
   <ItemGroup>
     <ClCompile Include="..\include\Utils\Time.cpp" />
     <ClCompile Include="..\src\Core\Core.cpp" />
-    <ClCompile Include="..\src\Driver\BufferOpenGL.cpp" />
+    <ClCompile Include="..\src\Driver\VertexBufferGL.cpp" />
     <ClCompile Include="..\src\Driver\DriverProperties.cpp" />
     <ClCompile Include="..\src\Driver\EffectGL.cpp" />
     <ClCompile Include="..\src\Driver\GLSLParser.cpp" />

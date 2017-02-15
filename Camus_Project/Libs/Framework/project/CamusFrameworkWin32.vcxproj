@@ -21,7 +21,6 @@
   <ItemGroup>
     <ClCompile Include="..\include\Utils\Time.cpp" />
     <ClCompile Include="..\src\Core\Core.cpp" />
-    <ClCompile Include="..\src\Driver\BufferOpenGL.cpp" />
     <ClCompile Include="..\src\Driver\DriverProperties.cpp" />
     <ClCompile Include="..\src\Driver\EffectGL.cpp" />
     <ClCompile Include="..\src\Driver\GLSLParser.cpp" />
@@ -29,8 +28,10 @@
     <ClCompile Include="..\src\Driver\ShaderBase.cpp" />
     <ClCompile Include="..\src\Driver\Direct3D11Driver.cpp" />
     <ClCompile Include="..\src\Driver\Texture.cpp" />
+    <ClCompile Include="..\src\Driver\TextureD3D11.cpp" />
     <ClCompile Include="..\src\Driver\TextureGL.cpp" />
     <ClCompile Include="..\src\Driver\TextureManager.cpp" />
+    <ClCompile Include="..\src\Driver\BuffersGL.cpp" />
     <ClCompile Include="..\src\Scene\Camera.cpp" />
     <ClCompile Include="..\src\Scene\Node.cpp" />
     <ClCompile Include="..\src\Utils\FileSystem.cpp" />
@@ -63,7 +64,7 @@
     <ClInclude Include="..\include\Core\OS_Selector.h" />
     <ClInclude Include="..\include\Driver\BaseDriver.h" />
     <ClInclude Include="..\include\Driver\Buffer.h" />
-    <ClInclude Include="..\include\Driver\BufferOpenGL.h" />
+    <ClInclude Include="..\include\Driver\BuffersGL.h" />
     <ClInclude Include="..\include\Driver\cil\cil.h" />
     <ClInclude Include="..\include\Driver\Direct3D11Driver.h" />
     <ClInclude Include="..\include\Driver\DriverProperties.h" />
@@ -78,6 +79,7 @@
     <ClInclude Include="..\include\Driver\stb\stb_truetype.h" />
     <ClInclude Include="..\include\Driver\Technique.h" />
     <ClInclude Include="..\include\Driver\Texture.h" />
+    <ClInclude Include="..\include\Driver\TextureD3D11.h" />
     <ClInclude Include="..\include\Driver\TextureGL.h" />
     <ClInclude Include="..\include\Driver\TextureManager.h" />
     <ClInclude Include="..\include\Scene\Camera.h" />

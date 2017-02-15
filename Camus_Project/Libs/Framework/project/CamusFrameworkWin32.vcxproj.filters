@@ -58,9 +58,6 @@
     <ClCompile Include="..\src\WindowManager\AppPlatform.cpp">
       <Filter>Source Files\WindowManager</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\Driver\BufferOpenGL.cpp">
-      <Filter>Source Files\Driver\OpenGL</Filter>
-    </ClCompile>
     <ClCompile Include="..\src\Driver\OpenGlDriver.cpp">
       <Filter>Source Files\Driver\OpenGL</Filter>
     </ClCompile>
@@ -115,6 +112,12 @@
     <ClCompile Include="..\src\Driver\TextureManager.cpp">
       <Filter>Source Files\Driver\Texture</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\Driver\TextureD3D11.cpp">
+      <Filter>Source Files\Driver\Direct3D</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Driver\BuffersGL.cpp">
+      <Filter>Source Files\Driver\OpenGL</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\Core\Core.h">
@@ -140,9 +143,6 @@
     </ClInclude>
     <ClInclude Include="..\include\Driver\Buffer.h">
       <Filter>Source Files\Driver</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\Driver\BufferOpenGL.h">
-      <Filter>Source Files\Driver\OpenGL</Filter>
     </ClInclude>
     <ClInclude Include="..\include\Driver\OpenGLDriver.h">
       <Filter>Source Files\Driver\OpenGL</Filter>
@@ -227,6 +227,12 @@
     </ClInclude>
     <ClInclude Include="..\include\Driver\TextureManager.h">
       <Filter>Source Files\Driver\Texture</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Driver\TextureD3D11.h">
+      <Filter>Source Files\Driver\Direct3D</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Driver\BuffersGL.h">
+      <Filter>Source Files\Driver\OpenGL</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
