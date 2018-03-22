@@ -25,7 +25,7 @@ namespace hyperspace {
 		unsigned int	TextureManager::queueoffsets[MAX_TEXURE_LIMIT];
 		Texture*		TextureManager::textures[MAX_TEXURE_LIMIT];
 		unsigned char	TextureManager::tex_mem_pool[TEXTURE_BUDGET_SIZE_BYTES];
-		char	TextureManager::tex_paths_pool[MAX_TEXURE_LIMIT][512];
+		char			TextureManager::tex_paths_pool[MAX_TEXURE_LIMIT][512];
 
 		unsigned int	TextureManager::num_textures_loaded = 0;
 		unsigned int	TextureManager::current_index = 0;
