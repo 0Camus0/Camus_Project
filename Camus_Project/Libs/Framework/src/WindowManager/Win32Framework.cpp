@@ -1,9 +1,9 @@
 
 #ifdef OS_WIN32
 #include<config.h>
-#include <WindowManager/Win32Framework.h>
-#include <Utils/WindowProperties.h>
-#include <Utils/FileSystem.h>
+#include <WindowManager\Win32Framework.h>
+#include <Utils\WindowProperties.h>
+#include <Utils\FileSystem.h>
 // SDL
 #include <SDL/SDL.h>
 // Windows 
@@ -11,9 +11,9 @@
 #include <mmsystem.h>
 
 #if defined(USING_OPENGL_ES)
-#include <Driver/OpenGLDriver.h>
+#include <Driver\OpenGLDriver.h>
 #else
-#include <driver/Direct3D11Driver.h>
+#include <Driver\Direct3D11Driver.h>
 #endif
 // #ifdef OS_WIN32
 // #ifdef min

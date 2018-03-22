@@ -1,16 +1,17 @@
-#include <WindowManager/FrameworkManager.h>
-#include <Utils/Log.h>
+#include <WindowManager\FrameworkManager.h>
+#include <Utils\Log.h>
 
 #if defined(OS_WIN32)
-#include <WindowManager/Win32Framework.h>
+#include <WindowManager\Win32Framework.h>
 #elif defined(OS_ANDROID)
-#include <WindowManager/AndroidFramework.h>
+#include <WindowManager\AndroidFramework.h>
 #include <unistd.h>
 #include <errno.h>
+#include <string.h>
 int							g_Mgread;
 int							g_Msgwrite;
 #elif defined(__APPLE__)
-#include <WindowManager/iOSFramework.h>
+#include <WindowManager\iOSFramework.h>
 #endif
 
 #include <iostream>

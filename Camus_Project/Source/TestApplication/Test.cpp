@@ -1,12 +1,12 @@
 #include "Test.h"
-#include <Utils/Log.h>
-#include <Driver/Technique.h>
-#include <Driver/EffectGL.h>
-#include <Driver/TextureManager.h>
-#include <Driver/TextureGL.h>
+#include <Utils\Log.h>
+#include <Driver\Technique.h>
+#include <Driver\EffectGL.h>
+#include <Driver\TextureManager.h>
+#include <Driver\TextureGL.h>
 
-#include <Utils/xFile/XDataBase.h>
-#include <Utils/Time.h>
+#include <Utils\xFile/XDataBase.h>
+#include <Utils\Time.h>
 
 #ifdef OS_WIN32
 #ifdef min
@@ -53,13 +53,13 @@ void TestApp::CreateAssets() {
 
 
 
-	hyperspace::video::TextureManager	*TexManager = new hyperspace::video::TextureManager();
+	//hyperspace::video::TextureManager	*TexManager = new hyperspace::video::TextureManager();
 
    // TexManager->LoadTexture("bones.BMP");
    // TexManager->LoadTexture("floor_normal.tga");
-    TexManager->LoadTexture("pvr/Cubemap.pvr");
-    TexManager->LoadTexture("pvr/BatBody_pvrtc2_rgba.pvr");
-    TexManager->LoadTexture("pvr/CrocBody_pvrtc4_rgba.pvr");
+   // TexManager->LoadTexture("pvr/Cubemap.pvr");
+   // TexManager->LoadTexture("pvr/BatBody_pvrtc2_rgba.pvr");
+   // TexManager->LoadTexture("pvr/CrocBody_pvrtc4_rgba.pvr");
     
 	
 //	TexManager->LoadTexture("etc1/BatBody_ETC1.ktx");

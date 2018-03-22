@@ -1,6 +1,6 @@
-#include <Driver/TextureD3D11.h>
-#include <Driver/DriverProperties.h>
-#include <Utils/Log.h>
+#include <Driver\TextureD3D11.h>
+#include <Driver\DriverProperties.h>
+#include <Utils\Log.h>
 
 namespace hyperspace {
 	namespace video {

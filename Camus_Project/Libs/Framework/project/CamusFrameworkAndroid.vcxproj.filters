@@ -132,9 +132,6 @@
     <ClInclude Include="..\include\Utils\Time.h">
       <Filter>Source Files\Utils</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\Driver\VertexBufferGL.h">
-      <Filter>Source Files\Driver\OpenGL</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\Driver\DriverProperties.cpp">
@@ -202,9 +199,6 @@
     </ClCompile>
     <ClCompile Include="..\src\Utils\Maths.cpp">
       <Filter>Source Files\Utils</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\Driver\VertexBufferGL.cpp">
-      <Filter>Source Files\Driver\OpenGL</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

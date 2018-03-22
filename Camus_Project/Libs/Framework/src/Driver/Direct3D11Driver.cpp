@@ -1,7 +1,7 @@
-#include <Driver/Direct3D11Driver.h>
-#include <Driver/DriverProperties.h>
-#include <Utils/WindowProperties.h>
-#include <Utils/Log.h>
+#include <Driver\Direct3D11Driver.h>
+#include <Driver\DriverProperties.h>
+#include <Utils\WindowProperties.h>
+#include <Utils\Log.h>
 
 void D3DReturnCodeCheck(char* f,HRESULT &r) {
 	switch (r){

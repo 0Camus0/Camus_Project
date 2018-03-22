@@ -1,5 +1,5 @@
-#include <Utils/WindowProperties.h>
-#include <Utils/Log.h>
+#include <Utils\WindowProperties.h>
+#include <Utils\Log.h>
 
 #if defined(OS_WIN32)
 #include <dxgi.h>

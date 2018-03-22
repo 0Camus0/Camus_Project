@@ -12,8 +12,8 @@ TestApp								*pTestApp = 0;
 
 #ifdef OS_ANDROID
 
-#include <WindowManager/AndroidFramework.h>
-#include <Utils/Log.h>
+#include <WindowManager\AndroidFramework.h>
+#include <Utils\Log.h>
 #include <android/configuration.h>
 #include <android/looper.h>
 #include <android/native_activity.h>
@@ -40,7 +40,7 @@ void ANativeActivity_onCreate(ANativeActivity* activity, void* savedState, size_
 #include <stdio.h>
 #include <tchar.h>
 
-#include <Driver/RenderState.h>
+#include <Driver\RenderState.h>
 
 int main()
 {
@@ -62,10 +62,10 @@ int main()
 
 #elif defined(__APPLE__)
 
-#include <Utils/Log.h>
+#include <Utils\Log.h>
 
 #import <UIKit/UIKit.h>
-#include <WindowManager/iOSFramework.h>
+#include <WindowManager\iOSFramework.h>
 
 
 int main(int argc, char * argv[]) {

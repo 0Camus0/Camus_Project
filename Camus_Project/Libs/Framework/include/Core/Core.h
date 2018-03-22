@@ -1,8 +1,8 @@
 #ifndef CA_CORE_H
 #define CA_CORE_H
 
-#include <Utils/InputBase.h>
-#include <Driver/BaseDriver.h>
+#include <Utils\InputBase.h>
+#include <Driver\BaseDriver.h>
 
 namespace hyperspace {
 

@@ -59,8 +59,8 @@
 #define USE_STRING_STREAM 0
 
 
-#include <Utils/xFile/xDefs.h>
-#include <Utils/xFile/xMesh.h>
+#include <Utils\xFile/xDefs.h>
+#include <Utils\xFile/xMesh.h>
 
 
 using namespace hyperspace;

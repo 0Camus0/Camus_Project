@@ -1,9 +1,9 @@
 #ifndef CA_TECHNIQUE_H
 #define CA_TECHNIQUE_H
 
-#include <Driver/RenderState.h>
-#include <Driver/ShaderBase.h>
-#include <Utils/Maths.h>
+#include <Driver\RenderState.h>
+#include <Driver\ShaderBase.h>
+#include <Utils\Maths.h>
 #include <string>
 #include <vector>
 #include <map>

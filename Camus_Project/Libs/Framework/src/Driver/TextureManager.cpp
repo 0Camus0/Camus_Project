@@ -1,19 +1,19 @@
 #include <config.h>
-#include <Driver/TextureManager.h>
-#include <Utils/FileSystem.h>
-#include <Driver/DriverProperties.h>
-#include <Utils/Log.h>
+#include <Driver\TextureManager.h>
+#include <Utils\FileSystem.h>
+#include <Driver\DriverProperties.h>
+#include <Utils\Log.h>
 
 #if  defined(USING_OPENGL_ES)
-#include <Driver/TextureGL.h>
+#include <Driver\TextureGL.h>
 #elif defined(USING_D3D11)
-#include <Driver/TextureD3D11.h>
+#include <Driver\TextureD3D11.h>
 #endif
 
 
 #define STB_IMAGE_IMPLEMENTATION
-#include <Driver/stb/stb_image.h>
-#include <Driver/cil/cil.h>
+#include <Driver\stb/stb_image.h>
+#include <Driver\cil/cil.h>
 
 #if defined(OS_ANDROID) || defined(__APPLE__)
 #define strcpy_s strcpy

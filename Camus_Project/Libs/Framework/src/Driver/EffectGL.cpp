@@ -1,6 +1,6 @@
-#include <Driver/EffectGL.h>
-#include <Utils/FileSystem.h>
-#include <Utils/Log.h>
+#include <Driver\EffectGL.h>
+#include <Utils\FileSystem.h>
+#include <Utils\Log.h>
 
 #ifdef __APPLE__
 #include <OpenGLES/ES2/gl.h>

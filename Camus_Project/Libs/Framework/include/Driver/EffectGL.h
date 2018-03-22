@@ -1,8 +1,8 @@
 #ifndef EFFECT_GL_H
 #define EFFECT_GL_H
 
-#include <Driver/Technique.h>
-#include <Driver/GLSLParser.h>
+#include <Driver\Technique.h>
+#include <Driver\GLSLParser.h>
 
 
 namespace hyperspace {

@@ -1,6 +1,6 @@
-#include <Utils/Log.h>
-#include <Utils/xFile/xMesh.h>
-#include <Utils/Time.h>
+#include <Utils\Log.h>
+#include <Utils\xFile/xMesh.h>
+#include <Utils\Time.h>
 
 #ifdef __APPLE__
 #include <OpenGLES/ES2/gl.h>
@@ -10,7 +10,7 @@
 #include <GLES2/gl2ext.h>
 #endif
 
-#include <Driver/EffectGL.h>
+#include <Driver\EffectGL.h>
 
 
 using namespace hyperspace;

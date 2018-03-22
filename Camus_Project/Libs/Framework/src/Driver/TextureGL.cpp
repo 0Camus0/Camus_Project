@@ -1,6 +1,6 @@
-#include <Driver/TextureGL.h>
-#include <Driver/DriverProperties.h>
-#include <Utils/Log.h>
+#include <Driver\TextureGL.h>
+#include <Driver\DriverProperties.h>
+#include <Utils\Log.h>
 
 #ifdef __APPLE__
 #include <OpenGLES/ES2/gl.h>

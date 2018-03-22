@@ -27,9 +27,9 @@ namespace hyperspace {
 
 		struct adapter {
 			wchar_t Desc[128];
-			size_t DedicatedVideoMemory;
-			size_t DedicatedSystemMemory;
-			size_t SharedSystemMemory;
+			std::size_t DedicatedVideoMemory;
+			std::size_t DedicatedSystemMemory;
+			std::size_t SharedSystemMemory;
 			std::vector<displaymode>	ResolutionList;
 		};
 

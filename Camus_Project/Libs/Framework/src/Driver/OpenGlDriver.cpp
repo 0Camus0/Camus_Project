@@ -1,7 +1,7 @@
-#include <Driver/OpenglDriver.h>
-#include <Driver/DriverProperties.h>
-#include <Utils/WindowProperties.h>
-#include <Utils/Log.h>
+#include <Driver\OpenglDriver.h>
+#include <Driver\DriverProperties.h>
+#include <Utils\WindowProperties.h>
+#include <Utils\Log.h>
 
 #ifdef __APPLE__
 extern EAGLContext *g_EAGLContext;
