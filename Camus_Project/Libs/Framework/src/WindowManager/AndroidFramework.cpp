@@ -28,7 +28,7 @@ extern int		g_Msgwrite;
 extern bool g_bAppRunning;
 
 extern ANativeActivity						*g_pActivity;
-extern hyperspace::RootFramework			*pFramework;
+extern t1000::RootFramework			*pFramework;
 
 void Suspend() {
 	LogPrintDebug("Suspend APP");
@@ -130,7 +130,7 @@ void  _ProcessInput(AndroidFramework* pApp, PollSource *source) {
 
 
 // Called  from App Thread
-AndroidFramework::AndroidFramework(hyperspace::AppBase *pBaseApp) :  RootFramework(pBaseApp){
+AndroidFramework::AndroidFramework(t1000::AppBase *pBaseApp) :  RootFramework(pBaseApp){
 	LogPrintDebug("AndroidApp::AndroidApp()");
 	m_pConfig = 0;
 	m_pInputQueue = 0;
@@ -181,7 +181,7 @@ void AndroidFramework::InitGlobalVars() {
 void AndroidFramework::OnCreateApplication() {
 	LogPrintDebug("OnCreateApplication() ");
 
-	hyperspace::fs::Filesystem::instance()->InitFS();
+	t1000::fs::Filesystem::instance()->InitFS();
 
 	m_cmdPoll.id  = LOOPER_ID_MAIN;
 	m_cmdPoll.app = this;
@@ -196,10 +196,10 @@ void AndroidFramework::OnCreateApplication() {
 	
 	ALooper_addFd(m_Looper, g_Mgread, LOOPER_ID_MAIN, ALOOPER_EVENT_INPUT, 0 ,&m_cmdPoll);
 
-	pEventManager = new hyperspace::input::EventManager();
+	pEventManager = new t1000::input::EventManager();
 	pEventManager->InitTouchScreen(AConfiguration_getTouchscreen(m_pConfig));
 
-	pVideoDriver = new hyperspace::video::OpenGLDriver();
+	pVideoDriver = new t1000::video::OpenGLDriver();
 	pVideoDriver->InitDriver();
 
 	
@@ -303,9 +303,6 @@ void AndroidFramework::ProcessInput() {
 		if (isBackPressed) {
 			LogPrintDebug("Back Key Pressed\n");
 			AInputQueue_finishEvent(m_pInputQueue, event, 1);
-			while (AInputQueue_getEvent(m_pInputQueue, &event) >= 0) {
-				AInputQueue_finishEvent(m_pInputQueue, event, 1);
-			}
 			continue;
 		}
 	
@@ -314,12 +311,12 @@ void AndroidFramework::ProcessInput() {
 		int32_t handled = 1;
 		switch (Flag){
 			case AMOTION_EVENT_ACTION_DOWN: {
-				hyperspace::input::InputEvent_ tmp;
+				t1000::input::InputEvent_ tmp;
 				tmp._id = AMotionEvent_getPointerId(event, 0);
 				tmp._time = AMotionEvent_getEventTime(event);
 				tmp.fcoords[0] = AMotionEvent_getX(event, 0);
 				tmp.fcoords[1] = AMotionEvent_getY(event, 0);
-				tmp._state = hyperspace::input::TypeEvent_::TOUCH_PRESSED;
+				tmp._state = t1000::input::TypeEvent_::TOUCH_PRESSED;
 				pEventManager->queue.push_back(tmp);
 				pEventManager->FillTouchCoords(tmp.fcoords[0], tmp.fcoords[1], tmp._id);
 				handled = 1;
@@ -328,23 +325,23 @@ void AndroidFramework::ProcessInput() {
 			case AMOTION_EVENT_ACTION_POINTER_DOWN: {
 				int index_ = (action & AMOTION_EVENT_ACTION_POINTER_INDEX_MASK) >> AMOTION_EVENT_ACTION_POINTER_INDEX_SHIFT;
 				std::int32_t ID_ =	AMotionEvent_getPointerId(event, index_);
-				hyperspace::input::InputEvent_ tmp;
+				t1000::input::InputEvent_ tmp;
 				tmp._id = ID_;
 				tmp._time = AMotionEvent_getEventTime(event);
 				tmp.fcoords[0] = AMotionEvent_getX(event, ID_);
 				tmp.fcoords[1] = AMotionEvent_getY(event, ID_);
-				tmp._state = hyperspace::input::TypeEvent_::TOUCH_PRESSED;
+				tmp._state = t1000::input::TypeEvent_::TOUCH_PRESSED;
 				pEventManager->queue.push_back(tmp);
 				pEventManager->FillTouchCoords(tmp.fcoords[0], tmp.fcoords[1], tmp._id);
 				handled = 1;
 			}break;
 			case AMOTION_EVENT_ACTION_UP: {
-				hyperspace::input::InputEvent_ tmp;
+				t1000::input::InputEvent_ tmp;
 				tmp._id = AMotionEvent_getPointerId(event, 0);
 				tmp._time = AMotionEvent_getEventTime(event);
 				tmp.fcoords[0] = AMotionEvent_getX(event, 0);
 				tmp.fcoords[1] = AMotionEvent_getY(event, 0);
-				tmp._state = hyperspace::input::TypeEvent_::TOUCH_RELEASED;
+				tmp._state = t1000::input::TypeEvent_::TOUCH_RELEASED;
 				pEventManager->queue.push_back(tmp);
 				pEventManager->FillTouchCoords(tmp.fcoords[0], tmp.fcoords[1], tmp._id);
 				handled = 1;
@@ -353,12 +350,12 @@ void AndroidFramework::ProcessInput() {
 			case AMOTION_EVENT_ACTION_POINTER_UP: {
 				int index_ = (action & AMOTION_EVENT_ACTION_POINTER_INDEX_MASK) >> AMOTION_EVENT_ACTION_POINTER_INDEX_SHIFT;
 				std::int32_t ID_ = AMotionEvent_getPointerId(event, index_);
-				hyperspace::input::InputEvent_ tmp;
+				t1000::input::InputEvent_ tmp;
 				tmp._id = ID_;
 				tmp._time = AMotionEvent_getEventTime(event);
 				tmp.fcoords[0] = AMotionEvent_getX(event, ID_);
 				tmp.fcoords[1] = AMotionEvent_getY(event, ID_);
-				tmp._state = hyperspace::input::TypeEvent_::TOUCH_RELEASED;
+				tmp._state = t1000::input::TypeEvent_::TOUCH_RELEASED;
 				pEventManager->queue.push_back(tmp);
 				pEventManager->FillTouchCoords(tmp.fcoords[0], tmp.fcoords[1], tmp._id);
 				handled = 1;
@@ -366,12 +363,12 @@ void AndroidFramework::ProcessInput() {
 			case AMOTION_EVENT_ACTION_MOVE: {
 				int index_ = (action & AMOTION_EVENT_ACTION_POINTER_INDEX_MASK) >> AMOTION_EVENT_ACTION_POINTER_INDEX_SHIFT;
 				std::int32_t ID_ = AMotionEvent_getPointerId(event, index_);
-				hyperspace::input::InputEvent_ tmp;
+				t1000::input::InputEvent_ tmp;
 				tmp._id = ID_;
 				tmp._time = AMotionEvent_getEventTime(event);
 				tmp.fcoords[0] = AMotionEvent_getX(event, ID_);
 				tmp.fcoords[1] = AMotionEvent_getY(event, ID_);
-				tmp._state = hyperspace::input::TypeEvent_::TOUCH_MOVED;
+				tmp._state = t1000::input::TypeEvent_::TOUCH_MOVED;
 				pEventManager->queue.push_back(tmp);
 				pEventManager->FillTouchCoords(tmp.fcoords[0], tmp.fcoords[1], tmp._id);
 				handled = 1;

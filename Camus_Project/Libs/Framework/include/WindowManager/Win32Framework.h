@@ -6,9 +6,9 @@
 
 #include <memory>
 
-class Win32Framework : public hyperspace::RootFramework {
+class Win32Framework : public t1000::RootFramework {
 	public:
-		Win32Framework(hyperspace::AppBase *pBaseApp) : RootFramework(pBaseApp) {
+		Win32Framework(t1000::AppBase *pBaseApp) : RootFramework(pBaseApp) {
 	
 		}
 		void InitGlobalVars();

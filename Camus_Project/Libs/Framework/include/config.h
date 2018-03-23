@@ -1,5 +1,18 @@
-#ifndef CA_CONFIG_H
-#define CA_CONFIG_H
+#ifndef T1000_CONFIG_H
+#define T1000_CONFIG_H
+
+
+#if defined(__linux__) && defined(__ANDROID__)
+	#ifndef OS_ANDROID
+	#define OS_ANDROID
+	#endif
+#elif defined(__linux__) && !defined(__ANDROID__)
+	#ifndef OS_LINUX
+	#define OS_LINUX
+	#endif
+#else
+	#define OS_WIN32
+#endif
 
 // Logging
 #ifdef OS_WIN32
@@ -49,18 +62,106 @@
 
 #define TEX_STACK_ALLOCATED_SIZE TEXTURE_BUDGET_SIZE_BYTES+PATH_ARRAY_SIZE+TEX_ARRAY_SIZE
 
-#define D3D11_DRIVER 1
-#define OPENGLES_DRIVER 2
 
-#define DRIVER_SELECTED D3D11_DRIVER
+// ---------------
 
-#if   DRIVER_SELECTED == OPENGLES_DRIVER
-	#define USING_OPENGL_ES
-#elif DRIVER_SELECTED == D3D11_DRIVER
-	#define USING_D3D11
+#ifndef FORCE_LOW_RES_TEXTURES
+#define FORCE_LOW_RES_TEXTURES 
 #endif
 
+#ifndef FORCED_FACTOR
+#define FORCED_FACTOR 2
+#endif
 
+#ifndef DEBUG_DRIVER
+#define DEBUG_DRIVER 0
+#endif
+
+#ifndef VDEBUG_NO_LIGHT
+#define VDEBUG_NO_LIGHT 0
+#endif
+
+#ifndef VDEBUG_SIMPLE_COLOR
+#define VDEBUG_SIMPLE_COLOR 0
+#endif
+
+#if VDEBUG_SIMPLE_COLOR && VDEBUG_NO_LIGHT
+#undef VDEBUG_NO_LIGHT
+#define VDEBUG_NO_LIGHT 0
+#endif
+
+#define D3D11	1 
+#define OGLES20 2
+#define OGLES30 3
+#define OGLES31 4
+#define OGL 5
+
+#define DRIVER_SELECTED OGLES30
+
+#if defined(OS_LINUX) || defined(OS_ANDROID)
+	#ifdef  DRIVER_SELECTED
+	#undef  DRIVER_SELECTED
+	#define DRIVER_SELECTED OGLES30
+	#endif
+#endif
+
+#if DRIVER_SELECTED == D3D11
+#define USING_D3D11
+#elif DRIVER_SELECTED == OGLES20
+#define USING_OPENGL_ES20
+#elif DRIVER_SELECTED == OGLES30
+#define USING_OPENGL_ES30
+#elif DRIVER_SELECTED == OGLES31
+#define USING_OPENGL_ES31
+#elif DRIVER_SELECTED == OGL
+#define USING_OPENGL
+#else
+#define USING_OPENGL // Default GL
+#endif
+
+#if defined(USING_OPENGL_ES20) || defined(USING_OPENGL_ES30)  || defined(USING_OPENGL_ES31) || defined(USING_OPENGL)
+#define USING_GL_COMMON
+#endif
+
+#define SDL 1
+#define FREEGLUT 2
+#define WAYLAND_NATIVE 3
+#define ANDROID_EGL 4
+
+#define WINDOW_MANAGER WAYLAND_NATIVE
+
+#if defined(OS_LINUX) 
+	#ifdef  WINDOW_MANAGER
+	#undef  WINDOW_MANAGER
+	#define WINDOW_MANAGER WAYLAND_NATIVE
+	#endif
+#endif
+
+#if defined(OS_ANDROID) 
+	#ifdef  WINDOW_MANAGER
+	#undef  WINDOW_MANAGER
+	#define WINDOW_MANAGER ANDROID_EGL
+	#endif
+#endif
+
+#if defined(OS_WINDOWS)
+	#ifdef  WINDOW_MANAGER
+	#undef  WINDOW_MANAGER
+	#define WINDOW_MANAGER SDL 
+	#endif
+#endif
+
+#if WINDOW_MANAGER == SDL
+#define USING_SDL
+#elif WINDOW_MANAGER == FREEGLUT
+#define USING_FREEGLUT
+#elif WINDOW_MANAGER == WAYLAND_NATIVE
+#define USING_WAYLAND_NATIVE
+#elif WINDOW_MANAGER == ANDROID_EGL
+#define USING_ANDROID_EGL
+#else
+#define USING_SDL
+#endif
 
 
 #endif

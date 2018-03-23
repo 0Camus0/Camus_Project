@@ -17,7 +17,7 @@ int							g_Msgwrite;
 #include <iostream>
 
 bool								g_bAppRunning = false; // Needs to be global, because it's shared by different threads but same class.
-hyperspace::RootFramework			*pFramework = 0;
+t1000::RootFramework			*pFramework = 0;
   
 
 #ifdef USE_C11_THREADS
@@ -35,7 +35,7 @@ void* FrameworkManager::BridgeFunction(void *pctx) {
 	return 0;
 }
 
-void FrameworkManager::CreateApp(hyperspace::AppBase* pApp) {
+void FrameworkManager::CreateApp(t1000::AppBase* pApp) {
 	LogPrintDebug("CreateApp");
 
 #if defined(OS_WIN32)

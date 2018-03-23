@@ -7,7 +7,7 @@
 #include <iterator>
 #include <fstream>
 
-namespace hyperspace {
+namespace t1000 {
 	namespace video {
 		DriverProperties& GetDriverProperties() {
 			static DriverProperties	_driverproperties;

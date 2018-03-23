@@ -31,7 +31,7 @@ public:
 	FrameworkManager() {
 	}
 	
-	void	CreateApp(hyperspace::AppBase* pApp);
+	void	CreateApp(t1000::AppBase* pApp);
 	void	MainAppThread();
 	void	ResetApp();
 

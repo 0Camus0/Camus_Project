@@ -20,7 +20,7 @@
 #define PROFILING_SCOPE(a)
 #endif
 
-namespace hyperspace {
+namespace t1000 {
 
 	struct tevent_ {
 		std::string		name;

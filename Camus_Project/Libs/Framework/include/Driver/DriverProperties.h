@@ -1,10 +1,10 @@
-#ifndef CA_DIVER_PROPERTIES_H
-#define CA_DIVER_PROPERTIES_H
+#ifndef T1000_DIVER_PROPERTIES_H
+#define T1000_DIVER_PROPERTIES_H
 
 #include <string>
 #include <vector>
 
-namespace hyperspace {
+namespace t1000 {
 	namespace video {
 		class DriverProperties {
 		public:

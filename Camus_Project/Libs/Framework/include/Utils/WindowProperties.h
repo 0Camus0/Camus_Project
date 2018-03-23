@@ -3,7 +3,7 @@
 
 #include <vector>
 
-namespace hyperspace {
+namespace t1000 {
 	class WindowParameters {
 	public:
 		enum {

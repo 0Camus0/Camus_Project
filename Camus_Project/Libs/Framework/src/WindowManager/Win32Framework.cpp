@@ -41,7 +41,7 @@ extern bool g_bAppRunning;
 
 
 void Win32Framework::InitGlobalVars() {
-	hyperspace::GetWindowParameters().GatherProperties();
+	t1000::GetWindowParameters().GatherProperties();
 	LARGE_INTEGER y;
 	QueryPerformanceFrequency(&y);
 	g_Frequency = double(y.QuadPart)/ 1000000.0;
@@ -49,37 +49,37 @@ void Win32Framework::InitGlobalVars() {
 
 void Win32Framework::OnCreateApplication() {
 
-	hyperspace::fs::Filesystem::instance()->InitFS();
+	t1000::fs::Filesystem::instance()->InitFS();
 
 	SDL_Init(SDL_INIT_VIDEO);
 	SDL_WM_SetCaption("Camus Framework", 0);
 
 	int flags = SDL_HWSURFACE;
-	auto parameters = hyperspace::GetWindowParameters();
+	auto parameters = t1000::GetWindowParameters();
 
 	int width = parameters.WindowedWidth;
 	int height = parameters.WindowedHeight;
 
-	if (parameters.Properties & hyperspace::WindowParameters::FULL_SCREEN) {
+	if (parameters.Properties & t1000::WindowParameters::FULL_SCREEN) {
 		flags |= SDL_FULLSCREEN;
 		width = parameters.FullScreenSelectedWidth;
 		height = parameters.FullScreenSelectedHeight;
 	}
 
-	if (parameters.Properties & hyperspace::WindowParameters::BORDERLESS)
+	if (parameters.Properties & t1000::WindowParameters::BORDERLESS)
 		flags |= SDL_NOFRAME;
 
-	if (parameters.Properties & hyperspace::WindowParameters::RESIZEABLE)
+	if (parameters.Properties & t1000::WindowParameters::RESIZEABLE)
 		flags |= SDL_RESIZABLE;
 
 	SDL_SetVideoMode(width, height, 32, flags);
 
-	ShowCursor((parameters.Properties & hyperspace::WindowParameters::SHOW_CURSOR) ? TRUE : FALSE);
+	ShowCursor((parameters.Properties & t1000::WindowParameters::SHOW_CURSOR) ? TRUE : FALSE);
 
 #if defined(USING_OPENGL_ES)
-	pVideoDriver = new hyperspace::video::OpenGLDriver();
+	pVideoDriver = new t1000::video::OpenGLDriver();
 #elif defined(USING_D3D11)
-	pVideoDriver = new hyperspace::video::Direct3D11Driver();
+	pVideoDriver = new t1000::video::Direct3D11Driver();
 #endif
 	pVideoDriver->SetWindow(0);
 	pVideoDriver->InitDriver();

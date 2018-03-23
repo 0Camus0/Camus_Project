@@ -19,35 +19,28 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\include\config.h" />
+    <ClInclude Include="..\include\Config.h" />
     <ClInclude Include="..\include\Core\Core.h" />
-    <ClInclude Include="..\include\Core\OS_Selector.h" />
-    <ClInclude Include="..\include\Driver\BaseDriver.h" />
-    <ClInclude Include="..\include\Driver\Buffer.h" />
-    <ClInclude Include="..\include\Driver\cil\cil.h" />
     <ClInclude Include="..\include\Driver\DriverProperties.h" />
-    <ClInclude Include="..\include\Driver\EffectGL.h" />
-    <ClInclude Include="..\include\Driver\GLSLParser.h" />
-    <ClInclude Include="..\include\Driver\OpenGLDriver.h" />
-    <ClInclude Include="..\include\Driver\ShaderBase.h" />
-    <ClInclude Include="..\include\Driver\stb\stb.h" />
-    <ClInclude Include="..\include\Driver\stb\stb_image.h" />
-    <ClInclude Include="..\include\Driver\stb\stb_truetype.h" />
-    <ClInclude Include="..\include\Driver\Technique.h" />
-    <ClInclude Include="..\include\Driver\Texture.h" />
-    <ClInclude Include="..\include\Driver\TextureGL.h" />
-    <ClInclude Include="..\include\Scene\Camera.h" />
-    <ClInclude Include="..\include\Scene\Node.h" />
-    <ClInclude Include="..\include\Scene\Scene.h" />
+    <ClInclude Include="..\include\Utils\cil.h" />
     <ClInclude Include="..\include\Utils\FileSystem.h" />
     <ClInclude Include="..\include\Utils\InputBase.h" />
     <ClInclude Include="..\include\Utils\Log.h" />
-    <ClInclude Include="..\include\Utils\Maths.h" />
     <ClInclude Include="..\include\Utils\Time.h" />
     <ClInclude Include="..\include\Utils\WindowProperties.h" />
-    <ClInclude Include="..\include\Utils\xFile\XDataBase.h" />
-    <ClInclude Include="..\include\Utils\xFile\xDefs.h" />
-    <ClInclude Include="..\include\Utils\xFile\xMesh.h" />
+    <ClInclude Include="..\include\Video\BaseDriver.h" />
+    <ClInclude Include="..\include\Video\d3d11\D3DXDriver.h" />
+    <ClInclude Include="..\include\Video\d3d11\D3DXRT.h" />
+    <ClInclude Include="..\include\Video\d3d11\D3DXShader.h" />
+    <ClInclude Include="..\include\Video\d3d11\D3DXTexture.h" />
+    <ClInclude Include="..\include\Video\Descriptors.h" />
+    <ClInclude Include="..\include\Video\gl\GLDriver.h" />
+    <ClInclude Include="..\include\Video\gl\GLRT.h" />
+    <ClInclude Include="..\include\Video\gl\GLShader.h" />
+    <ClInclude Include="..\include\Video\gl\GLSLParser.h" />
+    <ClInclude Include="..\include\Video\gl\GLTexture.h" />
+    <ClInclude Include="..\include\Video\ShaderBase.h" />
+    <ClInclude Include="..\include\Video\Technique.h" />
     <ClInclude Include="..\include\WindowManager\AndroidFramework.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">true</ExcludedFromBuild>
@@ -66,21 +59,21 @@
     <ClCompile Include="..\include\Utils\Time.cpp" />
     <ClCompile Include="..\src\Core\Core.cpp" />
     <ClCompile Include="..\src\Driver\DriverProperties.cpp" />
-    <ClCompile Include="..\src\Driver\EffectGL.cpp" />
-    <ClCompile Include="..\src\Driver\GLSLParser.cpp" />
-    <ClCompile Include="..\src\Driver\OpenGlDriver.cpp" />
-    <ClCompile Include="..\src\Driver\ShaderBase.cpp" />
-    <ClCompile Include="..\src\Driver\Texture.cpp" />
-    <ClCompile Include="..\src\Driver\TextureGL.cpp" />
-    <ClCompile Include="..\src\Scene\Camera.cpp" />
-    <ClCompile Include="..\src\Scene\Node.cpp" />
     <ClCompile Include="..\src\Utils\FileSystem.cpp" />
     <ClCompile Include="..\src\Utils\InputImplAndroid.cpp" />
     <ClCompile Include="..\src\Utils\Log.cpp" />
-    <ClCompile Include="..\src\Utils\Maths.cpp" />
     <ClCompile Include="..\src\Utils\WindowProperties.cpp" />
-    <ClCompile Include="..\src\Utils\xFile\XDataBase.cpp" />
-    <ClCompile Include="..\src\Utils\xFile\xMesh.cpp" />
+    <ClCompile Include="..\src\Video\BaseDriver.cpp" />
+    <ClCompile Include="..\src\Video\d3d11\D3DXDriver.cpp" />
+    <ClCompile Include="..\src\Video\d3d11\D3DXRT.cpp" />
+    <ClCompile Include="..\src\Video\d3d11\D3DXShader.cpp" />
+    <ClCompile Include="..\src\Video\d3d11\D3DXTexture.cpp" />
+    <ClCompile Include="..\src\Video\gl\GLDriver.cpp" />
+    <ClCompile Include="..\src\Video\gl\GLRT.cpp" />
+    <ClCompile Include="..\src\Video\gl\GLShader.cpp" />
+    <ClCompile Include="..\src\Video\gl\GLSLParser.cpp" />
+    <ClCompile Include="..\src\Video\gl\GLTexture.cpp" />
+    <ClCompile Include="..\src\Video\Technique.cpp" />
     <ClCompile Include="..\src\WindowManager\AndroidFramework.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">true</ExcludedFromBuild>
@@ -103,6 +96,7 @@
     <MinimumVisualStudioVersion>15.0</MinimumVisualStudioVersion>
     <ApplicationType>Android</ApplicationType>
     <ApplicationTypeRevision>3.0</ApplicationTypeRevision>
+    <ProjectName>t1000_framework_android</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'" Label="Configuration">
@@ -148,7 +142,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>$(ProjectDir)..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>OS_ANDROID;USE_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>__ANDROID__;USE_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <CppLanguageStandard>c++11</CppLanguageStandard>
     </ClCompile>
   </ItemDefinitionGroup>
@@ -157,8 +151,8 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <CppLanguageStandard>c++11</CppLanguageStandard>
-      <PreprocessorDefinitions>OS_ANDROID;USE_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>__ANDROID__;USE_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\include;$(SolutionDir)..\..\Externals\tinyxml2\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x86'">
@@ -166,14 +160,15 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>$(VS_NdkRoot)\platforms\$(AndroidAPILevel)\arch-x86\usr\include;$(StlIncludeDirectories);%(AdditionalIncludeDirectories);$(ProjectDir)..\include;</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>__ANDROID__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(VS_NdkRoot)\platforms\$(AndroidAPILevel)\arch-arm\usr\include;$(StlIncludeDirectories)%(AdditionalIncludeDirectories);$(ProjectDir)..\include;</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>OS_ANDROID;USE_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(VS_NdkRoot)\platforms\$(AndroidAPILevel)\arch-arm\usr\include;$(StlIncludeDirectories)%(AdditionalIncludeDirectories);$(ProjectDir)..\include;$(SolutionDir)..\..\Externals\tinyxml2\include</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>__ANDROID__;USE_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <CppLanguageStandard>c++11</CppLanguageStandard>
       <DebugInformationFormat>None</DebugInformationFormat>
     </ClCompile>

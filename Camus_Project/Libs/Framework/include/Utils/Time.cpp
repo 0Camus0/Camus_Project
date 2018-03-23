@@ -4,7 +4,7 @@
 
 extern double	g_Frequency;
 
-namespace hyperspace {
+namespace t1000 {
 
 	TimeEvent::TimeEvent(std::string name){
 		t.name = name;

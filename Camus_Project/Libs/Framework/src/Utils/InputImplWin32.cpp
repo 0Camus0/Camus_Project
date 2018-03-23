@@ -1,5 +1,5 @@
 #include <Utils\InputBase.h>
-namespace hyperspace {
+namespace t1000 {
 	namespace input {
 		void EventManager::InitKeyboard(int num_keys) {
 			devices[TypeInput_::KEYBOARD].typeInput = TypeInput_::KEYBOARD;

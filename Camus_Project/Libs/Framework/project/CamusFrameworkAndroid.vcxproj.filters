@@ -16,121 +16,115 @@
     <Filter Include="Source Files\WindowManager">
       <UniqueIdentifier>{e25a42c3-ba42-48c1-b828-e30526bf9772}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Driver\OpenGL">
-      <UniqueIdentifier>{38c1410a-869e-4347-a0e0-780ad347cfc4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Driver\Texture">
-      <UniqueIdentifier>{d1be0101-ab97-4a8f-8746-2c0f049787b2}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\Scene">
       <UniqueIdentifier>{9bcecbf4-1224-4870-bc04-70f45a75d8b4}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Driver\Texture\cil">
-      <UniqueIdentifier>{352da500-5f8e-4b41-a837-8ef63ca37037}</UniqueIdentifier>
+    <Filter Include="Include Files">
+      <UniqueIdentifier>{68a53821-2568-49fc-9300-67ff8ef00868}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Driver\Texture\stb">
-      <UniqueIdentifier>{141df28a-e4fd-44c8-985b-067564e5eae0}</UniqueIdentifier>
+    <Filter Include="Include Files\Core">
+      <UniqueIdentifier>{2fd9877a-4213-41c9-8d7f-6fa27f7cd3e7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Utils\xFile">
-      <UniqueIdentifier>{d9297582-a09b-4f69-b636-b7b8c97b8fc2}</UniqueIdentifier>
+    <Filter Include="Include Files\Utils">
+      <UniqueIdentifier>{eb589afd-259a-42f1-b5e0-3d56c0af88e2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Include Files\WindowManager">
+      <UniqueIdentifier>{26f7d443-bace-4e9b-a0ce-6289eb29ef75}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Include Files\Video">
+      <UniqueIdentifier>{e1098af7-abae-4d93-a096-6fafff05cdfb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Include Files\Video\d3d11">
+      <UniqueIdentifier>{8c7aaa62-cf54-437d-89c8-722d17baa959}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Include Files\Video\gl">
+      <UniqueIdentifier>{828fda71-b838-4e9c-8a79-7fc7548f6d78}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Video">
+      <UniqueIdentifier>{7ed4577f-f851-425f-987a-08abaeb12dc1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Video\d3d11">
+      <UniqueIdentifier>{044a5a6c-2cf7-4982-8912-42eb8f77bf86}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Video\gl">
+      <UniqueIdentifier>{f825596d-5ca0-4dd3-8e38-4fa065b30419}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\include\Config.h">
+      <Filter>Include Files</Filter>
+    </ClInclude>
     <ClInclude Include="..\include\Core\Core.h">
-      <Filter>Source Files\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\Core\OS_Selector.h">
-      <Filter>Source Files\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\Driver\BaseDriver.h">
-      <Filter>Source Files\Driver</Filter>
+      <Filter>Include Files\Core</Filter>
     </ClInclude>
     <ClInclude Include="..\include\Driver\DriverProperties.h">
-      <Filter>Source Files\Driver</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\Utils\Log.h">
-      <Filter>Source Files\Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\Utils\WindowProperties.h">
-      <Filter>Source Files\Utils</Filter>
+      <Filter>Include Files\Video</Filter>
     </ClInclude>
     <ClInclude Include="..\include\Utils\InputBase.h">
-      <Filter>Source Files\Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\Driver\Buffer.h">
-      <Filter>Source Files\Driver</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\Driver\OpenGLDriver.h">
-      <Filter>Source Files\Driver\OpenGL</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\Driver\GLSLParser.h">
-      <Filter>Source Files\Driver\OpenGL</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\Driver\ShaderBase.h">
-      <Filter>Source Files\Driver</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\Utils\Maths.h">
-      <Filter>Source Files\Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\WindowManager\AndroidFramework.h">
-      <Filter>Source Files\WindowManager</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\WindowManager\FrameworkManager.h">
-      <Filter>Source Files\WindowManager</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\WindowManager\Win32Framework.h">
-      <Filter>Source Files\WindowManager</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\Driver\Technique.h">
-      <Filter>Source Files\Driver</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\Driver\EffectGL.h">
-      <Filter>Source Files\Driver\OpenGL</Filter>
+      <Filter>Include Files\Utils</Filter>
     </ClInclude>
     <ClInclude Include="..\include\Utils\FileSystem.h">
-      <Filter>Source Files\Utils</Filter>
+      <Filter>Include Files\Utils</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\Driver\Texture.h">
-      <Filter>Source Files\Driver\Texture</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\Scene\Camera.h">
-      <Filter>Source Files\Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\Scene\Node.h">
-      <Filter>Source Files\Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\Scene\Scene.h">
-      <Filter>Source Files\Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\config.h">
-      <Filter>Source Files\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\Driver\cil\cil.h">
-      <Filter>Source Files\Driver\Texture\cil</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\Driver\stb\stb.h">
-      <Filter>Source Files\Driver\Texture\stb</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\Driver\stb\stb_image.h">
-      <Filter>Source Files\Driver\Texture\stb</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\Driver\stb\stb_truetype.h">
-      <Filter>Source Files\Driver\Texture\stb</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\Driver\TextureGL.h">
-      <Filter>Source Files\Driver\OpenGL</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\Utils\xFile\XDataBase.h">
-      <Filter>Source Files\Utils\xFile</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\Utils\xFile\xDefs.h">
-      <Filter>Source Files\Utils\xFile</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\Utils\xFile\xMesh.h">
-      <Filter>Source Files\Utils\xFile</Filter>
+    <ClInclude Include="..\include\Utils\Log.h">
+      <Filter>Include Files\Utils</Filter>
     </ClInclude>
     <ClInclude Include="..\include\Utils\Time.h">
-      <Filter>Source Files\Utils</Filter>
+      <Filter>Include Files\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Utils\WindowProperties.h">
+      <Filter>Include Files\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\WindowManager\AndroidFramework.h">
+      <Filter>Include Files\WindowManager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\WindowManager\FrameworkManager.h">
+      <Filter>Include Files\WindowManager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\WindowManager\Win32Framework.h">
+      <Filter>Include Files\WindowManager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Video\BaseDriver.h">
+      <Filter>Include Files\Video</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Video\ShaderBase.h">
+      <Filter>Include Files\Video</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Video\d3d11\D3DXDriver.h">
+      <Filter>Include Files\Video\d3d11</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Video\d3d11\D3DXRT.h">
+      <Filter>Include Files\Video\d3d11</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Video\d3d11\D3DXShader.h">
+      <Filter>Include Files\Video\d3d11</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Video\d3d11\D3DXTexture.h">
+      <Filter>Include Files\Video\d3d11</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Video\gl\GLDriver.h">
+      <Filter>Include Files\Video\gl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Video\gl\GLRT.h">
+      <Filter>Include Files\Video\gl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Video\gl\GLShader.h">
+      <Filter>Include Files\Video\gl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Video\gl\GLSLParser.h">
+      <Filter>Include Files\Video\gl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Video\gl\GLTexture.h">
+      <Filter>Include Files\Video\gl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Utils\cil.h">
+      <Filter>Include Files\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Video\Descriptors.h">
+      <Filter>Include Files\Video</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Video\Technique.h">
+      <Filter>Include Files\Video</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -149,12 +143,6 @@
     <ClCompile Include="..\src\Utils\InputImplAndroid.cpp">
       <Filter>Source Files\Utils</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\Driver\OpenGlDriver.cpp">
-      <Filter>Source Files\Driver\OpenGL</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\Driver\GLSLParser.cpp">
-      <Filter>Source Files\Driver\OpenGL</Filter>
-    </ClCompile>
     <ClCompile Include="..\src\WindowManager\AndroidFramework.cpp">
       <Filter>Source Files\WindowManager</Filter>
     </ClCompile>
@@ -167,38 +155,44 @@
     <ClCompile Include="..\src\WindowManager\Win32Framework.cpp">
       <Filter>Source Files\WindowManager</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\Driver\EffectGL.cpp">
-      <Filter>Source Files\Driver\OpenGL</Filter>
-    </ClCompile>
     <ClCompile Include="..\src\Utils\FileSystem.cpp">
       <Filter>Source Files\Utils</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\Driver\ShaderBase.cpp">
-      <Filter>Source Files\Driver</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\Driver\Texture.cpp">
-      <Filter>Source Files\Driver\Texture</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\Scene\Camera.cpp">
-      <Filter>Source Files\Scene</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\Scene\Node.cpp">
-      <Filter>Source Files\Scene</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\Driver\TextureGL.cpp">
-      <Filter>Source Files\Driver\OpenGL</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\Utils\xFile\XDataBase.cpp">
-      <Filter>Source Files\Utils\xFile</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\Utils\xFile\xMesh.cpp">
-      <Filter>Source Files\Utils\xFile</Filter>
     </ClCompile>
     <ClCompile Include="..\include\Utils\Time.cpp">
       <Filter>Source Files\Utils</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\Utils\Maths.cpp">
-      <Filter>Source Files\Utils</Filter>
+    <ClCompile Include="..\src\Video\BaseDriver.cpp">
+      <Filter>Source Files\Video</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Video\Technique.cpp">
+      <Filter>Source Files\Video</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Video\d3d11\D3DXDriver.cpp">
+      <Filter>Source Files\Video\d3d11</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Video\d3d11\D3DXRT.cpp">
+      <Filter>Source Files\Video\d3d11</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Video\d3d11\D3DXShader.cpp">
+      <Filter>Source Files\Video\d3d11</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Video\d3d11\D3DXTexture.cpp">
+      <Filter>Source Files\Video\d3d11</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Video\gl\GLDriver.cpp">
+      <Filter>Source Files\Video\gl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Video\gl\GLRT.cpp">
+      <Filter>Source Files\Video\gl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Video\gl\GLShader.cpp">
+      <Filter>Source Files\Video\gl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Video\gl\GLSLParser.cpp">
+      <Filter>Source Files\Video\gl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Video\gl\GLTexture.cpp">
+      <Filter>Source Files\Video\gl</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

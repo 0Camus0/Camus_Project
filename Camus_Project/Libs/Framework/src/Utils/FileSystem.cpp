@@ -7,7 +7,7 @@
 
 #include <fstream>
 
-namespace hyperspace {
+namespace t1000 {
 	namespace fs {
 
 		Filesystem* Filesystem::instance() {

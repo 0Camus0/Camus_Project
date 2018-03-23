@@ -4,7 +4,7 @@
 #include <iostream>
 #include <vector>
 
-namespace hyperspace {
+namespace t1000 {
 
 	namespace input {
 #define MAX_NUM_OF_TRACKING_POINTERS 4

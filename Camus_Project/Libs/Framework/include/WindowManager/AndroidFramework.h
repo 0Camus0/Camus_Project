@@ -154,9 +154,9 @@ struct PollSource {
 	void(*process)(AndroidFramework *app, PollSource *source);
 };
 
-class AndroidFramework : public hyperspace::RootFramework {
+class AndroidFramework : public t1000::RootFramework {
 public:
-	AndroidFramework(hyperspace::AppBase* pBaseApp);
+	AndroidFramework(t1000::AppBase* pBaseApp);
 	void InitGlobalVars();
 	void OnCreateApplication();
 	void OnDestroyApplication();

@@ -1,10 +1,12 @@
-#ifndef CA_CORE_H
-#define CA_CORE_H
+#ifndef T1000_CORE_H
+#define T1000_CORE_H
 
-#include <Utils\InputBase.h>
-#include <Driver\BaseDriver.h>
+#include <Config.h>
 
-namespace hyperspace {
+#include <Utils/InputBase.h>
+
+
+namespace t1000 {
 
 	class RootFramework;
 
@@ -47,7 +49,7 @@ namespace hyperspace {
 	
 
 		input::EventManager		*pEventManager;
-		video::BaseDriver		*pVideoDriver;
+
 		AppBase					*pBaseApp;
 	};
 }

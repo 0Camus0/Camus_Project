@@ -3,7 +3,7 @@
 
 #include <string>
 
-namespace hyperspace {
+namespace t1000 {
 	namespace fs {
 		class Filesystem {
 		public:

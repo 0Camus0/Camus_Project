@@ -6,7 +6,7 @@
 #include <iostream>
 #endif
 
-namespace hyperspace {
+namespace t1000 {
 	WindowParameters& GetWindowParameters() {
 		static WindowParameters	_windowparameter;
 		return _windowparameter;

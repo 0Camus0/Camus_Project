@@ -1,5 +1,5 @@
 #include <Core/Core.h>
-namespace hyperspace {
+namespace t1000 {
 	RootFramework::~RootFramework() {
 
 	}
