@@ -319,92 +319,76 @@ void AndroidFramework::UpdateApplication() {
 }
 
 void AndroidFramework::ProcessInput() {
-	LogPrintDebug("ProcessInput");
-	AInputEvent* event = NULL;
-	while (AInputQueue_getEvent(m_pInputQueue, &event) >= 0) {
-		LogPrintDebug("New Event[%d]\n", AInputEvent_getType(event));
+	while (AInputQueue_hasEvents(m_pInputQueue) == 1) {
+		AInputEvent* event = NULL;
+		AInputQueue_getEvent(m_pInputQueue, &event);
 
 		if (AInputQueue_preDispatchEvent(m_pInputQueue, event)) {
-			return;
-		}
-
-		bool isBackPressed = AInputEvent_getType(event) == AINPUT_EVENT_TYPE_KEY && AKeyEvent_getKeyCode(event) == AKEYCODE_BACK;
-
-		if (isBackPressed) {
-			LogPrintDebug("Back Key Pressed\n");
 			AInputQueue_finishEvent(m_pInputQueue, event, 1);
 			continue;
 		}
-	
-		int action = AKeyEvent_getAction(event);
-		unsigned int Flag = action & AMOTION_EVENT_ACTION_MASK;
-		int32_t handled = 1;
-		switch (Flag){
-			case AMOTION_EVENT_ACTION_DOWN: {
-				t1000::input::InputEvent_ tmp;
-				tmp._id = AMotionEvent_getPointerId(event, 0);
-				tmp._time = AMotionEvent_getEventTime(event);
-				tmp.fcoords[0] = AMotionEvent_getX(event, 0);
-				tmp.fcoords[1] = AMotionEvent_getY(event, 0);
-				tmp._state = t1000::input::TypeEvent_::TOUCH_PRESSED;
-				pEventManager->queue.push_back(tmp);
-				pEventManager->FillTouchCoords(tmp.fcoords[0], tmp.fcoords[1], tmp._id);
-				handled = 1;
-			}break;
 
-			case AMOTION_EVENT_ACTION_POINTER_DOWN: {
-				int index_ = (action & AMOTION_EVENT_ACTION_POINTER_INDEX_MASK) >> AMOTION_EVENT_ACTION_POINTER_INDEX_SHIFT;
-				std::int32_t ID_ =	AMotionEvent_getPointerId(event, index_);
-				t1000::input::InputEvent_ tmp;
-				tmp._id = ID_;
-				tmp._time = AMotionEvent_getEventTime(event);
-				tmp.fcoords[0] = AMotionEvent_getX(event, ID_);
-				tmp.fcoords[1] = AMotionEvent_getY(event, ID_);
-				tmp._state = t1000::input::TypeEvent_::TOUCH_PRESSED;
-				pEventManager->queue.push_back(tmp);
-				pEventManager->FillTouchCoords(tmp.fcoords[0], tmp.fcoords[1], tmp._id);
-				handled = 1;
-			}break;
-			case AMOTION_EVENT_ACTION_UP: {
-				t1000::input::InputEvent_ tmp;
-				tmp._id = AMotionEvent_getPointerId(event, 0);
-				tmp._time = AMotionEvent_getEventTime(event);
-				tmp.fcoords[0] = AMotionEvent_getX(event, 0);
-				tmp.fcoords[1] = AMotionEvent_getY(event, 0);
-				tmp._state = t1000::input::TypeEvent_::TOUCH_RELEASED;
-				pEventManager->queue.push_back(tmp);
-				pEventManager->FillTouchCoords(tmp.fcoords[0], tmp.fcoords[1], tmp._id);
-				handled = 1;
-			}break;
+		int type = AInputEvent_getType(event);
+		if (type == AINPUT_EVENT_TYPE_KEY) {
+			int action = AKeyEvent_getAction(event);
 
-			case AMOTION_EVENT_ACTION_POINTER_UP: {
-				int index_ = (action & AMOTION_EVENT_ACTION_POINTER_INDEX_MASK) >> AMOTION_EVENT_ACTION_POINTER_INDEX_SHIFT;
-				std::int32_t ID_ = AMotionEvent_getPointerId(event, index_);
-				t1000::input::InputEvent_ tmp;
-				tmp._id = ID_;
-				tmp._time = AMotionEvent_getEventTime(event);
-				tmp.fcoords[0] = AMotionEvent_getX(event, ID_);
-				tmp.fcoords[1] = AMotionEvent_getY(event, ID_);
-				tmp._state = t1000::input::TypeEvent_::TOUCH_RELEASED;
-				pEventManager->queue.push_back(tmp);
-				pEventManager->FillTouchCoords(tmp.fcoords[0], tmp.fcoords[1], tmp._id);
-				handled = 1;
-			}break;
-			case AMOTION_EVENT_ACTION_MOVE: {
-				int index_ = (action & AMOTION_EVENT_ACTION_POINTER_INDEX_MASK) >> AMOTION_EVENT_ACTION_POINTER_INDEX_SHIFT;
-				std::int32_t ID_ = AMotionEvent_getPointerId(event, index_);
-				t1000::input::InputEvent_ tmp;
-				tmp._id = ID_;
-				tmp._time = AMotionEvent_getEventTime(event);
-				tmp.fcoords[0] = AMotionEvent_getX(event, ID_);
-				tmp.fcoords[1] = AMotionEvent_getY(event, ID_);
-				tmp._state = t1000::input::TypeEvent_::TOUCH_MOVED;
-				pEventManager->queue.push_back(tmp);
-				pEventManager->FillTouchCoords(tmp.fcoords[0], tmp.fcoords[1], tmp._id);
-				handled = 1;
-			}break;
+			switch (action) {
+				case AKEY_EVENT_ACTION_DOWN: {
+					t1000::input::InputEvent_ tmp;
+					int key = AKeyEvent_getKeyCode(event);
+					int count = AKeyEvent_getRepeatCount(event);
+					LogPrintDebug("Pressed key [%d] counter [%d]\n", key, count);
+					tmp._state = t1000::input::TypeEvent_::KEY_PRESSED;
+					pEventManager->queue.push_back(tmp);
+				}break;
+
+				case AKEY_EVENT_ACTION_UP: {
+					t1000::input::InputEvent_ tmp;
+					int key = AKeyEvent_getKeyCode(event);
+					int count = AKeyEvent_getRepeatCount(event);
+					LogPrintDebug("Released key [%d] counter [%d]\n", key, count);
+					tmp._state = t1000::input::TypeEvent_::KEY_RELEASED;
+					pEventManager->queue.push_back(tmp);
+				}break;
+
+				case AKEY_EVENT_ACTION_MULTIPLE: {
+					LogPrintDebug("MULTIPLE\n");
+				}break;
+			}
 		}
-		
+		else if (type == AINPUT_EVENT_TYPE_MOTION) {
+			int action = AMotionEvent_getAction(event);
+			unsigned int Flag = action & AMOTION_EVENT_ACTION_MASK;
+
+			switch (Flag) {
+				case AMOTION_EVENT_ACTION_DOWN:
+				case AMOTION_EVENT_ACTION_POINTER_DOWN: {
+					t1000::input::InputEvent_ tmp;
+					tmp._time = AMotionEvent_getEventTime(event);
+					tmp.fcoords[0] = AMotionEvent_getRawX(event, 0);
+					tmp.fcoords[1] = AMotionEvent_getRawY(event, 0);
+					tmp._state = t1000::input::TypeEvent_::TOUCH_PRESSED;
+					LogPrintDebug("AMOTION_EVENT_ACTION_POINTER_DOWN [%f] [%f]\n", tmp.fcoords[0], tmp.fcoords[1]);
+					
+				}break;
+
+				case AMOTION_EVENT_ACTION_UP:
+				case AMOTION_EVENT_ACTION_POINTER_UP: {
+					t1000::input::InputEvent_ tmp;
+					tmp._time = AMotionEvent_getEventTime(event);
+					tmp.fcoords[0] = AMotionEvent_getRawX(event, 0);
+					tmp.fcoords[1] = AMotionEvent_getRawY(event, 0);
+					tmp._state = t1000::input::TypeEvent_::TOUCH_PRESSED;
+					LogPrintDebug("AMOTION_EVENT_ACTION_POINTER_UP [%f] [%f]\n", tmp.fcoords[0], tmp.fcoords[1]);
+				}break;
+				
+				default: {
+				//	LogPrintDebug("TOUCH MOVED\n");
+				}break;
+			}
+		}
+
+		int32_t handled = 1;
 		AInputQueue_finishEvent(m_pInputQueue, event, handled);
 	}
 }

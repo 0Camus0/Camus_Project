@@ -11,20 +11,27 @@
 
 #if defined(OS_ANDROID)
 static u_long myNextRandom = 1;
+#ifndef atof
 double atof(const char *nptr)
 {
 	return (strtod(nptr, NULL));
 }
-
+#endif
+#ifdef rand
+#undef rand
 int rand(void)
 {
 	return (int)((myNextRandom = (1103515245 * myNextRandom) + 12345) % ((u_long)RAND_MAX + 1));
 }
+#endif
 
+#ifdef srand
+#undef rand
 void srand(u_int seed)
 {
 	myNextRandom = seed;
 }
+#endif
 #endif 
 
 namespace t1000 {
