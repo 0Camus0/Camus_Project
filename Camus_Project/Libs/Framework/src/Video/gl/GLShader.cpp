@@ -1,9 +1,10 @@
-#include <video/GLShader.h>
+#include <video/gl/GLDriver.h>
+#include <video/gl/GLShader.h>
 #include <utils/Utils.h>
-#include "video/GLDriver.h"
 
 
-namespace t800 {
+
+namespace t1000 {
 #define BUFFER_OFFSET(i) ((char *)NULL + (i))
   bool GLShader::CreateShaderAPI(std::string src_vs, std::string src_fs, unsigned long long sig) {
 
@@ -23,34 +24,34 @@ namespace t800 {
     for (auto &it : m_parser.attributes)
     {
       int size = 0;
-      t800::InputElement ie;
+      t1000::InputElement ie;
       switch (it.type)
       {
-      case hyperspace::shader::datatype_::INT_:
+      case shader::datatype_::INT_:
         size = 4;
         break;
-      case hyperspace::shader::datatype_::BOOLEAN_:
+      case shader::datatype_::BOOLEAN_:
         size = 4;
         break;
-      case hyperspace::shader::datatype_::FLOAT_:
+      case shader::datatype_::FLOAT_:
         size = 4;
         break;
-      case hyperspace::shader::datatype_::MAT2_:
+      case shader::datatype_::MAT2_:
         size = 16;
         break;
-      case hyperspace::shader::datatype_::MAT3_:
+      case shader::datatype_::MAT3_:
         size = 36;
         break;
-      case hyperspace::shader::datatype_::MAT4_:
+      case shader::datatype_::MAT4_:
         size = 64;
         break;
-      case hyperspace::shader::datatype_::VECTOR2_:
+      case shader::datatype_::VECTOR2_:
         size = 8;
         break;
-      case hyperspace::shader::datatype_::VECTOR3_:
+      case shader::datatype_::VECTOR3_:
         size = 12;
         break;
-      case hyperspace::shader::datatype_::VECTOR4_:
+      case shader::datatype_::VECTOR4_:
         size = 16;
         break;
       default:
@@ -81,34 +82,34 @@ namespace t800 {
       }
       if (process) {
         int size = 0;
-        t800::InputElement ie;
+		t1000::InputElement ie;
         switch (it.type)
         {
-        case hyperspace::shader::datatype_::INT_:
+        case shader::datatype_::INT_:
           size = 4;
           break;
-        case hyperspace::shader::datatype_::BOOLEAN_:
+        case shader::datatype_::BOOLEAN_:
           size = 4;
           break;
-        case hyperspace::shader::datatype_::FLOAT_:
+        case shader::datatype_::FLOAT_:
           size = 4;
           break;
-        case hyperspace::shader::datatype_::MAT2_:
+        case shader::datatype_::MAT2_:
           size = 16;
           break;
-        case hyperspace::shader::datatype_::MAT3_:
+        case shader::datatype_::MAT3_:
           size = 36;
           break;
-        case hyperspace::shader::datatype_::MAT4_:
+        case shader::datatype_::MAT4_:
           size = 64;
           break;
-        case hyperspace::shader::datatype_::VECTOR2_:
+        case shader::datatype_::VECTOR2_:
           size = 8;
           break;
-        case hyperspace::shader::datatype_::VECTOR3_:
+        case shader::datatype_::VECTOR3_:
           size = 12;
           break;
-        case hyperspace::shader::datatype_::VECTOR4_:
+        case shader::datatype_::VECTOR4_:
           size = 16;
           break;
         default:

@@ -19,15 +19,40 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\Externals\miniz\miniz.h" />
+    <ClInclude Include="..\..\..\Externals\miniz\miniz_common.h" />
+    <ClInclude Include="..\..\..\Externals\miniz\miniz_tdef.h" />
+    <ClInclude Include="..\..\..\Externals\miniz\miniz_tinfl.h" />
+    <ClInclude Include="..\..\..\Externals\miniz\miniz_zip.h" />
     <ClInclude Include="..\include\Config.h" />
     <ClInclude Include="..\include\Core\Core.h" />
     <ClInclude Include="..\include\Driver\DriverProperties.h" />
+    <ClInclude Include="..\include\Scene\LensFlare.h" />
+    <ClInclude Include="..\include\Scene\PrimitiveBase.h" />
+    <ClInclude Include="..\include\Scene\PrimitiveInstance.h" />
+    <ClInclude Include="..\include\Scene\PrimitiveManager.h" />
+    <ClInclude Include="..\include\Scene\RenderMesh.h" />
+    <ClInclude Include="..\include\Scene\RenderQuad.h" />
+    <ClInclude Include="..\include\Scene\SceneProp.h" />
+    <ClInclude Include="..\include\Scene\SplineWireframe.h" />
+    <ClInclude Include="..\include\Scene\T8_Quad.h" />
+    <ClInclude Include="..\include\Scene\T8_TextRenderer.h" />
+    <ClInclude Include="..\include\Utils\Camera.h" />
+    <ClInclude Include="..\include\Utils\Checker.h" />
     <ClInclude Include="..\include\Utils\cil.h" />
     <ClInclude Include="..\include\Utils\FileSystem.h" />
     <ClInclude Include="..\include\Utils\InputBase.h" />
+    <ClInclude Include="..\include\Utils\InputManager.h" />
     <ClInclude Include="..\include\Utils\Log.h" />
+    <ClInclude Include="..\include\Utils\ResourceManager.h" />
+    <ClInclude Include="..\include\Utils\T8_Spline.h" />
     <ClInclude Include="..\include\Utils\Time.h" />
+    <ClInclude Include="..\include\Utils\Timer.h" />
+    <ClInclude Include="..\include\Utils\Utils.h" />
     <ClInclude Include="..\include\Utils\WindowProperties.h" />
+    <ClInclude Include="..\include\Utils\XDataBase.h" />
+    <ClInclude Include="..\include\Utils\xDefs.h" />
+    <ClInclude Include="..\include\Utils\xMaths.h" />
     <ClInclude Include="..\include\Video\BaseDriver.h" />
     <ClInclude Include="..\include\Video\d3d11\D3DXDriver.h" />
     <ClInclude Include="..\include\Video\d3d11\D3DXRT.h" />
@@ -39,6 +64,7 @@
     <ClInclude Include="..\include\Video\gl\GLShader.h" />
     <ClInclude Include="..\include\Video\gl\GLSLParser.h" />
     <ClInclude Include="..\include\Video\gl\GLTexture.h" />
+    <ClInclude Include="..\include\Video\gl\GL_Headers.h" />
     <ClInclude Include="..\include\Video\ShaderBase.h" />
     <ClInclude Include="..\include\Video\Technique.h" />
     <ClInclude Include="..\include\WindowManager\AndroidFramework.h">
@@ -56,13 +82,37 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\Externals\miniz\miniz.c" />
+    <ClCompile Include="..\..\..\Externals\miniz\miniz_tdef.c" />
+    <ClCompile Include="..\..\..\Externals\miniz\miniz_tinfl.c" />
+    <ClCompile Include="..\..\..\Externals\miniz\miniz_zip.c" />
+    <ClCompile Include="..\..\..\Externals\tinyxml2\tinyxml2.cpp" />
     <ClCompile Include="..\include\Utils\Time.cpp" />
     <ClCompile Include="..\src\Core\Core.cpp" />
     <ClCompile Include="..\src\Driver\DriverProperties.cpp" />
+    <ClCompile Include="..\src\Scene\LensFlare.cpp" />
+    <ClCompile Include="..\src\Scene\PrimitiveInstance.cpp" />
+    <ClCompile Include="..\src\Scene\PrimitiveManager.cpp" />
+    <ClCompile Include="..\src\Scene\RenderMesh.cpp" />
+    <ClCompile Include="..\src\Scene\RenderQuad.cpp" />
+    <ClCompile Include="..\src\Scene\SceneProp.cpp" />
+    <ClCompile Include="..\src\Scene\SplineWireframe.cpp" />
+    <ClCompile Include="..\src\Scene\T8_Quad.cpp" />
+    <ClCompile Include="..\src\Scene\T8_TextRenderer.cpp" />
+    <ClCompile Include="..\src\Utils\Camera.cpp" />
+    <ClCompile Include="..\src\Utils\cil.cpp" />
     <ClCompile Include="..\src\Utils\FileSystem.cpp" />
     <ClCompile Include="..\src\Utils\InputImplAndroid.cpp" />
+    <ClCompile Include="..\src\Utils\InputImplWin32.cpp" />
+    <ClCompile Include="..\src\Utils\InputManager.cpp" />
     <ClCompile Include="..\src\Utils\Log.cpp" />
+    <ClCompile Include="..\src\Utils\ResourceManager.cpp" />
+    <ClCompile Include="..\src\Utils\T8_Spline.cpp" />
+    <ClCompile Include="..\src\Utils\Timer.cpp" />
+    <ClCompile Include="..\src\Utils\Utils.cpp" />
     <ClCompile Include="..\src\Utils\WindowProperties.cpp" />
+    <ClCompile Include="..\src\Utils\XDataBase.cpp" />
+    <ClCompile Include="..\src\Utils\XMaths.cpp" />
     <ClCompile Include="..\src\Video\BaseDriver.cpp" />
     <ClCompile Include="..\src\Video\d3d11\D3DXDriver.cpp" />
     <ClCompile Include="..\src\Video\d3d11\D3DXRT.cpp" />
@@ -109,7 +159,7 @@
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>Gcc_4_9</PlatformToolset>
     <UseOfStl>gnustl_static</UseOfStl>
-    <AndroidAPILevel>android-19</AndroidAPILevel>
+    <AndroidAPILevel>android-18</AndroidAPILevel>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x86'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
@@ -119,9 +169,9 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>Clang_3_8</PlatformToolset>
+    <PlatformToolset>Gcc_4_9</PlatformToolset>
     <UseOfStl>gnustl_static</UseOfStl>
-    <AndroidAPILevel>android-19</AndroidAPILevel>
+    <AndroidAPILevel>android-18</AndroidAPILevel>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings" />
@@ -151,8 +201,9 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <CppLanguageStandard>c++11</CppLanguageStandard>
-      <PreprocessorDefinitions>__ANDROID__;USE_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\include;$(SolutionDir)..\..\Externals\tinyxml2\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>__ANDROID__;USE_DEBUG;ANDROID_NDK;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\include;$(SolutionDir)..\..\Externals\tinyxml2\include;$(SolutionDir)..\..\Externals\stb\include;$(SolutionDir)..\..\Externals\miniz;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>-Wno-attributes %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x86'">
@@ -167,8 +218,8 @@
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(VS_NdkRoot)\platforms\$(AndroidAPILevel)\arch-arm\usr\include;$(StlIncludeDirectories)%(AdditionalIncludeDirectories);$(ProjectDir)..\include;$(SolutionDir)..\..\Externals\tinyxml2\include</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>__ANDROID__;USE_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(VS_NdkRoot)\platforms\$(AndroidAPILevel)\arch-arm\usr\include;$(StlIncludeDirectories)%(AdditionalIncludeDirectories);$(ProjectDir)..\include;$(SolutionDir)..\..\Externals\tinyxml2\include;$(SolutionDir)..\..\Externals\stb\include;$(SolutionDir)..\..\Externals\miniz</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>__ANDROID__;ANDROID_NDK;USE_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <CppLanguageStandard>c++11</CppLanguageStandard>
       <DebugInformationFormat>None</DebugInformationFormat>
     </ClCompile>

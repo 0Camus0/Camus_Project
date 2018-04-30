@@ -1,72 +1,20 @@
-/*********************************************************
-* Copyright (C) 2017 Daniel Enriquez (camus_mm@hotmail.com)
-* All Rights Reserved
-*
-* You may use, distribute and modify this code under the
-* following terms:
-* ** Do not claim that you wrote this software
-* ** A mention would be appreciated but not needed
-* ** I do not and will not provide support, this software is "as is"
-* ** Enjoy, learn and share.
-*********************************************************/
-
-#ifndef T800_GLDRIVER_H
-#define T800_GLDRIVER_H
-
 #include <Config.h>
+
+#ifndef T1000_GLDRIVER_H
+#define T1000_GLDRIVER_H
+
 #include <video/BaseDriver.h>
-#ifdef T850_HEADLESS
-#include <EGL/egl.h>
-#include <EGL/eglext.h>
-#include <GLES3/gl31.h>
-#include <assert.h>
-#include <fcntl.h>
-#include <gbm.h>
-#include <stdbool.h>
-#include <stdio.h>
-#include <string.h>
-#include <unistd.h>
-#else
-#ifdef OS_WINDOWS
-#if defined(USING_OPENGL_ES20)
-#include <EGL/egl.h>
-#include <GLES2/gl2.h>
-#include <GLES2/gl2ext.h>
-#elif defined(USING_OPENGL_ES30)
-#include <EGL/egl.h>
-#include <GLES3/gl3.h>
-#elif defined(USING_OPENGL_ES31)
-#include <EGL/egl.h>
-#include <GLES3/gl31.h>
-#elif defined(USING_OPENGL)
-#include <GL/glew.h>
-#include <SDL/SDL.h>
-#else
-#include <GL/glew.h>
-#include <SDL/SDL.h>
-#endif
-#elif defined(OS_LINUX)
-#if defined(USING_OPENGL_ES20)
-#include <EGL/egl.h>
-#include <GLES2/gl2.h>
-#include <GLES2/gl2ext.h>
-#elif defined(USING_OPENGL_ES30)
-#include <EGL/egl.h>
-#include <GLES3/gl3.h>
-#elif defined(USING_OPENGL_ES31)
-#include <EGL/egl.h>
-#include <GLES3/gl31.h>
-#elif defined(USING_OPENGL)
-#include <GL/glew.h>
-#else
-#include <GL/glew.h>
-#endif
-#endif
+#include <video/gl/GL_Headers.h>
+
+#ifdef OS_ANDROID
+#include <android/configuration.h>
+#include <android/looper.h>
+#include <android/native_activity.h>
 #endif
 
 #include <vector>
 
-namespace t800 {
+namespace t1000 {
   /* DEVICES */
   class GLDeviceContext : public DeviceContext {
   public:
@@ -74,7 +22,7 @@ namespace t800 {
     void** GetAPIObjectReference() const override;
 
     void release() override;
-    void SetPrimitiveTopology(T8_TOPOLOGY::E topology) override;
+    void SetPrimitiveTopology(T_TOPOLOGY::E topology) override;
     void DrawIndexed(unsigned vertexCount, unsigned startIndex, unsigned startVertex) override;
     int internalIBFormat;
     int internalTopology;
@@ -88,8 +36,8 @@ namespace t800 {
     void** GetAPIObjectReference() const override;
 
     void release() override;
-    Buffer* CreateBuffer(T8_BUFFER_TYPE::E bufferType, BufferDesc desc, void* initialData = nullptr) override;
-    ShaderBase* CreateShader(std::string src_vs, std::string src_fs, unsigned long long sig = T8_NO_SIGNATURE) override;
+    Buffer* CreateBuffer(T_BUFFER_TYPE::E bufferType, BufferDesc desc, void* initialData = nullptr) override;
+    ShaderBase* CreateShader(std::string src_vs, std::string src_fs, unsigned long long sig = T_NO_SIGNATURE) override;
     Texture* CreateTexture(std::string path) override;
     Texture* CreateTextureFromMemory(const unsigned char *buff, int w, int h, int channels, std::string name) override;
     Texture* CreateCubeMap(const unsigned char * buff, int w, int h) override;
@@ -121,7 +69,7 @@ namespace t800 {
     void* GetAPIObject() const override;
     void** GetAPIObjectReference() const override;
 
-    void Set(const DeviceContext& deviceContext, const unsigned offset, T8_IB_FORMAR::E format = T8_IB_FORMAR::R32) override;
+    void Set(const DeviceContext& deviceContext, const unsigned offset, T_IB_FORMAT::E format = T_IB_FORMAT::R32) override;
     void UpdateFromSystemCopy(const DeviceContext& deviceContext) override;
     void UpdateFromBuffer(const DeviceContext& deviceContext, const void* buffer) override;
     void release() override;
@@ -149,7 +97,7 @@ namespace t800 {
 
   class GLDriver : public BaseDriver {
   public:
-    GLDriver() { m_currentAPI = GRAPHICS_API::OPENGL; }
+	  GLDriver();
     void	InitDriver();
     void	CreateSurfaces();
     void	DestroySurfaces();
@@ -157,23 +105,41 @@ namespace t800 {
     void	DestroyDriver();
     void	SetWindow(void *window);
     void	SetDimensions(int, int);
-    void SetBlendState(BLEND_STATES state) override;
-    void SetDepthStencilState(DEPTH_STENCIL_STATES state) override;
-    void SaveScreenshot(std::string path) override;
-	void SetCullFace(FACE_CULLING state) override;
-
+    void	SetBlendState(BLEND_STATES state) override;
+    void	SetDepthStencilState(DEPTH_STENCIL_STATES state) override;
+    void	SaveScreenshot(std::string path) override;
+	void	SetCullFace(FACE_CULLING state) override;
+	void	ResetDriver();
     void	PopRT();
 
     void	Clear();
     void	SwapBuffers();
-    bool	CheckExtension(std::string s);
-#if defined(USING_OPENGL_ES20) || defined(USING_OPENGL_ES30) || defined(USING_OPENGL_ES31)
-    EGLDisplay			eglDisplay;
-    EGLConfig			eglConfig;
-    EGLSurface			eglSurface;
-    EGLContext			eglContext;
 
-    EGLNativeWindowType	eglWindow;
+#ifdef USING_GL_ES
+	bool	EGLInit();
+	void	EGLCreateSurfaces();
+	void	EGLDestroySurfaces();
+	void	EGLResetDriver();
+#endif
+
+    bool	CheckExtension(std::string s);
+
+#ifndef __APPLE__
+
+	#ifdef USING_GL_ES
+		EGLDisplay			eglDisplay;
+		EGLConfig			eglConfig;
+		EGLSurface			eglSurface;
+		EGLContext			eglContext;
+
+		#ifdef OS_WIN32
+			EGLNativeWindowType	eglWindow;
+		#elif defined(OS_ANDROID)
+			ANativeWindow		*eglWindow;
+		#endif
+
+	#endif
+
 #endif
     GLint				CurrentFBO;
 #if defined(USING_OPENGL) || defined(USING_OPENGL_ES30) || defined(USING_OPENGL_ES31)
@@ -182,6 +148,7 @@ namespace t800 {
     std::vector<std::string>	ExtensionsTok;
     std::string					Extensions;
 
+	bool				bInited;
   };
 }
 #endif

@@ -49,6 +49,18 @@
     <Filter Include="Source Files\Video\gl">
       <UniqueIdentifier>{f825596d-5ca0-4dd3-8e38-4fa065b30419}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Include Files\Scene">
+      <UniqueIdentifier>{12a8abaf-9029-40e4-9c84-8f15439296bc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="external source">
+      <UniqueIdentifier>{48fe662f-a94c-4630-9973-fc77647c27e3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="external source\xml">
+      <UniqueIdentifier>{c7eb67a0-6431-4111-af4b-20db01f79d60}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="external source\miniz">
+      <UniqueIdentifier>{0743a90f-d9f2-4879-a8e8-701409f36807}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\Config.h">
@@ -126,6 +138,84 @@
     <ClInclude Include="..\include\Video\Technique.h">
       <Filter>Include Files\Video</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\Video\gl\GL_Headers.h">
+      <Filter>Include Files\Video\gl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Utils\Utils.h">
+      <Filter>Include Files\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Scene\LensFlare.h">
+      <Filter>Include Files\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Scene\PrimitiveBase.h">
+      <Filter>Include Files\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Scene\PrimitiveInstance.h">
+      <Filter>Include Files\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Scene\PrimitiveManager.h">
+      <Filter>Include Files\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Scene\RenderMesh.h">
+      <Filter>Include Files\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Scene\RenderQuad.h">
+      <Filter>Include Files\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Scene\SceneProp.h">
+      <Filter>Include Files\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Scene\SplineWireframe.h">
+      <Filter>Include Files\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Scene\T8_Quad.h">
+      <Filter>Include Files\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Scene\T8_TextRenderer.h">
+      <Filter>Include Files\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Utils\Checker.h">
+      <Filter>Include Files\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Utils\ResourceManager.h">
+      <Filter>Include Files\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Utils\T8_Spline.h">
+      <Filter>Include Files\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Utils\XDataBase.h">
+      <Filter>Include Files\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Utils\xDefs.h">
+      <Filter>Include Files\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Utils\xMaths.h">
+      <Filter>Include Files\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Utils\Camera.h">
+      <Filter>Include Files\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Utils\Timer.h">
+      <Filter>Include Files\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Utils\InputManager.h">
+      <Filter>Include Files\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Externals\miniz\miniz.h">
+      <Filter>external source\miniz</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Externals\miniz\miniz_common.h">
+      <Filter>external source\miniz</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Externals\miniz\miniz_tdef.h">
+      <Filter>external source\miniz</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Externals\miniz\miniz_tinfl.h">
+      <Filter>external source\miniz</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Externals\miniz\miniz_zip.h">
+      <Filter>external source\miniz</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\Driver\DriverProperties.cpp">
@@ -193,6 +283,78 @@
     </ClCompile>
     <ClCompile Include="..\src\Video\gl\GLTexture.cpp">
       <Filter>Source Files\Video\gl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Utils\Utils.cpp">
+      <Filter>Source Files\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Utils\Camera.cpp">
+      <Filter>Source Files\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Utils\cil.cpp">
+      <Filter>Source Files\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Utils\InputImplWin32.cpp">
+      <Filter>Source Files\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Utils\ResourceManager.cpp">
+      <Filter>Source Files\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Utils\T8_Spline.cpp">
+      <Filter>Source Files\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Utils\Timer.cpp">
+      <Filter>Source Files\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Utils\XDataBase.cpp">
+      <Filter>Source Files\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Utils\XMaths.cpp">
+      <Filter>Source Files\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Scene\LensFlare.cpp">
+      <Filter>Source Files\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Scene\PrimitiveInstance.cpp">
+      <Filter>Source Files\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Scene\PrimitiveManager.cpp">
+      <Filter>Source Files\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Scene\RenderMesh.cpp">
+      <Filter>Source Files\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Scene\RenderQuad.cpp">
+      <Filter>Source Files\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Scene\SceneProp.cpp">
+      <Filter>Source Files\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Scene\SplineWireframe.cpp">
+      <Filter>Source Files\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Scene\T8_Quad.cpp">
+      <Filter>Source Files\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Scene\T8_TextRenderer.cpp">
+      <Filter>Source Files\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Utils\InputManager.cpp">
+      <Filter>Source Files\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Externals\tinyxml2\tinyxml2.cpp">
+      <Filter>external source\xml</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Externals\miniz\miniz.c">
+      <Filter>external source\miniz</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Externals\miniz\miniz_tdef.c">
+      <Filter>external source\miniz</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Externals\miniz\miniz_tinfl.c">
+      <Filter>external source\miniz</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Externals\miniz\miniz_zip.c">
+      <Filter>external source\miniz</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

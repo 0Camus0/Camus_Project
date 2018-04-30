@@ -1,5 +1,7 @@
-#include <WindowManager\FrameworkManager.h>
-#include <Utils\Log.h>
+#include <Config.h>
+
+#include <WindowManager/FrameworkManager.h>
+#include <Utils/Log.h>
 
 #if defined(OS_WIN32)
 #include <WindowManager\Win32Framework.h>
@@ -135,7 +137,8 @@ void FrameworkManager::MainAppThread() {
     
 	pFramework->InitGlobalVars();
 
-	pFramework->OnCreateApplication();
+	t1000::ApplicationDesc desc;	
+	pFramework->OnCreateApplication(desc);
     
 #ifndef __APPLE__
 #ifdef USE_C11_THREADS

@@ -22,13 +22,14 @@ ANativeActivity					*g_pActivity;
 
 void ANativeActivity_onCreate(ANativeActivity* activity, void* savedState, size_t savedStateSize) {
 	
+	
 	g_pActivity = activity;
 
 	if (pAppManager==0) {
 		LogPrintDebug("ANativeActivity_onCreate: Activity Virgin");
 		pAppManager = new FrameworkManager;
 		pTestApp = new TestApp;
-		pAppManager->CreateApp((hyperspace::AppBase*)pTestApp);
+		pAppManager->CreateApp((t1000::AppBase*)pTestApp);
 	}else{
 		LogPrintDebug("ANativeActivity_onCreate: Activity Changed");
 		pAppManager->ResetApp();

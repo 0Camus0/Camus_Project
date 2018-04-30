@@ -1,7 +1,42 @@
 #include <utils/cil.h>
+#include <Utils/Log.h>
 
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
+
+void checkformat_from_memory(const char* buffer, int bufferSize, unsigned int &prop) {
+	char	dds[4];
+	memcpy((char*)dds, buffer, 3);
+
+	dds[3] = '\0';
+	if (strcmp(dds, "DDS") == 0) {
+		prop |= CIL_DDS;
+		return;
+	}
+
+	unsigned char	ktx[5];
+	memcpy((char*)ktx, buffer, 4);
+	ktx[0] = ' ';
+	ktx[4] = '\0';
+	if (strcmp((char*)ktx, " KTX") == 0) {
+		prop |= CIL_KTX;
+		return;
+	}
+
+	char pvr[4];
+	memcpy((char*)pvr, buffer, 3);
+	pvr[3] = '\0';
+	if (strcmp((char*)pvr, "PVR") == 0) {
+		prop |= CIL_PVR;
+		return;
+	}
+
+#if CIL_CALL_STB
+	prop = CIL_FORWARD_TO_STB;
+#else
+	prop = CIL_NOT_SUPPORTED_FILE;
+#endif
+}
 
 void checkformat(ifstream &in_, unsigned int &prop) {
 	std::streampos begPos = in_.tellg();
@@ -275,6 +310,109 @@ unsigned char*	load_pvr(ifstream &in_, int &x, int &y, unsigned int &mipmaps, un
 	return buffer;
 }
 
+unsigned char*	load_pvr_from_memory(const char* _buffer, int _bufferSize, int &x, int &y, unsigned int &mipmaps, unsigned int &prop, unsigned int &buffersize) {
+	const char *pBuffCopytoWork = _buffer;
+	pvr_v3_header header;
+
+	memcpy((char*)&header, pBuffCopytoWork, sizeof(pvr_v3_header));
+	pBuffCopytoWork += sizeof(pvr_v3_header);
+
+	if (header.version == 52) {
+		prop = CIL_PVR_V2_NOT_SUPPORTED;
+		return 0;
+	}
+
+#if CIL_LOG_OUTPUT
+	cout << "PVR Data: " << endl
+		<< "Version: " << header.version << endl
+		<< "Pixel format: " << header.pix_format_0 << endl
+		<< "Channel type: " << header.channel_type << endl
+		<< "Height: " << header.height << endl
+		<< "Width: " << header.width << endl
+		<< "Depth: " << header.depth << endl
+		<< "Surfaces: " << header.surfaces << endl
+		<< "Faces: " << header.faces << endl
+		<< "Mipmap count: " << header.mipmaps_c << endl
+		<< "Size meta: " << header.metadata_size << endl;
+#endif
+
+	x = header.width;
+	y = header.height;
+	mipmaps = header.mipmaps_c;
+
+	if (header.faces == 6)
+		prop |= CIL_CUBE_MAP;
+
+	pvr_set_pix_format(header.pix_format_0, prop);
+	pvr_set_channel_type(header.channel_type, prop);
+
+	pvr_metadata meta;
+
+	memcpy((char*)&meta, pBuffCopytoWork, sizeof(pvr_metadata));
+	pBuffCopytoWork += sizeof(pvr_metadata);
+
+	unsigned char*	metadata = new unsigned char[meta.size + 1];
+	memcpy((char*)&metadata[0], pBuffCopytoWork, meta.size);
+	pBuffCopytoWork += meta.size;
+	metadata[meta.size] = '\0';
+
+#if CIL_LOG_OUTPUT
+	cout << "Metadata: " << endl
+
+		<< "Fourcc 0: " << meta.fourcc[0] << endl
+		<< "Fourcc 1: " << meta.fourcc[1] << endl
+		<< "Fourcc 2: " << meta.fourcc[2] << endl
+		<< "Fourcc 3: " << (int)meta.fourcc[3] << endl
+		<< "Key: " << meta.key << endl
+		<< "Data size: " << meta.size << endl;
+	for (unsigned int i = 0; i < meta.size; i++) {
+		cout << "Meta " << i << ": " << (int)metadata[i] << endl;
+	}
+#endif
+	delete[] metadata;
+
+	int currentWidth = header.width, currentHeight = header.height;
+	int final_size = 0;
+	int blockSize = (prop & CIL_BPP_4) ? 16 : 32;
+	int bpp = (prop & CIL_BPP_4) ? 4 : 2;
+	int widthBlocks = (prop & CIL_BPP_4) ? (currentWidth / 4) : (currentWidth / 8);
+	int heightBlocks = currentHeight / 4;
+	int current_size = 0;
+	for (unsigned int i = 0; i < header.mipmaps_c; i++) {
+
+		widthBlocks = widthBlocks < 2 ? 2 : widthBlocks;
+		heightBlocks = heightBlocks < 2 ? 2 : heightBlocks;
+
+		if (prop&CIL_ETC1) {
+			current_size = (currentHeight*currentWidth*bpp) / 8;
+			current_size = max(current_size, 8);
+		}
+		else {
+			current_size = widthBlocks * heightBlocks * ((blockSize * bpp) / 8);
+		}
+		for (unsigned int f = 0; f < header.faces; f++) {
+			final_size += current_size;
+		}
+		currentWidth = max(currentWidth >> 1, 1);
+		currentHeight = max(currentHeight >> 1, 1);
+
+		widthBlocks = (prop & CIL_BPP_4) ? (currentWidth / 4) : (currentWidth / 8);
+		heightBlocks = currentHeight / 4;
+	}
+
+	buffersize = final_size;
+	unsigned char *buffer = new unsigned char[buffersize];
+
+	if (buffer == 0) {
+		prop = CIL_NO_MEMORY;
+		return 0;
+	}
+
+	memcpy((char*)&buffer[0], pBuffCopytoWork, buffersize);
+
+	return buffer;
+}
+
 void ktx_set_pix_format(unsigned int &format, unsigned int &prop) {
 
 	switch (format) {
@@ -421,6 +559,87 @@ unsigned char*	load_ktx(ifstream &in_, int &x, int &y, unsigned int &mipmaps, un
 	return pBuffer;
 }
 
+unsigned char*	load_ktx_from_memory(const char* _buffer, int _bufferSize, int &x, int &y, unsigned int &mipmaps, unsigned int &prop, unsigned int &buffersize) {
+	const char *pBuffCopytoWork = _buffer;
+	ktx_header	header;
+	memcpy((char*)&header, pBuffCopytoWork, sizeof(ktx_header));
+	pBuffCopytoWork += sizeof(ktx_header);
+
+#if CIL_LOG_OUTPUT
+	cout << "KTX Data: " << endl
+		<< "GLType: " << header.gltype << endl
+		<< "GLFormat: " << header.glformat << endl
+		<< "GLInternalFormat: " << header.glinternalformat << endl
+		<< "GLTypeSize: " << header.gltypesize << endl
+		<< "Height: " << header.height << endl
+		<< "Width: " << header.width << endl
+		<< "Depth: " << header.depth << endl
+		<< "Surfaces: " << header.surfaces << endl
+		<< "Faces: " << header.faces << endl
+		<< "Mipmap count: " << header.mipmaps_c << endl
+		<< "Size Key: " << header.keyvaluedatasize << endl;
+#endif
+	if (header.mipmaps_c == 0)
+		header.mipmaps_c = 1;
+
+	x = header.width;
+	y = header.height;
+	mipmaps = header.mipmaps_c;
+
+
+	if (header.faces == 6)
+		prop |= CIL_CUBE_MAP;
+
+
+	ktx_set_pix_format(header.glinternalformat, prop);
+
+	if (header.keyvaluedatasize > 0) {
+		unsigned char*	metadata = new unsigned char[header.keyvaluedatasize + 1];
+		memcpy((char*)&metadata[0], pBuffCopytoWork, header.keyvaluedatasize);
+		pBuffCopytoWork += header.keyvaluedatasize;
+		metadata[header.keyvaluedatasize] = '\0';
+		delete[] metadata;
+	}
+
+	const char *pActual = pBuffCopytoWork;
+
+	unsigned int totalSize = 0;
+	for (unsigned int i = 0; i < header.mipmaps_c; i++) {
+		unsigned int size = 0;
+		memcpy((char*)&size, pBuffCopytoWork, sizeof(unsigned int));
+		pBuffCopytoWork += sizeof(unsigned int);
+		size = size * header.faces;
+		pBuffCopytoWork += size;
+		totalSize += size;
+	}
+
+
+	buffersize = totalSize;
+
+	unsigned char * pBuffer = new unsigned char[totalSize];
+	unsigned char *pHead = pBuffer;
+	if (pBuffer == 0) {
+		prop = CIL_NO_MEMORY;
+		return 0;
+	}
+
+	pBuffCopytoWork = pActual;
+
+	for (unsigned int i = 0; i < header.mipmaps_c; i++) {
+		unsigned int size = 0;
+		memcpy((char*)&size, pBuffCopytoWork, sizeof(unsigned int));
+		pBuffCopytoWork += sizeof(unsigned int);
+		for (unsigned int f = 0; f < header.faces; f++) {
+			memcpy((char*)&pBuffer, pBuffCopytoWork, size);
+			pBuffCopytoWork += size;
+			pBuffer += size;
+		}
+	}
+	pBuffer = pHead;
+
+	return pBuffer;
+}
+
 void dds_set_pix_format(unsigned int &format, unsigned int &bppinfo, unsigned int &prop) {
 	switch (format) {
 	case CIL_FOURCC_RAW: {
@@ -545,7 +764,8 @@ unsigned char*	load_dds(ifstream &in_, int &x, int &y, unsigned int &mipmaps, un
 
 	if (FileSize != 0) {
 		in_.close();
-		exit(666);
+		LogPrintDebug("Error Loading dds from memory");
+		return 0;
 	}
 
 	unsigned char *buffer = new unsigned char[buffersize];
@@ -560,6 +780,121 @@ unsigned char*	load_dds(ifstream &in_, int &x, int &y, unsigned int &mipmaps, un
 	return buffer;
 }
 
+unsigned char*	load_dds_from_memory(const char* _buffer, int _bufferSize, int &x, int &y, unsigned int &mipmaps, unsigned int &prop, unsigned int &buffersize) {
+	const char *pBuffCopytoWork = _buffer;
+	char ddstr[4];
+	DDS_HEADER header;
+	
+	unsigned int FileSize = _bufferSize;
+
+	memcpy((char*)&ddstr, pBuffCopytoWork, 4);
+	pBuffCopytoWork += 4;
+	FileSize -= 4;
+
+	memcpy((char*)&header, pBuffCopytoWork, sizeof(DDS_HEADER));
+	pBuffCopytoWork += sizeof(DDS_HEADER);
+	FileSize -= sizeof(DDS_HEADER);
+
+	if (header.dwSize != 124) {
+		prop = CIL_DDS_MALFORMED;
+		return 0;
+	}
+
+#if CIL_LOG_OUTPUT
+	cout << "DDS Data: " << endl
+		<< "	dwSize: " << header.dwSize << endl
+		<< "	dwFlags: " << header.dwFlags << endl
+		<< "	dwHeight: " << header.dwHeight << endl
+		<< "	dwWidth: " << header.dwWidth << endl
+		<< "	dwPitchOrLinearSize: " << header.dwPitchOrLinearSize << endl
+		<< "	dwDepth: " << header.dwDepth << endl
+		<< "	dwMipMapCount: " << header.dwMipMapCount << endl
+		<< "	dwCaps: " << header.dwCaps << endl
+		<< "	dwCaps2: " << header.dwCaps2 << endl
+		<< "	dwCaps3: " << header.dwCaps3 << endl
+		<< "	dwCaps4: " << header.dwCaps4 << endl
+		<< "	dwReserved2: " << header.dwMipMapCount << endl << endl;
+
+	cout << "DDS Pixel Format: " << endl
+		<< "	dwSize: " << header.ddspf.dwSize << endl
+		<< "	dwFlags: " << header.ddspf.dwFlags << endl
+		<< "	dwFourCC: " << header.ddspf.dwFourCC << endl
+		<< "	dwRGBBitCount: " << header.ddspf.dwRGBBitCount << endl
+		<< "	dwRBitMask: " << header.ddspf.dwRBitMask << endl
+		<< "	dwGBitMask: " << header.ddspf.dwGBitMask << endl
+		<< "	dwBBitMask: " << header.ddspf.dwBBitMask << endl
+		<< "	dwABitMask: " << header.ddspf.dwABitMask << endl;
+
+	char *FourCC;
+	FourCC = (char*)&header.ddspf.dwFourCC;
+	cout << "	FOURCC: " << FourCC << endl;
+#endif
+	x = header.dwWidth;
+	y = header.dwHeight;
+	mipmaps = header.dwMipMapCount;
+
+	if (header.dwCaps2 & CIL_DDS_CUBEMAP) {
+		prop |= CIL_CUBE_MAP;
+	}
+
+	dds_set_pix_format(header.ddspf.dwFourCC, header.ddspf.dwRGBBitCount, prop);
+
+	int numFaces = (prop&CIL_CUBE_MAP) ? 6 : 1;
+	int finalSize = 0;
+	int widthBlocks = x;
+	int heightBlocks = y;
+	int bpp = 8;
+	if (prop&CIL_COMPRESSED) {
+		int blockSize = (prop & CIL_BPP_4) ? 8 : 16;
+		if (prop&CIL_DXT1)
+			bpp = 4;
+		for (int i = 0; i < numFaces; i++) {
+			widthBlocks = x;
+			heightBlocks = y;
+			for (unsigned int j = 0; j < mipmaps; j++) {
+				int current_size = (widthBlocks*heightBlocks*bpp) / 8;
+				current_size = max(current_size, blockSize);
+				finalSize += current_size;
+				widthBlocks >>= 1;
+				heightBlocks >>= 1;
+			}
+		}
+	}
+	else {
+		bpp = (prop&CIL_RGB) ? 24 : 32;
+		mipmaps = mipmaps == 0 ? 1 : mipmaps;
+		for (int i = 0; i < numFaces; i++) {
+			widthBlocks = x;
+			heightBlocks = y;
+			for (unsigned int j = 0; j < mipmaps; j++) {
+				int current_size = (widthBlocks*heightBlocks*bpp) / 8;
+				finalSize += current_size;
+				widthBlocks >>= 1;
+				heightBlocks >>= 1;
+			}
+		}
+	}
+
+	buffersize = finalSize;
+	FileSize -= finalSize;
+
+	if (FileSize != 0) {
+		LogPrintDebug("Error Loading dds from memory");
+		return 0;
+	}
+
+	unsigned char *buffer = new unsigned char[buffersize];
+
+	if (buffer == 0) {
+		prop = CIL_NO_MEMORY;
+		return 0;
+	}
+
+	memcpy((char*)&buffer[0], pBuffCopytoWork, buffersize);
+
+	return buffer;
+}
+
 void cil_free_buffer(unsigned char *pbuff, unsigned int prop) {
 	if (prop&CIL_LOADED_WITH_STB) {
 		stbi_image_free(pbuff);
@@ -568,6 +903,86 @@ void cil_free_buffer(unsigned char *pbuff, unsigned int prop) {
 		delete[] pbuff;
 		pbuff = 0;
 	}
+}
+
+unsigned char*	cil_load_from_memory(const char* _buffer, int _bufferSize, int *x, int *y, unsigned int *mipmaps, unsigned int *props, unsigned int *buffersize, unsigned int ForceResizeFactor) {
+	if (!_buffer) {
+		*props = CIL_NOT_FOUND;
+		return 0;
+	}
+
+	int x_ = 0, y_ = 0;
+	unsigned int props_ = 0;
+	unsigned int buffer_size_ = 0;
+	unsigned int mipmaps_;
+	checkformat_from_memory(_buffer, _bufferSize, props_);
+
+	if (props_&CIL_PVR) {
+		unsigned char * buffer = load_pvr_from_memory(_buffer, _bufferSize, x_, y_, mipmaps_, props_, buffer_size_);
+		*props = props_;
+		*x = x_;
+		*y = y_;
+		*buffersize = buffer_size_;
+		*mipmaps = mipmaps_;
+		return buffer;
+	}
+	else if (props_&CIL_KTX) {
+		unsigned char * buffer = load_ktx_from_memory(_buffer, _bufferSize, x_, y_, mipmaps_, props_, buffer_size_);
+		*props = props_;
+		*x = x_;
+		*y = y_;
+		*buffersize = buffer_size_;
+		*mipmaps = mipmaps_;
+		return buffer;
+	}
+	else if (props_&CIL_DDS) {
+		unsigned char * buffer = load_dds_from_memory(_buffer, _bufferSize, x_, y_, mipmaps_, props_, buffer_size_);
+		*props = props_;
+		*x = x_;
+		*y = y_;
+		*buffersize = buffer_size_;
+		*mipmaps = mipmaps_;
+		return buffer;
+	}
+#if CIL_CALL_STB
+	else if (props_ == CIL_FORWARD_TO_STB) {
+		props_ = CIL_LOADED_WITH_STB | CIL_RAW;
+		int channels;
+		unsigned char * buffer = stbi_load_from_memory((stbi_uc const *)_buffer,_bufferSize, x, y, &channels, 4);
+		props_ |= (channels == 3) ? CIL_RGB : CIL_RGBA;
+		*mipmaps = 1;
+		*buffersize = (*x)*(*y) * channels;
+		*props = props_;
+#if FORCE_LOW_RES_TEXTURES
+		if (buffer) {
+
+			int nx = *x / FORCED_FACTOR;
+			int ny = *y / FORCED_FACTOR;
+
+			unsigned char* resizedBuf = (unsigned char*)STBI_MALLOC(nx*ny * 4 + 1);
+
+			resizedBuf[nx*ny * 4] = '\0';
+
+			int result = stbir_resize_uint8(buffer, *x, *y, 0, resizedBuf, nx, ny, 0, 4);
+
+			stbi_image_free(buffer);
+
+			*buffersize = nx * ny * 4;
+			buffer = resizedBuf;
+			*x = nx;
+			*y = ny;
+			channels = 4;
+		}
+#endif
+		return buffer;
+	}
+#else
+	else if (props_ == CIL_NOT_SUPPORTED_FILE) {
+		return 0;
+	}
+#endif
+
+	return 0;
 }
 
 unsigned char*	cil_load(const char* filename, int *x, int *y, unsigned int *mipmaps, unsigned int *props, unsigned int *buffersize, unsigned int ForceResizeFactor) {

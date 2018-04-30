@@ -1,18 +1,10 @@
-/*********************************************************
-* Copyright (C) 2017 Daniel Enriquez (camus_mm@hotmail.com)
-* All Rights Reserved
-*
-* You may use, distribute and modify this code under the
-* following terms:
-* ** Do not claim that you wrote this software
-* ** A mention would be appreciated but not needed
-* ** I do not and will not provide support, this software is "as is"
-* ** Enjoy, learn and share.
-*********************************************************/
+#include <Config.h>
+#ifndef OS_ANDROID
 
-#include <video/windows/D3DXTexture.h>
 
-namespace t800 {
+#include <video/d3d11/D3DXTexture.h>
+
+namespace t1000 {
   extern Device*            T8Device;
   extern DeviceContext*     T8DeviceContext;
 
@@ -161,3 +153,5 @@ namespace t800 {
     reinterpret_cast<ID3D11DeviceContext*>(deviceContext.GetAPIObject())->PSSetSamplers(0, 1, pSampler.GetAddressOf());
   }
 }
+
+#endif

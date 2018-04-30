@@ -1,7 +1,7 @@
-#ifndef CA_LOG_H
-#define CA_LOG_H
+#ifndef T1000_LOG_H
+#define T1000_LOG_H
 
-#include <config.h>
+#include <Config.h>
 
 #ifdef USE_DEBUG
 #if defined(OS_WIN32)

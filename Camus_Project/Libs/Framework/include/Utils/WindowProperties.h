@@ -1,5 +1,5 @@
-#ifndef CA_WINDOW_PROPERTIES_H
-#define CA_WINDOW_PROPERTIES_H
+#ifndef T1000_WINDOW_PROPERTIES_H
+#define T1000_WINDOW_PROPERTIES_H
 
 #include <vector>
 
@@ -42,11 +42,11 @@ namespace t1000 {
 		int		FullScreenSelectedRefreshRate;		
 		int		Properties;
 
-		WindowParameters() :
-			  WindowedWidth(1280)
-			, WindowedHeight(720)
-			, FullScreenSelectedWidth(0)
+		WindowParameters() :			
+			  FullScreenSelectedWidth(0)
 			, FullScreenSelectedHeight(0)
+			, WindowedWidth(1280)
+			, WindowedHeight(720)
 			, FullScreenSelectedRefreshRate(60)
 			, Properties(LANDSCAPE_0 | RESIZEABLE | SHOW_CURSOR) {
 			

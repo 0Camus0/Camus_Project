@@ -8,7 +8,7 @@
 */
 
 #include <Core/Core.h>
-#include <Driver\BaseDriver.h>
+#include <video/BaseDriver.h>
 #include <memory>
 
 #include <android/configuration.h>
@@ -158,13 +158,14 @@ class AndroidFramework : public t1000::RootFramework {
 public:
 	AndroidFramework(t1000::AppBase* pBaseApp);
 	void InitGlobalVars();
-	void OnCreateApplication();
+	void OnCreateApplication(t1000::ApplicationDesc desc);
 	void OnDestroyApplication();
 	void OnInterruptApplication();
 	void OnResumeApplication();
 	void UpdateApplication();
 	void ProcessInput();
 	void ResetApplication();
+	void ChangeAPI(t1000::T_GRAPHICS_API::E api);
 	void CheckState();
 
 	~AndroidFramework();
@@ -203,6 +204,9 @@ public:
 
 	PollSource					m_cmdPoll;
 	PollSource					m_inputPoll;
+	std::string					m_internalDataPath;
+	std::string					m_externalDataPath;
+	std::string					m_apkPath;
 
 
 

@@ -1,7 +1,11 @@
-#include <video/windows/D3DXShader.h>
+#include <Config.h>
+#ifndef OS_ANDROID
 
 
-namespace t800 {
+#include <video/d3d11/D3DXShader.h>
+
+
+namespace t1000 {
   extern Device*            T8Device;
   extern DeviceContext*     T8DeviceContext;
 
@@ -129,3 +133,5 @@ namespace t800 {
     Layout.Reset();
   }
 }
+
+#endif

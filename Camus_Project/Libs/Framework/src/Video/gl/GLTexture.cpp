@@ -1,37 +1,9 @@
-/*********************************************************
-* Copyright (C) 2017 Daniel Enriquez (camus_mm@hotmail.com)
-* All Rights Reserved
-*
-* You may use, distribute and modify this code under the
-* following terms:
-* ** Do not claim that you wrote this software
-* ** A mention would be appreciated but not needed
-* ** I do not and will not provide support, this software is "as is"
-* ** Enjoy, learn and share.
-*********************************************************/
-
-#include <video/GLTexture.h>
-
-#if defined(USING_OPENGL_ES20)
-#include <GLES2/gl2.h>
-#include <GLES2/gl2ext.h>
-#elif defined(USING_OPENGL_ES30)
-#include <GLES3/gl3.h>
-#include <GLES2/gl2ext.h>
-#elif defined(USING_OPENGL_ES31)
-#include <GLES3/gl31.h>
-#include <GLES2/gl2ext.h>
-#elif defined(USING_OPENGL)
-#include <GL/glew.h>
-#else
-#include <GL/glew.h>
-#include <SDL/SDL.h>
-#endif
-
-#include "video/GLShader.h"
+#include <video/gl/GLDriver.h>
+#include <video/gl/GLTexture.h>
+#include <video/gl/GLShader.h>
 
 
-namespace t800 {
+namespace t1000 {
   GLTexture::GLTexture() : glTarget(GL_TEXTURE_2D)
   {
   }
@@ -53,10 +25,10 @@ namespace t800 {
     //if(params & TEXT_BASIC_PARAMS::MIPMAPS)
     glFiltering = GL_LINEAR_MIPMAP_LINEAR; //GL_TEXTURE_MAX_ANISOTROPY_EXT
 
-    if (params & TEXT_BASIC_PARAMS::CLAMP_TO_EDGE)
+    if (params & T_TEXT_BASIC_PARAMS::CLAMP_TO_EDGE)
       glWrap = GL_CLAMP_TO_EDGE;
 
-    if (params & TEXT_BASIC_PARAMS::TILED)
+    if (params & T_TEXT_BASIC_PARAMS::TILED)
       glWrap = GL_REPEAT;
 
     glTexParameteri(glTarget, GL_TEXTURE_MIN_FILTER, glFiltering);
@@ -84,11 +56,11 @@ namespace t800 {
     else
       glTarget = GL_TEXTURE_2D;
 
-    if (this->props&TEXT_BASIC_FORMAT::CH_ALPHA)
+    if (this->props&T_TEXT_BASIC_FORMAT::CH_ALPHA)
       glFormat = GL_ALPHA;
-    else if (this->props&TEXT_BASIC_FORMAT::CH_RGB)
+    else if (this->props&T_TEXT_BASIC_FORMAT::CH_RGB)
       glFormat = GL_RGB;
-    else if (this->props&TEXT_BASIC_FORMAT::CH_RGBA)
+    else if (this->props&T_TEXT_BASIC_FORMAT::CH_RGBA)
       glFormat = GL_RGBA;
 
     glGenTextures(1, &id);
@@ -129,7 +101,7 @@ namespace t800 {
   {
     m_shaderTextureName = name;
     int slot_active = GL_TEXTURE0 + slot;
-    int deb = reinterpret_cast<GLShader*>(deviceContext.actualShaderSet)->ShaderProg;
+    //int deb = reinterpret_cast<GLShader*>(deviceContext.actualShaderSet)->ShaderProg;
     APITextureLoc = glGetUniformLocation(reinterpret_cast<GLShader*>(deviceContext.actualShaderSet)->ShaderProg, m_shaderTextureName.c_str());
     if (APITextureLoc != -1) {
       glActiveTexture(slot_active);

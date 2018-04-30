@@ -1,12 +1,13 @@
-#include "utils/T8_Technique.h"
-#include <iostream>
-#include "video/GLDriver.h"
-#include "video/GLShader.h"
+#include <video/gl/GLDriver.h>
+#include <video/gl/GLShader.h>
+#include <video/Technique.h>
 #if defined(OS_WINDOWS)
-#include <video/windows/D3DXShader.h>
-#include <video/windows/D3DXDriver.h>
+#include <video/d3d11/D3DXShader.h>
+#include <video/d3d11/D3DXDriver.h>
 #endif
-namespace t800 {
+
+#include <iostream>
+namespace t1000 {
   void T8TechniqueInfo::ProcessDefine(tinyxml2::XMLElement * element)
   {
     const char* name = element->Attribute("name");

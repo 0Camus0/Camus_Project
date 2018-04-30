@@ -10,7 +10,7 @@
 #include <Video/Technique.h>
 
 namespace t1000 {
-#define T_NO_SIGNATURE -1
+
   class Buffer;
   class VertexBuffer;
   class IndexBuffer;
@@ -27,6 +27,8 @@ namespace t1000 {
     virtual void SetPrimitiveTopology(T_TOPOLOGY::E topology) = 0;
     virtual void DrawIndexed(unsigned vertexCount, unsigned startIndex, unsigned startVertex) = 0;
 
+	virtual ~DeviceContext() { }
+
     ConstantBuffer* actualConstantBuffer;
     IndexBuffer* actualIndexBuffer;
     VertexBuffer* actualVertexBuffer;
@@ -39,11 +41,13 @@ namespace t1000 {
 
     virtual void release() = 0;
     virtual Buffer* CreateBuffer(T_BUFFER_TYPE::E bufferType, BufferDesc desc, void* initialData = nullptr) = 0;
-    virtual ShaderBase* CreateShader(std::string src_vs, std::string src_fs, unsigned long long sig = T8_NO_SIGNATURE) = 0;
+    virtual ShaderBase* CreateShader(std::string src_vs, std::string src_fs, unsigned long long sig = T_NO_SIGNATURE) = 0;
     virtual Texture* CreateTexture(std::string path) = 0;
     virtual Texture* CreateTextureFromMemory(const unsigned char *buff, int w, int h, int channels, std::string name) = 0;
     virtual Texture* CreateCubeMap(const unsigned char * buff, int w, int h) = 0;
     virtual BaseRT* CreateRT(int nrt, int cf, int df, int w, int h, bool genMips = false) = 0;
+
+	virtual ~Device() { }
   };
   /* BUFFERS */
   class Buffer {
@@ -55,6 +59,8 @@ namespace t1000 {
     virtual void UpdateFromBuffer(const DeviceContext& deviceContext, const void* buffer) = 0;
     virtual void release() = 0;
     virtual void Create(const Device& device, BufferDesc desc, void* initialData = nullptr) = 0;
+
+	virtual ~Buffer() { }
 
     BufferDesc descriptor;
     std::vector<char> sysMemCpy;
@@ -155,6 +161,8 @@ namespace t1000 {
     virtual void Set(const DeviceContext& context) = 0;
     virtual void ChangeCubeDepthTexture(int i) = 0;
 
+	virtual ~BaseRT() { }
+
     int w;
     int h;
     int number_RT;
@@ -173,6 +181,8 @@ namespace t1000 {
     virtual void  Set(const t1000::DeviceContext& deviceContext) = 0;
     virtual void DestroyAPIShader() = 0;
     void release();
+
+	virtual ~ShaderBase() { }
 
     unsigned long long	Sig;
   };
@@ -234,10 +244,11 @@ namespace t1000 {
 
     virtual void SaveScreenshot(std::string path) = 0;
 	virtual void SetCullFace(FACE_CULLING state) = 0;
+	virtual void ResetDriver() = 0;
 
     int 	 CreateTexture(std::string);
     int    CreateCubeMap(const unsigned char * buff, int w, int h);
-    int	   CreateShader(std::string src_vs, std::string src_fs, unsigned long long sig = T8_NO_SIGNATURE);
+    int	   CreateShader(std::string src_vs, std::string src_fs, unsigned long long sig = T_NO_SIGNATURE);
     int 	 CreateRT(int nrt, int cf, int df, int w, int h, bool genMips = false);
     void 	 ModifyRT(int RTID, int nrt, int cf, int df, int w, int h, bool genMips = false);
     int    CreateTechnique(std::string path);

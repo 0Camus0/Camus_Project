@@ -62,11 +62,14 @@
 
 #define TEX_STACK_ALLOCATED_SIZE TEXTURE_BUDGET_SIZE_BYTES+PATH_ARRAY_SIZE+TEX_ARRAY_SIZE
 
-
 // ---------------
 
+#ifndef T_NO_SIGNATURE
+#define T_NO_SIGNATURE -1
+#endif
+
 #ifndef FORCE_LOW_RES_TEXTURES
-#define FORCE_LOW_RES_TEXTURES 
+#define FORCE_LOW_RES_TEXTURES 0
 #endif
 
 #ifndef FORCED_FACTOR
@@ -123,6 +126,10 @@
 #define USING_GL_COMMON
 #endif
 
+#if defined(USING_GL_COMMON) && !defined(USING_OPENGL)
+#define USING_GL_ES
+#endif
+
 #define SDL 1
 #define FREEGLUT 2
 #define WAYLAND_NATIVE 3
@@ -162,6 +169,8 @@
 #else
 #define USING_SDL
 #endif
+
+
 
 
 #endif

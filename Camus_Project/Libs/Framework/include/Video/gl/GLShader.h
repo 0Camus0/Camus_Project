@@ -1,41 +1,16 @@
-/*********************************************************
-* Copyright (C) 2017 Daniel Enriquez (camus_mm@hotmail.com)
-* All Rights Reserved
-*
-* You may use, distribute and modify this code under the
-* following terms:
-* ** Do not claim that you wrote this software
-* ** A mention would be appreciated but not needed
-* ** I do not and will not provide support, this software is "as is"
-* ** Enjoy, learn and share.
-*********************************************************/
-
-#ifndef T800_GLSHADER_H
-#define T800_GLSHADER_H
-
 #include <Config.h>
 
+#ifndef T1000_GLSHADER_H
+#define T1000_GLSHADER_H
+
 #include <video/BaseDriver.h>
-
-#if defined(USING_OPENGL_ES20)
-#include <GLES2/gl2.h>
-#include <GLES2/gl2ext.h>
-#elif defined(USING_OPENGL_ES30)
-#include <GLES3/gl3.h>
-#elif defined(USING_OPENGL_ES31)
-#include <GLES3/gl31.h>
-#elif defined(USING_OPENGL)
-#include <GL/glew.h>
-#else
-#include <GL/glew.h>
-#include <SDL/SDL.h>
-#endif
-
+#include <video/gl/GL_Headers.h>
+#include <video/gl/GLSLParser.h>
 #include <utils/Utils.h>
-#include <vector>
-#include <video/GLSLParser.h>
 
-namespace t800 {
+#include <vector>
+
+namespace t1000 {
   class GLShader : public ShaderBase {
   public:
 	  GLShader() {}
@@ -52,7 +27,7 @@ namespace t800 {
     std::vector<InputElement> internalUniformsLocs;
     int vertexWidth;
 
-    GLSL_Parser m_parser;
+	shader::GLSL_Parser m_parser;
     GLuint vshader_id;
     GLuint fshader_id;
   };

@@ -1,11 +1,5 @@
 #include "Test.h"
 #include <Utils\Log.h>
-#include <Driver\Technique.h>
-#include <Driver\EffectGL.h>
-#include <Driver\TextureManager.h>
-#include <Driver\TextureGL.h>
-
-#include <Utils\xFile/XDataBase.h>
 #include <Utils\Time.h>
 
 #ifdef OS_WIN32
@@ -30,83 +24,60 @@ float clip(float n, float lower, float upper) {
 		std::min(n, upper));
 }
  
+void TestApp::InitVars() {
+	Cam.InitPerspective(XVECTOR3(0.0f, 1.0f, 10.0f), Deg2Rad(46.8f), (float)pFramework->pVideoDriver->width / (float)pFramework->pVideoDriver->height, 2.0f, 12000.0f);
+	Cam.Speed = 10.0f;
+	Cam.Eye = XVECTOR3(0.0f, 9.75f, -31.0f);
+	Cam.Pitch = 0.14f;
+	Cam.Roll = 0.0f;
+	Cam.Yaw = 0.020f;
+	Cam.Update(0.0f);
+
+	LightCam.InitOrtho(XVECTOR3(0.0f, 100.0f, 10.0f), 130.0f, 130.0f, 10.0f, 600.0f);
+	LightCam.Speed = 10.0f;
+	LightCam.Eye = XVECTOR3(25.0f, 100.0f, 0.0f);
+	LightCam.Pitch = 1.12f;
+	LightCam.Roll = 0.0f;
+	LightCam.Yaw = -0.9f;
+	LightCam.Update(0.0f);
+
+	ActiveCam = &Cam;
+
+	SceneProp.AddCamera(ActiveCam);
+	SceneProp.AddLightCamera(&LightCam);
+
+	SceneProp.AddLight(LightCam.Eye, XVECTOR3(1, 1, 1), 30000, true);
+	SceneProp.AddLight(XVECTOR3(-55, 10, 0), XVECTOR3(1.0, 0.57, 0.16), 60, true);
+	SceneProp.AddLight(XVECTOR3(55, 10, 0), XVECTOR3(1.0, 0.57, 0.16), 60, true);
+	SceneProp.AddLight(XVECTOR3(60, 10, 30), XVECTOR3(1.0, 0.57, 0.16), 60, true);
+	SceneProp.AddLight(XVECTOR3(60, 10, -30), XVECTOR3(1.0, 0.57, 0.16), 60, true);
+	SceneProp.ActiveLights = 5;
+	SceneProp.AmbientColor = XVECTOR3(0.8f, 0.8f, 0.8f);
+}
+
+void TestApp::LoadAssets() {
+
+}
+
 void TestApp::CreateAssets() {
 	LogPrintDebug("TestApp::CreateAssets\n");
 
-//	hyperspace::video::CTechnique_ *AllTechnique = new hyperspace::video::TechniqueGL();
-//	AllTechnique->Initialize("All-tech", "All");
-//	AllTechnique->BindAttribute("myVertex",0,hyperspace::video::shader::bind_::POSITION);
+	PrimitiveMgr.Init();
+	PrimitiveMgr.SetVP(&VP);
 
-//	((hyperspace::video::TechniqueGL*)AllTechnique)->DebugPassesContent();
 
-//	delete AllTechnique;
+	int index = PrimitiveMgr.CreateMesh("Scene.X");
 
+
+	Meshes[0].CreateInstance(PrimitiveMgr.GetPrimitive(index), &VP);
+
+
+	Meshes[0].TranslateAbsolute(0.0, -10.0f, 0.0f);
+	Meshes[0].Update();
+
+	PrimitiveMgr.SetSceneProps(&SceneProp);
 	
 
-
-
-	{
-//	TimeEvent t("Load_model");
-//	xF::XDataBase xDataBase;
-//	xDataBase.LoadXFile("DealerA14.X");
-	}
-
-
-
-	//hyperspace::video::TextureManager	*TexManager = new hyperspace::video::TextureManager();
-
-   // TexManager->LoadTexture("bones.BMP");
-   // TexManager->LoadTexture("floor_normal.tga");
-   // TexManager->LoadTexture("pvr/Cubemap.pvr");
-   // TexManager->LoadTexture("pvr/BatBody_pvrtc2_rgba.pvr");
-   // TexManager->LoadTexture("pvr/CrocBody_pvrtc4_rgba.pvr");
-    
-	
-//	TexManager->LoadTexture("etc1/BatBody_ETC1.ktx");
-/*	TexManager->LoadTexture("etc1/BatHead_ETC1.ktx");
-	TexManager->LoadTexture("etc1/CrocBody_ETC1.ktx");
-	TexManager->LoadTexture("etc1/CrocHead_ETC1.ktx");
-	TexManager->LoadTexture("etc1/cube_ETC1.ktx");
-	TexManager->LoadTexture("etc1/JokerBody_ETC1.ktx");
-	TexManager->LoadTexture("etc1/JokerHead_ETC1.ktx");
-	TexManager->LoadTexture("etc1/text_ETC1.ktx");
-	*/
-/*
-	TexManager->LoadTexture("bones.bmp");
-	TexManager->LoadTexture("etc1/BatHead_ETC1.ktx");
-	TexManager->LoadTexture("etc1/CrocBody_ETC1.ktx");
-	TexManager->LoadTexture("etc1/CrocHead_ETC1.ktx");
-	TexManager->LoadTexture("etc1/cube_ETC1.ktx");
-	TexManager->LoadTexture("Real.png");
-	TexManager->LoadTexture("etc1/JokerHead_ETC1.ktx");
-	TexManager->LoadTexture("floor_normal.tga");
-	*/
-	
-/*	
-	TexManager->AddTextureToLoadingQueue("etc1/BatBody_ETC1.ktx");
-	TexManager->AddTextureToLoadingQueue("etc1/BatHead_ETC1.ktx");
-	TexManager->AddTextureToLoadingQueue("etc1/CrocBody_ETC1.ktx");
-	TexManager->AddTextureToLoadingQueue("etc1/CrocHead_ETC1.ktx");
-	TexManager->AddTextureToLoadingQueue("etc1/cube_ETC1.ktx");
-	TexManager->AddTextureToLoadingQueue("etc1/JokerBody_ETC1.ktx");
-	TexManager->AddTextureToLoadingQueue("etc1/JokerHead_ETC1.ktx");
-	TexManager->AddTextureToLoadingQueue("etc1/text_ETC1.ktx");
-	
-	
-	TexManager->AddTextureToLoadingQueue("bones.bmp");
-	TexManager->AddTextureToLoadingQueue("etc1/BatHead_ETC1.ktx");
-	TexManager->AddTextureToLoadingQueue("etc1/CrocBody_ETC1.ktx");
-	TexManager->AddTextureToLoadingQueue("etc1/CrocHead_ETC1.ktx");
-	TexManager->AddTextureToLoadingQueue("etc1/cube_ETC1.ktx");
-	TexManager->AddTextureToLoadingQueue("Real.png");
-	TexManager->AddTextureToLoadingQueue("etc1/JokerHead_ETC1.ktx");
-	TexManager->AddTextureToLoadingQueue("floor_normal.tga");
-*/	
-//	TexManager->LoadTextureQueue();
-	
-	
-	//	delete TexManager;
-	
  	bInited = true;
 }
 
@@ -114,25 +85,32 @@ void TestApp::DestroyAssets() {
 	LogPrintDebug("TestApp::DestroyAssets");
 }
 
-void TestApp::OnUpdate(unsigned int dt) {
+void TestApp::OnUpdate() {
+
+	DtTimer.Update();
+	DtSecs = DtTimer.GetDTSecs();
+
+
+	
+
+	ActiveCam->MoveYaw(0.015);
+
+
+	ActiveCam->Update(DtSecs);
+	VP = ActiveCam->VP;
+
+	
 	
 
 
 }
 
 void TestApp::OnDraw() {
-   // LogPrintDebug("TestApp::OnDraw");
-	static float ang = 0.0f;
 
-	float R = 0.0f, G = 0.0f, B = 0.0f;
+	pFramework->pVideoDriver->Clear();
 
-	ang += 0.01f;
-
-	R = (clip(std::sin(ang), 0.0f, 1.0f))*0.5f + 0.5f;
-	G = (clip(std::cos(ang + .70f), 0.0f, 1.0f))*0.5f + 0.5f;
-	B = (clip(std::tan(ang + 1.44f), 0.0f, 1.0f))*0.5f + 0.5f;
-
-	pFramework->pVideoDriver->Clear(hyperspace::video::draw_bits_::COLOR_BIT, R, G, B, 1.0f);
+	Meshes[0].SetGlobalSignature(t1000::T_Signature::FORWARD_PASS);
+	Meshes[0].Draw();
 
 	pFramework->pVideoDriver->SwapBuffers();
 
@@ -155,4 +133,10 @@ void TestApp::OnResume() {
 
 void TestApp::OnReset() {
 	LogPrintDebug("TestApp::OnReset()");
+
+	Cam.InitPerspective(XVECTOR3(0.0f, 1.0f, 10.0f), Deg2Rad(46.8f),(float)pFramework->pVideoDriver->width / (float)pFramework->pVideoDriver->height, 2.0f, 12000.0f);
+}
+
+void TestApp::LoadScene(int id) {
+
 }

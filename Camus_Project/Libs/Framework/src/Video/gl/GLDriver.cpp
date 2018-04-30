@@ -1,19 +1,11 @@
-/*********************************************************
-* Copyright (C) 2017 Daniel Enriquez (camus_mm@hotmail.com)
-* All Rights Reserved
-*
-* You may use, distribute and modify this code under the
-* following terms:
-* ** Do not claim that you wrote this software
-* ** A mention would be appreciated but not needed
-* ** I do not and will not provide support, this software is "as is"
-* ** Enjoy, learn and share.
-*********************************************************/
 
-#include <video/GLDriver.h>
-#include <video/GLTexture.h>
-#include <video/GLRT.h>
-#include <video/GLShader.h>
+#include <video/gl/GLDriver.h>
+#include <video/gl/GLTexture.h>
+#include <video/gl/GLRT.h>
+#include <video/gl/GLShader.h>
+
+#include <Utils/Log.h>
+
 #include <iostream>
 #include <string>
 #include <sstream>
@@ -21,6 +13,16 @@
 #include <iterator>
 #include <fstream>
 
+
+namespace patch
+{
+	template < typename T > std::string to_string(const T& n)
+	{
+		std::ostringstream stm;
+		stm << n;
+		return stm.str();
+	}
+}
 
 
 #ifdef OS_WINDOWS
@@ -37,7 +39,24 @@
 #elif defined(OS_LINUX)
 #include <GL/freeglut.h>
 #endif
-namespace t800 {
+
+#ifdef __APPLE__
+extern EAGLContext *g_EAGLContext;
+#endif
+#ifndef USE_DEBUG
+#define ReportEGLError(...) ((void)0)
+#else
+void ReportEGLError(const char* c_ptr) {
+#if !defined(__APPLE__)
+	EGLint iErr = eglGetError();
+	if (iErr != EGL_SUCCESS) {
+		LogPrintError("%s failed (%d).\n", c_ptr, iErr);
+	}
+#endif
+}
+#endif
+
+namespace t1000 {
   extern Device*            T8Device;
   extern DeviceContext*     T8DeviceContext;
   void * GLDeviceContext::GetAPIObject() const
@@ -52,23 +71,23 @@ namespace t800 {
   {
     delete this;
   }
-  void GLDeviceContext::SetPrimitiveTopology(T8_TOPOLOGY::E topology)
+  void GLDeviceContext::SetPrimitiveTopology(T_TOPOLOGY::E topology)
   {
     switch (topology)
     {
-    case T8_TOPOLOGY::POINT_LIST:
+    case T_TOPOLOGY::POINT_LIST:
       internalTopology = GL_POINTS;
       break;
-    case T8_TOPOLOGY::LINE_LIST:
+    case T_TOPOLOGY::LINE_LIST:
       internalTopology = GL_LINES;
       break;
-    case T8_TOPOLOGY::LINE_STRIP:
+    case T_TOPOLOGY::LINE_STRIP:
       internalTopology = GL_LINE_STRIP;
       break;
-    case T8_TOPOLOGY::TRIANLE_LIST:
+    case T_TOPOLOGY::TRIANLE_LIST:
       internalTopology = GL_TRIANGLES;
       break;
-    case T8_TOPOLOGY::TRIANGLE_STRIP:
+    case T_TOPOLOGY::TRIANGLE_STRIP:
       internalTopology = GL_TRIANGLE_STRIP;
       break;
     default:
@@ -92,18 +111,18 @@ namespace t800 {
   {
     delete this;
   }
-  Buffer * GLDevice::CreateBuffer(T8_BUFFER_TYPE::E bufferType, BufferDesc desc, void * initialData)
+  Buffer * GLDevice::CreateBuffer(T_BUFFER_TYPE::E bufferType, BufferDesc desc, void * initialData)
   {
     Buffer* retBuff;
     switch (bufferType)
     {
-    case T8_BUFFER_TYPE::VERTEX:
+    case T_BUFFER_TYPE::VERTEX:
       retBuff = new GLVertexBuffer;
       break;
-    case T8_BUFFER_TYPE::INDEX:
+    case T_BUFFER_TYPE::INDEX:
       retBuff = new GLIndexBuffer;
       break;
-    case T8_BUFFER_TYPE::CONSTANT:
+    case T_BUFFER_TYPE::CONSTANT:
       retBuff = new GLConstantBuffer;
       break;
     default:
@@ -209,14 +228,14 @@ namespace t800 {
     return nullptr;
   }
 
-  void GLIndexBuffer::Set(const DeviceContext & deviceContext, const unsigned offset, T8_IB_FORMAR::E format)
+  void GLIndexBuffer::Set(const DeviceContext & deviceContext, const unsigned offset, T_IB_FORMAT::E format)
   {
     switch (format)
     {
-    case T8_IB_FORMAR::R16:
+    case T_IB_FORMAT::R16:
       reinterpret_cast<GLDeviceContext*>(const_cast<DeviceContext*>(&deviceContext))->internalIBFormat = GL_UNSIGNED_SHORT;
       break;
-    case T8_IB_FORMAR::R32:
+    case T_IB_FORMAT::R32:
       reinterpret_cast<GLDeviceContext*>(const_cast<DeviceContext*>(&deviceContext))->internalIBFormat = GL_UNSIGNED_INT;
       break;
     default:
@@ -274,31 +293,31 @@ namespace t800 {
     for (auto &it : sh->internalUniformsLocs) {
       switch (it.type)
       {
-      case hyperspace::shader::datatype_::INT_:
+      case shader::datatype_::INT_:
         glUniform1i(it.loc, *reinterpret_cast<GLint*>(&sysMemCpy[it.bufferBytePosition]));
         break;
-      case hyperspace::shader::datatype_::BOOLEAN_:
+      case shader::datatype_::BOOLEAN_:
         glUniform1i(it.loc, *reinterpret_cast<GLint*>(&sysMemCpy[it.bufferBytePosition]));
         break;
-      case hyperspace::shader::datatype_::FLOAT_:
+      case shader::datatype_::FLOAT_:
         glUniform1f(it.loc, *reinterpret_cast<GLfloat*>(&sysMemCpy[it.bufferBytePosition]));
         break;
-      case hyperspace::shader::datatype_::MAT2_:
+      case shader::datatype_::MAT2_:
         glUniformMatrix2fv(it.loc, it.num, GL_FALSE, reinterpret_cast<GLfloat*>(&sysMemCpy[it.bufferBytePosition]));
         break;
-      case hyperspace::shader::datatype_::MAT3_:
+      case shader::datatype_::MAT3_:
         glUniformMatrix3fv(it.loc, it.num, GL_FALSE, reinterpret_cast<GLfloat*>(&sysMemCpy[it.bufferBytePosition]));
         break;
-      case hyperspace::shader::datatype_::MAT4_:
+      case shader::datatype_::MAT4_:
         glUniformMatrix4fv(it.loc, it.num, GL_FALSE, reinterpret_cast<GLfloat*>(&sysMemCpy[it.bufferBytePosition]));
         break;
-      case hyperspace::shader::datatype_::VECTOR2_:
+      case shader::datatype_::VECTOR2_:
         glUniform2fv(it.loc, it.num, reinterpret_cast<GLfloat*>(&sysMemCpy[it.bufferBytePosition]));
         break;
-      case hyperspace::shader::datatype_::VECTOR3_:
+      case shader::datatype_::VECTOR3_:
         glUniform3fv(it.loc, it.num, reinterpret_cast<GLfloat*>(&sysMemCpy[it.bufferBytePosition]));
         break;
-      case hyperspace::shader::datatype_::VECTOR4_:
+      case shader::datatype_::VECTOR4_:
         glUniform4fv(it.loc, it.num, reinterpret_cast<GLfloat*>(&sysMemCpy[it.bufferBytePosition]));
         break;
       default:
@@ -345,113 +364,32 @@ namespace t800 {
 #if defined(USING_OPENGL) || defined(USING_OPENGL_ES30) || defined(USING_OPENGL_ES31)
   GLenum GLDriver::DrawBuffers[16];
 #endif
+
+  GLDriver::GLDriver() { 
+	  bInited = false;
+	  m_currentAPI = T_GRAPHICS_API::_OPENGL; 
+#ifndef __APPLE__
+	  eglWindow = 0;
+	  eglDisplay = 0;
+	  eglSurface = 0;
+	  eglContext = 0;
+#endif
+  }
+
   void	GLDriver::InitDriver() {
-    T8Device = new t800::GLDevice;
-    T8DeviceContext = new t800::GLDeviceContext;
-#ifdef T850_HEADLESS
-    std::cout << "USING HEADLESS CONTEXT" << std::endl;
-    bool res;
-    int32_t fd = open ("/dev/dri/renderD128", O_RDWR);
-    assert (fd > 0);
- 
-   struct gbm_device *gbm = gbm_create_device (fd);
-   assert (gbm != NULL);
- 
-   /* setup EGL from the GBM device */
-   EGLDisplay egl_dpy = eglGetPlatformDisplay (EGL_PLATFORM_GBM_MESA, gbm, NULL);
-   assert (egl_dpy != NULL);
- 
-   res = eglInitialize (egl_dpy, NULL, NULL);
-   assert (res);
- 
-   const char *egl_extension_st = eglQueryString (egl_dpy, EGL_EXTENSIONS);
-   assert (strstr (egl_extension_st, "EGL_KHR_create_context") != NULL);
-   assert (strstr (egl_extension_st, "EGL_KHR_surfaceless_context") != NULL);
- 
-   static const EGLint config_attribs[] = {
-      EGL_RENDERABLE_TYPE, EGL_OPENGL_ES3_BIT_KHR,
-      EGL_NONE
-   };
-   EGLConfig cfg;
-   EGLint count;
- 
-   res = eglChooseConfig (egl_dpy, config_attribs, &cfg, 1, &count);
-   assert (res);
- 
-   res = eglBindAPI (EGL_OPENGL_ES_API);
-   assert (res);
- 
-   static const EGLint attribs[] = {
-      EGL_CONTEXT_CLIENT_VERSION, 3,
-      EGL_NONE
-   };
-   EGLContext core_ctx = eglCreateContext (egl_dpy,
-                                           cfg,
-                                           EGL_NO_CONTEXT,
-                                           attribs);
-   assert (core_ctx != EGL_NO_CONTEXT);
- 
-   res = eglMakeCurrent (egl_dpy, EGL_NO_SURFACE, EGL_NO_SURFACE, core_ctx);
-   assert (res);
+#if USER_LOG_DEBUG_DRIVER_FLOW
+	LogPrintDebug("InitDriver()");
+#endif
+	g_pBaseDriver = this;
+    T8Device = new t1000::GLDevice;
+    T8DeviceContext = new t1000::GLDeviceContext;
+	
+#ifdef USING_GL_ES
+	;
 
-#else
-#if (defined(USING_OPENGL_ES20) || defined(USING_OPENGL_ES30) || defined(USING_OPENGL_ES31)) && defined(USING_SDL)
-    EGLint numConfigs;
-    EGLNativeDisplayType nativeDisplay;
+	if (!EGLInit())
+		return;
 
-    if (!OpenNativeDisplay(&nativeDisplay)) {
-      std::cout << "can't open native display" << std::endl;
-    }
-
-    eglDisplay = eglGetDisplay(nativeDisplay);
-
-    EGLError("eglGetDisplay");
-
-    EGLint iMajorVersion, iMinorVersion;
-
-    if (!eglInitialize(eglDisplay, &iMajorVersion, &iMinorVersion)) {
-      std::cout << "Failed to initialize egl" << std::endl;
-    }
-    else {
-      std::cout << "EGL version " << iMajorVersion << "." << iMinorVersion << std::endl;
-    }
-
-    eglBindAPI(EGL_OPENGL_ES_API);
-
-    EGLError("eglBindAPI");
-
-    const EGLint attribs[] = {
-      EGL_SURFACE_TYPE,	EGL_WINDOW_BIT,
-      EGL_RENDERABLE_TYPE,	EGL_OPENGL_ES2_BIT,
-      EGL_BLUE_SIZE,		8,
-      EGL_GREEN_SIZE,		8,
-      EGL_RED_SIZE,		8,
-      EGL_DEPTH_SIZE,		24,
-      EGL_NONE
-    };
-
-    if (!eglChooseConfig(eglDisplay, attribs, &eglConfig, 1, &numConfigs)) {
-      std::cout << "Failed to choose config" << std::endl;
-    }
-
-    EGLError("eglChooseConfig");
-
-    eglSurface = eglCreateWindowSurface(eglDisplay, eglConfig, eglWindow, NULL);
-
-    EGLError("eglCreateWindowSurface");
-
-    EGLint ai32ContextAttribs[] = { EGL_CONTEXT_CLIENT_VERSION, 2, EGL_NONE };
-    eglContext = eglCreateContext(eglDisplay, eglConfig, NULL, ai32ContextAttribs);
-
-    EGLError("eglCreateContext");
-
-    if (eglMakeCurrent(eglDisplay, eglSurface, eglSurface, eglContext) == EGL_FALSE) {
-      std::cout << "Failed to make current" << std::endl;
-      return;
-    }
-
-    eglQuerySurface(eglDisplay, eglSurface, EGL_WIDTH, &width);
-    eglQuerySurface(eglDisplay, eglSurface, EGL_HEIGHT, &height);
 #elif defined(USING_OPENGL)
     GLenum err = glewInit();
     if (GLEW_OK != err) {
@@ -464,7 +402,8 @@ namespace t800 {
     width = sur->w;
     height = sur->h;
 #endif
-#endif//HEADLESS
+
+#if USER_LOG_DEBUG_DRIVER_FLOW
     std::string GL_Version = std::string((const char*)glGetString(GL_VERSION));
     std::string GL_Extensions = std::string((const char*)glGetString(GL_EXTENSIONS));
 
@@ -475,17 +414,16 @@ namespace t800 {
     ExtensionsTok = tokens;
     Extensions = GL_Extensions;
 
-    std::cout << "GL Version: " << GL_Version << "\n\nExtensions\n\n";
 
-    for (unsigned int i = 0; i < ExtensionsTok.size(); i++) {
-      printf("[%s]\n", ExtensionsTok[i].c_str());
-    }
-
-    const unsigned char *version = glGetString(GL_SHADING_LANGUAGE_VERSION);
-    printf("GLSL Ver: %s \n", version);
+	LogPrintDebug("WTFWTFWTFWTFWTFWTFWTFWTFWTFWTFWTFWTFWTFWTFWTF");
+	LogPrintDebug("GL Version [%s]", GL_Version.c_str());
+	for (unsigned int i = 0; i < ExtensionsTok.size(); i++) {
+		LogPrintDebug("[%s]\n", ExtensionsTok[i].c_str());
+	}
+#endif
 
     glEnable(GL_DEPTH_TEST);
-    glClearDepthf(1.0f);
+    glClearDepthf(1.0f);			
     glEnable(GL_CULL_FACE);
     glCullFace(GL_FRONT);
 
@@ -496,19 +434,182 @@ namespace t800 {
       GLDriver::DrawBuffers[i] = GL_COLOR_ATTACHMENT0 + i;
     }
 #endif
+
+	bInited = true;
   }
 
   void	GLDriver::CreateSurfaces() {
+#ifdef USING_GL_ES
+	  EGLCreateSurfaces();
+#endif
+  }
 
+  void	GLDriver::ResetDriver() {
+#ifdef USING_GL_ES
+	  EGLResetDriver();
+#endif
   }
 
   void	GLDriver::DestroySurfaces() {
-
+#ifdef USING_GL_ES
+	  EGLDestroySurfaces();
+#endif
   }
 
   void	GLDriver::Update() {
 
   }
+
+#ifdef USING_GL_ES
+  bool	GLDriver::EGLInit() {
+#if USER_LOG_DEBUG_DRIVER_FLOW
+	  LogPrintDebug("GLDriver::EGLInit()");
+#endif
+
+	  if (eglWindow == 0) {
+#if USER_LOG_DEBUG_DRIVER_FLOW
+		  LogPrintDebug("GLDriver::EGLInit() - No egl window yet");
+#endif
+		  return false;
+	  }
+
+	  if (bInited) {
+#if USER_LOG_DEBUG_DRIVER_FLOW
+		  LogPrintDebug("GLDriver::EGLInit() - Driver already intied, reseting it.");
+#endif
+		  EGLResetDriver();
+		  return false;
+	  }
+	  
+	  EGLint numConfigs;
+
+#ifdef OS_WIN32
+	  HDC	hDC = GetDC(eglWindow);
+	  eglDisplay = eglGetDisplay(hDC);
+#elif defined(OS_ANDROID)
+	  EGLint format;
+	  eglDisplay = eglGetDisplay(EGL_DEFAULT_DISPLAY);
+#endif
+
+#if USER_LOG_DEBUG_DRIVER_CALLS
+	  ReportEGLError("eglGetDisplay");
+#endif
+
+	  EGLint iMajorVersion, iMinorVersion;
+
+	  if (!eglInitialize(eglDisplay, &iMajorVersion, &iMinorVersion)) {
+#if USER_LOG_DEBUG_DRIVER_CALLS
+		  ReportEGLError("eglInitialize");
+#endif
+	  }
+
+	  eglBindAPI(EGL_OPENGL_ES_API);		// To check later
+
+#if USER_LOG_DEBUG_DRIVER_CALLS
+	  ReportEGLError("eglBindAPI");
+#endif
+
+	  const EGLint attribs[] = {
+		  EGL_SURFACE_TYPE,	EGL_WINDOW_BIT,
+#ifdef OS_WIN32
+		  EGL_RENDERABLE_TYPE,	EGL_OPENGL_ES2_BIT,
+#endif
+		  EGL_BLUE_SIZE,		8,
+		  EGL_GREEN_SIZE,		8,
+		  EGL_RED_SIZE,			8,
+		  EGL_DEPTH_SIZE,		24,
+		  EGL_NONE
+	  };
+
+	  eglChooseConfig(eglDisplay, attribs, &eglConfig, 1, &numConfigs);
+#if USER_LOG_DEBUG_DRIVER_CALLS
+	  ReportEGLError("eglChooseConfig");
+#endif
+
+#ifdef OS_ANDROID
+	  eglGetConfigAttrib(eglDisplay, eglConfig, EGL_NATIVE_VISUAL_ID, &format);
+	  ANativeWindow_setBuffersGeometry(eglWindow, 0, 0, format);
+#if USER_LOG_DEBUG_DRIVER_CALLS
+	  ReportEGLError("eglGetConfigAttrib");
+#endif
+#endif
+	  eglSurface = eglCreateWindowSurface(eglDisplay, eglConfig, eglWindow, NULL);
+#if USER_LOG_DEBUG_DRIVER_CALLS
+	  ReportEGLError("eglCreateWindowSurface");
+#endif
+
+	  EGLint ai32ContextAttribs[] = { EGL_CONTEXT_CLIENT_VERSION, 3, EGL_NONE };
+	  eglContext = eglCreateContext(eglDisplay, eglConfig, NULL, ai32ContextAttribs);
+
+#if USER_LOG_DEBUG_DRIVER_CALLS
+	  ReportEGLError("eglCreateContext");
+#endif
+
+	  if (eglMakeCurrent(eglDisplay, eglSurface, eglSurface, eglContext) == EGL_FALSE) {
+#if USER_LOG_DEBUG_DRIVER_CALLS
+		  LogPrintError("Failed to Make Current (eglMakeCurrent)");
+#endif
+		  return false;
+	  }
+
+	  eglQuerySurface(eglDisplay, eglSurface, EGL_WIDTH, &width);
+	  eglQuerySurface(eglDisplay, eglSurface, EGL_HEIGHT, &height);
+
+	  LogPrintDebug("Current Resolution %d x %d", width, height);
+
+	  return true;
+  }
+
+  void	GLDriver::EGLCreateSurfaces() {
+#if USER_LOG_DEBUG_DRIVER_FLOW
+	  LogPrintDebug("GLDriver::EGLCreateSurfaces()");
+#endif
+	  eglSurface = eglCreateWindowSurface(eglDisplay, eglConfig, eglWindow, NULL);
+#if USER_LOG_DEBUG_DRIVER_CALLS
+	  ReportEGLError("eglCreateWindowSurface");
+#endif
+  }
+
+  void	GLDriver::EGLResetDriver() {
+#if USER_LOG_DEBUG_DRIVER_FLOW
+	  LogPrintDebug("GLDriver::EGLResetDriver()");
+#endif
+
+#ifdef OS_ANDROID
+	  EGLint format;
+	  eglGetConfigAttrib(eglDisplay, eglConfig, EGL_NATIVE_VISUAL_ID, &format);
+	  ANativeWindow_setBuffersGeometry(eglWindow, 0, 0, format);
+#if USER_LOG_DEBUG_DRIVER_CALLS
+	  ReportEGLError("eglGetConfigAttrib");
+#endif
+#endif
+	  EGLCreateSurfaces();
+
+	  if (eglMakeCurrent(eglDisplay, eglSurface, eglSurface, eglContext) == EGL_FALSE) {
+#if USER_LOG_DEBUG_DRIVER_CALLS
+		  LogPrintError("Failed to Make Current (eglMakeCurrent)");
+#endif
+		  return;
+	  }
+
+	  eglQuerySurface(eglDisplay, eglSurface, EGL_WIDTH, &width);
+	  eglQuerySurface(eglDisplay, eglSurface, EGL_HEIGHT, &height);
+
+	  LogPrintDebug("Current Resolution %d x %d", width, height);
+
+#if USER_LOG_DEBUG_DRIVER_FLOW
+	  LogPrintDebug("Driver successfuly restarted.");
+#endif
+  }
+
+  void	GLDriver::EGLDestroySurfaces() {
+#if USER_LOG_DEBUG_DRIVER_FLOW
+	  LogPrintDebug("GLDriver::DestroySurfaces");
+#endif
+	  eglDestroySurface(eglDisplay, eglSurface);
+	  eglMakeCurrent(eglDisplay, 0, 0, eglContext);
+  }
+#endif
 
   void	GLDriver::DestroyDriver() {
     DestroyShaders();
@@ -524,8 +625,15 @@ namespace t800 {
   }
 
   void	GLDriver::SetWindow(void *window) {
-#if (defined(USING_OPENGL_ES20) || defined(USING_OPENGL_ES30) || defined(USING_OPENGL_ES31)) && defined(OS_WINDOWS)
-    eglWindow = GetActiveWindow();
+#if USER_LOG_DEBUG_DRIVER_FLOW
+	  LogPrintDebug("GLDriver::SetWindow");
+#endif
+#if (defined(USING_OPENGL_ES20) || defined(USING_OPENGL_ES30) || defined(USING_OPENGL_ES31)) 
+	#if defined(OS_WINDOWS)
+	  eglWindow = GetActiveWindow();
+	#elif defined(OS_ANDROID)
+	  eglWindow = (ANativeWindow*)window;
+	#endif
 #endif
   }
 
@@ -538,21 +646,21 @@ namespace t800 {
   {
     switch (state)
     {
-    case t800::BaseDriver::BLEND_DEFAULT:
+    case t1000::BaseDriver::BLEND_DEFAULT:
       glDisable(GL_BLEND);
       break;
-    case t800::BaseDriver::BLEND_OPAQUE:
+    case t1000::BaseDriver::BLEND_OPAQUE:
       glDisable(GL_BLEND);
       break;
-    case t800::BaseDriver::ADDITIVE:
+    case t1000::BaseDriver::ADDITIVE:
       glEnable(GL_BLEND);
       glBlendFunc(GL_SRC_ALPHA, GL_ONE);
       break;
-    case t800::BaseDriver::ALPHA_BLEND:
+    case t1000::BaseDriver::ALPHA_BLEND:
       glEnable(GL_BLEND);
       glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
       break;
-    case t800::BaseDriver::NON_PREMULTIPLIED:
+    case t1000::BaseDriver::NON_PREMULTIPLIED:
       glEnable(GL_BLEND);
       break;
     default:
@@ -564,19 +672,19 @@ namespace t800 {
   {
     switch (state)
     {
-    case t800::BaseDriver::DEPTH_DEFAULT:
+    case t1000::BaseDriver::DEPTH_DEFAULT:
       glDepthMask(GL_TRUE);
       glEnable(GL_DEPTH_TEST);
       break;
-    case t800::BaseDriver::READ_WRITE:
+    case t1000::BaseDriver::READ_WRITE:
       glDepthMask(GL_TRUE);
       glEnable(GL_DEPTH_TEST);
       break;
-    case t800::BaseDriver::NONE:
+    case t1000::BaseDriver::NONE:
       glDepthMask(GL_FALSE);
       glDisable(GL_DEPTH_TEST);
       break;
-    case t800::BaseDriver::READ:
+    case t1000::BaseDriver::READ:
      // glDepthMask(GL_FALSE);
       glDisable(GL_DEPTH_TEST);
       break;
@@ -602,7 +710,7 @@ namespace t800 {
     out.write(h.c_str(),h.size());
     h = std::string("# Test Image\n");
     out.write(h.c_str(), h.size());
-    h = std::string(std::to_string(viewport[2]) + std::string(" ")+ std::to_string( viewport[3]) + std::string("\n"));
+    h = std::string(patch::to_string(viewport[2]) + std::string(" ")+ patch::to_string( viewport[3]) + std::string("\n"));
     out.write(h.c_str(), h.size());
     h = std::string("255\n");
     out.write(h.c_str(), h.size());
@@ -631,15 +739,15 @@ namespace t800 {
   void GLDriver::SetCullFace(FACE_CULLING state) {
 	  m_FaceCulling = state;
 	  switch (m_FaceCulling) {
-		  case t800::BaseDriver::FRONT_FACES:
+		  case t1000::BaseDriver::FRONT_FACES:
 			  glEnable(GL_CULL_FACE);
 			  glCullFace(GL_FRONT);
 			  break;
-		  case t800::BaseDriver::BACK_FACES:
+		  case t1000::BaseDriver::BACK_FACES:
 			  glEnable(GL_CULL_FACE);
 			  glCullFace(GL_BACK);
 			  break;
-		  case t800::BaseDriver::FRONT_AND_BACK:
+		  case t1000::BaseDriver::FRONT_AND_BACK:
 			  glDisable(GL_CULL_FACE);
 			  glCullFace(GL_FRONT_AND_BACK);
 			  break;
@@ -647,14 +755,14 @@ namespace t800 {
   }
 
   void	GLDriver::Clear() {
-    glClearColor(1.0, 1.0, 1.0, 0.0);
+    glClearColor(1.0, 1.0, 1.0, 1.0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
   }
 
   void	GLDriver::SwapBuffers() {
-#ifdef OS_WINDOWS
-#if defined(USING_OPENGL_ES20) || defined(USING_OPENGL_ES30)
+#if defined(OS_WINDOWS) || defined(OS_ANDROID)
+#ifdef USING_GL_ES
     eglSwapBuffers(eglDisplay, eglSurface);
 #elif defined(USING_OPENGL)
     SDL_GL_SwapBuffers();

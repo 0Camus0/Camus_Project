@@ -1,3 +1,4 @@
+#include <Config.h>
 
 #ifdef OS_WIN32
 #include<config.h>
@@ -117,7 +118,7 @@ void Win32Framework::UpdateApplication() {
 
 	pVideoDriver->Update();
 
-	pBaseApp->OnUpdate(0);
+	pBaseApp->OnUpdate();
 
 	pBaseApp->OnDraw();
 }

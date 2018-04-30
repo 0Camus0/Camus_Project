@@ -1,5 +1,5 @@
-#ifndef T800_CIL_H
-#define T800_CIL_H
+#ifndef T1000_CIL_H
+#define T1000_CIL_H
 
 
 #include <string>
@@ -197,14 +197,19 @@ struct DDS_HEADER {
 };
 
 void checkformat(ifstream &in_, unsigned int &prop);
+void checkformat_from_memory(const char* buffer, int bufferSize, unsigned int &prop);
 void pvr_set_pix_format(uint32_t& pix_format, unsigned int &prop);
 void pvr_set_channel_type(uint32_t& c_type, unsigned int &prop);
 unsigned char*	load_pvr(ifstream &in_, int &x, int &y, unsigned int &mipmaps, unsigned int &prop, unsigned int &buffersize);
+unsigned char*	load_pvr_from_memory(const char* buffer, int bufferSize, int &x, int &y, unsigned int &mipmaps, unsigned int &prop, unsigned int &buffersize);
 void ktx_set_pix_format(unsigned int &format, unsigned int &prop);
 unsigned char*	load_ktx(ifstream &in_, int &x, int &y, unsigned int &mipmaps, unsigned int &prop, unsigned int &buffersize);
+unsigned char*	load_ktx_from_memory(const char* buffer, int bufferSize, int &x, int &y, unsigned int &mipmaps, unsigned int &prop, unsigned int &buffersize);
 void dds_set_pix_format(unsigned int &format, unsigned int &bppinfo, unsigned int &prop);
 unsigned char*	load_dds(ifstream &in_, int &x, int &y, unsigned int &mipmaps, unsigned int &prop, unsigned int &buffersize);
+unsigned char*	load_dds_from_memory(const char* buffer, int bufferSize, int &x, int &y, unsigned int &mipmaps, unsigned int &prop, unsigned int &buffersize);
 void cil_free_buffer(unsigned char *pbuff,unsigned int prop=0);
 unsigned char*	cil_load(const char* filename, int *x, int *y, unsigned int *mipmaps, unsigned int *props, unsigned int *buffersize, unsigned int ForceResizeFactor = 0);
+unsigned char*	cil_load_from_memory(const char* buffer, int bufferSize, int *x, int *y, unsigned int *mipmaps, unsigned int *props, unsigned int *buffersize, unsigned int ForceResizeFactor = 0);
 
 #endif

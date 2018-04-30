@@ -1,5 +1,8 @@
 #include <Video/BaseDriver.h>
 #include <Utils/cil.h>
+#include <Utils/Checker.h>
+#include <Utils/FileSystem.h>
+#include <Utils/Log.h>
 
 #include <iostream>
 #include <string>
@@ -11,15 +14,24 @@ namespace t1000 {
   Device*           T8Device;	// Device for create resources
   DeviceContext*    T8DeviceContext; // Context to set and manipulate the resources
 
-#include <utils/Checker.h>
+
 
   bool		Texture::LoadTexture(const char *fn) {
     bool found = false;
+	
+	std::string OS_Path = t1000::fs::Filesystem::instance()->GetResourcesPath();
+
     std::string path = "Textures/";
-    filepath = path + std::string(fn);
+    filepath = OS_Path + path + std::string(fn);
+	/*
     std::ifstream inf(filepath.c_str());
     found = inf.good();
     inf.close();
+	*/
+	int Size = 0;
+	char *pData = (char*)t1000::fs::Filesystem::instance()->GetFile(filepath,&Size);
+	
+	found = (pData) ? true : false;
 
     int x = 0, y = 0;
     unsigned char *buffer = 0;
@@ -29,13 +41,16 @@ namespace t1000 {
       x = g_chkr.width;
       y = g_chkr.height;
       m_channels = g_chkr.bytes_per_pixel;
-      std::cout << "Texture [" << filepath << "] not found, loading checker" << std::endl;
+	  LogPrintDebug("Texture[%s] not found, loading checker", filepath.c_str());      
     }
     else {
       //buffer = stbi_load(filepath.c_str(), &x, &y, &channels, 0);
       cil_props = 0;
-      buffer = cil_load((filepath.c_str()), &x, &y, &mipmaps, &cil_props, &size);
+     // buffer = cil_load((filepath.c_str()), &x, &y, &mipmaps, &cil_props, &size);
+	  buffer = cil_load_from_memory(pData, Size, &x, &y, &mipmaps, &cil_props, &size);
     }
+
+	t1000::fs::Filesystem::instance()->ReleaseFile(pData);
 
     if (!buffer)
       return false;
@@ -47,11 +62,11 @@ namespace t1000 {
     props = 0;
 
     if (cil_props&CIL_RGBA) {
-      props |= TEXT_BASIC_FORMAT::CH_RGBA;
+      props |= t1000::T_TEXT_BASIC_FORMAT::CH_RGBA;
       m_channels = 4;
     }
     else {
-      props |= TEXT_BASIC_FORMAT::CH_RGB;
+      props |= t1000::T_TEXT_BASIC_FORMAT::CH_RGB;
       m_channels = 3;
     }
 
@@ -81,13 +96,13 @@ namespace t1000 {
     props = 0;
 
     if (channels == 4) {
-      props |= TEXT_BASIC_FORMAT::CH_RGBA;
+      props |= T_TEXT_BASIC_FORMAT::CH_RGBA;
     }
     else if (channels == 3){
-      props |= TEXT_BASIC_FORMAT::CH_RGB;
+      props |= T_TEXT_BASIC_FORMAT::CH_RGB;
     }
     else if (channels == 1) {
-      props |= TEXT_BASIC_FORMAT::CH_ALPHA;
+      props |= T_TEXT_BASIC_FORMAT::CH_ALPHA;
     }
 
     LoadAPITexture(T8DeviceContext, const_cast<unsigned char*>(buff));
@@ -106,13 +121,13 @@ namespace t1000 {
     props = 0;
 
     if (m_channels == 4) {
-      props |= TEXT_BASIC_FORMAT::CH_RGBA;
+      props |= T_TEXT_BASIC_FORMAT::CH_RGBA;
     }
     else if (m_channels == 3) {
-      props |= TEXT_BASIC_FORMAT::CH_RGB;
+      props |= T_TEXT_BASIC_FORMAT::CH_RGB;
     }
     else if (m_channels == 1) {
-      props |= TEXT_BASIC_FORMAT::CH_ALPHA;
+      props |= T_TEXT_BASIC_FORMAT::CH_ALPHA;
     }
     LoadAPITexture(T8DeviceContext, const_cast<unsigned char*>(buff));
     return true;
@@ -139,7 +154,7 @@ namespace t1000 {
   }
 
   bool ShaderBase::CreateShader(std::string src_vs, std::string src_fs, unsigned long long sig) {
-    if (sig != T8_NO_SIGNATURE) {
+    if (sig != (unsigned long long)T_NO_SIGNATURE) {
       std::string Defines = "";
 
       bool LinearDepth = true;
@@ -149,7 +164,7 @@ namespace t1000 {
 #endif
 
 #if defined(USING_OPENGL_ES30) || defined(USING_OPENGL_ES31)
-      if (g_pBaseDriver->m_currentAPI == GRAPHICS_API::OPENGL) {
+      if (g_pBaseDriver->m_currentAPI == T_GRAPHICS_API::_OPENGL) {
         Defines += "#version 300 es\n\n";
         Defines += "#define ES_30\n\n";
       }
@@ -170,83 +185,83 @@ namespace t1000 {
       Defines += "#define SIMPLE_COLOR\n\n";
 #endif
 
-      if (sig&Signature::HAS_NORMALS)
+      if (sig&T_Signature::HAS_NORMALS)
         Defines += "#define USE_NORMALS\n\n";
-      if (sig&Signature::HAS_TEXCOORDS0)
+      if (sig&T_Signature::HAS_TEXCOORDS0)
         Defines += "#define USE_TEXCOORD0\n\n";
-      if (sig&Signature::HAS_TEXCOORDS1)
+      if (sig&T_Signature::HAS_TEXCOORDS1)
         Defines += "#define USE_TEXCOORD1\n\n";
-      if (sig&Signature::HAS_TANGENTS)
+      if (sig&T_Signature::HAS_TANGENTS)
         Defines += "#define USE_TANGENTS\n\n";
-      if (sig&Signature::HAS_BINORMALS)
+      if (sig&T_Signature::HAS_BINORMALS)
         Defines += "#define USE_BINORMALS\n\n";
-      if (sig&Signature::DIFFUSE_MAP)
+      if (sig&T_Signature::DIFFUSE_MAP)
         Defines += "#define DIFFUSE_MAP\n\n";
-      if (sig&Signature::SPECULAR_MAP)
+      if (sig&T_Signature::SPECULAR_MAP)
         Defines += "#define SPECULAR_MAP\n\n";
-      if (sig&Signature::GLOSS_MAP)
+      if (sig&T_Signature::GLOSS_MAP)
         Defines += "#define GLOSS_MAP\n\n";
-      if (sig&Signature::NORMAL_MAP)
+      if (sig&T_Signature::NORMAL_MAP)
         Defines += "#define NORMAL_MAP\n\n";
-      if (sig&Signature::REFLECT_MAP)
+      if (sig&T_Signature::REFLECT_MAP)
         Defines += "#define REFLECT_MAP\n\n";
-      if (sig&Signature::HEIGHT_MAP)
+      if (sig&T_Signature::HEIGHT_MAP)
         Defines += "#define HEIGHT_MAP\n\n";
-      if (sig&Signature::USE_NO_LIGHT)
+      if (sig&T_Signature::USE_NO_LIGHT)
         Defines += "#define NO_LIGHT\n\n";
-      if (sig&Signature::GBUFF_PASS)
+      if (sig&T_Signature::GBUFF_PASS)
         Defines += "#define G_BUFFER_PASS\n\n";
-      if (sig&Signature::FSQUAD_1_TEX)
+      if (sig&T_Signature::FSQUAD_1_TEX)
         Defines += "#define FSQUAD_1_TEX\n\n";
-      if (sig&Signature::FSQUAD_2_TEX)
+      if (sig&T_Signature::FSQUAD_2_TEX)
         Defines += "#define FSQUAD_2_TEX\n\n";
-      if (sig&Signature::FSQUAD_3_TEX)
+      if (sig&T_Signature::FSQUAD_3_TEX)
         Defines += "#define FSQUAD_3_TEX\n\n";
-      if (sig&Signature::SHADOW_MAP_PASS)
+      if (sig&T_Signature::SHADOW_MAP_PASS)
         Defines += "#define SHADOW_MAP_PASS\n\n";
       if (!LinearDepth)
         Defines += "#define NON_LINEAR_DEPTH\n\n";
-      if (sig&Signature::SHADOW_COMP_PASS)
+      if (sig&T_Signature::SHADOW_COMP_PASS)
         Defines += "#define SHADOW_COMP_PASS\n\n";
-      if (sig&Signature::DEFERRED_PASS)
+      if (sig&T_Signature::DEFERRED_PASS)
         Defines += "#define DEFERRED_PASS\n\n";
-      if (sig&Signature::VERTICAL_BLUR_PASS)
+      if (sig&T_Signature::VERTICAL_BLUR_PASS)
         Defines += "#define VERTICAL_BLUR_PASS\n\n";
-      if (sig&Signature::HORIZONTAL_BLUR_PASS)
+      if (sig&T_Signature::HORIZONTAL_BLUR_PASS)
         Defines += "#define HORIZONTAL_BLUR_PASS\n\n";
-      if (sig&Signature::ONE_PASS_BLUR)
+      if (sig&T_Signature::ONE_PASS_BLUR)
         Defines += "#define ONE_PASS_BLUR\n\n";
-      if (sig&Signature::BRIGHT_PASS)
+      if (sig&T_Signature::BRIGHT_PASS)
         Defines += "#define BRIGHT_PASS\n\n";
-      if (sig&Signature::HDR_COMP_PASS)
+      if (sig&T_Signature::HDR_COMP_PASS)
         Defines += "#define HDR_COMP_PASS\n\n";
-      if (sig&Signature::COC_PASS)
+      if (sig&T_Signature::COC_PASS)
         Defines += "#define COC_PASS\n\n";
-      if (sig&Signature::COMBINE_COC_PASS)
+      if (sig&T_Signature::COMBINE_COC_PASS)
         Defines += "#define COMBINE_COC_PASS\n\n";
-      if (sig&Signature::DOF_PASS)
+      if (sig&T_Signature::DOF_PASS)
         Defines += "#define DOF_PASS\n\n";
-      if (sig&Signature::DOF_PASS_2)
+      if (sig&T_Signature::DOF_PASS_2)
         Defines += "#define DOF_PASS_2\n\n";
-      if (sig&Signature::VIGNETTE_PASS)
+      if (sig&T_Signature::VIGNETTE_PASS)
         Defines += "#define VIGNETTE_PASS\n\n";
-      if (sig&Signature::GOD_RAY_CALCULATION_PASS)
+      if (sig&T_Signature::GOD_RAY_CALCULATION_PASS)
         Defines += "#define GOD_RAY_CALCULATION_PASS\n\n";
-      if (sig&Signature::GOD_RAY_BLEND_PASS)
+      if (sig&T_Signature::GOD_RAY_BLEND_PASS)
         Defines += "#define GOD_RAY_BLEND_PASS\n\n";
-      if (sig&Signature::SSAO_PASS)
+      if (sig&T_Signature::SSAO_PASS)
         Defines += "#define SSAO_PASS\n\n";
-      if (sig&Signature::RAY_MARCH)
+      if (sig&T_Signature::RAY_MARCH)
         Defines += "#define RAY_MARCH\n\n";
-      if (sig&Signature::RADIAL_DEPTH_PASS)
+      if (sig&T_Signature::RADIAL_DEPTH_PASS)
         Defines += "#define RADIAL_DEPTH_PASS\n\n";
-      if (sig&Signature::LIGHT_RAY_MARCHING)
+      if (sig&T_Signature::LIGHT_RAY_MARCHING)
         Defines += "#define LIGHT_RAY_MARCHING\n\n";
-      if (sig&Signature::LIGHT_ADD)
+      if (sig&T_Signature::LIGHT_ADD)
         Defines += "#define LIGHT_ADD\n\n";
-      if (sig&Signature::FADE_PASS)
+      if (sig&T_Signature::FADE_PASS)
         Defines += "#define FADE\n\n";
-      if (sig&Signature::USE_OMNIDIRECTIONAL_SHADOWS)
+      if (sig&T_Signature::USE_OMNIDIRECTIONAL_SHADOWS)
         Defines += "#define OMNIDIRECTIONAL_SH\n\n";
       
       
@@ -427,7 +442,7 @@ namespace t1000 {
   }
   int BaseDriver::CreateShader(std::string src_vs, std::string src_fs, unsigned long long sig)
   {
-    if (sig != T8_NO_SIGNATURE) {
+    if (sig != (unsigned long long)T_NO_SIGNATURE) {
       for (unsigned int i = 0; i < m_signatureShaders.size(); i++) {
         if (m_signatureShaders[i]->Sig == sig) {
           return i;

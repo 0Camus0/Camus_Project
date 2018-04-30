@@ -1,11 +1,14 @@
+#include <Config.h>
 
 #ifdef OS_ANDROID
 
-#include <WindowManager\AndroidFramework.h>
-#include <Utils\WindowProperties.h>
-#include <Utils\Log.h>
-#include <Driver\OpenGLDriver.h>
-#include <Utils\FileSystem.h>
+
+#include <WindowManager/AndroidFramework.h>
+#include <Utils/WindowProperties.h>
+#include <Utils/Log.h>
+#include <video/BaseDriver.h>
+#include <video/gl/GLDriver.h>
+#include <Utils/FileSystem.h>
 
 #include <unistd.h>
 
@@ -172,16 +175,30 @@ void AndroidFramework::ResetApplication(){
 	AConfiguration_fromAssetManager(m_pConfig, g_pActivity->assetManager);
 
 	PrintCurrentConfig();
+
+	this->m_internalDataPath = std::string(g_pActivity->internalDataPath);
+	this->m_externalDataPath = std::string(g_pActivity->externalDataPath);
+
+	JNIEnv* env = g_pActivity->env;
+	jclass clazz = env->GetObjectClass(g_pActivity->clazz);
+	jmethodID methodID = env->GetMethodID(clazz, "getPackageCodePath", "()Ljava/lang/String;");
+	jobject result = env->CallObjectMethod(g_pActivity->clazz, methodID);
+
+	jboolean isCopy;
+	std::string res = env->GetStringUTFChars((jstring)result, &isCopy);
+	LogPrintDebug("Looked up package code path: %s", res.c_str());
+	this->m_apkPath = res;
 }
 // Called from App Thread
 void AndroidFramework::InitGlobalVars() {
 	LogPrintDebug("InitGlobalVars()");
 }
 // Called from App Thread
-void AndroidFramework::OnCreateApplication() {
+void AndroidFramework::OnCreateApplication(t1000::ApplicationDesc desc) {
 	LogPrintDebug("OnCreateApplication() ");
 
-	t1000::fs::Filesystem::instance()->InitFS();
+	t1000::fs::Filesystem::instance()->InitFS(m_internalDataPath,m_externalDataPath,m_apkPath);
+
 
 	m_cmdPoll.id  = LOOPER_ID_MAIN;
 	m_cmdPoll.app = this;
@@ -191,7 +208,6 @@ void AndroidFramework::OnCreateApplication() {
 	m_inputPoll.app = this;
 	m_inputPoll.process = _ProcessInput;
 
-
 	m_Looper = ALooper_prepare(ALOOPER_PREPARE_ALLOW_NON_CALLBACKS);
 	
 	ALooper_addFd(m_Looper, g_Mgread, LOOPER_ID_MAIN, ALOOPER_EVENT_INPUT, 0 ,&m_cmdPoll);
@@ -199,10 +215,17 @@ void AndroidFramework::OnCreateApplication() {
 	pEventManager = new t1000::input::EventManager();
 	pEventManager->InitTouchScreen(AConfiguration_getTouchscreen(m_pConfig));
 
-	pVideoDriver = new t1000::video::OpenGLDriver();
+
+	pVideoDriver = new t1000::GLDriver();
+
+
+
 	pVideoDriver->InitDriver();
 
-	
+
+}
+
+void AndroidFramework::ChangeAPI(t1000::T_GRAPHICS_API::E api) {
 
 }
 
@@ -230,8 +253,16 @@ void AndroidFramework::CheckState(){
 					pBaseApp->OnResume();
 				}
 				else {
+					pBaseApp->InitVars();
 					pBaseApp->CreateAssets();
 				}
+			}break;
+			case APP_CMD_CONFIG_CHANGED:{
+			/*	pVideoDriver->DestroySurfaces();
+				pVideoDriver->SetWindow((void*)m_pWindow);
+				pVideoDriver->InitDriver();
+				pBaseApp->OnReset();
+				pBaseApp->OnResume();*/
 			}break;
 			case APP_CMD_TERM_WINDOW: {
 				pVideoDriver->DestroySurfaces();
@@ -277,9 +308,9 @@ void AndroidFramework::UpdateApplication() {
 
 	pEventManager->queue.clear();
 
-	if (!pBaseApp->bPaused) {
+	if (!pBaseApp->bPaused && pBaseApp->bInited) {
 		pVideoDriver->Update();
-		pBaseApp->OnUpdate(0);
+		pBaseApp->OnUpdate();
 		pBaseApp->OnDraw();
 	}
 
@@ -290,7 +321,6 @@ void AndroidFramework::UpdateApplication() {
 void AndroidFramework::ProcessInput() {
 	LogPrintDebug("ProcessInput");
 	AInputEvent* event = NULL;
-	int processed = 0;
 	while (AInputQueue_getEvent(m_pInputQueue, &event) >= 0) {
 		LogPrintDebug("New Event[%d]\n", AInputEvent_getType(event));
 
@@ -402,6 +432,9 @@ void AndroidFramework::PrintCurrentConfig() {
 		AConfiguration_getScreenLong(m_pConfig),
 		AConfiguration_getUiModeType(m_pConfig),
 		AConfiguration_getUiModeNight(m_pConfig));
+
+	LogPrintDebug("Internal Path[%s]\n", g_pActivity->internalDataPath);
+	LogPrintDebug("External Path[%s]\n", g_pActivity->externalDataPath);
 }
 
 // Called from Activity Thread
@@ -502,6 +535,12 @@ void AndroidFramework::onConfigurationChanged(ANativeActivity* activity){
 	AndroidFramework *_app = (AndroidFramework*)(pFramework);
 	if(_app)
 		_app->m_ActivityStateQueue.push_back(APP_CMD_CONFIG_CHANGED);
+
+	int Width = ANativeWindow_getWidth(_app->m_pWindow);
+	int Height = ANativeWindow_getHeight(_app->m_pWindow);
+
+	LogPrintDebug("onConfigurationChanged to [%d]x[%d]", Width, Height);
+
 	pthread_mutex_unlock(&g_mutex);
 #endif
 }

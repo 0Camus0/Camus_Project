@@ -10,17 +10,17 @@
 * ** Enjoy, learn and share.
 *********************************************************/
 
-#include <video/GLRT.h>
-#include <video/GLTexture.h>
-#include <video/GLDriver.h>
+#include <video/gl/GLRT.h>
+#include <video/gl/GLTexture.h>
+#include <video/gl/GLDriver.h>
 #include <utils/Utils.h>
 
 #if defined(OS_LINUX)
 #include <sys/time.h>
 #endif
-namespace t800 {
+namespace t1000 {
   bool GLRT::LoadAPIRT() {
-    GLint cfmt, dfmt, cinternal;
+    GLint cfmt, cinternal;
     GLint bysize = 0;
 
     switch (this->color_format) {
@@ -78,9 +78,7 @@ namespace t800 {
     }break;
     }
 
-    dfmt = GL_DEPTH_COMPONENT;
-
-
+ 
     GLuint fbo;
 #if defined(OS_LINUX)
     timeval start;
@@ -240,7 +238,7 @@ namespace t800 {
   void GLRT::DestroyAPIRT() {
     GLuint FBO = vFrameBuffers[0];
     glDeleteFramebuffers(1, &FBO);
-    for (int i = 0; i < vColorTextures.size(); i++) {
+    for (std::size_t i = 0; i < vColorTextures.size(); i++) {
       vColorTextures[i]->release();
     }
     pDepthTexture->release();

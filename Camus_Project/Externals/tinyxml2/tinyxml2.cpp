@@ -2292,8 +2292,8 @@ void XMLDocument::Print( XMLPrinter* streamer ) const
         Accept( streamer );
     }
     else {
-        XMLPrinter stdoutStreamer( stdout );
-        Accept( &stdoutStreamer );
+      //  XMLPrinter stdoutStreamer( stdout );
+      //  Accept( &stdoutStreamer );
     }
 }
 

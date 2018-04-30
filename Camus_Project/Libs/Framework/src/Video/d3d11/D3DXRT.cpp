@@ -1,19 +1,11 @@
-/*********************************************************
-* Copyright (C) 2017 Daniel Enriquez (camus_mm@hotmail.com)
-* All Rights Reserved
-*
-* You may use, distribute and modify this code under the
-* following terms:
-* ** Do not claim that you wrote this software
-* ** A mention would be appreciated but not needed
-* ** I do not and will not provide support, this software is "as is"
-* ** Enjoy, learn and share.
-*********************************************************/
+#include <Config.h>
+#ifndef OS_ANDROID
 
-#include <video/windows/D3DXRT.h>
+
+#include <video/d3d11/D3DXRT.h>
 #include <iostream>
 
-namespace t800 {
+namespace t1000 {
   extern Device*            T8Device;
   extern DeviceContext*     T8DeviceContext;
 
@@ -213,3 +205,5 @@ namespace t800 {
   {
   }
 }
+
+#endif

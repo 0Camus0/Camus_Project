@@ -1,25 +1,17 @@
-/*********************************************************
-* Copyright (C) 2017 Daniel Enriquez (camus_mm@hotmail.com)
-* All Rights Reserved
-*
-* You may use, distribute and modify this code under the
-* following terms:
-* ** Do not claim that you wrote this software
-* ** A mention would be appreciated but not needed
-* ** I do not and will not provide support, this software is "as is"
-* ** Enjoy, learn and share.
-*********************************************************/
+#include <Config.h>
+#ifndef OS_ANDROID
 
-#include <video/windows/D3DXDriver.h>
-#include <video/windows/D3DXRT.h>
-#include <video/windows/D3DXShader.h>
+
+#include <video/d3d11/D3DXDriver.h>
+#include <video/d3d11/D3DXRT.h>
+#include <video/d3d11/D3DXShader.h>
 
 #include <iostream>
 #include <string>
 
 
 
-namespace t800 {
+namespace t1000 {
   // D3D11 Main Objects
   ComPtr<IDXGISwapChain>			DXGISwapchain;	// Responsible of the swap buffers
   ComPtr<ID3D11RenderTargetView>  D3D11RenderTargetView;  // View into the back buffer
@@ -45,19 +37,19 @@ namespace t800 {
     D3D11_PRIMITIVE_TOPOLOGY apitopology;
     switch (topology)
     {
-    case T8_TOPOLOGY::POINT_LIST:
+    case T_TOPOLOGY::POINT_LIST:
       apitopology = D3D11_PRIMITIVE_TOPOLOGY_POINTLIST;
       break;
-    case T8_TOPOLOGY::LINE_LIST:
+    case T_TOPOLOGY::LINE_LIST:
       apitopology = D3D11_PRIMITIVE_TOPOLOGY_LINELIST;
       break;
-    case T8_TOPOLOGY::LINE_STRIP:
+    case T_TOPOLOGY::LINE_STRIP:
       apitopology = D3D11_PRIMITIVE_TOPOLOGY_LINESTRIP;
       break;
-    case T8_TOPOLOGY::TRIANLE_LIST:
+    case T_TOPOLOGY::TRIANLE_LIST:
       apitopology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
       break;
-    case T8_TOPOLOGY::TRIANGLE_STRIP:
+    case T_TOPOLOGY::TRIANGLE_STRIP:
       apitopology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP;
       break;
     default:
@@ -84,18 +76,18 @@ namespace t800 {
     APIDevice->Release();
   }
 
-  Buffer * D3DXDevice::CreateBuffer(T8_BUFFER_TYPE::E bufferType, BufferDesc desc, void* initialData)
+  Buffer * D3DXDevice::CreateBuffer(T_BUFFER_TYPE::E bufferType, BufferDesc desc, void* initialData)
   {
     Buffer* retBuff;
     switch (bufferType)
     {
-    case T8_BUFFER_TYPE::VERTEX:
+    case T_BUFFER_TYPE::VERTEX:
       retBuff = new D3DXVertexBuffer;
       break;
-    case T8_BUFFER_TYPE::INDEX:
+    case T_BUFFER_TYPE::INDEX:
       retBuff = new D3DXIndexBuffer;
       break;
-    case T8_BUFFER_TYPE::CONSTANT:
+    case T_BUFFER_TYPE::CONSTANT:
       retBuff = new D3DXConstantBuffer;
       break;
     default:
@@ -165,13 +157,13 @@ namespace t800 {
     D3D11_USAGE usage;
     switch (desc.usage)
     {
-    case T8_BUFFER_USAGE::DEFAULT:
+    case T_BUFFER_USAGE::DEFAULT:
       usage = D3D11_USAGE_DEFAULT;
       break;
-    case T8_BUFFER_USAGE::DINAMIC:
+    case T_BUFFER_USAGE::DINAMIC:
       usage = D3D11_USAGE_DYNAMIC;
       break;
-    case T8_BUFFER_USAGE::STATIC:
+    case T_BUFFER_USAGE::STATIC:
       usage = D3D11_USAGE_IMMUTABLE;
       break;
     default:
@@ -226,11 +218,11 @@ namespace t800 {
     return (void**)&APIBuffer;
   }
 
-  void D3DXIndexBuffer::Set(const DeviceContext & deviceContext, const unsigned offset, T8_IB_FORMAR::E format)
+  void D3DXIndexBuffer::Set(const DeviceContext & deviceContext, const unsigned offset, T_IB_FORMAT::E format)
   {
     const_cast<DeviceContext*>(&deviceContext)->actualIndexBuffer = (IndexBuffer*)this;
     DXGI_FORMAT apiformat;
-    if (format == T8_IB_FORMAR::R16)
+    if (format == T_IB_FORMAT::R16)
       apiformat = DXGI_FORMAT::DXGI_FORMAT_R16_UINT;
     else
       apiformat = DXGI_FORMAT::DXGI_FORMAT_R32_UINT;
@@ -242,13 +234,13 @@ namespace t800 {
     D3D11_USAGE usage;
     switch (desc.usage)
     {
-    case T8_BUFFER_USAGE::DEFAULT:
+    case T_BUFFER_USAGE::DEFAULT:
       usage = D3D11_USAGE_DEFAULT;
       break;
-    case T8_BUFFER_USAGE::DINAMIC:
+    case T_BUFFER_USAGE::DINAMIC:
       usage = D3D11_USAGE_DYNAMIC;
       break;
-    case T8_BUFFER_USAGE::STATIC:
+    case T_BUFFER_USAGE::STATIC:
       usage = D3D11_USAGE_IMMUTABLE;
       break;
     default:
@@ -362,6 +354,9 @@ namespace t800 {
 
 
   void D3DXDriver::InitDriver() {
+
+	 g_pBaseDriver = this;
+
     T8Device = new t800::D3DXDevice;
     T8DeviceContext = new t800::D3DXDeviceContext;
 
@@ -560,18 +555,18 @@ namespace t800 {
     ID3D11DeviceContext* deviceContext = reinterpret_cast<ID3D11DeviceContext*>(T8DeviceContext->GetAPIObject());
     switch (state)
     {
-    case t800::BaseDriver::BLEND_DEFAULT:
+    case t1000::BaseDriver::BLEND_DEFAULT:
       deviceContext->OMSetBlendState(m_BlendStateOpaque, 0, 0xffffffff);
       break;
-    case t800::BaseDriver::BLEND_STATES::BLEND_OPAQUE:
+    case t1000::BaseDriver::BLEND_STATES::BLEND_OPAQUE:
       break;
-    case t800::BaseDriver::ADDITIVE:
+    case t1000::BaseDriver::ADDITIVE:
       deviceContext->OMSetBlendState(m_BlendStateAdditive, 0, 0xffffffff);
       break;
-    case t800::BaseDriver::ALPHA_BLEND:
+    case t1000::BaseDriver::ALPHA_BLEND:
       deviceContext->OMSetBlendState(m_BlendStateAlphaBlend, 0, 0xffffffff);
       break;
-    case t800::BaseDriver::NON_PREMULTIPLIED:
+    case t1000::BaseDriver::NON_PREMULTIPLIED:
       deviceContext->OMSetBlendState(m_BlendStateNonPremultiplied, 0, 0xffffffff);
       break;
     default:
@@ -584,16 +579,16 @@ namespace t800 {
     ID3D11DeviceContext* deviceContext = reinterpret_cast<ID3D11DeviceContext*>(T8DeviceContext->GetAPIObject());
     switch (state)
     {
-    case t800::BaseDriver::DEPTH_DEFAULT:
+    case t1000::BaseDriver::DEPTH_DEFAULT:
       deviceContext->OMSetDepthStencilState(m_depthStateReadWrite, 1);
       break;
-    case t800::BaseDriver::READ_WRITE:
+    case t1000::BaseDriver::READ_WRITE:
       deviceContext->OMSetDepthStencilState(m_depthStateReadWrite, 1);
       break;
-    case t800::BaseDriver::NONE:
+    case t1000::BaseDriver::NONE:
       deviceContext->OMSetDepthStencilState(m_depthStateNone, 1);
       break;
-    case t800::BaseDriver::READ:
+    case t1000::BaseDriver::READ:
       deviceContext->OMSetDepthStencilState(m_depthStateRead, 1);
       break;
     default:
@@ -641,3 +636,5 @@ namespace t800 {
 
   }
 }
+
+#endif

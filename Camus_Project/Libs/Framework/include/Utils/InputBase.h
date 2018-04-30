@@ -1,5 +1,5 @@
-#ifndef CA_INPUTBASE_H
-#define CA_INPUTBASE_H
+#ifndef T1000_INPUTBASE_H
+#define T1000_INPUTBASE_H
 
 #include <iostream>
 #include <vector>
