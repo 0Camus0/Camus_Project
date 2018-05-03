@@ -217,6 +217,8 @@ namespace t1000 {
         Defines += "#define FSQUAD_2_TEX\n\n";
       if (sig&T_Signature::FSQUAD_3_TEX)
         Defines += "#define FSQUAD_3_TEX\n\n";
+	  if (sig&T_Signature::FSQUAD_TESTING)
+		  Defines += "#define FSQUAD_TESTING\n\n";
       if (sig&T_Signature::SHADOW_MAP_PASS)
         Defines += "#define SHADOW_MAP_PASS\n\n";
       if (!LinearDepth)

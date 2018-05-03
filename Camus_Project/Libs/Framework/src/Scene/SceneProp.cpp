@@ -16,7 +16,7 @@ double atof(const char *nptr)
 {
 	return (strtod(nptr, NULL));
 }
-#endif
+#endif 
 #ifdef rand
 #undef rand
 int rand(void)

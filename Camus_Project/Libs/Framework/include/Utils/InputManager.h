@@ -536,6 +536,11 @@ enum STDKEYS_ANDROID {
 #define MAXKEYS 512
 #define MAXMOUSEBUTTONS 5
 
+struct TouchEvent {
+	TouchEvent() : xCoord(0), yCoord(0) {}
+	int	xCoord, yCoord;
+	bool state[2];
+};
 
 class InputManager {
 public:
@@ -546,9 +551,13 @@ public:
 	bool	PressedKey(int key);
 	bool	PressedMouseButton(int mb);
 
+	bool	PressedTouch(int &coordX, int &coordY);
+	bool	PressedOnceTouch(int &coordX, int &coordY);
+
 	bool	KeyStates[2][MAXKEYS];
 	bool	KeyAndroidStates[2][MAXKEYS];
 	bool	MouseButtonStates[2][MAXMOUSEBUTTONS];
+	TouchEvent Touch;
 
 	int		xDelta;
 	int 	yDelta;

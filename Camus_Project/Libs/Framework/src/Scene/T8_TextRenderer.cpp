@@ -1,4 +1,5 @@
 #include <scene/T8_TextRenderer.h>
+#include <Utils/FileSystem.h>
 
 #include <video/gl/GLShader.h>
 #include <video/gl/GLDriver.h>
@@ -24,7 +25,17 @@ namespace t1000 {
     unsigned char* temp_bitmap = new unsigned char[m_textureSize * m_textureSize];
 
     
-    fread(ttf_buffer, 1, 1 << 20, fopen(path.c_str(), "rb"));
+	std::string OS_Path = t1000::fs::Filesystem::instance()->GetResourcesPath();
+	OS_Path += "Fonts/";
+	std::string Path = OS_Path;
+	Path += path;
+
+	int Size;
+	char *fdata = (char*)t1000::fs::Filesystem::instance()->GetFile(Path, &Size);
+
+	memcpy(ttf_buffer, fdata, Size);
+
+  //  fread(ttf_buffer, 1, 1 << 20, fopen(path.c_str(), "rb"));
     stbtt_BakeFontBitmap(ttf_buffer, 0, fontSize, temp_bitmap, m_textureSize, m_textureSize, 32, 96, cdata);
 
     if (g_pBaseDriver->m_currentAPI == T_GRAPHICS_API::_OPENGL) { //OpenGL is loading the texture upside down T_T

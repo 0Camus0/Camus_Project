@@ -14,6 +14,8 @@ InputManager::InputManager() {
 	}
 	xDelta = 0;
 	yDelta = 0;
+	Touch.state[0] = 0;
+	Touch.state[1] = 0;
 }
 
 bool InputManager::PressedOnceKey(int key) {
@@ -49,4 +51,25 @@ bool InputManager::PressedKey(int key) {
 
 bool InputManager::PressedMouseButton(int mb) {
 	return MouseButtonStates[0][mb];
+}
+
+bool InputManager::PressedTouch(int &coordX, int &coordY) {
+	coordX = Touch.xCoord;
+	coordY = Touch.yCoord;
+	return Touch.state[0];
+}
+
+bool InputManager::PressedOnceTouch(int &coordX, int &coordY) {
+	bool ret = Touch.state[0];
+	coordX = Touch.xCoord;
+	coordY = Touch.yCoord;
+
+	if (!Touch.state[1] && Touch.state[0]) {
+		Touch.state[1] = true;
+	}
+	else {
+		ret = false;
+	}
+
+	return ret;
 }

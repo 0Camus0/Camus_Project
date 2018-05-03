@@ -51,6 +51,9 @@ namespace t1000 {
     Dest = SigBase | T_Signature::FSQUAD_3_TEX;
     g_pBaseDriver->CreateShader(vstr, fstr, Dest);
 
+	Dest = SigBase | T_Signature::FSQUAD_TESTING;
+	g_pBaseDriver->CreateShader(vstr, fstr, Dest);
+
     Dest = SigBase | T_Signature::SHADOW_COMP_PASS;
     g_pBaseDriver->CreateShader(vstr, fstr, Dest);
     Dest = SigBase | T_Signature::SHADOW_COMP_PASS | T_Signature::USE_OMNIDIRECTIONAL_SHADOWS;

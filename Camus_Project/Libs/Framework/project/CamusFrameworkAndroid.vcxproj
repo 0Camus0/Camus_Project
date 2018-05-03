@@ -219,7 +219,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>$(VS_NdkRoot)\platforms\$(AndroidAPILevel)\arch-arm\usr\include;$(StlIncludeDirectories)%(AdditionalIncludeDirectories);$(ProjectDir)..\include;$(SolutionDir)..\..\Externals\tinyxml2\include;$(SolutionDir)..\..\Externals\stb\include;$(SolutionDir)..\..\Externals\miniz</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>__ANDROID__;ANDROID_NDK;USE_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>__ANDROID__;ANDROID_NDK;USE_DEBUG;OS_ANDROID;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <CppLanguageStandard>c++11</CppLanguageStandard>
       <DebugInformationFormat>None</DebugInformationFormat>
     </ClCompile>

@@ -11,6 +11,7 @@ void Timer::Init() {
 	QueryPerformanceCounter(&StartTime);
 #elif defined(OS_LINUX) || defined(OS_ANDROID)
     gettimeofday(&StartTime,0);
+	Dt = Frequency = DtSecs = 0.0;
 #endif
 }
 

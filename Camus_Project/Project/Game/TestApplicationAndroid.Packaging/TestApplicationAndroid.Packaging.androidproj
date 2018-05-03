@@ -64,7 +64,7 @@
     </AntPackage>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <Content Include="assets\Models\Scene.X" />
+    <Content Include="assets\Fonts\tahomabd.ttf" />
     <Content Include="assets\Shaders\FS.glsl" />
     <Content Include="assets\Shaders\FS.hlsl" />
     <Content Include="assets\Shaders\FS_Mesh.glsl" />
@@ -89,14 +89,33 @@
     <Content Include="assets\Shaders\VS_tri.hlsl" />
     <Content Include="assets\Shaders\VS_W.glsl" />
     <Content Include="assets\Shaders\VS_W.hlsl" />
-    <Content Include="assets\Textures\1.tga" />
-    <Content Include="assets\Textures\2.tga" />
-    <Content Include="assets\Textures\3.tga" />
-    <Content Include="assets\Textures\4.tga" />
-    <Content Include="assets\Textures\5.tga" />
-    <Content Include="assets\Textures\6.tga" />
-    <Content Include="assets\Textures\black.tga" />
-    <Content Include="assets\Textures\Grass.tga" />
+    <Content Include="assets\Textures\BG.tga" />
+    <Content Include="assets\Textures\Disenio.tga" />
+    <Content Include="assets\Textures\DisenioIMG.tga" />
+    <Content Include="assets\Textures\DisenioTEXT.tga" />
+    <Content Include="assets\Textures\DistribuciondeMedicamentos.tga" />
+    <Content Include="assets\Textures\DistribuciondeMedicamentosIMG.tga" />
+    <Content Include="assets\Textures\DistribuciondeMedicamentosTEXT.tga" />
+    <Content Include="assets\Textures\Dodis.tga" />
+    <Content Include="assets\Textures\DodisIMG.tga" />
+    <Content Include="assets\Textures\DodisTEXT.tga" />
+    <Content Include="assets\Textures\Evolucion.tga" />
+    <Content Include="assets\Textures\EvolucionIMG.tga" />
+    <Content Include="assets\Textures\EvolucionTEXT.tga" />
+    <Content Include="assets\Textures\FarmaciaHospitalaria.tga" />
+    <Content Include="assets\Textures\FarmaciaHospitalariaIMG.tga" />
+    <Content Include="assets\Textures\FarmaciaHospitalariaTEXT.tga" />
+    <Content Include="assets\Textures\GeneralBG.tga" />
+    <Content Include="assets\Textures\Gestion.tga" />
+    <Content Include="assets\Textures\GestionIMG.tga" />
+    <Content Include="assets\Textures\GestionTEXT.tga" />
+    <Content Include="assets\Textures\Monitorizacion.tga" />
+    <Content Include="assets\Textures\MonitorizacionIMG.tga" />
+    <Content Include="assets\Textures\MonitorizacionTEXT.tga" />
+    <Content Include="assets\Textures\Prescripcion.tga" />
+    <Content Include="assets\Textures\PrescripcionIMG.tga" />
+    <Content Include="assets\Textures\PrescripcionTEXT.tga" />
+    <Content Include="assets\Textures\Splash.tga" />
     <Content Include="res\values\strings.xml" />
     <AntBuildXml Include="build.xml" />
     <AndroidManifest Include="AndroidManifest.xml" />
@@ -106,6 +125,9 @@
     <ProjectReference Include="..\TestApplicationAndroid.NativeActivity\TestApplicationAndroid.NativeActivity.vcxproj">
       <Project>{ece03c71-46b3-40d5-8603-46cbbdf465c1}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="assets\Models\" />
   </ItemGroup>
   <Import Project="$(AndroidTargetsPath)\Android.targets" />
   <ImportGroup Label="ExtensionTargets" />

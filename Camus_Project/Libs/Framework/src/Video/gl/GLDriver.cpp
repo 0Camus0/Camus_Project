@@ -422,9 +422,10 @@ namespace t1000 {
 	}
 #endif
 
-    glEnable(GL_DEPTH_TEST);
-    glClearDepthf(1.0f);			
-    glEnable(GL_CULL_FACE);
+	glDisable(GL_DEPTH_TEST);
+    //glEnable(GL_DEPTH_TEST);
+  //  glClearDepthf(1.0f);			
+    glDisable(GL_CULL_FACE);
     glCullFace(GL_FRONT);
 
     glGetIntegerv(GL_FRAMEBUFFER_BINDING, &CurrentFBO);
@@ -755,7 +756,7 @@ namespace t1000 {
   }
 
   void	GLDriver::Clear() {
-    glClearColor(1.0, 1.0, 1.0, 1.0);
+    glClearColor(0.0, 0.0, 0.0, 1.0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
   }

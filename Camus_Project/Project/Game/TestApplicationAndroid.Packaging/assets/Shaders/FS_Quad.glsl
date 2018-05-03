@@ -1169,6 +1169,18 @@ void main(){
 		gl_FragColor = vec4(texture2D(tex0,coords).rrr, 1.0);
 	#endif
 }
+#elif defined(FSQUAD_TESTING)
+uniform mediump sampler2D tex0;
+void main(){
+	lowp vec2 coords = vecUVCoords;
+	//coords.y = 1.0 - coords.y;
+
+	#ifdef ES_30
+		colorOut = vec4(texture(tex0, coords).rgb,1.0);
+	#else
+		gl_FragColor = vec4(texture2D(tex0,coords).rgb, 1.0);
+	#endif
+}
 #else
 void main(){
 	#ifdef ES_30

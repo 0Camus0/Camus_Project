@@ -368,7 +368,10 @@ void AndroidFramework::ProcessInput() {
 					tmp.fcoords[0] = AMotionEvent_getRawX(event, 0);
 					tmp.fcoords[1] = AMotionEvent_getRawY(event, 0);
 					tmp._state = t1000::input::TypeEvent_::TOUCH_PRESSED;
-					LogPrintDebug("AMOTION_EVENT_ACTION_POINTER_DOWN [%f] [%f]\n", tmp.fcoords[0], tmp.fcoords[1]);
+					pBaseApp->IManager.Touch.state[0] = true;
+					pBaseApp->IManager.Touch.xCoord = (int)tmp.fcoords[0];
+					pBaseApp->IManager.Touch.yCoord = (int)tmp.fcoords[1];
+				//	LogPrintDebug("AMOTION_EVENT_ACTION_POINTER_DOWN [%f] [%f]\n", tmp.fcoords[0], tmp.fcoords[1]);
 					
 				}break;
 
@@ -379,7 +382,11 @@ void AndroidFramework::ProcessInput() {
 					tmp.fcoords[0] = AMotionEvent_getRawX(event, 0);
 					tmp.fcoords[1] = AMotionEvent_getRawY(event, 0);
 					tmp._state = t1000::input::TypeEvent_::TOUCH_PRESSED;
-					LogPrintDebug("AMOTION_EVENT_ACTION_POINTER_UP [%f] [%f]\n", tmp.fcoords[0], tmp.fcoords[1]);
+					pBaseApp->IManager.Touch.state[0] = false;
+					pBaseApp->IManager.Touch.state[1] = false;
+					pBaseApp->IManager.Touch.xCoord = (int)tmp.fcoords[0];
+					pBaseApp->IManager.Touch.yCoord = (int)tmp.fcoords[1];
+				//	LogPrintDebug("AMOTION_EVENT_ACTION_POINTER_UP [%f] [%f]\n", tmp.fcoords[0], tmp.fcoords[1]);
 				}break;
 				
 				default: {
