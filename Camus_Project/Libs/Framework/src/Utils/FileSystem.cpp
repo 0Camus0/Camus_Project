@@ -10,6 +10,7 @@
 #include <miniz.h>
 #include <miniz_zip.h>
 mz_zip_archive zip_archive;
+#include <fstream>
 #endif
 
 #include <fstream>
@@ -38,8 +39,12 @@ namespace t1000 {
 #ifdef OS_WIN32
 			ResPath = "Resourcez/";
 #elif defined(OS_ANDROID)
-		    ResPath = "assets/";
+		#if USE_LOAD_FROM_MEMORY
+			ResPath = "assets/";
 			OpenAPK(apk);
+		#else
+			ResPath = "/storage/emulated/0/Resourcez/";
+		#endif
 #elif defined(__APPLE__)
 			const char* paths = [[[NSBundle mainBundle] resourcePath] UTF8String];
 			ResPath = std::string(paths) + std::string("/Resourcez/");
@@ -47,6 +52,8 @@ namespace t1000 {
 		}
 
 		void *Filesystem::GetFile(std::string path, int *size) {
+
+#if USE_LOAD_FROM_MEMORY
 			if (!bLoadedAPK) {
 				LogPrintDebug("Trying to access unloaded apk, probable seg fault!");
 				return 0;
@@ -72,11 +79,36 @@ namespace t1000 {
 			}
 
 			LogPrintDebug("File [%s] from APK not Found", path.c_str());
+#else
+			std::ifstream	inFile(path.c_str(), std::ios::binary | std::ios::in);
+			if (!inFile.good()) {
+				LogPrintDebug("File [%s] not found on the path, maybe a crash is coming", path.c_str());
+				inFile.close();
+				return 0;
+			}
+
+			inFile.seekg(0, std::ios::end);
+			unsigned int Size = static_cast<unsigned int>(inFile.tellg());
+			*size = Size;
+			inFile.seekg(0, std::ios::beg);
+
+
+			char* pData = new char[Size + 1];
+			pData[Size] = '\0';
+
+			inFile.read(pData, Size);
+			inFile.close();
+			return pData;
+#endif
 			return 0;
 		}
 
 		void  Filesystem::ReleaseFile(void *p) {
+#if USE_LOAD_FROM_MEMORY
 			mz_free(p);
+#else
+			delete [] p;
+#endif
 		}
 
 		void Filesystem::OpenAPK(std::string apk_path){

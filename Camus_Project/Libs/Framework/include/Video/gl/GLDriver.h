@@ -151,4 +151,24 @@ namespace t1000 {
 	bool				bInited;
   };
 }
+
+#include <iostream>
+#include <string>
+#include <sstream>
+#include <algorithm>
+#include <iterator>
+#include <fstream>
+
+
+namespace patch
+{
+	template < typename T > std::string to_string(const T& n)
+	{
+		std::ostringstream stm;
+		stm << n;
+		return stm.str();
+	}
+}
+
+
 #endif

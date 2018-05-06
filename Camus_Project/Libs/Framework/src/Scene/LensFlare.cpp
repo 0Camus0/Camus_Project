@@ -1,10 +1,8 @@
+#include <video/gl/GLDriver.h>
 #include <scene/LensFlare.h>
+
 #include <string>
 
-namespace patch
-{
-	 template < typename T > extern std::string to_string(const T& n);
-}
 
 namespace t1000 {
   XVECTOR3 WorldToScreenPos(const XVECTOR3& worldPos, XMATRIX44 VP) {

@@ -93,6 +93,11 @@
 #define VDEBUG_NO_LIGHT 0
 #endif
 
+
+#ifndef USE_LOAD_FROM_MEMORY
+#define USE_LOAD_FROM_MEMORY 0
+#endif
+
 #define D3D11	1 
 #define OGLES20 2
 #define OGLES30 3

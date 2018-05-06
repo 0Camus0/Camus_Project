@@ -1,6 +1,7 @@
 #ifndef T1000_FILESYS_H
 #define T1000_FILESYS_H
 
+#include <Config.h>
 #include <string>
 
 namespace t1000 {

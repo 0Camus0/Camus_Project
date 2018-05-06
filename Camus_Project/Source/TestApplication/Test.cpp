@@ -1,4 +1,5 @@
 #include "Test.h"
+#include <video\gl\GLDriver.h>
 #include <Utils\Log.h>
 #include <Utils\Time.h>
 
@@ -18,19 +19,22 @@
 #include <iostream>
 #include <cmath>
 
-Sprite_on_Back_State			*onBackState = 0;
-Sprite_Rotating_to_Front_State	*onRotatingToFrontState = 0;;
-Sprite_on_Front_State			*onFrontState = 0;;
-Sprite_Rotating_to_Back_State	*onRotatingToBackState = 0;;
+#define NUM_LIGHTS 1
+#define RADI 170.0f
 
+#define HIGHQ 1
+#define MEDIUMQ 2
+#define LOWQ 3
 
-StartWindow						*onStartWindow;
-PlayingtWindow					*onPlayingWindow;
-PlayingtWindowTransitionToDesc	*onPlayingtWindowTransitionToDesc;
-PlayingtWindowDescription		*onPlayingtWindowDescription;
-PlayingtWindowTransitionToPlay  *onPlayingtWindowTransitionToPlay;
-PlayingtWindowToEnd				*onPlayingtWindowToEnd;
+#define QUALITY_SELECTED HIGHQ
 
+#if   QUALITY_SELECTED == HIGHQ
+#define MAX_QUALITY
+#elif QUALITY_SELECTED == MEDIUMQ
+#define MEDIUM_QUALITY
+#elif QUALITY_SELECTED == LOWQ
+#define LOW_QUALITY 
+#endif
 
 int RandomRange(int min_, int max_) {
 	std::random_device rd;     
@@ -78,169 +82,290 @@ void TestApp::InitVars() {
 	SceneProp.ActiveLights = 5;
 	SceneProp.AmbientColor = XVECTOR3(0.8f, 0.8f, 0.8f);
 
-	onBackState = new Sprite_on_Back_State;
-	onRotatingToFrontState = new Sprite_Rotating_to_Front_State;
-	onFrontState = new Sprite_on_Front_State;
-	onRotatingToBackState = new Sprite_Rotating_to_Back_State;
+
+	ShadowFilter.kernelSize = 4;
+	ShadowFilter.radius = 1.f;
+	ShadowFilter.sigma = 1.0f;
+	ShadowFilter.Update();
+
+	BloomFilter.kernelSize = 11;
+	BloomFilter.radius = 2.5f;
+	BloomFilter.sigma = 4.5f;
+	BloomFilter.Update();
 
 
-	onStartWindow = new StartWindow;
-	onPlayingWindow = new PlayingtWindow;
-	onPlayingtWindowTransitionToDesc = new PlayingtWindowTransitionToDesc;
-	onPlayingtWindowDescription = new PlayingtWindowDescription;
-	onPlayingtWindowTransitionToPlay = new PlayingtWindowTransitionToPlay;
-	onPlayingtWindowToEnd = new PlayingtWindowToEnd;
+	NearDOFFilter.kernelSize = 8;
+	NearDOFFilter.radius = 2.5f;
+	NearDOFFilter.sigma = 4.5f;
+	NearDOFFilter.Update();
 
-	pCurrentState = onStartWindow;
+	SceneProp.Aperture = 120;
+	SceneProp.FocalLength = 50;
+	SceneProp.MaxCoc = 2.5;
+#ifdef  MAX_QUALITY
+	SceneProp.DOF_Near_Samples_squared = 1.0f;
+	SceneProp.DOF_Far_Samples_squared = 3.0f;
+	SceneProp.ShadowMapResolution = 2048.0f;
+	SceneProp.GoodRaysResolution = 0.0f;
+	SceneProp.PCFScale = 1.5f;
+	SceneProp.PCFSamples = 3.0f;
+	SceneProp.ParallaxLowSamples = 20.0f;
+	SceneProp.ParallaxHighSamples = 30.0f;
+	SceneProp.ParallaxHeight = 0.02f;
+	SceneProp.LightVolumeSteps = 256.0f;
+	SceneProp.SSAOKernel.Radius = 1.5f;
+	SceneProp.SSAOKernel.KernelSize = 32;
+#elif defined(MEDIUM_QUALITY)
+	SceneProp.DOF_Near_Samples_squared = 1.0f;
+	SceneProp.DOF_Far_Samples_squared = 3.0f;
+	SceneProp.ShadowMapResolution = 2048.0f;
+	SceneProp.GoodRaysResolution = 0.0f;
+	SceneProp.PCFScale = 2.1f;
+	SceneProp.PCFSamples = 3.0f;
+	SceneProp.ParallaxLowSamples = 10.0f;
+	SceneProp.ParallaxHighSamples = 18.0f;
+	SceneProp.ParallaxHeight = 0.02f;
+	SceneProp.LightVolumeSteps = 248.0f;
+	SceneProp.SSAOKernel.Radius = 1.5f;
+	SceneProp.SSAOKernel.KernelSize = 32;
+#elif defined(LOW_QUALITY)
+	SceneProp.DOF_Near_Samples_squared = 1.0f;
+	SceneProp.DOF_Far_Samples_squared = 2.0f;
+	SceneProp.ShadowMapResolution = 1024.0f;
+	SceneProp.GoodRaysResolution = 512.0f;
+	SceneProp.PCFScale = 1.7f;
+	SceneProp.PCFSamples = 1.0f;
+	SceneProp.ParallaxLowSamples = 2.0f;
+	SceneProp.ParallaxHighSamples = 8.0f;
+	SceneProp.ParallaxHeight = 0.01f;
+	SceneProp.LightVolumeSteps = 64.0f;
+	SceneProp.SSAOKernel.Radius = 1.5f;
+	SceneProp.SSAOKernel.KernelSize = 8;
+#endif
+
+	SceneProp.SSAOKernel.Update();
+
+
+	SceneProp.ToogleShadow = true;
+	SceneProp.ToogleSSAO = true;
+	SceneProp.AutoFocus = true;
+
+
+
+	SceneProp.AddGaussKernel(&ShadowFilter);
+	SceneProp.AddGaussKernel(&BloomFilter);
+	SceneProp.AddGaussKernel(&NearDOFFilter);
+	SceneProp.ActiveGaussKernel = SHADOW_KERNEL;
+	ChangeActiveGaussSelection = SHADOW_KERNEL;
+
+	RTIndex = -1;
+
+	m_spline.m_points.push_back(t1000::SplinePoint(80, 90, -80));
+	m_spline.m_points.back().m_velocity = 3.0f;
+	m_spline.m_points.push_back(t1000::SplinePoint(80, 90, -20));
+	m_spline.m_points.back().m_velocity = 6.f;
+	m_spline.m_points.push_back(t1000::SplinePoint(20, 110, 0));
+	m_spline.m_points.back().m_velocity = 20.f;
+	m_spline.m_points.push_back(t1000::SplinePoint(30, 20, 0));
+	m_spline.m_points.back().m_velocity = 7;
+	m_spline.m_points.push_back(t1000::SplinePoint(40, 6, 0));
+	m_spline.m_points.back().m_velocity = 7;
+	m_spline.m_points.push_back(t1000::SplinePoint(50, 4, 20));
+	m_spline.m_points.back().m_velocity = 7;
+	m_spline.m_points.push_back(t1000::SplinePoint(40, 4, 20));
+	m_spline.m_points.back().m_velocity = 7;
+	m_spline.m_points.push_back(t1000::SplinePoint(0, 4, 20));
+	m_spline.m_points.back().m_velocity = 7;
+	m_spline.m_points.push_back(t1000::SplinePoint(-50, 3, 20));
+	m_spline.m_points.back().m_velocity = 7;
+	m_spline.m_points.push_back(t1000::SplinePoint(-50, 6, 0));
+	m_spline.m_points.back().m_velocity = 7;
+	m_spline.m_points.push_back(t1000::SplinePoint(-20, 15, 0));
+	m_spline.m_points.back().m_velocity = 7;
+	m_spline.m_points.push_back(t1000::SplinePoint(0, 10, 0)); //
+	m_spline.m_points.back().m_velocity = 7;
+	m_spline.m_points.push_back(t1000::SplinePoint(-40, 25, 3));
+	m_spline.m_points.back().m_velocity = 10;
+	m_spline.m_points.push_back(t1000::SplinePoint(-55, 30, 5));
+	m_spline.m_points.back().m_velocity = 10;
+	m_spline.m_points.push_back(t1000::SplinePoint(-55, 30, -25));
+	m_spline.m_points.back().m_velocity = 3;
+	m_spline.m_points.push_back(t1000::SplinePoint(-65, 25, 0));
+	m_spline.m_points.back().m_velocity = 3;
+	m_spline.m_points.push_back(t1000::SplinePoint(-60, 25, 25));
+	m_spline.m_points.back().m_velocity = 3;
+	m_spline.m_points.push_back(t1000::SplinePoint(-35, 30, -20));
+	m_spline.m_points.back().m_velocity = 10;
+	m_spline.m_points.push_back(t1000::SplinePoint(15, 30, -20));
+	m_spline.m_points.back().m_velocity = 10;
+	m_spline.m_points.push_back(t1000::SplinePoint(25, 30, 20));
+	m_spline.m_points.back().m_velocity = 10;
+	m_spline.m_points.push_back(t1000::SplinePoint(50, 30, 20));
+	m_spline.m_points.back().m_velocity = 10;
+	m_spline.m_points.push_back(t1000::SplinePoint(50, 30, -20));
+	m_spline.m_points.back().m_velocity = 10;
+	m_spline.m_points.push_back(t1000::SplinePoint(-50, 30, -20));
+	m_spline.m_points.back().m_velocity = 10;
+	m_spline.m_points.push_back(t1000::SplinePoint(-50, 30, 0));
+	m_spline.m_points.back().m_velocity = 10;
+	m_spline.m_points.push_back(t1000::SplinePoint(-30, 30, 0));
+	m_spline.m_points.back().m_velocity = 10;
+	m_spline.m_points.push_back(t1000::SplinePoint(0, 5, 0));
+	m_spline.m_points.back().m_velocity = 10;
+
+	m_spline.m_looped = false;
+	m_spline.Init();
+
+	m_agent.SetOffset(0);
+	m_agent.m_pSpline = &m_spline;
+	m_agent.m_moving = true;
+	m_agent.m_velocity = 15.0f;
 }
 
 void TestApp::LoadAssets() {
 
 }
 
-void TestApp::ChangeState(stateGameBase *st) {
-	st->Exit(this);
-	pCurrentState = st;
-	st->Enter(this);
-}
-
 void TestApp::CreateAssets() {
 	LogPrintDebug("TestApp::CreateAssets [%d] x [%d]\n", pFramework->pVideoDriver->width, pFramework->pVideoDriver->height);
 	DtTimer.Init();
+	m_textRender.LoadFromFile(36, "tahomabd.ttf", 512.0f);
+	//Create RT's
+	GBufferPass = pFramework->pVideoDriver->CreateRT(4, t1000::BaseRT::RGBA8, t1000::BaseRT::F32, 0, 0, true);
+	DeferredPass = pFramework->pVideoDriver->CreateRT(1, t1000::BaseRT::RGBA16F, t1000::BaseRT::NOTHING, 0, 0, true);
+	Extra16FPass = pFramework->pVideoDriver->CreateRT(1, t1000::BaseRT::RGBA16F, t1000::BaseRT::NOTHING, 0, 0, true);
+	DepthPass = pFramework->pVideoDriver->CreateRT(0, t1000::BaseRT::NOTHING, t1000::BaseRT::F32, (int)SceneProp.ShadowMapResolution, (int)SceneProp.ShadowMapResolution, false);
+	ShadowAccumPass = pFramework->pVideoDriver->CreateRT(1, t1000::BaseRT::R8, t1000::BaseRT::NOTHING, 0, 0, true);
+	ExtraHelperPass = pFramework->pVideoDriver->CreateRT(1, t1000::BaseRT::RGBA8, t1000::BaseRT::NOTHING, 0, 0, true);
+	BloomAccumPass = pFramework->pVideoDriver->CreateRT(1, t1000::BaseRT::RGBA8, t1000::BaseRT::NOTHING, 512, 512, true);
+	GodRaysCalcPass = pFramework->pVideoDriver->CreateRT(1, t1000::BaseRT::RGBA8, t1000::BaseRT::NOTHING, SceneProp.GoodRaysResolution, SceneProp.GoodRaysResolution, true);
+	GodRaysCalcExtraPass = pFramework->pVideoDriver->CreateRT(1, t1000::BaseRT::RGBA8, t1000::BaseRT::NOTHING, SceneProp.GoodRaysResolution, SceneProp.GoodRaysResolution, true);
+	CoCPass = pFramework->pVideoDriver->CreateRT(2, t1000::BaseRT::F16, t1000::BaseRT::NOTHING, 512, 512, true);
+	CombineCoCPass = pFramework->pVideoDriver->CreateRT(1, t1000::BaseRT::F16, t1000::BaseRT::NOTHING, 512, 512, true);
+	CoCHelperPass = pFramework->pVideoDriver->CreateRT(1, t1000::BaseRT::F16, t1000::BaseRT::NOTHING, 512, 512, false);
+	CoCHelperPass2 = pFramework->pVideoDriver->CreateRT(1, t1000::BaseRT::F16, t1000::BaseRT::NOTHING, 512, 512, false);
 
-	struct timeval time;
-	gettimeofday(&time, NULL);
-	srand((time.tv_sec * 1000) + (time.tv_usec / 1000));
+	LogPrintDebug("TestApp::CreateAssets 1");
 
+	//
 	PrimitiveMgr.Init();
 	PrimitiveMgr.SetVP(&VP);
+	m_flare.Init(PrimitiveMgr);
 
+	LogPrintDebug("TestApp::CreateAssets 2");
 
-	int index = 0; //= PrimitiveMgr.CreateMesh("Scene.X");
+	SceneProp.SSAOKernel.InitTexture();
+
+	LogPrintDebug("TestApp::CreateAssets 3");
+
+	EnvMapTexIndex = pFramework->pVideoDriver->CreateTexture(string("CubeMap_Mountains.dds"));
+
+	LogPrintDebug("TestApp::CreateAssets 4");
+
+	int index = PrimitiveMgr.CreateMesh("SkyBox.X");
+
+	LogPrintDebug("TestApp::CreateAssets 5");
+	Meshes[1].CreateInstance(PrimitiveMgr.GetPrimitive(index), &VP);
+	LogPrintDebug("TestApp::CreateAssets 6");
+	Meshes[1].TranslateAbsolute(0.0, -10.0f, 0.0f);
+	Meshes[1].Update();
+
+	LogPrintDebug("TestApp::CreateAssets 7");
+
+	index = PrimitiveMgr.CreateMesh("SponzaEsc.X");
 	
-	std::string Texts[] = { "Disenio.tga" , "DistribuciondeMedicamentos.tga", "Dodis.tga", "Evolucion.tga", "FarmaciaHospitalaria.tga", "Gestion.tga", "Monitorizacion.tga", "Prescripcion.tga" };
-	std::string Images[] = { "DisenioIMG.tga" , "DistribuciondeMedicamentosIMG.tga", "DodisIMG.tga", "EvolucionIMG.tga", "FarmaciaHospitalariaIMG.tga", "GestionIMG.tga", "MonitorizacionIMG.tga", "PrescripcionIMG.tga" };
-	std::string Desc[] = { "DisenioTEXT.tga" , "DistribuciondeMedicamentosTEXT.tga", "DodisTEXT.tga", "EvolucionTEXT.tga", "FarmaciaHospitalariaTEXT.tga", "GestionTEXT.tga", "MonitorizacionTEXT.tga", "PrescripcionTEXT.tga" };
+	LogPrintDebug("TestApp::CreateAssets 8");
 
-	for (std::size_t i = 0; i < 8; i++) {
-		TexIdTest = pFramework->pVideoDriver->CreateTexture(Images[i]);
-		Pairs[i].ImageTexture = pFramework->pVideoDriver->GetTexture(TexIdTest);
-		TexIdTest = pFramework->pVideoDriver->CreateTexture(Texts[i]);
-		Pairs[i].TextTexture = pFramework->pVideoDriver->GetTexture(TexIdTest);
-		TexIdTest = pFramework->pVideoDriver->CreateTexture(Desc[i]);
-		Pairs[i].DescriptionTexture = pFramework->pVideoDriver->GetTexture(TexIdTest);
-		Pairs[i].Id = i;
-		Pairs[i].Taken = 0;
-	}
+	Meshes[0].CreateInstance(PrimitiveMgr.GetPrimitive(index), &VP);
 
-	TexBG = pFramework->pVideoDriver->GetTexture(pFramework->pVideoDriver->CreateTexture("BG.tga"));
-	Splash = pFramework->pVideoDriver->GetTexture(pFramework->pVideoDriver->CreateTexture("Splash.tga"));
-	GeneralTexBG = pFramework->pVideoDriver->GetTexture(pFramework->pVideoDriver->CreateTexture("GeneralBG.tga"));
+	LogPrintDebug("TestApp::CreateAssets 9");
 
-	float win_w = (float)pFramework->pVideoDriver->width;
-	float win_h = (float)pFramework->pVideoDriver->height;
-	float w = 1024.0f; // (float)Textures[0]->x;
-	float h = 768.0f; // (float)Textures[0]->y;
+	index = PrimitiveMgr.CreateSpline(m_spline);
 
-	float width_ = (float)win_w;
-	float height_ = (float)win_h;
+	LogPrintDebug("TestApp::CreateAssets 10");
 
-	float image_w = w;
-	float image_h = h;
+	splineWire = (t1000::SplineWireframe*)PrimitiveMgr.GetPrimitive(index);
+	splineInst.CreateInstance(splineWire, &VP);
 
-	float ratio_y = (image_h / height_);
-	float ratio_x = image_w / width_ / ratio_y;
+	LogPrintDebug("TestApp::CreateAssets 11");
+	m.Identity();
+	LogPrintDebug("TestApp::CreateAssets 12");
+	Quads[0].CreateInstance(PrimitiveMgr.GetPrimitive(t1000::PrimitiveManager::QUAD), &m);
+	LogPrintDebug("TestApp::CreateAssets 13");
+	Quads[0].SetTexture(pFramework->pVideoDriver->RTs[0]->vColorTextures[0], 0);
+	Quads[0].SetTexture(pFramework->pVideoDriver->RTs[0]->vColorTextures[1], 1);
+	Quads[0].SetTexture(pFramework->pVideoDriver->RTs[0]->vColorTextures[2], 2);
+	Quads[0].SetTexture(pFramework->pVideoDriver->RTs[0]->vColorTextures[3], 3);
+	Quads[0].SetTexture(pFramework->pVideoDriver->RTs[0]->pDepthTexture, 4);
+	LogPrintDebug("TestApp::CreateAssets 14");
+	Quads[0].SetEnvironmentMap(pFramework->pVideoDriver->GetTexture(EnvMapTexIndex));
+	LogPrintDebug("TestApp::CreateAssets 15");
 
-	float general_Scale = 0.2f;
+	Quads[1].CreateInstance(PrimitiveMgr.GetPrimitive(t1000::PrimitiveManager::QUAD), &m);
+	LogPrintDebug("TestApp::CreateAssets 16");
+	Quads[2].CreateInstance(PrimitiveMgr.GetPrimitive(t1000::PrimitiveManager::QUAD), &m);
+	LogPrintDebug("TestApp::CreateAssets 17");
+	Quads[3].CreateInstance(PrimitiveMgr.GetPrimitive(t1000::PrimitiveManager::QUAD), &m);
+	LogPrintDebug("TestApp::CreateAssets 18");
+	Quads[4].CreateInstance(PrimitiveMgr.GetPrimitive(t1000::PrimitiveManager::QUAD), &m);
+	LogPrintDebug("TestApp::CreateAssets 19");
+	Quads[5].CreateInstance(PrimitiveMgr.GetPrimitive(t1000::PrimitiveManager::QUAD), &m);
+	LogPrintDebug("TestApp::CreateAssets 20");
+	Quads[6].CreateInstance(PrimitiveMgr.GetPrimitive(t1000::PrimitiveManager::QUAD), &m);
+	LogPrintDebug("TestApp::CreateAssets 21");
+	Quads[7].CreateInstance(PrimitiveMgr.GetPrimitive(t1000::PrimitiveManager::QUAD), &m);
 
-	float OriginX = -1.0f + 2.0f*0.1;
-	float OriginY = 1.0f - 2.0f*0.111;
-
-	float startX = OriginX;
-	float startY = OriginY;
-	int counter = 0;
-	float FXScale = 1.0f;
-	float FYScale = 1.0f;
-
-	for (int i = 0; i < 16; i++) {
-
-		if (ratio_x < 1.0f) {
-			FXScale = ratio_x * general_Scale;
-			FYScale = 1.0f*general_Scale;;		}
-		else {
-			ratio_x = image_w / width_;
-			ratio_y = (image_h / height_) / ratio_x;
-			FXScale = 1.0f*general_Scale;
-			FYScale = ratio_y * general_Scale;
-		}
-
-		Sprites[i].Create(PrimitiveMgr.GetPrimitive(t1000::PrimitiveManager::QUAD), startX, startY, FXScale, FYScale);
-		Sprites[i].TexBG = TexBG;
-		Sprites[i].CurrentState = onBackState;
-
-		counter++;
-
-		if (counter == 4) {
-			startX = OriginX;
-			startY -= 1.0f / 2.0f;
-			counter = 0;
-		}
-		else {
-			startX += 1.0f / 2.0f;
-		}
-	}
-
-	BGInstance.CreateInstance(PrimitiveMgr.GetPrimitive(t1000::PrimitiveManager::QUAD), &VP);
-	BGInstance.SetTexture(GeneralTexBG, 0);
-
-	SplashInstance.CreateInstance(PrimitiveMgr.GetPrimitive(t1000::PrimitiveManager::QUAD), &VP);
-	SplashInstance.SetTexture(Splash,0);
-
-	WinningInstance.CreateInstance(PrimitiveMgr.GetPrimitive(t1000::PrimitiveManager::QUAD), &VP);
-	
-	Randomize();
-	
-
+	LogPrintDebug("TestApp::CreateAssets 22");
 	PrimitiveMgr.SetSceneProps(&SceneProp);
-	
-	grdo = 0.0f;
+
+	m_agent.m_actualPoint = m_spline.GetPoint(m_spline.GetNormalizedOffset(0));
+	LogPrintDebug("TestApp::CreateAssets 22");
+	ActiveCam->AttachAgent(m_agent);
+	LogPrintDebug("TestApp::CreateAssets 23");
+	ActiveCam->m_lookAtCenter = false;
+
+	Quads[0].TranslateAbsolute(0.0f, 0.0f, 0.0f);
+	Quads[0].Update();
+
+	LogPrintDebug("TestApp::CreateAssets 24");
+
+	Quads[1].ScaleAbsolute(0.25);
+	Quads[1].TranslateAbsolute(-0.75f, +0.75f, 0.0f);
+	Quads[1].Update();
+
+	Quads[2].ScaleAbsolute(0.25f);
+	Quads[2].TranslateAbsolute(0.75f, +0.75f, 0.0f);
+	Quads[2].Update();
+
+	Quads[3].ScaleAbsolute(0.25f);
+	Quads[3].TranslateAbsolute(-0.75f, -0.75f, 0.0f);
+	Quads[3].Update();
+
+	Quads[4].ScaleAbsolute(0.25f);
+	Quads[4].TranslateAbsolute(0.75f, -0.75f, 0.0f);
+	Quads[4].Update();
+
+	Quads[5].ScaleAbsolute(0.25f);
+	Quads[5].TranslateAbsolute(0.75f, 0.0f, 0.0f);
+	Quads[5].Update();
+
+	Quads[6].ScaleAbsolute(0.25f);
+	Quads[6].TranslateAbsolute(-0.75f, 0.0f, 0.0f);
+	Quads[6].Update();
+
+	Quads[7].ScaleAbsolute(1.0f);
+	Quads[7].TranslateAbsolute(0.0f, 0.0f, 0.1f);
+	Quads[7].Update();
+
+	LogPrintDebug("TestApp::CreateAssets 25");
+
  	bInited = true;
-}
-
-void TestApp::Randomize() {
-	for (std::size_t i = 0; i < 8; i++) {
-		int random_1 = RandomRange(0, 15);
-		int random_2 = RandomRange(0, 15);
-
-		while (random_1 == random_2 || Sprites[random_1].Taken == 1 || Sprites[random_2].Taken == 1) {
-			random_1 = RandomRange(0, 15);
-			random_2 = RandomRange(0, 15);		
-		}
-
-		Sprites[random_1].ActualTexture = Pairs[i].ImageTexture;
-		Sprites[random_1].Type = Sprite::IMAGE;
-		Sprites[random_2].ActualTexture = Pairs[i].TextTexture;
-		Sprites[random_2].Type = Sprite::TEXT;
-		Sprites[random_1].DescriptionTexture = Pairs[i].DescriptionTexture;
-		Sprites[random_2].DescriptionTexture = Pairs[i].DescriptionTexture;
-		Sprites[random_1].Equal = &Sprites[random_2];
-		Sprites[random_2].Equal = &Sprites[random_1];
-		Sprites[random_1].Taken = 1;
-		Sprites[random_2].Taken = 1;
-		Sprites[random_1].Enabled = 1;
-		Sprites[random_2].Enabled = 1;
-//		LogPrintDebug("Sprite %d assign %d Tex[%d] name[%s] TexEqual name[%s]", random_1, random_2, i, Sprites[random_1].ActualTexture->optname, Sprites[random_1].Equal->ActualTexture->optname);
-	}
-
-	for (int i = 0; i < 16; i++) {
-		Sprites[i].SetTexture(Sprites[i].ActualTexture);
-		Sprites[i].Taken = 0;
-		Sprites[i].ChangeState(onBackState);
-	}
 }
 
 void TestApp::DestroyAssets() {
 	LogPrintDebug("TestApp::DestroyAssets");
+	PrimitiveMgr.DestroyPrimitives();
+	pFramework->pVideoDriver->DestroyRTs();
 }
 
 void TestApp::OnUpdate() {
@@ -250,36 +375,221 @@ void TestApp::OnUpdate() {
 	DtTimer.Update();
 	DtSecs = DtTimer.GetDTSecs();
 
+	static float timeAccum = 0;
+	timeAccum += DtSecs;
 
-	
-	pCurrentState->Update(this, DtSecs);
+	if (timeAccum > 1.0) {
+		m_fpsString = "FPS " + patch::to_string((int)(1.0 / DtSecs));
+		m_fpsCol = XVECTOR3(0.2, 0.8, 0.2);
+		timeAccum = 0;
+	}
 
-	//grdo += DtSecs;
 
-	//if (grdo > 2.0f) {
-	//	Randomize();
-	//	grdo = 0.0f;
-	//}
+	Meshes[0].SetParallaxSettings(SceneProp.ParallaxLowSamples, SceneProp.ParallaxHighSamples, SceneProp.ParallaxHeight);
+	m_agent.Update(DtSecs);
+
 
 	ActiveCam->Update(DtSecs);
 	VP = ActiveCam->VP;
+	SceneProp.Lights[0].Position = LightCam.Eye;
+	SceneProp.pLightCameras[0]->Yaw -= 0.008f *DtSecs;
+
+	SceneProp.pLightCameras[0]->Update(DtSecs);
 
 }
 
 void TestApp::OnDraw() {
-
 	pFramework->pVideoDriver->Clear();
-
-	BGInstance.SetGlobalSignature(t1000::T_Signature::FSQUAD_TESTING);
-	BGInstance.SetTexture(GeneralTexBG, 0);
-	BGInstance.Draw();
 	
 
-	pCurrentState->Draw(this, DtSecs);
+	pFramework->pVideoDriver->SetDepthStencilState(t1000::BaseDriver::DEPTH_STENCIL_STATES::READ_WRITE);
 
-	pFramework->pVideoDriver->SwapBuffers();
+	// Shadow Map Depth Pass
+	pFramework->pVideoDriver->PushRT(DepthPass);
+	SceneProp.pCameras[0] = &LightCam;
+	pFramework->pVideoDriver->SetCullFace(t1000::BaseDriver::FACE_CULLING::BACK_FACES);
+	for (int i = 0; i < 2; i++) {
+		Meshes[i].SetGlobalSignature(t1000::T_Signature::SHADOW_MAP_PASS);
+		Meshes[i].Draw();
+		Meshes[i].SetGlobalSignature(t1000::T_Signature::FORWARD_PASS);
+	}
+	pFramework->pVideoDriver->PopRT();
 
+	pFramework->pVideoDriver->SetCullFace(t1000::BaseDriver::FACE_CULLING::FRONT_FACES);
+
+	// G Buffer Pass
+	pFramework->pVideoDriver->PushRT(GBufferPass);
+	SceneProp.pCameras[0] = &Cam;
+	for (int i = 0; i < 2; i++) {
+		Meshes[i].SetGlobalSignature(t1000::T_Signature::GBUFF_PASS);
+		Meshes[i].Draw();
+		Meshes[i].SetGlobalSignature(t1000::T_Signature::FORWARD_PASS);
+	}
+	pFramework->pVideoDriver->PopRT();
+
+	pFramework->pVideoDriver->SetDepthStencilState(t1000::BaseDriver::DEPTH_STENCIL_STATES::READ);
+
+	// Shadow Map Buffer Accumulation + Occlusion 
+	pFramework->pVideoDriver->PushRT(ShadowAccumPass);
+	pFramework->pVideoDriver->Clear();
+	Quads[0].SetTexture(pFramework->pVideoDriver->GetRTTexture(GBufferPass, t1000::BaseDriver::DEPTH_ATTACHMENT), 0);
+	Quads[0].SetTexture(pFramework->pVideoDriver->GetRTTexture(DepthPass, t1000::BaseDriver::DEPTH_ATTACHMENT), 1);
+	Quads[0].SetTexture(pFramework->pVideoDriver->GetRTTexture(GBufferPass, t1000::BaseDriver::COLOR1_ATTACHMENT), 2);
+	Quads[0].SetTexture(SceneProp.SSAOKernel.NoiseTex, 3);
+	Quads[0].SetGlobalSignature(t1000::T_Signature::SHADOW_COMP_PASS);
+	Quads[0].Draw();
+	pFramework->pVideoDriver->PopRT();
+
+
+	// Shadow Map Blur Pass
+	pFramework->pVideoDriver->PushRT(ExtraHelperPass);
+	SceneProp.ActiveGaussKernel = SHADOW_KERNEL;
+	Quads[0].SetTexture(pFramework->pVideoDriver->GetRTTexture(ShadowAccumPass, t1000::BaseDriver::COLOR0_ATTACHMENT), 0);
+	Quads[0].SetGlobalSignature(t1000::T_Signature::VERTICAL_BLUR_PASS);
+	Quads[0].Draw();
+	pFramework->pVideoDriver->PopRT();
+
+	pFramework->pVideoDriver->PushRT(ShadowAccumPass);
+	Quads[0].SetTexture(pFramework->pVideoDriver->GetRTTexture(ExtraHelperPass, t1000::BaseDriver::COLOR0_ATTACHMENT), 0);
+	Quads[0].SetGlobalSignature(t1000::T_Signature::HORIZONTAL_BLUR_PASS);
+	Quads[0].Draw();
+	pFramework->pVideoDriver->PopRT();
+
+
+	// Deferred Pass
+	pFramework->pVideoDriver->PushRT(DeferredPass);
+	Quads[0].SetTexture(pFramework->pVideoDriver->GetRTTexture(GBufferPass, t1000::BaseDriver::COLOR0_ATTACHMENT), 0);
+	Quads[0].SetTexture(pFramework->pVideoDriver->GetRTTexture(GBufferPass, t1000::BaseDriver::COLOR1_ATTACHMENT), 1);
+	Quads[0].SetTexture(pFramework->pVideoDriver->GetRTTexture(GBufferPass, t1000::BaseDriver::COLOR2_ATTACHMENT), 2);
+	Quads[0].SetTexture(pFramework->pVideoDriver->GetRTTexture(GBufferPass, t1000::BaseDriver::COLOR3_ATTACHMENT), 3);
+	Quads[0].SetTexture(pFramework->pVideoDriver->GetRTTexture(GBufferPass, t1000::BaseDriver::DEPTH_ATTACHMENT), 4);
+	Quads[0].SetTexture(pFramework->pVideoDriver->GetRTTexture(ShadowAccumPass, t1000::BaseDriver::COLOR0_ATTACHMENT), 5);
+	Quads[0].SetEnvironmentMap(pFramework->pVideoDriver->GetTexture(EnvMapTexIndex));
+	Quads[0].SetGlobalSignature(t1000::T_Signature::DEFERRED_PASS);
+	Quads[0].Draw();
+	pFramework->pVideoDriver->PopRT();
+
+
+	// God Rays and Volumetric Pass
+	pFramework->pVideoDriver->PushRT(GodRaysCalcPass);
+	Quads[0].SetGlobalSignature(t1000::T_Signature::LIGHT_RAY_MARCHING);
+	Quads[0].SetTexture(pFramework->pVideoDriver->GetRTTexture(GBufferPass, t1000::BaseDriver::DEPTH_ATTACHMENT), 0);
+	Quads[0].SetTexture(pFramework->pVideoDriver->GetRTTexture(DepthPass, t1000::BaseDriver::DEPTH_ATTACHMENT), 1);
+	Quads[0].Draw();
+	pFramework->pVideoDriver->PopRT();
+
+	//God Rays blur
+	pFramework->pVideoDriver->PushRT(GodRaysCalcExtraPass);
+	SceneProp.ActiveGaussKernel = DOF_KERNEL;
+	Quads[0].SetTexture(pFramework->pVideoDriver->GetRTTexture(GodRaysCalcPass, t1000::BaseDriver::COLOR0_ATTACHMENT), 0);
+	Quads[0].SetGlobalSignature(t1000::T_Signature::VERTICAL_BLUR_PASS);
+	Quads[0].Draw();
+	pFramework->pVideoDriver->PopRT();
+
+	pFramework->pVideoDriver->PushRT(GodRaysCalcPass);
+	Quads[0].SetTexture(pFramework->pVideoDriver->GetRTTexture(GodRaysCalcExtraPass, t1000::BaseDriver::COLOR0_ATTACHMENT), 0);
+	Quads[0].SetGlobalSignature(t1000::T_Signature::HORIZONTAL_BLUR_PASS);
+	Quads[0].Draw();
+	pFramework->pVideoDriver->PopRT();
+
+	pFramework->pVideoDriver->PushRT(Extra16FPass);
+	Quads[0].SetGlobalSignature(t1000::T_Signature::LIGHT_ADD);
+	Quads[0].SetTexture(pFramework->pVideoDriver->GetRTTexture(GodRaysCalcPass, t1000::BaseDriver::COLOR0_ATTACHMENT), 0);
+	Quads[0].SetTexture(pFramework->pVideoDriver->GetRTTexture(DeferredPass, t1000::BaseDriver::COLOR0_ATTACHMENT), 1);
+	Quads[0].Draw();
+	pFramework->pVideoDriver->PopRT();
+
+
+
+	// Bright Pass
+	pFramework->pVideoDriver->PushRT(BloomAccumPass);
+	Quads[0].SetTexture(pFramework->pVideoDriver->GetRTTexture(Extra16FPass, t1000::BaseDriver::COLOR0_ATTACHMENT), 0);
+	Quads[0].SetGlobalSignature(t1000::T_Signature::BRIGHT_PASS);
+	Quads[0].Draw();
+	pFramework->pVideoDriver->PopRT();
+
+	SceneProp.ActiveGaussKernel = BLOOM_KERNEL;
+	pFramework->pVideoDriver->PushRT(ExtraHelperPass);
+	Quads[0].SetTexture(pFramework->pVideoDriver->GetRTTexture(BloomAccumPass, t1000::BaseDriver::COLOR0_ATTACHMENT), 0);
+	Quads[0].SetGlobalSignature(t1000::T_Signature::HORIZONTAL_BLUR_PASS);
+	Quads[0].Draw();
+	pFramework->pVideoDriver->PopRT();
+
+	pFramework->pVideoDriver->PushRT(BloomAccumPass);
+	Quads[0].SetTexture(pFramework->pVideoDriver->GetRTTexture(ExtraHelperPass, t1000::BaseDriver::COLOR0_ATTACHMENT), 0);
+	Quads[0].SetGlobalSignature(t1000::T_Signature::VERTICAL_BLUR_PASS);
+	Quads[0].Draw();
+	pFramework->pVideoDriver->PopRT();
+
+
+	SceneProp.ActiveGaussKernel = DOF_KERNEL;
+	//DOF PASS
+	pFramework->pVideoDriver->PushRT(CoCPass);
+	Quads[0].SetGlobalSignature(t1000::T_Signature::COC_PASS);
+	Quads[0].SetTexture(pFramework->pVideoDriver->GetRTTexture(GBufferPass, t1000::BaseDriver::DEPTH_ATTACHMENT), 0);
+	Quads[0].Draw();
+	pFramework->pVideoDriver->PopRT();
+
+	//COMBINE COC
+	pFramework->pVideoDriver->PushRT(CombineCoCPass);
+	Quads[0].SetGlobalSignature(t1000::T_Signature::COMBINE_COC_PASS);
+	Quads[0].SetTexture(pFramework->pVideoDriver->GetRTTexture(CoCPass, t1000::BaseDriver::COLOR0_ATTACHMENT), 0);
+	Quads[0].SetTexture(pFramework->pVideoDriver->GetRTTexture(CoCPass, t1000::BaseDriver::COLOR1_ATTACHMENT), 1);
+	Quads[0].Draw();
+	pFramework->pVideoDriver->PopRT();
+	////DOF_BLUR
+	pFramework->pVideoDriver->PushRT(DeferredPass);
+	Quads[0].SetGlobalSignature(t1000::T_Signature::DOF_PASS);
+	Quads[0].SetTexture(pFramework->pVideoDriver->GetRTTexture(Extra16FPass, t1000::BaseDriver::COLOR0_ATTACHMENT), 0);
+	Quads[0].SetTexture(pFramework->pVideoDriver->GetRTTexture(CombineCoCPass, t1000::BaseDriver::COLOR0_ATTACHMENT), 1);
+	Quads[0].Draw();
+	pFramework->pVideoDriver->PopRT();
+
+	pFramework->pVideoDriver->PushRT(Extra16FPass);
+	Quads[0].SetGlobalSignature(t1000::T_Signature::DOF_PASS_2);
+	Quads[0].SetTexture(pFramework->pVideoDriver->GetRTTexture(DeferredPass, t1000::BaseDriver::COLOR0_ATTACHMENT), 0);
+	Quads[0].SetTexture(pFramework->pVideoDriver->GetRTTexture(CombineCoCPass, t1000::BaseDriver::COLOR0_ATTACHMENT), 1);
+	Quads[0].Draw();
+	pFramework->pVideoDriver->PopRT();
+
+	// HDR Composition Pass
+	pFramework->pVideoDriver->PushRT(ExtraHelperPass);
+	Quads[0].SetTexture(pFramework->pVideoDriver->GetRTTexture(Extra16FPass, t1000::BaseDriver::COLOR0_ATTACHMENT), 0);
+	Quads[0].SetTexture(pFramework->pVideoDriver->GetRTTexture(BloomAccumPass, t1000::BaseDriver::COLOR0_ATTACHMENT), 1);
+	Quads[0].SetGlobalSignature(t1000::T_Signature::HDR_COMP_PASS);
+	Quads[0].Draw();
+
+
+	pFramework->pVideoDriver->PopRT();
+
+	// Final Draw
+	Quads[7].SetTexture(pFramework->pVideoDriver->GetRTTexture(ExtraHelperPass, t1000::BaseDriver::COLOR0_ATTACHMENT), 0);
+	Quads[7].SetGlobalSignature(t1000::T_Signature::FSQUAD_TESTING);
+	Quads[7].Draw();
 	
+	Quads[1].SetTexture(pFramework->pVideoDriver->GetRTTexture(DepthPass, t1000::BaseDriver::DEPTH_ATTACHMENT), 0);
+	Quads[1].SetGlobalSignature(t1000::T_Signature::FSQUAD_TESTING);
+	Quads[1].Draw();
+
+	Quads[2].SetTexture(pFramework->pVideoDriver->GetRTTexture(GBufferPass, t1000::BaseDriver::COLOR1_ATTACHMENT), 0);
+	Quads[2].SetGlobalSignature(t1000::T_Signature::FSQUAD_TESTING);
+	Quads[2].Draw();
+
+	Quads[3].SetTexture(pFramework->pVideoDriver->GetRTTexture(GBufferPass, t1000::BaseDriver::COLOR2_ATTACHMENT), 0);
+	Quads[3].SetGlobalSignature(t1000::T_Signature::FSQUAD_TESTING);
+	Quads[3].Draw();
+
+	Quads[4].SetTexture(pFramework->pVideoDriver->GetRTTexture(ShadowAccumPass, t1000::BaseDriver::COLOR0_ATTACHMENT), 0);
+	Quads[4].SetGlobalSignature(t1000::T_Signature::FSQUAD_TESTING);
+	Quads[4].Draw();
+	
+	if (SceneProp.pCameras[0]->Eye.y > 80) {
+		m_flare.Draw();
+	}
+
+	m_textRender.Draw(-0.9f, -0.8f, m_fpsCol, m_fpsString);
+
+	pFramework->pVideoDriver->SwapBuffers();	
 }
 
 void TestApp::OnInput() {
@@ -309,389 +619,3 @@ void TestApp::OnReset() {
 void TestApp::LoadScene(int id) {
 
 }
-
-void Sprite::Create(t1000::PrimitiveBase* base, float x, float y, float scx, float scy) {
-	XMATRIX44 VP;
-	pInstance.CreateInstance(base, &VP);	
-	PosXOriginal = x;
-	PosYOriginal = y;
-	ScaleXOriginal = scx;
-	ScaleYOriginal = scy;
-}
-
-void Sprite::ChangeState(stateBase *state) {
-	CurrentState->Exit(this);
-	CurrentState = state;
-	CurrentState->Enter(this);
-}
-
-void Sprite::SetTexture(t1000::Texture* tex) {
-	pInstance.SetTexture(tex,0);
-}
-
-void Sprite::Update(float dt) {
-	CurrentState->Run(this,dt);
-}
-
-void Sprite::CheckForCollision(float coordx, float coordy) {
-	float x_delta = coordx - PosXOriginal;
-	float y_delta = coordy - PosYOriginal;
-	float distance_ = sqrtf((x_delta*x_delta) + (y_delta* y_delta));
-
-	if (distance_ < 0.1f) {
-		Collision = true;
-		LogPrintDebug("Collision!");
-	}
-	else {
-		Collision = false;
-	}
-}
-
-void Sprite::Rotate180() {
-
-}
-
-void Sprite::Draw() {
-	pInstance.SetGlobalSignature(t1000::T_Signature::FSQUAD_TESTING);
-	pInstance.Draw();
-}
-
-// Back
-void Sprite_on_Back_State::Enter(Sprite* sp) {
-	sp->Angle = 0.0f;
-	sp->Sign = 1.0f;
-	sp->SetTexture(sp->TexBG);
-	sp->State = Sprite::BACK;
-}
-
-void Sprite_on_Back_State::Run(Sprite* sp,float dt) {
-	sp->pInstance.TranslateAbsolute(sp->PosXOriginal, sp->PosYOriginal, 0.0f);
-	sp->pInstance.ScaleAbsolute(sp->ScaleXOriginal*sp->Sign, sp->ScaleYOriginal, 1.0f);
-	sp->pInstance.RotateYAbsolute(sp->Angle);
-	sp->pInstance.Update();
-
-	if (sp->Collision && sp->SpritesOnBack > (14 - sp->SpritesDisabled)) {
-		sp->NeedtoChangeState = true;
-		sp->Collision = false;
-	}
-
-	if (sp->NeedtoChangeState)
-		sp->ChangeState(onRotatingToFrontState);
-}
-
-void Sprite_on_Back_State::Exit(Sprite* sp) {
-	sp->NeedtoChangeState = 0;
-}
-
-// To Front
-void Sprite_Rotating_to_Front_State::Enter(Sprite* sp) {
-	sp->Angle = 0.0f;
-	sp->SetTexture(sp->TexBG);
-	sp->State = Sprite::SPIN_FRONT;
-}
-
-void Sprite_Rotating_to_Front_State::Run(Sprite* sp, float dt) {
-	sp->Angle += sp->SpeedOnDegrees*dt;
-
-
-	if (sp->Angle >= 90.0f) {
-		sp->SetTexture(sp->ActualTexture);
-		sp->Sign = -1.0f;
-	}
-
-	if (sp->Angle >= 180.0f) {
-		sp->Angle = 180.0f;
-		sp->ChangeState(onFrontState);
-	}
-
-
-	sp->pInstance.TranslateAbsolute(sp->PosXOriginal, sp->PosYOriginal, 0.0f);
-	sp->pInstance.ScaleAbsolute(sp->ScaleXOriginal*sp->Sign, sp->ScaleYOriginal, 1.0f);
-	sp->pInstance.RotateYAbsolute(sp->Angle);
-	sp->pInstance.Update();
-}
-
-void Sprite_Rotating_to_Front_State::Exit(Sprite* sp) {
-	sp->NeedtoChangeState = 0;
-}
-
-// Front
-void Sprite_on_Front_State::Enter(Sprite* sp) {
-	sp->Angle = 180.0f;
-	sp->SetTexture(sp->ActualTexture);
-	sp->Sign = -1.0f;
-	sp->State = Sprite::FRONT;
-}
-
-void Sprite_on_Front_State::Run(Sprite* sp, float dt) {
-	sp->pInstance.TranslateAbsolute(sp->PosXOriginal, sp->PosYOriginal, 0.0f);
-	sp->pInstance.ScaleAbsolute(sp->ScaleXOriginal*sp->Sign, sp->ScaleYOriginal, 1.0f);
-	sp->pInstance.RotateYAbsolute(sp->Angle);
-	sp->pInstance.Update();
-
-	if (sp->Collision) {
-		sp->NeedtoChangeState = true;
-		sp->Collision = false;
-	}
-
-	if (sp->NeedtoChangeState)
-		sp->ChangeState(onRotatingToBackState);
-}
-
-void Sprite_on_Front_State::Exit(Sprite* sp) {
-	sp->NeedtoChangeState = 0;
-}
-
-// To Back
-void Sprite_Rotating_to_Back_State::Enter(Sprite* sp) {
-	sp->Angle = 180.0f;
-	sp->SetTexture(sp->ActualTexture);
-	sp->Sign = -1.0f;
-	sp->State = Sprite::SPIN_BACK;
-}
-
-void Sprite_Rotating_to_Back_State::Run(Sprite* sp, float dt) {
-	sp->Angle -= sp->SpeedOnDegrees*dt;
-
-
-	if (sp->Angle <= 90.0f) {
-		sp->SetTexture(sp->TexBG);
-		sp->Sign = 1.0f;
-	}
-
-	if (sp->Angle <= 0.0f) {
-		sp->Angle = 0.0f;
-		sp->ChangeState(onBackState);
-	}
-
-	sp->pInstance.TranslateAbsolute(sp->PosXOriginal, sp->PosYOriginal, 0.0f);
-	sp->pInstance.ScaleAbsolute(sp->ScaleXOriginal*sp->Sign, sp->ScaleYOriginal, 1.0f);
-	sp->pInstance.RotateYAbsolute(sp->Angle);
-	sp->pInstance.Update();
-}
-
-void Sprite_Rotating_to_Back_State::Exit(Sprite* sp) {
-	sp->NeedtoChangeState = 0;
-}
-
-void StartWindow::Enter(TestApp* app) {
-	app->SpritesDisabled = 0;
-	app->WinningScale = 1.0f;
-	for (int i = 0; i < 16; i++) {
-		app->Sprites[i].SpritesDisabled = 0;
-	}
-	app->Randomize();
-}
-
-void StartWindow::Update(TestApp* app, float) {
-	int xCoord = 0, yCoord = 0;
-	bool bChange = false;
-
-	if (app->IManager.PressedOnceTouch(xCoord, yCoord)) {
-		bChange = true;
-	}
-
-	if (bChange)
-		app->ChangeState(onPlayingWindow);
-
-	app->SplashInstance.ScaleAbsolute(app->WinningScale, app->WinningScale, app->WinningScale);
-	 
-}
-
-void StartWindow::Draw(TestApp* app, float) {
-	app->SplashInstance.SetGlobalSignature(t1000::T_Signature::FSQUAD_TESTING);
-	app->SplashInstance.SetTexture(app->Splash, 0);
-	app->SplashInstance.Draw();
-}
-void StartWindow::Exit(TestApp* app) {
-
-}
-
-
-
-void PlayingtWindow::Enter(TestApp* app ) {
-
-}
-
-void PlayingtWindow::Update(TestApp* app, float DtSecs) {
-	int xCoord = 0, yCoord = 0;
-
-
-	float win_w = (float)app->pFramework->pVideoDriver->width;
-	float win_h = (float)app->pFramework->pVideoDriver->height;
-
-	int OnBack = 0, OnFront = 0;
-	for (int i = 0; i < 16; i++) {
-		if (app->Sprites[i].Enabled) {
-			if (app->Sprites[i].State == Sprite::BACK)
-				OnBack++;
-			if (app->Sprites[i].State == Sprite::FRONT)
-				OnFront++;
-		}
-	}
-
-	if (app->IManager.PressedOnceTouch(xCoord, yCoord)) {
-		float realXCoord = (((float)xCoord) / win_w)*2.0 - 1.0;
-		float realYCoord = 2.0 - (((float)yCoord) / win_h)*2.0 - 1.0;
-
-
-		for (int i = 0; i < 16; i++) {
-			if (app->Sprites[i].Enabled) {
-				app->Sprites[i].SpritesOnFront = OnFront;
-				app->Sprites[i].SpritesOnBack = OnBack;
-				app->Sprites[i].CheckForCollision(realXCoord, realYCoord);
-			}
-		}
-	}
-
-	if (OnFront == 2) {
-		int count = 0;
-		Sprite *both[2] = { 0 , 0 };
-		for (int i = 0; i < 16; i++) {
-			if (app->Sprites[i].Enabled) {
-				if (app->Sprites[i].State == Sprite::FRONT) {
-					both[count++] = &app->Sprites[i];
-				}
-			}
-		}
-
-		if (both[0]->Equal == both[1]) {
-			both[0]->Enabled = 0;
-			both[1]->Enabled = 0;
-			app->SpritesDisabled += 2;
-			for (int i = 0; i < 16; i++) {		
-				app->Sprites[i].SpritesDisabled = app->SpritesDisabled;
-			}
-			app->DescriptionToShow = both[0]->DescriptionTexture;
-			app->ChangeState(onPlayingtWindowTransitionToDesc);
-		}
-
-	}
-
-	for (int i = 0; i < 16; i++) {
-		app->Sprites[i].Update(DtSecs);
-	}
-
-
-}
-
-void PlayingtWindow::Draw(TestApp* app, float DtSecs) {
-	for (int i = 0; i < 16; i++) {
-		if (app->Sprites[i].Enabled) 
-			app->Sprites[i].Draw();
-	}
-}
-
-void PlayingtWindow::Exit(TestApp* app) {
-
-}
-
-
-
-void PlayingtWindowTransitionToDesc::Enter(TestApp* app) {
-	app->WinningScale = 0.0f;
-	app->WinningInstance.SetTexture(app->DescriptionToShow, 0);
-}
-
-void PlayingtWindowTransitionToDesc::Update(TestApp* app, float dt) {
-	app->WinningScale += 1.0f*dt;
-
-	if (app->WinningScale >= 1.0f) {
-		app->WinningScale = 1.0f;
-		app->ChangeState(onPlayingtWindowDescription);
-	}
-
-	app->WinningInstance.ScaleAbsolute(app->WinningScale, app->WinningScale, app->WinningScale);
-	app->WinningInstance.Update();
-}
-
-void PlayingtWindowTransitionToDesc::Draw(TestApp* app, float) {
-	app->WinningInstance.SetGlobalSignature(t1000::T_Signature::FSQUAD_TESTING);
-	app->WinningInstance.SetTexture(app->DescriptionToShow, 0);
-	app->WinningInstance.Draw();
-}
-
-void PlayingtWindowTransitionToDesc::Exit(TestApp* app) {
-	app->WinningScale = 1.0f;
-}
-
-
-
-void PlayingtWindowDescription::Enter(TestApp* app) {
-
-}
-
-void PlayingtWindowDescription::Update(TestApp* app, float) {
-	int xCoord = 0, yCoord = 0;
-	bool bChange = false;
-
-	if (app->IManager.PressedOnceTouch(xCoord, yCoord)) {
-		bChange = true;
-	}
-
-	int counterF = 0;
-	for (int i = 0; i < 16; i++) {
-		if (!app->Sprites[i].Enabled)
-			counterF++;
-	}
-
-	if (counterF == 16 && bChange) {
-		app->ChangeState(onStartWindow);
-		return;
-	}
-
-	if (bChange)
-		app->ChangeState(onPlayingWindow);
-
-	app->WinningInstance.ScaleAbsolute(app->WinningScale, app->WinningScale, app->WinningScale);
-
-	
-}
-
-void PlayingtWindowDescription::Draw(TestApp* app, float) {
-	app->WinningInstance.SetGlobalSignature(t1000::T_Signature::FSQUAD_TESTING);
-	app->WinningInstance.SetTexture(app->DescriptionToShow, 0);
-	app->WinningInstance.Draw();
-		
-}
-
-void PlayingtWindowDescription::Exit(TestApp* app) {
-
-}
-
-
-
-void PlayingtWindowTransitionToPlay::Enter(TestApp*) {
-
-}
-
-void PlayingtWindowTransitionToPlay::Update(TestApp* app, float) {
-
-}
-
-void PlayingtWindowTransitionToPlay::Draw(TestApp* app, float) {
-
-}
-
-void PlayingtWindowTransitionToPlay::Exit(TestApp*) {
-
-}
-
-
-
-void PlayingtWindowToEnd::Enter(TestApp*) {
-
-}
-
-void PlayingtWindowToEnd::Update(TestApp* app, float) {
-
-}
-
-void PlayingtWindowToEnd::Draw(TestApp* app, float) {
-
-}
-
-void PlayingtWindowToEnd::Exit(TestApp*) {
-
-}
-

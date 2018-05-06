@@ -14,17 +14,6 @@
 #include <fstream>
 
 
-namespace patch
-{
-	template < typename T > std::string to_string(const T& n)
-	{
-		std::ostringstream stm;
-		stm << n;
-		return stm.str();
-	}
-}
-
-
 #ifdef OS_WINDOWS
 #if defined(USING_OPENGL_ES20)
 #pragma comment(lib,"libEGL.lib")
@@ -422,11 +411,10 @@ namespace t1000 {
 	}
 #endif
 
-	glDisable(GL_DEPTH_TEST);
-    //glEnable(GL_DEPTH_TEST);
-  //  glClearDepthf(1.0f);			
-    glDisable(GL_CULL_FACE);
-    glCullFace(GL_FRONT);
+	glEnable(GL_DEPTH_TEST);
+	glClearDepthf(1.0f);
+	glEnable(GL_CULL_FACE);
+	glCullFace(GL_FRONT);
 
     glGetIntegerv(GL_FRAMEBUFFER_BINDING, &CurrentFBO);
 

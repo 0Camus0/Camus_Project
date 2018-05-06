@@ -4,183 +4,63 @@
 #include <scene/PrimitiveManager.h>
 #include <scene/PrimitiveInstance.h>
 #include <scene/SceneProp.h>
+#include <Scene/LensFlare.h>
+#include <Scene/T8_TextRenderer.h>
+#include <Scene/SplineWireframe.h>
+#include <Utils/T8_Spline.h>
 
 #include <utils/xMaths.h>
 #include <utils/Camera.h>
 #include <utils/Timer.h>
 
-struct Sprite;
-struct stateBase {
-	virtual void Enter(Sprite*) = 0;
-	virtual void Run(Sprite*,float) = 0;
-	virtual void Exit(Sprite*) = 0;
-};
-
-struct Sprite_on_Back_State : public stateBase {
-	void Enter(Sprite*);
-	void Run(Sprite*, float);
-	void Exit(Sprite*);
-};
-
-struct Sprite_Rotating_to_Front_State : public stateBase {
-	void Enter(Sprite*);
-	void Run(Sprite*, float);
-	void Exit(Sprite*);
-};
-
-struct Sprite_on_Front_State : public stateBase {
-	void Enter(Sprite*);
-	void Run(Sprite*, float);
-	void Exit(Sprite*);
-};
-
-struct Sprite_Rotating_to_Back_State : public stateBase {
-	void Enter(Sprite*);
-	void Run(Sprite*, float);
-	void Exit(Sprite*);
-};
-
-struct Pair {
-	Pair() : ImageTexture(0), TextTexture(0), DescriptionTexture(0), Id(0), Taken(0) {}
-	t1000::Texture *ImageTexture;
-	t1000::Texture *TextTexture;
-	t1000::Texture *DescriptionTexture;
-	int Taken;
-	int	Id;
-};
-
-struct Sprite {
-	Sprite() :
-		TexBG(0),
-		ActualTexture(0),
-		DescriptionTexture(0),
-		Equal(0),
-		CurrentState(0),
-		Angle(0.0f),
-		PosXOriginal(0.0f),
-		PosYOriginal(0.0f),
-		ScaleXOriginal(1.0f),
-		ScaleYOriginal(1.0f),
-		State(BACK),
-		Taken(0),
-		Type(0),
-		NeedtoChangeState(0),
-		Collision(0),
-		SpritesOnFront(0),
-		SpritesOnBack(0),
-		SpritesDisabled(0),
-		Enabled(0),
-		Sign(1.0f),
-		SpeedOnDegrees(270.0f)
-	{}
-
-	enum STATE {
-		BACK, SPIN_FRONT, SPIN_BACK, FRONT
-	};
-	
-	enum TYPE {
-		IMAGE, TEXT
-	};
-
-	void Create(t1000::PrimitiveBase* base,float x, float y, float scx, float scy);
-
-	void SetTexture(t1000::Texture* tex);
-
-	void ChangeState(stateBase *state);
-
-	void Update(float dt);
-
-	void CheckForCollision(float coordx, float coordY);
-
-	void Rotate180();
-
-	void Draw();
-
-	t1000::Texture			*TexBG;
-	t1000::Texture			*ActualTexture;
-	t1000::Texture			*DescriptionTexture;
-	t1000::PrimitiveInst	pInstance;
-	Sprite *Equal;
-	stateBase *CurrentState;
-	std::string Name;
-	float	Angle;
-	float	PosXOriginal, PosYOriginal;
-	float	ScaleXOriginal,ScaleYOriginal;
-	int		State;
-	int		Taken;
-	int		Type;
-	int		NeedtoChangeState;
-	int		Collision;
-	int		SpritesOnFront;
-	int		SpritesOnBack;
-	int		SpritesDisabled;
-	int		Enabled;
-	float	Sign;
-	float	SpeedOnDegrees;
-};
-
-class TestApp;
-
-struct stateGameBase {
-	virtual void Enter(TestApp*) = 0;
-	virtual void Update(TestApp*, float) = 0;
-	virtual void Draw(TestApp*, float) = 0;
-	virtual void Exit(TestApp*) = 0;
-};
-
-struct StartWindow : public stateGameBase {
-	void Enter(TestApp*);
-	void Update(TestApp*, float);
-	void Draw(TestApp*, float);
-	void Exit(TestApp*);
-};
-
-struct PlayingtWindow : public stateGameBase {
-	void Enter(TestApp*);
-	void Update(TestApp*, float);
-	void Draw(TestApp*, float);
-	void Exit(TestApp*);
-};
-
-struct PlayingtWindowTransitionToDesc : public stateGameBase {
-	void Enter(TestApp*);
-	void Update(TestApp*, float);
-	void Draw(TestApp*, float);
-	void Exit(TestApp*);
-};
-
-struct PlayingtWindowDescription: public stateGameBase {
-	void Enter(TestApp*);
-	void Update(TestApp*, float);
-	void Draw(TestApp*, float);
-	void Exit(TestApp*);
-};
-
-struct PlayingtWindowTransitionToPlay : public stateGameBase {
-	void Enter(TestApp*);
-	void Update(TestApp*, float);
-	void Draw(TestApp*, float);
-	void Exit(TestApp*);
-};
-
-struct PlayingtWindowToEnd : public stateGameBase {
-	void Enter(TestApp*);
-	void Update(TestApp*, float);
-	void Draw(TestApp*, float);
-	void Exit(TestApp*);
-};
-
-
 
 class TestApp : public t1000::AppBase {
 public:
+	enum {
+		DRAW_CUBE_SPINNING = 0,
+		DRAW_CUBE_BIG,
+		DRAW_MESH,
+		DRAW_ALL,
+	};
+
+	enum {
+		SHADOW_KERNEL = 0,
+		BLOOM_KERNEL = 1,
+		DOF_KERNEL = 2
+	};
+
+	enum {
+		CHANGE_EXPOSURE = 0,
+		CHANGE_BLOOM_FACTOR,
+		CHANGE_NUM_LIGHTS,
+		CHANGE_ACTIVE_GAUSS_KERNEL,
+		CHANGE_GAUSS_KERNEL_SAMPLE_COUNT,
+		CHANGE_GAUSS_KERNEL_RADIUS,
+		CHANGE_GAUSS_KERNEL_DEVIATION,
+		CHANGE_PCF_RADIUS,
+		CHANGE_PCF_SAMPLES,
+		CHANGE_SSAO_KERNEL_SIZE,
+		CHANGE_SSAO_RADIUS,
+		CHANGE_DOF_APERTURE,
+		CHANGE_DOF_FOCAL_LENGHT,
+		CHANGE_DOF_MAX_COC,
+		CHANGE_DOF_FAR_SAMPLE,
+		CHANGE_DOF_NEAR_SAMPLE,
+		CHANGE_DOF_AUTO_FOCUS,
+		CHANGE_PARALLAX_LOW_SAMPLES,
+		CHANGE_PARALLAX_HIGH_SAMPLES,
+		CHANGE_PARALLAX_HEIGHT,
+		CHANGE_LIGHT_VOLUME_STEPS,
+		CHANGE_PCF_TOOGLE,
+		CHANGLE_SSAO_TOOGLE,
+		CHANGE_MAX_NUM_OPTIONS
+	};
+
 	TestApp() : t1000::AppBase() {}
 
 	void InitVars();
 
 	void LoadAssets();
-
-	void ChangeState(stateGameBase*t);
 
 	void CreateAssets();
 	void DestroyAssets();
@@ -196,25 +76,20 @@ public:
 
 	void LoadScene(int id);
 
-	void Randomize();
+	Timer			DtTimer;
+	float			DtSecs;
 
+	std::string		m_fpsString;
+	XVECTOR3		m_fpsCol;
+	SceneProps		SceneProp;
+	t1000::TextRenderer		m_textRender;
 	t1000::PrimitiveManager PrimitiveMgr;
-//	t1000::PrimitiveInst	Sprites[16];
-	t1000::PrimitiveInst    Meshes[16];
-	t1000::PrimitiveInst	BGInstance;
-	t1000::PrimitiveInst	SplashInstance;
-	t1000::PrimitiveInst	WinningInstance;
+	t1000::PrimitiveInst	Cubes[10];
+	t1000::PrimitiveInst	Triangles[10];
+	t1000::PrimitiveInst   Meshes[10];
+	t1000::PrimitiveInst	QuadInst;
 
-	stateGameBase		*pCurrentState;
-
-	t1000::Texture			*TexBG;
-	t1000::Texture			*Splash;
-	t1000::Texture			*GeneralTexBG;
-	t1000::Texture			*DescriptionToShow;
-
-	Pair			Pairs[8];
-
-	Sprite			Sprites[16];
+	t1000::PrimitiveInst	Quads[10];
 
 	Camera			Cam;
 	Camera			LightCam;
@@ -233,17 +108,44 @@ public:
 	XMATRIX44		Projection;
 	XMATRIX44		VP;
 
-	SceneProps		SceneProp;
+	int				SelectedMesh;
+	int				RTIndex;
+	int				GBufferPass;
+	int				DeferredPass;
+	int				DepthPass;
+	int				ShadowAccumPass;
+	int				BloomAccumPass;
+	int				ExtraHelperPass;
+	int Extra16FPass;
+	int GodRaysCalcPass;
+	int GodRaysCalcExtraPass;
 
-	int				TexIdTest;
-	int				SpritesDisabled;
+	int CoCPass;
+	int CoCHelperPass;
+	int CoCHelperPass2;
+	int DOFPass;
+	int CombineCoCPass;
+	int Extra16FPass5x5;
+	//int				
 
-	Timer			DtTimer;
-	float			DtSecs;
-	float			grdo;
+	int				EnvMapTexIndex;
+	int       fireTextureIndx;
+	int       noiseTexture;
 
-	float			realXCoord;
-	float			realYCoord;
+	enum {
+		NORMAL_CAM1 = 0,
+		LIGHT_CAM1,
+		MAX_CAMS
+	};
+	int				CamSelection;
+	int				SceneSettingSelection;
+	int				ChangeActiveGaussSelection;
 
-	float			WinningScale;
+	t1000::SplineWireframe* splineWire;
+	t1000::PrimitiveInst splineInst;
+	t1000::SplineAgent m_agent;
+	t1000::Spline m_spline;
+
+	t1000::LensFlare m_flare;
+	XMATRIX44 m;
 };
