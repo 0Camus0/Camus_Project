@@ -155,7 +155,7 @@ namespace t1000 {
     CnstBuffer.WVP = transform;
     CnstBuffer.World = transform;
     CnstBuffer.WorldView = WV;
-	  CnstBuffer.Projection = pActualCamera->VP;
+	CnstBuffer.Projection = pActualCamera->VP;
     CnstBuffer.CameraPos = pActualCamera->Eye;
     CnstBuffer.brightness.x = m_brightness;
 	CnstBuffer.brightness.y = pScProp->ShadowMapResolution;

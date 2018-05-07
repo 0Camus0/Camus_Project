@@ -26,7 +26,7 @@
 #define MEDIUMQ 2
 #define LOWQ 3
 
-#define QUALITY_SELECTED HIGHQ
+#define QUALITY_SELECTED LOWQ
 
 #if   QUALITY_SELECTED == HIGHQ
 #define MAX_QUALITY
@@ -53,6 +53,14 @@ float clip(float n, float lower, float upper) {
 }
  
 void TestApp::InitVars() {
+    Position = XVECTOR3(0.0f, 0.0f, 0.0f);
+    Orientation = XVECTOR3(0.0f, 0.0f, 0.0f);
+    Scaling = XVECTOR3(1.0f, 1.0f, 1.0f);
+    SelectedMesh = 0;
+
+    CamSelection = NORMAL_CAM1;
+    SceneSettingSelection = CHANGE_EXPOSURE;
+  
 	Cam.InitPerspective(XVECTOR3(0.0f, 1.0f, 10.0f), Deg2Rad(46.8f), (float)pFramework->pVideoDriver->width / (float)pFramework->pVideoDriver->height, 2.0f, 12000.0f);
 	Cam.Speed = 10.0f;
 	Cam.Eye = XVECTOR3(0.0f, 9.75f, -31.0f);
@@ -231,12 +239,12 @@ void TestApp::CreateAssets() {
 	DtTimer.Init();
 	m_textRender.LoadFromFile(36, "tahomabd.ttf", 512.0f);
 	//Create RT's
-	GBufferPass = pFramework->pVideoDriver->CreateRT(4, t1000::BaseRT::RGBA8, t1000::BaseRT::F32, 0, 0, true);
-	DeferredPass = pFramework->pVideoDriver->CreateRT(1, t1000::BaseRT::RGBA16F, t1000::BaseRT::NOTHING, 0, 0, true);
-	Extra16FPass = pFramework->pVideoDriver->CreateRT(1, t1000::BaseRT::RGBA16F, t1000::BaseRT::NOTHING, 0, 0, true);
+	GBufferPass = pFramework->pVideoDriver->CreateRT(4, t1000::BaseRT::RGBA8, t1000::BaseRT::F32, 1280, 720, true);
+	DeferredPass = pFramework->pVideoDriver->CreateRT(1, t1000::BaseRT::RGBA16F, t1000::BaseRT::NOTHING, 1280, 720, true);
+	Extra16FPass = pFramework->pVideoDriver->CreateRT(1, t1000::BaseRT::RGBA16F, t1000::BaseRT::NOTHING, 1280, 720, true);
 	DepthPass = pFramework->pVideoDriver->CreateRT(0, t1000::BaseRT::NOTHING, t1000::BaseRT::F32, (int)SceneProp.ShadowMapResolution, (int)SceneProp.ShadowMapResolution, false);
-	ShadowAccumPass = pFramework->pVideoDriver->CreateRT(1, t1000::BaseRT::R8, t1000::BaseRT::NOTHING, 0, 0, true);
-	ExtraHelperPass = pFramework->pVideoDriver->CreateRT(1, t1000::BaseRT::RGBA8, t1000::BaseRT::NOTHING, 0, 0, true);
+	ShadowAccumPass = pFramework->pVideoDriver->CreateRT(1, t1000::BaseRT::RGBA8, t1000::BaseRT::NOTHING, 1280, 720, true);
+	ExtraHelperPass = pFramework->pVideoDriver->CreateRT(1, t1000::BaseRT::RGBA8, t1000::BaseRT::NOTHING, 1280, 720, true);
 	BloomAccumPass = pFramework->pVideoDriver->CreateRT(1, t1000::BaseRT::RGBA8, t1000::BaseRT::NOTHING, 512, 512, true);
 	GodRaysCalcPass = pFramework->pVideoDriver->CreateRT(1, t1000::BaseRT::RGBA8, t1000::BaseRT::NOTHING, SceneProp.GoodRaysResolution, SceneProp.GoodRaysResolution, true);
 	GodRaysCalcExtraPass = pFramework->pVideoDriver->CreateRT(1, t1000::BaseRT::RGBA8, t1000::BaseRT::NOTHING, SceneProp.GoodRaysResolution, SceneProp.GoodRaysResolution, true);
@@ -245,89 +253,57 @@ void TestApp::CreateAssets() {
 	CoCHelperPass = pFramework->pVideoDriver->CreateRT(1, t1000::BaseRT::F16, t1000::BaseRT::NOTHING, 512, 512, false);
 	CoCHelperPass2 = pFramework->pVideoDriver->CreateRT(1, t1000::BaseRT::F16, t1000::BaseRT::NOTHING, 512, 512, false);
 
-	LogPrintDebug("TestApp::CreateAssets 1");
-
-	//
 	PrimitiveMgr.Init();
 	PrimitiveMgr.SetVP(&VP);
 	m_flare.Init(PrimitiveMgr);
 
-	LogPrintDebug("TestApp::CreateAssets 2");
-
 	SceneProp.SSAOKernel.InitTexture();
-
-	LogPrintDebug("TestApp::CreateAssets 3");
 
 	EnvMapTexIndex = pFramework->pVideoDriver->CreateTexture(string("CubeMap_Mountains.dds"));
 
-	LogPrintDebug("TestApp::CreateAssets 4");
-
 	int index = PrimitiveMgr.CreateMesh("SkyBox.X");
 
-	LogPrintDebug("TestApp::CreateAssets 5");
 	Meshes[1].CreateInstance(PrimitiveMgr.GetPrimitive(index), &VP);
-	LogPrintDebug("TestApp::CreateAssets 6");
+
 	Meshes[1].TranslateAbsolute(0.0, -10.0f, 0.0f);
 	Meshes[1].Update();
 
-	LogPrintDebug("TestApp::CreateAssets 7");
-
 	index = PrimitiveMgr.CreateMesh("SponzaEsc.X");
-	
-	LogPrintDebug("TestApp::CreateAssets 8");
-
 	Meshes[0].CreateInstance(PrimitiveMgr.GetPrimitive(index), &VP);
-
-	LogPrintDebug("TestApp::CreateAssets 9");
-
 	index = PrimitiveMgr.CreateSpline(m_spline);
-
-	LogPrintDebug("TestApp::CreateAssets 10");
 
 	splineWire = (t1000::SplineWireframe*)PrimitiveMgr.GetPrimitive(index);
 	splineInst.CreateInstance(splineWire, &VP);
 
-	LogPrintDebug("TestApp::CreateAssets 11");
+
 	m.Identity();
-	LogPrintDebug("TestApp::CreateAssets 12");
+
 	Quads[0].CreateInstance(PrimitiveMgr.GetPrimitive(t1000::PrimitiveManager::QUAD), &m);
-	LogPrintDebug("TestApp::CreateAssets 13");
+
 	Quads[0].SetTexture(pFramework->pVideoDriver->RTs[0]->vColorTextures[0], 0);
 	Quads[0].SetTexture(pFramework->pVideoDriver->RTs[0]->vColorTextures[1], 1);
 	Quads[0].SetTexture(pFramework->pVideoDriver->RTs[0]->vColorTextures[2], 2);
 	Quads[0].SetTexture(pFramework->pVideoDriver->RTs[0]->vColorTextures[3], 3);
 	Quads[0].SetTexture(pFramework->pVideoDriver->RTs[0]->pDepthTexture, 4);
-	LogPrintDebug("TestApp::CreateAssets 14");
+
 	Quads[0].SetEnvironmentMap(pFramework->pVideoDriver->GetTexture(EnvMapTexIndex));
-	LogPrintDebug("TestApp::CreateAssets 15");
 
 	Quads[1].CreateInstance(PrimitiveMgr.GetPrimitive(t1000::PrimitiveManager::QUAD), &m);
-	LogPrintDebug("TestApp::CreateAssets 16");
 	Quads[2].CreateInstance(PrimitiveMgr.GetPrimitive(t1000::PrimitiveManager::QUAD), &m);
-	LogPrintDebug("TestApp::CreateAssets 17");
 	Quads[3].CreateInstance(PrimitiveMgr.GetPrimitive(t1000::PrimitiveManager::QUAD), &m);
-	LogPrintDebug("TestApp::CreateAssets 18");
 	Quads[4].CreateInstance(PrimitiveMgr.GetPrimitive(t1000::PrimitiveManager::QUAD), &m);
-	LogPrintDebug("TestApp::CreateAssets 19");
 	Quads[5].CreateInstance(PrimitiveMgr.GetPrimitive(t1000::PrimitiveManager::QUAD), &m);
-	LogPrintDebug("TestApp::CreateAssets 20");
 	Quads[6].CreateInstance(PrimitiveMgr.GetPrimitive(t1000::PrimitiveManager::QUAD), &m);
-	LogPrintDebug("TestApp::CreateAssets 21");
 	Quads[7].CreateInstance(PrimitiveMgr.GetPrimitive(t1000::PrimitiveManager::QUAD), &m);
 
-	LogPrintDebug("TestApp::CreateAssets 22");
 	PrimitiveMgr.SetSceneProps(&SceneProp);
 
 	m_agent.m_actualPoint = m_spline.GetPoint(m_spline.GetNormalizedOffset(0));
-	LogPrintDebug("TestApp::CreateAssets 22");
 	ActiveCam->AttachAgent(m_agent);
-	LogPrintDebug("TestApp::CreateAssets 23");
 	ActiveCam->m_lookAtCenter = false;
 
 	Quads[0].TranslateAbsolute(0.0f, 0.0f, 0.0f);
 	Quads[0].Update();
-
-	LogPrintDebug("TestApp::CreateAssets 24");
 
 	Quads[1].ScaleAbsolute(0.25);
 	Quads[1].TranslateAbsolute(-0.75f, +0.75f, 0.0f);
@@ -356,8 +332,6 @@ void TestApp::CreateAssets() {
 	Quads[7].ScaleAbsolute(1.0f);
 	Quads[7].TranslateAbsolute(0.0f, 0.0f, 0.1f);
 	Quads[7].Update();
-
-	LogPrintDebug("TestApp::CreateAssets 25");
 
  	bInited = true;
 }
@@ -392,9 +366,10 @@ void TestApp::OnUpdate() {
 	ActiveCam->Update(DtSecs);
 	VP = ActiveCam->VP;
 	SceneProp.Lights[0].Position = LightCam.Eye;
-	SceneProp.pLightCameras[0]->Yaw -= 0.008f *DtSecs;
-
 	SceneProp.pLightCameras[0]->Update(DtSecs);
+
+/*	SceneProp.pLightCameras[0]->Yaw -= 0.008f *DtSecs;
+*/
 
 }
 
@@ -439,8 +414,7 @@ void TestApp::OnDraw() {
 	Quads[0].SetGlobalSignature(t1000::T_Signature::SHADOW_COMP_PASS);
 	Quads[0].Draw();
 	pFramework->pVideoDriver->PopRT();
-
-
+/*
 	// Shadow Map Blur Pass
 	pFramework->pVideoDriver->PushRT(ExtraHelperPass);
 	SceneProp.ActiveGaussKernel = SHADOW_KERNEL;
@@ -454,8 +428,7 @@ void TestApp::OnDraw() {
 	Quads[0].SetGlobalSignature(t1000::T_Signature::HORIZONTAL_BLUR_PASS);
 	Quads[0].Draw();
 	pFramework->pVideoDriver->PopRT();
-
-
+*/
 	// Deferred Pass
 	pFramework->pVideoDriver->PushRT(DeferredPass);
 	Quads[0].SetTexture(pFramework->pVideoDriver->GetRTTexture(GBufferPass, t1000::BaseDriver::COLOR0_ATTACHMENT), 0);
@@ -563,7 +536,7 @@ void TestApp::OnDraw() {
 	pFramework->pVideoDriver->PopRT();
 
 	// Final Draw
-	Quads[7].SetTexture(pFramework->pVideoDriver->GetRTTexture(ExtraHelperPass, t1000::BaseDriver::COLOR0_ATTACHMENT), 0);
+	Quads[7].SetTexture(pFramework->pVideoDriver->GetRTTexture(ShadowAccumPass, t1000::BaseDriver::COLOR0_ATTACHMENT), 0);
 	Quads[7].SetGlobalSignature(t1000::T_Signature::FSQUAD_TESTING);
 	Quads[7].Draw();
 	

@@ -16,7 +16,7 @@ uniform highp vec4 LightCameraInfo;
 uniform highp vec4   brightness;
 uniform highp vec4   toogles;
 
-#define ENABLE_PCF 1
+#define ENABLE_PCF 0
 
 
 highp float roundTo(highp float num,highp float decimals){
@@ -273,7 +273,7 @@ void main(){
 
 	 		Final.xyz += RefleCol*kSpecular.xyz;
 
-			//Final.xyz *= Shadow;
+			Final.xyz *= Shadow;
 
 			//Final.xyz = vec3(rough, rough, rough);
 	}
@@ -290,7 +290,11 @@ uniform mediump sampler2D tex0;
 #if defined OMNIDIRECTIONAL_SH
 uniform mediump samplerCube tex1;
 #else
-uniform mediump sampler2DShadow  tex1;
+	#if ENABLE_PCF
+		uniform mediump sampler2DShadow  tex1;
+	#else
+		uniform mediump sampler2D tex1;
+	#endif
 #endif
 uniform mediump sampler2D tex2; // Normals
 uniform mediump sampler2D tex3; // Noise
@@ -330,70 +334,69 @@ highp vec4 FShadow = vec4(1.0,1.0,1.0,1.0);
 		shadowVal =  (1.0 - shadowVal) ;
 		FShadow = shadowVal*vec4(1.0,1.0,1.0,1.0);//texture(tex1, fragToLight ).rrrr;
 	#else
-	highp vec4 LightPos = WVPLight*position;
-	#ifdef NON_LINEAR_DEPTH
-		LightPos.xyz /= LightPos.w;
-	#else
-		LightPos.xy /= LightPos.w;
-		LightPos.z /= LightCameraInfo.y;
-	#endif
-	highp vec2 SHTC = LightPos.xy*0.5 + 0.5;
-	
-	if(SHTC.x < 1.0 && SHTC.y < 1.0 && SHTC.x  > 0.0 && SHTC.y > 0.0 && LightPos.w > 0.0 && LightPos.z < 1.0 ){
-		#if ENABLE_PCF
-			highp float sum = 0.0;
-			highp float x, y;
-			highp float Total = 0.0;
-			highp float Origin = brightness.x;			
-			highp float depthPos = LightPos.z;
-			for (y = -Origin; y <= Origin; y += 1.0){
-				for (x = -Origin; x <= Origin; x += 1.0){
-					highp float Val_1;					
-					#ifdef ES_30
-						highp vec3 Coords_Final = vec3(SHTC.xy + (brightness.z / brightness.y)*vec2(x, y), LightPos.z);
-						Val_1 = texture(tex1, Coords_Final);
-					#else
-						highp vec4 Coords_Final = vec4(SHTC.xy + (brightness.z / brightness.y)*vec2(x, y), LightPos.z, LightPos.w);
-						Val_1 = shadow2DProj(tex1, Coords_Final).r;
-					#endif
-						Val_1 *= 0.75;
-						Val_1 += 0.25;
-						sum += Val_1; //(depthPos > Val_1) ? 0.25 : 1.0;
-					Total++;
-				}
-			}
-
-			highp float shadowCoeff = sum / Total;
-			FShadow = shadowCoeff*vec4(1.0,1.0,1.0,1.0);
-			
-		/*
-			highp vec3 Coords_Final = vec3(SHTC.xy, LightPos.z);
-			highp float Val_1 = texture(tex1, Coords_Final,0.001);
-			Val_1 *= 0.75;
-			Val_1 += 0.25;
-			FShadow = Val_1*vec4(1.0, 1.0, 1.0, 1.0);
-			*/
-		#else	
-			highp float depthSM;
-			#ifdef ES_30
-				highp float depthSM_1 = texture(tex1,SHTC).r;
-				//highp float depthSM_2 = texture(tex4,SHTC).r;
-				depthSM = (depthSM_1+depthSM_2)/2.0;
-			#else
-				highp float depthSM_1 = texture2D(tex1,SHTC).r;
-				highp float depthSM_2 = texture2D(tex4,SHTC).r;
-				depthSM = (depthSM_1+depthSM_2)/2.0;
-			#endif
-		
-			highp float depthPos = LightPos.z;
-
-			if( depthPos  > depthSM)
-				FShadow = 0.25*vec4(1.0,1.0,1.0,1.0);
+		highp vec4 LightPos = WVPLight*position;
+		#ifdef NON_LINEAR_DEPTH
+			LightPos.xyz /= LightPos.w;
+		#else
+			LightPos.xy /= LightPos.w;
+			LightPos.z /= LightCameraInfo.y;
 		#endif
+		highp vec2 SHTC = LightPos.xy*0.5 + 0.5;
 		
-	}else{
-		FShadow = 0.25*vec4(1.0,1.0,1.0,1.0);
-	}
+		if(SHTC.x < 1.0 && SHTC.y < 1.0 && SHTC.x  > 0.0 && SHTC.y > 0.0 && LightPos.w > 0.0 && LightPos.z < 1.0 ){
+			#if ENABLE_PCF
+				highp float sum = 0.0;
+				highp float x, y;
+				highp float Total = 0.0;
+				highp float Origin = brightness.x;			
+				highp float depthPos = LightPos.z;
+				for (y = -Origin; y <= Origin; y += 1.0){
+					for (x = -Origin; x <= Origin; x += 1.0){
+						highp float Val_1;					
+						#ifdef ES_30
+							highp vec3 Coords_Final = vec3(SHTC.xy + (brightness.z / brightness.y)*vec2(x, y), LightPos.z);
+							Val_1 = texture(tex1, Coords_Final);
+						#else
+							highp vec4 Coords_Final = vec4(SHTC.xy + (brightness.z / brightness.y)*vec2(x, y), LightPos.z, LightPos.w);
+							Val_1 = shadow2DProj(tex1, Coords_Final).r;
+						#endif
+							Val_1 *= 0.75;
+							Val_1 += 0.25;
+							sum += Val_1; //(depthPos > Val_1) ? 0.25 : 1.0;
+						Total++;
+					}
+				}
+
+				highp float shadowCoeff = sum / Total;
+				FShadow = shadowCoeff*vec4(1.0,1.0,1.0,1.0);
+				
+			/*
+				highp vec3 Coords_Final = vec3(SHTC.xy, LightPos.z);
+				highp float Val_1 = texture(tex1, Coords_Final,0.001);
+				Val_1 *= 0.75;
+				Val_1 += 0.25;
+				FShadow = Val_1*vec4(1.0, 1.0, 1.0, 1.0);
+				*/
+			#else	
+				highp float depthSM;
+
+				#ifdef ES_30
+					highp float depthSM_1 = texture(tex1,SHTC).r;
+					depthSM = depthSM_1;
+				#else
+					highp float depthSM_1 = texture2D(tex1,SHTC).r;
+					depthSM = depthSM_1; 
+				#endif
+			
+				highp float depthPos = LightPos.z;
+
+				if( depthPos  > depthSM)
+					FShadow = 0.25*vec4(1.0,1.0,1.0,1.0);
+			#endif
+			
+		}else{
+			FShadow = 0.25*vec4(1.0,1.0,1.0,1.0);
+		}
 	#endif
 	return FShadow;
 }
@@ -480,20 +483,20 @@ void main(){
 		position.xyz /= position.w;
 		position.w = 1.0;
 	#else		
-		highp vec4 position = CameraPosition + PosCorner*depth;
+		highp vec4 position =  PosCorner*depth;
 	#endif
 
-	if (toogles.x == 1.0){
-		Fcolor = CalculateShadow(position);
-	}
+//	if (toogles.x == 1.0){
+//		Fcolor = CalculateShadow(position);
+//	}
 
-	if (toogles.y == 1.0) {
-		highp vec3 normal = GetNormal(coords);
-		highp float Occlusion = GetOcclusion(depth, coords.xy, position, normal);
-		Fcolor *= Occlusion;
-	}
+//	if (toogles.y == 1.0) {
+//		highp vec3 normal = GetNormal(coords);
+//		highp float Occlusion = GetOcclusion(depth, coords.xy, position, normal);
+//		Fcolor *= Occlusion;
+//	}
 
-	
+	Fcolor = texture(tex0,coords);// vec4(depth,depth,depth,1.0);
 	#ifdef ES_30
 		colorOut = Fcolor;
 	#else
