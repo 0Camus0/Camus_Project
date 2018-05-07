@@ -126,6 +126,7 @@ public:
 	int DOFPass;
 	int CombineCoCPass;
 	int Extra16FPass5x5;
+	int SceneDepthPass;
 	//int				
 
 	int				EnvMapTexIndex;

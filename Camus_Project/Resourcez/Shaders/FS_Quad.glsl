@@ -16,7 +16,7 @@ uniform highp vec4 LightCameraInfo;
 uniform highp vec4   brightness;
 uniform highp vec4   toogles;
 
-#define ENABLE_PCF 0
+#define ENABLE_PCF 1
 
 
 highp float roundTo(highp float num,highp float decimals){
@@ -483,20 +483,20 @@ void main(){
 		position.xyz /= position.w;
 		position.w = 1.0;
 	#else		
-		highp vec4 position =  PosCorner*depth;
+		highp vec4 position = CameraPosition + PosCorner*depth;
 	#endif
 
-//	if (toogles.x == 1.0){
-//		Fcolor = CalculateShadow(position);
-//	}
+	if (toogles.x == 1.0){
+		Fcolor = CalculateShadow(position);
+	}
 
-//	if (toogles.y == 1.0) {
-//		highp vec3 normal = GetNormal(coords);
-//		highp float Occlusion = GetOcclusion(depth, coords.xy, position, normal);
-//		Fcolor *= Occlusion;
-//	}
+	if (toogles.y == 1.0) {
+		highp vec3 normal = GetNormal(coords);
+		highp float Occlusion = GetOcclusion(depth, coords.xy, position, normal);
+		Fcolor *= Occlusion;
+	}
 
-	Fcolor = texture(tex0,coords);// vec4(depth,depth,depth,1.0);
+
 	#ifdef ES_30
 		colorOut = Fcolor;
 	#else

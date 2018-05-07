@@ -95,7 +95,7 @@
 
 
 #ifndef USE_LOAD_FROM_MEMORY
-#define USE_LOAD_FROM_MEMORY 0
+#define USE_LOAD_FROM_MEMORY 1
 #endif
 
 #define D3D11	1 

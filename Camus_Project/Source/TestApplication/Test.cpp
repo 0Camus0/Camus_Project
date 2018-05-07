@@ -239,12 +239,14 @@ void TestApp::CreateAssets() {
 	DtTimer.Init();
 	m_textRender.LoadFromFile(36, "tahomabd.ttf", 512.0f);
 	//Create RT's
-	GBufferPass = pFramework->pVideoDriver->CreateRT(4, t1000::BaseRT::RGBA8, t1000::BaseRT::F32, 1280, 720, true);
-	DeferredPass = pFramework->pVideoDriver->CreateRT(1, t1000::BaseRT::RGBA16F, t1000::BaseRT::NOTHING, 1280, 720, true);
-	Extra16FPass = pFramework->pVideoDriver->CreateRT(1, t1000::BaseRT::RGBA16F, t1000::BaseRT::NOTHING, 1280, 720, true);
+	int WidthReal = 1280;
+	int HeightReal = 720;
+	GBufferPass = pFramework->pVideoDriver->CreateRT(4, t1000::BaseRT::RGBA8, t1000::BaseRT::F32,  WidthReal, HeightReal, true);
+	DeferredPass = pFramework->pVideoDriver->CreateRT(1, t1000::BaseRT::RGBA16F, t1000::BaseRT::NOTHING,  WidthReal, HeightReal, true);
+	Extra16FPass = pFramework->pVideoDriver->CreateRT(1, t1000::BaseRT::RGBA16F, t1000::BaseRT::NOTHING,  WidthReal, HeightReal, true);
 	DepthPass = pFramework->pVideoDriver->CreateRT(0, t1000::BaseRT::NOTHING, t1000::BaseRT::F32, (int)SceneProp.ShadowMapResolution, (int)SceneProp.ShadowMapResolution, false);
-	ShadowAccumPass = pFramework->pVideoDriver->CreateRT(1, t1000::BaseRT::RGBA8, t1000::BaseRT::NOTHING, 1280, 720, true);
-	ExtraHelperPass = pFramework->pVideoDriver->CreateRT(1, t1000::BaseRT::RGBA8, t1000::BaseRT::NOTHING, 1280, 720, true);
+	ShadowAccumPass = pFramework->pVideoDriver->CreateRT(1, t1000::BaseRT::RGBA8, t1000::BaseRT::NOTHING,  WidthReal, HeightReal, true);
+	ExtraHelperPass = pFramework->pVideoDriver->CreateRT(1, t1000::BaseRT::RGBA8, t1000::BaseRT::NOTHING,  WidthReal, HeightReal, true);
 	BloomAccumPass = pFramework->pVideoDriver->CreateRT(1, t1000::BaseRT::RGBA8, t1000::BaseRT::NOTHING, 512, 512, true);
 	GodRaysCalcPass = pFramework->pVideoDriver->CreateRT(1, t1000::BaseRT::RGBA8, t1000::BaseRT::NOTHING, SceneProp.GoodRaysResolution, SceneProp.GoodRaysResolution, true);
 	GodRaysCalcExtraPass = pFramework->pVideoDriver->CreateRT(1, t1000::BaseRT::RGBA8, t1000::BaseRT::NOTHING, SceneProp.GoodRaysResolution, SceneProp.GoodRaysResolution, true);
@@ -252,6 +254,7 @@ void TestApp::CreateAssets() {
 	CombineCoCPass = pFramework->pVideoDriver->CreateRT(1, t1000::BaseRT::F16, t1000::BaseRT::NOTHING, 512, 512, true);
 	CoCHelperPass = pFramework->pVideoDriver->CreateRT(1, t1000::BaseRT::F16, t1000::BaseRT::NOTHING, 512, 512, false);
 	CoCHelperPass2 = pFramework->pVideoDriver->CreateRT(1, t1000::BaseRT::F16, t1000::BaseRT::NOTHING, 512, 512, false);
+	SceneDepthPass = pFramework->pVideoDriver->CreateRT(0, t1000::BaseRT::NOTHING, t1000::BaseRT::F32,  WidthReal, HeightReal, false);
 
 	PrimitiveMgr.Init();
 	PrimitiveMgr.SetVP(&VP);
@@ -366,11 +369,8 @@ void TestApp::OnUpdate() {
 	ActiveCam->Update(DtSecs);
 	VP = ActiveCam->VP;
 	SceneProp.Lights[0].Position = LightCam.Eye;
+	SceneProp.pLightCameras[0]->Yaw -= 0.008f *DtSecs;
 	SceneProp.pLightCameras[0]->Update(DtSecs);
-
-/*	SceneProp.pLightCameras[0]->Yaw -= 0.008f *DtSecs;
-*/
-
 }
 
 void TestApp::OnDraw() {
@@ -392,6 +392,17 @@ void TestApp::OnDraw() {
 
 	pFramework->pVideoDriver->SetCullFace(t1000::BaseDriver::FACE_CULLING::FRONT_FACES);
 
+	// Only Depth Pass
+	pFramework->pVideoDriver->PushRT(SceneDepthPass);
+	SceneProp.pCameras[0] = &Cam;
+	for (int i = 0; i < 2; i++) {
+		Meshes[i].SetGlobalSignature(t1000::T_Signature::SHADOW_MAP_PASS);
+		Meshes[i].Draw();
+		Meshes[i].SetGlobalSignature(t1000::T_Signature::FORWARD_PASS);
+	}
+	pFramework->pVideoDriver->PopRT();
+
+	
 	// G Buffer Pass
 	pFramework->pVideoDriver->PushRT(GBufferPass);
 	SceneProp.pCameras[0] = &Cam;
@@ -407,14 +418,14 @@ void TestApp::OnDraw() {
 	// Shadow Map Buffer Accumulation + Occlusion 
 	pFramework->pVideoDriver->PushRT(ShadowAccumPass);
 	pFramework->pVideoDriver->Clear();
-	Quads[0].SetTexture(pFramework->pVideoDriver->GetRTTexture(GBufferPass, t1000::BaseDriver::DEPTH_ATTACHMENT), 0);
+	Quads[0].SetTexture(pFramework->pVideoDriver->GetRTTexture(SceneDepthPass, t1000::BaseDriver::DEPTH_ATTACHMENT), 0);
 	Quads[0].SetTexture(pFramework->pVideoDriver->GetRTTexture(DepthPass, t1000::BaseDriver::DEPTH_ATTACHMENT), 1);
 	Quads[0].SetTexture(pFramework->pVideoDriver->GetRTTexture(GBufferPass, t1000::BaseDriver::COLOR1_ATTACHMENT), 2);
 	Quads[0].SetTexture(SceneProp.SSAOKernel.NoiseTex, 3);
 	Quads[0].SetGlobalSignature(t1000::T_Signature::SHADOW_COMP_PASS);
 	Quads[0].Draw();
 	pFramework->pVideoDriver->PopRT();
-/*
+
 	// Shadow Map Blur Pass
 	pFramework->pVideoDriver->PushRT(ExtraHelperPass);
 	SceneProp.ActiveGaussKernel = SHADOW_KERNEL;
@@ -428,14 +439,14 @@ void TestApp::OnDraw() {
 	Quads[0].SetGlobalSignature(t1000::T_Signature::HORIZONTAL_BLUR_PASS);
 	Quads[0].Draw();
 	pFramework->pVideoDriver->PopRT();
-*/
+
 	// Deferred Pass
 	pFramework->pVideoDriver->PushRT(DeferredPass);
 	Quads[0].SetTexture(pFramework->pVideoDriver->GetRTTexture(GBufferPass, t1000::BaseDriver::COLOR0_ATTACHMENT), 0);
 	Quads[0].SetTexture(pFramework->pVideoDriver->GetRTTexture(GBufferPass, t1000::BaseDriver::COLOR1_ATTACHMENT), 1);
 	Quads[0].SetTexture(pFramework->pVideoDriver->GetRTTexture(GBufferPass, t1000::BaseDriver::COLOR2_ATTACHMENT), 2);
 	Quads[0].SetTexture(pFramework->pVideoDriver->GetRTTexture(GBufferPass, t1000::BaseDriver::COLOR3_ATTACHMENT), 3);
-	Quads[0].SetTexture(pFramework->pVideoDriver->GetRTTexture(GBufferPass, t1000::BaseDriver::DEPTH_ATTACHMENT), 4);
+	Quads[0].SetTexture(pFramework->pVideoDriver->GetRTTexture(SceneDepthPass, t1000::BaseDriver::DEPTH_ATTACHMENT), 4);
 	Quads[0].SetTexture(pFramework->pVideoDriver->GetRTTexture(ShadowAccumPass, t1000::BaseDriver::COLOR0_ATTACHMENT), 5);
 	Quads[0].SetEnvironmentMap(pFramework->pVideoDriver->GetTexture(EnvMapTexIndex));
 	Quads[0].SetGlobalSignature(t1000::T_Signature::DEFERRED_PASS);
@@ -446,7 +457,7 @@ void TestApp::OnDraw() {
 	// God Rays and Volumetric Pass
 	pFramework->pVideoDriver->PushRT(GodRaysCalcPass);
 	Quads[0].SetGlobalSignature(t1000::T_Signature::LIGHT_RAY_MARCHING);
-	Quads[0].SetTexture(pFramework->pVideoDriver->GetRTTexture(GBufferPass, t1000::BaseDriver::DEPTH_ATTACHMENT), 0);
+	Quads[0].SetTexture(pFramework->pVideoDriver->GetRTTexture(SceneDepthPass, t1000::BaseDriver::DEPTH_ATTACHMENT), 0);
 	Quads[0].SetTexture(pFramework->pVideoDriver->GetRTTexture(DepthPass, t1000::BaseDriver::DEPTH_ATTACHMENT), 1);
 	Quads[0].Draw();
 	pFramework->pVideoDriver->PopRT();
@@ -499,7 +510,7 @@ void TestApp::OnDraw() {
 	//DOF PASS
 	pFramework->pVideoDriver->PushRT(CoCPass);
 	Quads[0].SetGlobalSignature(t1000::T_Signature::COC_PASS);
-	Quads[0].SetTexture(pFramework->pVideoDriver->GetRTTexture(GBufferPass, t1000::BaseDriver::DEPTH_ATTACHMENT), 0);
+	Quads[0].SetTexture(pFramework->pVideoDriver->GetRTTexture(SceneDepthPass, t1000::BaseDriver::DEPTH_ATTACHMENT), 0);
 	Quads[0].Draw();
 	pFramework->pVideoDriver->PopRT();
 
@@ -536,10 +547,10 @@ void TestApp::OnDraw() {
 	pFramework->pVideoDriver->PopRT();
 
 	// Final Draw
-	Quads[7].SetTexture(pFramework->pVideoDriver->GetRTTexture(ShadowAccumPass, t1000::BaseDriver::COLOR0_ATTACHMENT), 0);
-	Quads[7].SetGlobalSignature(t1000::T_Signature::FSQUAD_TESTING);
+	Quads[7].SetTexture(pFramework->pVideoDriver->GetRTTexture(ExtraHelperPass, t1000::BaseDriver::COLOR0_ATTACHMENT), 0);
+	Quads[7].SetGlobalSignature(t1000::T_Signature::VIGNETTE_PASS);
 	Quads[7].Draw();
-	
+	/*
 	Quads[1].SetTexture(pFramework->pVideoDriver->GetRTTexture(DepthPass, t1000::BaseDriver::DEPTH_ATTACHMENT), 0);
 	Quads[1].SetGlobalSignature(t1000::T_Signature::FSQUAD_TESTING);
 	Quads[1].Draw();
@@ -555,7 +566,7 @@ void TestApp::OnDraw() {
 	Quads[4].SetTexture(pFramework->pVideoDriver->GetRTTexture(ShadowAccumPass, t1000::BaseDriver::COLOR0_ATTACHMENT), 0);
 	Quads[4].SetGlobalSignature(t1000::T_Signature::FSQUAD_TESTING);
 	Quads[4].Draw();
-	
+	*/
 	if (SceneProp.pCameras[0]->Eye.y > 80) {
 		m_flare.Draw();
 	}
